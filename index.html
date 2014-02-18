@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>snd.js test</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <script src="./snd.js"></script>
+        <script src="./TestCanvas.js"></script>
+        <script>
+
+            /// 定数の定義 ///
+            // 音源の名前
+            KEY_SOURCE = "音源";
+            KEY_BGM = "BGM";
+            // エフェクトの名前
+            KEY_SOURCE_NODE = "パンニング(立体音響)エフェクト";
+            // 音源のURL
+            URL_SOURCE = "./test.wav";
+            URL_BGM = "./01 Liftoff (Get High).wav";
+            // オーディオデータ管理オブジェクトに渡すデータセット
+            SOUND_DATA = {};
+            SOUND_DATA[KEY_SOURCE] = URL_SOURCE;
+            SOUND_DATA[KEY_BGM] = URL_BGM;
+
+            /// グローバル変数の定義 ///
+            // 音源
+            source = null; // 動かせる音源
+            bgm = null; // BGM
+            // パンニングエフェクト用オーディオユニット
+            sourceNode = null;
+            // キャンバス
+            canvas = null; // 描画用クラス
+
+            function setCanvas() {
+                // canvasの設定
+                canvas = new TestCanvas(sourceNode, snd.LISTENER);
+                // このメソッドで音源をマウスと連動させている(TestCanvas.js 19行～)
+                canvas.setOnMouseMove();
+                // このメソッドでリスナーの操作を設定している(TestCanvas.js 34行～)
+                window.addEventListener("keydown", canvas.onkeydown, true);
+            }
+
+            window.onload = function() {
+                // カーソルの形を変更する (snd.AUDIO_DATA_MANAGERのコールバック関数で元に戻す)
+                window.document.body.style.cursor = "wait";
+
+                // snd.jsの初期化
+                // 初期化前にsndの各種メソッドを呼び出してもnullでエラーになります。
+                snd.init();
+
+                // 音源オブジェクトを作る
+                bgm = new snd.BufferSource(KEY_BGM); // BGM
+                source = new snd.BufferSource(KEY_SOURCE); // 音源
+
+                // 立体音響エフェクト用のオーディオユニットを作る
+                sourceNode = new snd.SoundNode(KEY_SOURCE_NODE);
+
+                // 音源オブジェクトをオーディオユニットに接続 (音データの設定は後で大丈夫です)
+               source.connect(sourceNode);
+
+                snd.SOUND_ENVIRONMENT.connectAudioUnit(KEY_SOURCE_NODE, sourceNode);
+                snd.SOUND_ENVIRONMENT.connectAudioUnit(KEY_BGM, bgm);
+
+                //// 音データのローディング ////
+                // 読込み予定にSOUND_DATAの中身を追加 (追加するデータセットは{"音源名":"データのURL"}の連想配列)
+                snd.AUDIO_DATA_MANAGER.addAll(SOUND_DATA);
+                // ローディング終了時に呼ばれるコールバック関数
+                snd.AUDIO_DATA_MANAGER.onload = function() {
+                    // カーソルの形を元に戻す
+                    window.document.body.style.cursor = "default";
+                    // 音まわりの設定をする
+                    onSoundDataLoad();
+                };
+
+                // 描画するキャンバスの設定
+                setCanvas();
+
+                // ロード開始
+                snd.AUDIO_DATA_MANAGER.load();
+            };
+
+            onSoundDataLoad = function() {
+                // 読込んだ音源のデータを設定
+                source.setAudioBuffer(snd.AUDIO_DATA_MANAGER.getAudioBuffer(KEY_SOURCE));
+                source.setLoop(true); // ループするように設定
+
+                // 読込んだBGMのデータを設定
+                bgm.setAudioBuffer(snd.AUDIO_DATA_MANAGER.getAudioBuffer(KEY_BGM));
+                bgm.setLoop(true); // ループするように設定
+
+                // 再生を開始
+                source.start();
+                bgm.start();
+            };
+
+        </script>
+    </head>
+    <body>
+        <h1>PannerNode</h1>
+        <canvas id="canvas" height="480" width="640" style="border: 1px #000000 solid;"></canvas><br>
+        canvasの上でマウスを動かすと音源が動きます。<br>
+        WASD, JLキーでリスナーの操作が可能です。<br>
+        <table>
+            <tr><td>W</td><td>↑</td></tr>
+            <tr><td>A</td><td>←</td></tr>
+            <tr><td>S</td><td>↓</td></tr>
+            <tr><td>D</td><td>→</td></tr>
+            <tr><td>J</td><td>左回転</td></tr>
+            <tr><td>L</td><td>右回転</td></tr>
+        </table>
+        <br>
+        BGM: <a href="http://ocremix.org/info/Pilotwings:_Take_Flight">Take Flight - 01 Liftoff (Get High)</a>
+    </body>
+</html>
