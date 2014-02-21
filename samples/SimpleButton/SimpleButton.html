@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<!--
+    全画面でカーソル形状を変更するために、htmlとbodyタグのheightを100%にする必要があります。
+    htmlタグやbodyタグでheightに100%を指定しなかった場合、画面全体でなく、bodyタグの内側にカーソルが入った場合のみカーソルが変更されるようになってしまいます。
+-->
+<html style="height:100%;">
+    <head>
+        <title>ボタン押し音</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <script src="./jquery-2.1.0.min.js"></script>
+        <script src="../../snd.js"></script>
+        <script>
+            /**
+             * コードフェードイン時の音源オブジェクトのID
+             * @type String
+             */
+            FADE_IN_SOUND_ID = "フェードイン_音源";
+
+            /**
+             * コードフェードアウト時の音源オブジェクトのID
+             * @type String
+             */
+            FADE_OUT_SOUND_ID = "フェードアウト_音源";
+
+            /**
+             * ボタン1をクリックした時に出す音の音源オブジェクトのID
+             * @type String
+             */
+            BUTTON1_SOUND_ID = "ボタン1_音源";
+
+            /**
+             * ボタン2をクリックした時に出す音の音源オブジェクトのID
+             * @type String
+             */
+            BUTTON2_SOUND_ID = "ボタン2_音源";
+
+            /**
+             * コードフェードイン時に出す音のデータのIDです。
+             * @type String
+             */
+            FADE_IN_SOUND_NAME = "フェードイン_音データ";
+
+            /**
+             * コードフェードアウト時に出す音のデータのIDです。
+             * @type String
+             */
+            FADE_OUT_SOUND_NAME = "フェードアウト_音データ";
+
+            /**
+             * ボタンが押されたとき出す音のデータのIDです。
+             * @type String
+             */
+            BUTTON_SOUND_NAME = "ボタンクリック_音データ";
+
+            /**
+             * コードフェードイン時に出す音のデータのURLです。
+             * @type String
+             */
+            FADE_IN_SOUND_URL = "./sound/se_maoudamashii_system19.wav";
+
+            /**
+             * コードフェードアウト時に出す音のデータのURLです。
+             * @type String
+             */
+            FADE_OUT_SOUND_URL = "./sound/se_maoudamashii_system23.wav";
+
+            /**
+             * ボタンが押されたとき出す音のデータのURLです。
+             * @type String
+             */
+            BUTTON_SOUND_URL = "./sound/se_maoudamashii_onepoint26.wav";
+
+            // ブラウザがmp3形式のファイルに対応している場合はmp3にする。
+            if (snd.DOES_MP3_SUPPORTED) {
+                FADE_IN_SOUND_URL = "./sound/se_maoudamashii_system19.mp3";
+                FADE_OUT_SOUND_URL = "./sound/se_maoudamashii_system23.mp3";
+                BUTTON_SOUND_URL = "./sound/se_maoudamashii_onepoint26.mp3";
+            }
+
+            /**
+             * 読込むデータをまとめた連想配列です。
+             * @type @exp;BUTTON_SOUND_URL 読込むデータをまとめた連想配列。 {データのID:データのURL}
+             */
+            SOUND_DATA_SET = {};
+            SOUND_DATA_SET[FADE_IN_SOUND_NAME] = FADE_IN_SOUND_URL; // フェードイン音
+            SOUND_DATA_SET[FADE_OUT_SOUND_NAME] = FADE_OUT_SOUND_URL; // フェードアウト音
+            SOUND_DATA_SET[BUTTON_SOUND_NAME] = BUTTON_SOUND_URL; // ボタン音は同じ音を2箇所で使いまわすので、読込むデータは1個だけです。
+
+            fadeIn = function() { /* ロード終了時にメイン関数内で書き換え */
+            };
+            fadeOut = function() { /* ロード終了時にメイン関数内で書き換え */
+            };
+            pushButton1 = function() { /* ロード終了時にメイン関数内で書き換え */
+            };
+            pushButton2 = function() { /* ロード終了時にメイン関数内で書き換え */
+            };
+
+            /**
+             * ブラウザがページの読込みを終えたときに呼び出される関数
+             */
+            window.onload = function() {
+                $("#code").toggle("fade");
+
+                // カーソルを砂時計に変更
+                window.document.body.style.cursor = "wait";
+
+                /* snd.jsの初期化 */
+
+                snd.init();
+
+                /* 音源オブジェクトの初期化 */
+
+                // 音源オブジェクトを作り、snd.SOUND_ENVIRONMENTに接続します。
+                // 音データのロード終了後に音源オブジェクトの初期化を行っても問題ありませんが、
+                // ここではonload関数に初期化メソッドをまとめました。
+
+                // フェードイン音の音源オブジェクトを作ります。
+                var fadeInSound = new snd.BufferSource(FADE_IN_SOUND_ID);
+                // snd.SOUND_ENVIRONMENTに音源オブジェクトを接続
+                snd.SOUND_ENVIRONMENT.connectAudioUnit(FADE_IN_SOUND_ID, fadeInSound);
+
+                // こちらはフェードアウト音の音源オブジェクト。
+                var fadeOutSound = new snd.BufferSource(FADE_OUT_SOUND_ID);
+                // フェードアウト音の音源オブジェクトも同様に接続
+                snd.SOUND_ENVIRONMENT.connectAudioUnit(FADE_OUT_SOUND_ID, fadeOutSound);
+
+                // ボタン1をクリックしたときに出す音の音源オブジェクトも作ります。
+                var button1Sound = new snd.BufferSource(BUTTON1_SOUND_ID);
+                // 作った音源オブジェクトをSOUND_ENVIRONMENTにザクッと接続。
+                snd.SOUND_ENVIRONMENT.connectAudioUnit(BUTTON1_SOUND_ID, button1Sound);
+
+                // さらにボタン2をクリックしたときに出す音の音源オブジェクトも作ります。
+                var button2Sound = new snd.BufferSource(BUTTON2_SOUND_ID);
+                // こっちもサクッと接続します。
+                snd.SOUND_ENVIRONMENT.connectAudioUnit(BUTTON2_SOUND_ID, button2Sound);
+
+                /* ロードするデータを設定 */
+
+                // snd.AUDIO_DATA_MANAGERに読込むURLを設定
+                snd.AUDIO_DATA_MANAGER.addAll(SOUND_DATA_SET);
+                // ローディング終了時に呼ばれる関数を設定
+                snd.AUDIO_DATA_MANAGER.onload = main;
+
+                // 音データのローディングを開始
+                snd.AUDIO_DATA_MANAGER.load();
+            };
+
+            /**
+             * 音データのロード終了時に呼び出されるメイン関数
+             */
+            main = function() {
+
+                /* 読込んだ音データを音源オブジェクトにセット */
+
+                // snd.SOUND_ENVIRONMENTからフェードイン音の音源オブジェクトを取得
+                var fadeInSound = snd.SOUND_ENVIRONMENT.getAudioUnit(FADE_IN_SOUND_ID);
+                // snd.AUDIO_DATA_MANAGERから音データ(AudioBuffer)を取得してきて、音源オブジェクトに設定
+                fadeInSound.setAudioBuffer(snd.AUDIO_DATA_MANAGER.getAudioBuffer(FADE_IN_SOUND_NAME));
+
+                // snd.SOUND_ENVIRONMENTからフェードイン音の音源オブジェクトを取得
+                var fadeOutSound = snd.SOUND_ENVIRONMENT.getAudioUnit(FADE_OUT_SOUND_ID);
+                // snd.AUDIO_DATA_MANAGERから音データ(AudioBuffer)を取得してきて、音源オブジェクトに設定
+                fadeOutSound.setAudioBuffer(snd.AUDIO_DATA_MANAGER.getAudioBuffer(FADE_OUT_SOUND_NAME));
+
+                // snd.SOUND_ENVIRONMENTからボタン1クリック音の音源オブジェクトを取得
+                var buttonSound1 = snd.SOUND_ENVIRONMENT.getAudioUnit(BUTTON1_SOUND_ID); //接続したときに指定したkey値で取得します。
+                // snd.AUDIO_DATA_MANAGERから音データ(AudioBuffer)を取得してきて、音源オブジェクトに設定
+                buttonSound1.setAudioBuffer(snd.AUDIO_DATA_MANAGER.getAudioBuffer(BUTTON_SOUND_NAME)); // 読込み設定時に使用したキー値で取得します。
+
+                // snd.SOUND_ENVIRONMENTからボタン2クリック音の音源オブジェクトを取得
+                var buttonSound2 = snd.SOUND_ENVIRONMENT.getAudioUnit(BUTTON2_SOUND_ID);
+                // こちらも同じように音データを設定
+                buttonSound2.setAudioBuffer(snd.AUDIO_DATA_MANAGER.getAudioBuffer(BUTTON_SOUND_NAME));
+
+                /* 再生メソッドの書き換え */
+
+                // コードフェードイン時に呼び出されるfadeinメソッドを書き換える
+                fadein = function() {
+                    // フェードイン音の再生開始メソッドを実行
+                    fadeInSound.start();
+                };
+
+                // コードフェードアウト時に呼び出されるfedeoutメソッドを書き換える
+                fadeout = function() {
+                    // フェードアウト音の再生開始メソッドを実行
+                    fadeOutSound.start();
+                };
+
+                // ボタン1クリック時に呼ばれるpushButton1メソッドを書き換える
+                pushButton1 = function() {
+                    // ボタン1クリック音の音源オブジェクトを再生開始
+                    buttonSound1.start();
+                };
+
+                // ボタン2クリック時のメソッドも同じように書き換え
+                pushButton2 = function() {
+                    // ボタン2クリック音の音源オブジェクトを再生開始
+                    buttonSound2.start();
+                };
+
+                // 最後にカーソルの形を元に戻します。おつかれさまでした。
+                window.document.body.style.cursor = "default";
+            };
+
+        </script>
+    </head>
+    <body style="height:100%;">
+        <h3>サンプル1: ボタンクリック音</h3>
+        <div>
+            音の読込み、音源オブジェクトの生成と接続、再生を行う単純なサンプルです。<br/>
+            ボタンをクリックするとポチッと音がしますよ。<br/>
+        </div>
+        <div>
+            <br/>
+            <button onclick="pushButton1()">ポチッとな</button> <button onclick="pushButton2()">こっちもポチッ</button><br/>
+            <br/>
+        </div>
+        <div/>
+            どっちも音は同じ！！<br/>
+            ↑の意味は↓でコードを読んで確認してください。<br/>
+        <div/>
+        <div id="switch" style="text-decoration: underline" onclick='$("#code").toggle("fade"); if ($("#switch").text() === "{コードを表示}") { $("#switch").text("{コードを隠す}"); fadeout(); } else { $("#switch").text("{コードを表示}"); fadein(); }'>{コードを表示}</div>
+        <div id="code" style="background-color: #000; color: #FFF; margin: 1em; padding: 2em;">
+            <p>&lt;!DOCTYPE&nbsp;html&gt;<br>
+                &lt;!--<br>
+                <span style="position:relative;left:4ex;">全画面でカーソル形状を変更するために、htmlとbodyタグのheightを100%にする必要があります。</span><br>
+                <span style="position:relative;left:4ex;">htmlタグやbodyタグでheightに100%を指定しなかった場合、画面全体でなく、bodyタグの内側にカーソルが入った場合のみカーソルが変更されるようになってしまいます。</span><br>
+                --&gt;<br>
+                &lt;html&nbsp;style=&quot;height:100%;&quot;&gt;<br>
+                <span style="position:relative;left:4ex;">&lt;head&gt;</span><br>
+                <span style="position:relative;left:8ex;">&lt;title&gt;ボタン押し音&lt;/title&gt;</span><br>
+                <span style="position:relative;left:8ex;">&lt;meta&nbsp;charset=&quot;UTF-8&quot;&gt;</span><br>
+                <span style="position:relative;left:8ex;">&lt;meta&nbsp;name=&quot;viewport&quot;&nbsp;content=&quot;width=device-width&quot;&gt;</span><br>
+                <span style="position:relative;left:8ex;">&lt;script&nbsp;src=&quot;./jquery-2.1.0.min.js&quot;&gt;&lt;/script&gt;</span><br>
+                <span style="position:relative;left:8ex;">&lt;script&nbsp;src=&quot;../../snd.js&quot;&gt;&lt;/script&gt;</span><br>
+                <span style="position:relative;left:8ex;">&lt;script&gt;</span><br>
+                <span style="position:relative;left:12ex;">/**</span><br>
+                <span style="position:relative;left:13ex;">*&nbsp;コードフェードイン時の音源オブジェクトのID</span><br>
+                <span style="position:relative;left:13ex;">*&nbsp;@type&nbsp;String</span><br>
+                <span style="position:relative;left:13ex;">*/</span><br>
+                <span style="position:relative;left:12ex;">FADE_IN_SOUND_ID&nbsp;=&nbsp;&quot;フェードイン_音源&quot;;</span><br>
+                <span style="position:relative;left:12ex;"></span></p>
+            <p><span style="position:relative;left:12ex;">/**</span><br>
+                <span style="position:relative;left:13ex;">*&nbsp;コードフェードアウト時の音源オブジェクトのID</span><br>
+                <span style="position:relative;left:13ex;">*&nbsp;@type&nbsp;String</span><br>
+                <span style="position:relative;left:13ex;">*/</span><br>
+                <span style="position:relative;left:12ex;">FADE_OUT_SOUND_ID&nbsp;=&nbsp;&quot;フェードアウト_音源&quot;;</span><br>
+                <span style="position:relative;left:12ex;"></span></p>
+            <p><span style="position:relative;left:12ex;">/**</span><br>
+                <span style="position:relative;left:13ex;">*&nbsp;ボタン1をクリックした時に出す音の音源オブジェクトのID</span><br>
+                <span style="position:relative;left:13ex;">*&nbsp;@type&nbsp;String</span><br>
+                <span style="position:relative;left:13ex;">*/</span><br>
+                <span style="position:relative;left:12ex;">BUTTON1_SOUND_ID&nbsp;=&nbsp;&quot;ボタン1_音源&quot;;</span><br>
+            </p>
+            <p><span style="position:relative;left:12ex;">/**</span><br>
+                <span style="position:relative;left:13ex;">*&nbsp;ボタン2をクリックした時に出す音の音源オブジェクトのID</span><br>
+                <span style="position:relative;left:13ex;">*&nbsp;@type&nbsp;String</span><br>
+                <span style="position:relative;left:13ex;">*/</span><br>
+                <span style="position:relative;left:12ex;">BUTTON2_SOUND_ID&nbsp;=&nbsp;&quot;ボタン2_音源&quot;;</span><br>
+                <span style="position:relative;left:12ex;"></span></p>
+            <p><span style="position:relative;left:12ex;">/**</span><br>
+                <span style="position:relative;left:13ex;">*&nbsp;コードフェードイン時に出す音のデータのIDです。</span><br>
+                <span style="position:relative;left:13ex;">*&nbsp;@type&nbsp;String</span><br>
+                <span style="position:relative;left:13ex;">*/</span><br>
+                <span style="position:relative;left:12ex;">FADE_IN_SOUND_NAME&nbsp;=&nbsp;&quot;フェードイン_音データ&quot;;</span><br>
+                <span style="position:relative;left:12ex;"></span></p>
+            <p><span style="position:relative;left:12ex;">/**</span><br>
+                <span style="position:relative;left:13ex;">*&nbsp;コードフェードアウト時に出す音のデータのIDです。</span><br>
+                <span style="position:relative;left:13ex;">*&nbsp;@type&nbsp;String</span><br>
+                <span style="position:relative;left:13ex;">*/</span><br>
+                <span style="position:relative;left:12ex;">FADE_OUT_SOUND_NAME&nbsp;=&nbsp;&quot;フェードアウト_音データ&quot;;</span><br>
+            </p>
+            <p><span style="position:relative;left:12ex;">/**</span><br>
+                <span style="position:relative;left:13ex;">*&nbsp;ボタンが押されたとき出す音のデータのIDです。</span><br>
+                <span style="position:relative;left:13ex;">*&nbsp;@type&nbsp;String</span><br>
+                <span style="position:relative;left:13ex;">*/</span><br>
+                <span style="position:relative;left:12ex;">BUTTON_SOUND_NAME&nbsp;=&nbsp;&quot;ボタンクリック_音データ&quot;;</span><br>
+                <span style="position:relative;left:12ex;"></span></p>
+            <p><span style="position:relative;left:12ex;">/**</span><br>
+                <span style="position:relative;left:13ex;">*&nbsp;コードフェードイン時に出す音のデータのURLです。</span><br>
+                <span style="position:relative;left:13ex;">*&nbsp;@type&nbsp;String</span><br>
+                <span style="position:relative;left:13ex;">*/</span><br>
+                <span style="position:relative;left:12ex;">FADE_IN_SOUND_URL&nbsp;=&nbsp;&quot;./sound/se_maoudamashii_system19.wav&quot;;</span><br>
+                <span style="position:relative;left:12ex;"></span></p>
+            <p><span style="position:relative;left:12ex;">/**</span><br>
+                <span style="position:relative;left:13ex;">*&nbsp;コードフェードアウト時に出す音のデータのURLです。</span><br>
+                <span style="position:relative;left:13ex;">*&nbsp;@type&nbsp;String</span><br>
+                <span style="position:relative;left:13ex;">*/</span><br>
+                <span style="position:relative;left:12ex;">FADE_OUT_SOUND_URL&nbsp;=&nbsp;&quot;./sound/se_maoudamashii_system23.wav&quot;;</span><br>
+            </p>
+            <p><span style="position:relative;left:12ex;">/**</span><br>
+                <span style="position:relative;left:13ex;">*&nbsp;ボタンが押されたとき出す音のデータのURLです。</span><br>
+                <span style="position:relative;left:13ex;">*&nbsp;@type&nbsp;String</span><br>
+                <span style="position:relative;left:13ex;">*/</span><br>
+                <span style="position:relative;left:12ex;">BUTTON_SOUND_URL&nbsp;=&nbsp;&quot;./sound/se_maoudamashii_onepoint26.wav&quot;;</span><br>
+                <span style="position:relative;left:12ex;"></span></p>
+            <p><span style="position:relative;left:12ex;">//&nbsp;ブラウザがmp3形式のファイルに対応している場合はmp3にする。</span><br>
+                <span style="position:relative;left:12ex;">if&nbsp;(snd.DOES_MP3_SUPPORTED)&nbsp;{</span><br>
+                <span style="position:relative;left:16ex;">FADE_IN_SOUND_URL&nbsp;=&nbsp;&quot;./sound/se_maoudamashii_system19.mp3&quot;;</span><br>
+                <span style="position:relative;left:16ex;">FADE_OUT_SOUND_URL&nbsp;=&nbsp;&quot;./sound/se_maoudamashii_system23.mp3&quot;;</span><br>
+                <span style="position:relative;left:16ex;">BUTTON_SOUND_URL&nbsp;=&nbsp;&quot;./sound/se_maoudamashii_onepoint26.mp3&quot;;</span><br>
+                <span style="position:relative;left:12ex;">}</span><br>
+            </p>
+            <p><span style="position:relative;left:12ex;">/**</span><br>
+                <span style="position:relative;left:13ex;">*&nbsp;読込むデータをまとめた連想配列です。</span><br>
+                <span style="position:relative;left:13ex;">*&nbsp;@type&nbsp;@exp;BUTTON_SOUND_URL&nbsp;読込むデータをまとめた連想配列。&nbsp;{データのID:データのURL}</span><br>
+                <span style="position:relative;left:13ex;">*/</span><br>
+                <span style="position:relative;left:12ex;">SOUND_DATA_SET&nbsp;=&nbsp;{};</span><br>
+                <span style="position:relative;left:12ex;">SOUND_DATA_SET[FADE_IN_SOUND_NAME]&nbsp;=&nbsp;FADE_IN_SOUND_URL;&nbsp;//&nbsp;フェードイン音</span><br>
+                <span style="position:relative;left:12ex;">SOUND_DATA_SET[FADE_OUT_SOUND_NAME]&nbsp;=&nbsp;FADE_OUT_SOUND_URL;&nbsp;//&nbsp;フェードアウト音</span><br>
+                <span style="position:relative;left:12ex;">SOUND_DATA_SET[BUTTON_SOUND_NAME]&nbsp;=&nbsp;BUTTON_SOUND_URL;&nbsp;//&nbsp;ボタン音は同じ音を2箇所で使いまわすので、読込むデータは1個だけです。</span><br>
+            </p>
+            <p><span style="position:relative;left:12ex;">fadeIn&nbsp;=&nbsp;function(){&nbsp;/*&nbsp;ロード終了時にメイン関数内で書き換え&nbsp;*/&nbsp;};</span><br>
+                <span style="position:relative;left:12ex;">fadeOut&nbsp;=&nbsp;function(){&nbsp;/*&nbsp;ロード終了時にメイン関数内で書き換え&nbsp;*/&nbsp;};</span><br>
+                <span style="position:relative;left:12ex;">pushButton1&nbsp;=&nbsp;function()&nbsp;{&nbsp;/*&nbsp;ロード終了時にメイン関数内で書き換え&nbsp;*/&nbsp;};</span><br>
+                <span style="position:relative;left:12ex;">pushButton2&nbsp;=&nbsp;function()&nbsp;{&nbsp;/*&nbsp;ロード終了時にメイン関数内で書き換え&nbsp;*/&nbsp;};</span><br>
+            </p>
+            <p><span style="position:relative;left:12ex;">/**</span><br>
+                <span style="position:relative;left:13ex;">*&nbsp;ブラウザがページの読込みを終えたときに呼び出される関数</span><br>
+                <span style="position:relative;left:13ex;">*/</span><br>
+                <span style="position:relative;left:12ex;">window.onload&nbsp;=&nbsp;function()&nbsp;{</span><br>
+                <span style="position:relative;left:16ex;">$(&quot;#code&quot;).toggle(&quot;fade&quot;);</span><br>
+                <span style="position:relative;left:16ex;"></span></p>
+            <p><span style="position:relative;left:16ex;">//&nbsp;カーソルを砂時計に変更</span><br>
+                <span style="position:relative;left:16ex;">window.document.body.style.cursor&nbsp;=&nbsp;&quot;wait&quot;;</span><br>
+            </p>
+            <p><span style="position:relative;left:16ex;">/*&nbsp;snd.jsの初期化&nbsp;*/</span><br>
+            </p>
+            <p><span style="position:relative;left:16ex;">snd.init();</span><br>
+            </p>
+            <p><span style="position:relative;left:16ex;">/*&nbsp;音源オブジェクトの初期化&nbsp;*/</span><br>
+            </p>
+            <p><span style="position:relative;left:16ex;">//&nbsp;音源オブジェクトを作り、snd.SOUND_ENVIRONMENTに接続します。</span><br>
+                <span style="position:relative;left:16ex;">//&nbsp;音データのロード終了後に音源オブジェクトの初期化を行っても問題ありませんが、</span><br>
+                <span style="position:relative;left:16ex;">//&nbsp;ここではonload関数に初期化メソッドをまとめました。</span><br>
+                <span style="position:relative;left:16ex;"></span></p>
+            <p><span style="position:relative;left:16ex;">//&nbsp;フェードイン音の音源オブジェクトを作ります。</span><br>
+                <span style="position:relative;left:16ex;">var&nbsp;fadeInSound&nbsp;=&nbsp;new&nbsp;snd.BufferSource(FADE_IN_SOUND_ID);</span><br>
+                <span style="position:relative;left:16ex;">//&nbsp;snd.SOUND_ENVIRONMENTに音源オブジェクトを接続</span><br>
+                <span style="position:relative;left:16ex;">snd.SOUND_ENVIRONMENT.connectAudioUnit(FADE_IN_SOUND_ID,&nbsp;fadeInSound);</span><br>
+                <span style="position:relative;left:16ex;"></span></p>
+            <p><span style="position:relative;left:16ex;">//&nbsp;こちらはフェードアウト音の音源オブジェクト。</span><br>
+                <span style="position:relative;left:16ex;">var&nbsp;fadeOutSound&nbsp;=&nbsp;new&nbsp;snd.BufferSource(FADE_OUT_SOUND_ID);</span><br>
+                <span style="position:relative;left:16ex;">//&nbsp;フェードアウト音の音源オブジェクトも同様に接続</span><br>
+                <span style="position:relative;left:16ex;">snd.SOUND_ENVIRONMENT.connectAudioUnit(FADE_OUT_SOUND_ID,&nbsp;fadeOutSound);</span><br>
+                <span style="position:relative;left:16ex;"></span></p>
+            <p><span style="position:relative;left:16ex;">//&nbsp;ボタン1をクリックしたときに出す音の音源オブジェクトも作ります。</span><br>
+                <span style="position:relative;left:16ex;">var&nbsp;button1Sound&nbsp;=&nbsp;new&nbsp;snd.BufferSource(BUTTON1_SOUND_ID);</span><br>
+                <span style="position:relative;left:16ex;">//&nbsp;作った音源オブジェクトをSOUND_ENVIRONMENTにザクッと接続。</span><br>
+                <span style="position:relative;left:16ex;">snd.SOUND_ENVIRONMENT.connectAudioUnit(BUTTON1_SOUND_ID,&nbsp;button1Sound);</span><br>
+            </p>
+            <p><span style="position:relative;left:16ex;">//&nbsp;さらにボタン2をクリックしたときに出す音の音源オブジェクトも作ります。</span><br>
+                <span style="position:relative;left:16ex;">var&nbsp;button2Sound&nbsp;=&nbsp;new&nbsp;snd.BufferSource(BUTTON2_SOUND_ID);</span><br>
+                <span style="position:relative;left:16ex;">//&nbsp;こっちもサクッと接続します。</span><br>
+                <span style="position:relative;left:16ex;">snd.SOUND_ENVIRONMENT.connectAudioUnit(BUTTON2_SOUND_ID,&nbsp;button2Sound);</span><br>
+            </p>
+            <p><span style="position:relative;left:16ex;">/*&nbsp;ロードするデータを設定&nbsp;*/</span><br>
+            </p>
+            <p><span style="position:relative;left:16ex;">//&nbsp;snd.AUDIO_DATA_MANAGERに読込むURLを設定</span><br>
+                <span style="position:relative;left:16ex;">snd.AUDIO_DATA_MANAGER.addAll(SOUND_DATA_SET);</span><br>
+                <span style="position:relative;left:16ex;">//&nbsp;ローディング終了時に呼ばれる関数を設定</span><br>
+                <span style="position:relative;left:16ex;">snd.AUDIO_DATA_MANAGER.onload&nbsp;=&nbsp;main;</span><br>
+            </p>
+            <p><span style="position:relative;left:16ex;">//&nbsp;音データのローディングを開始</span><br>
+                <span style="position:relative;left:16ex;">snd.AUDIO_DATA_MANAGER.load();</span><br>
+                <span style="position:relative;left:12ex;">};</span><br>
+            </p>
+            <p><span style="position:relative;left:12ex;">/**</span><br>
+                <span style="position:relative;left:13ex;">*&nbsp;音データのロード終了時に呼び出されるメイン関数</span><br>
+                <span style="position:relative;left:13ex;">*/</span><br>
+                <span style="position:relative;left:12ex;">main&nbsp;=&nbsp;function()&nbsp;{</span><br>
+                <span style="position:relative;left:16ex;"></span></p>
+            <p><span style="position:relative;left:16ex;">/*&nbsp;読込んだ音データを音源オブジェクトにセット&nbsp;*/</span><br>
+                <span style="position:relative;left:16ex;"></span></p>
+            <p><span style="position:relative;left:16ex;">//&nbsp;snd.SOUND_ENVIRONMENTからフェードイン音の音源オブジェクトを取得</span><br>
+                <span style="position:relative;left:16ex;">var&nbsp;fadeInSound&nbsp;=&nbsp;snd.SOUND_ENVIRONMENT.getAudioUnit(FADE_IN_SOUND_ID);</span><br>
+                <span style="position:relative;left:16ex;">//&nbsp;snd.AUDIO_DATA_MANAGERから音データ(AudioBuffer)を取得してきて、音源オブジェクトに設定</span><br>
+                <span style="position:relative;left:16ex;">fadeInSound.setAudioBuffer(snd.AUDIO_DATA_MANAGER.getAudioBuffer(FADE_IN_SOUND_NAME));</span><br>
+                <span style="position:relative;left:16ex;"></span></p>
+            <p><span style="position:relative;left:16ex;">//&nbsp;snd.SOUND_ENVIRONMENTからフェードイン音の音源オブジェクトを取得</span><br>
+                <span style="position:relative;left:16ex;">var&nbsp;fadeOutSound&nbsp;=&nbsp;snd.SOUND_ENVIRONMENT.getAudioUnit(FADE_OUT_SOUND_ID);</span><br>
+                <span style="position:relative;left:16ex;">//&nbsp;snd.AUDIO_DATA_MANAGERから音データ(AudioBuffer)を取得してきて、音源オブジェクトに設定</span><br>
+                <span style="position:relative;left:16ex;">fadeOutSound.setAudioBuffer(snd.AUDIO_DATA_MANAGER.getAudioBuffer(FADE_OUT_SOUND_NAME));</span><br>
+                <span style="position:relative;left:16ex;"></span></p>
+            <p><span style="position:relative;left:16ex;">//&nbsp;snd.SOUND_ENVIRONMENTからボタン1クリック音の音源オブジェクトを取得</span><br>
+                <span style="position:relative;left:16ex;">var&nbsp;buttonSound1&nbsp;=&nbsp;snd.SOUND_ENVIRONMENT.getAudioUnit(BUTTON1_SOUND_ID);&nbsp;//接続したときに指定したkey値で取得します。</span><br>
+                <span style="position:relative;left:16ex;">//&nbsp;snd.AUDIO_DATA_MANAGERから音データ(AudioBuffer)を取得してきて、音源オブジェクトに設定</span><br>
+                <span style="position:relative;left:16ex;">buttonSound1.setAudioBuffer(snd.AUDIO_DATA_MANAGER.getAudioBuffer(BUTTON_SOUND_NAME));&nbsp;//&nbsp;読込み設定時に使用したキー値で取得します。</span><br>
+            </p>
+            <p><span style="position:relative;left:16ex;">//&nbsp;snd.SOUND_ENVIRONMENTからボタン2クリック音の音源オブジェクトを取得</span><br>
+                <span style="position:relative;left:16ex;">var&nbsp;buttonSound2&nbsp;=&nbsp;snd.SOUND_ENVIRONMENT.getAudioUnit(BUTTON2_SOUND_ID);</span><br>
+                <span style="position:relative;left:16ex;">//&nbsp;こちらも同じように音データを設定</span><br>
+                <span style="position:relative;left:16ex;">buttonSound2.setAudioBuffer(snd.AUDIO_DATA_MANAGER.getAudioBuffer(BUTTON_SOUND_NAME));</span><br>
+                <span style="position:relative;left:16ex;"></span></p>
+            <p><span style="position:relative;left:16ex;">/*&nbsp;再生メソッドの書き換え&nbsp;*/</span><br>
+                <span style="position:relative;left:16ex;"></span></p>
+            <p><span style="position:relative;left:16ex;">//&nbsp;コードフェードイン時に呼び出されるfadeinメソッドを書き換える</span><br>
+                <span style="position:relative;left:16ex;">fadein&nbsp;=&nbsp;function()&nbsp;{</span><br>
+                <span style="position:relative;left:20ex;">//&nbsp;フェードイン音の再生開始メソッドを実行</span><br>
+                <span style="position:relative;left:20ex;">fadeInSound.start();</span><br>
+                <span style="position:relative;left:16ex;">};</span><br>
+                <span style="position:relative;left:16ex;"></span></p>
+            <p><span style="position:relative;left:16ex;">//&nbsp;コードフェードアウト時に呼び出されるfedeoutメソッドを書き換える</span><br>
+                <span style="position:relative;left:16ex;">fadeout&nbsp;=&nbsp;function()&nbsp;{</span><br>
+                <span style="position:relative;left:20ex;">//&nbsp;フェードアウト音の再生開始メソッドを実行</span><br>
+                <span style="position:relative;left:20ex;">fadeOutSound.start();</span><br>
+                <span style="position:relative;left:16ex;">};</span><br>
+                <span style="position:relative;left:16ex;"></span></p>
+            <p><span style="position:relative;left:16ex;">//&nbsp;ボタン1クリック時に呼ばれるpushButton1メソッドを書き換える</span><br>
+                <span style="position:relative;left:16ex;">pushButton1&nbsp;=&nbsp;function()&nbsp;{</span><br>
+                <span style="position:relative;left:20ex;">//&nbsp;ボタン1クリック音の音源オブジェクトを再生開始</span><br>
+                <span style="position:relative;left:20ex;">buttonSound1.start();</span><br>
+                <span style="position:relative;left:16ex;">};</span><br>
+            </p>
+            <p><span style="position:relative;left:16ex;">//&nbsp;ボタン2クリック時のメソッドも同じように書き換え</span><br>
+                <span style="position:relative;left:16ex;">pushButton2&nbsp;=&nbsp;function()&nbsp;{</span><br>
+                <span style="position:relative;left:20ex;">//&nbsp;ボタン2クリック音の音源オブジェクトを再生開始</span><br>
+                <span style="position:relative;left:20ex;">buttonSound2.start();</span><br>
+                <span style="position:relative;left:16ex;">};</span><br>
+            </p>
+            <p><span style="position:relative;left:16ex;">//&nbsp;最後にカーソルの形を元に戻します。おつかれさまでした。</span><br>
+                <span style="position:relative;left:16ex;">window.document.body.style.cursor&nbsp;=&nbsp;&quot;default&quot;;</span><br>
+                <span style="position:relative;left:12ex;">};</span><br>
+            </p>
+            <p><span style="position:relative;left:8ex;">&lt;/script&gt;</span><br>
+                <span style="position:relative;left:4ex;">&lt;/head&gt;</span><br>
+                <span style="position:relative;left:4ex;">&lt;body&nbsp;style=&quot;height:100%;&quot;&gt;</span><br>
+                <span style="position:relative;left:8ex;">&lt;div&gt;</span><br>
+                <span style="position:relative;left:12ex;">&lt;button&nbsp;onclick=&quot;pushButton1()&quot;&gt;ポチッとな&lt;/button&gt;</span><br>
+                <span style="position:relative;left:8ex;">&lt;/div&gt;</span><br>
+                <span style="position:relative;left:8ex;">&lt;div&gt;</span><br>
+                <span style="position:relative;left:12ex;">&lt;button&nbsp;onclick=&quot;pushButton2()&quot;&gt;こっちもポチッ&lt;/button&gt;</span><br>
+                <span style="position:relative;left:8ex;">&lt;/div&gt;</span><br>
+                <span style="position:relative;left:8ex;">どっちも音は同じ！！</span><br>
+                <span style="position:relative;left:8ex;">&lt;div&nbsp;id=&quot;code&quot;&nbsp;style=&quot;background-color:&nbsp;#000;&nbsp;color:&nbsp;#FFF;&nbsp;margin:&nbsp;1em;&nbsp;padding:&nbsp;2em;&quot;&gt;</span><br>
+                <span style="position:relative;left:12ex;"><span class="strong2">・・・・</span></span><br>
+                <span style="position:relative;left:8ex;">&lt;/div&gt;</span><br>
+                <span style="position:relative;left:8ex;">&lt;div&nbsp;id=&quot;switch&quot;&nbsp;style=&quot;text-decoration:&nbsp;underline&quot;&nbsp;onclick='$(&quot;#code&quot;).toggle(&quot;fade&quot;);&nbsp;if&nbsp;($(&quot;#switch&quot;).text()&nbsp;===&nbsp;&quot;{コードを表示}&quot;)&nbsp;{$(&quot;#switch&quot;).text(&quot;{コードを隠す}&quot;);fadeout();}&nbsp;else&nbsp;{$(&quot;#switch&quot;).text(&quot;{コードを表示}&quot;);fadein();}'&gt;{コードを表示}&lt;/div&gt;</span><br>
+                <span style="position:relative;left:4ex;">&lt;/body&gt;</span><br>
+                &lt;/html&gt;<br>
+            </p>
+        </div>
+        <br/>
+        <hr/>
+        <div style="font-size:0.7em; text-align: center;">
+            <a href="http://maoudamashii.jokersounds.com">効果音: (c) 魔王魂</a><br/>
+            <a href="h.10x64@gmail.com">CreativeCommons BY 4.0 (cc) 2014 N_H&lt;h.10x64@gmail.com&gt;</a>
+        </div>
+    </body>
+</html>

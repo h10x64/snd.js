@@ -4,7 +4,16 @@
  */
 snd = {VERSION: "62190", IS_BETA:true};
 
+/**
+ * ブラウザ名です
+ * @type String
+ */
 snd.BLOWSER = window.navigator.userAgent.toLowerCase();
+
+/**
+ * 表示に使われているブラウザがmp3形式のAudioBufferに対応しているかどうかを表します
+ * @type Boolean
+ */
 snd.DOES_MP3_SUPPORTED = false;
 if (snd.BLOWSER.indexOf("chrome") != -1) {
     snd.DOES_MP3_SUPPORTED = true;
