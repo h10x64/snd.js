@@ -14,10 +14,18 @@ snd.AudioUnit.prototype.connect = function(connectTo) {
     // PLEASE OVERRIDE ME
 };
 
-snd.AudioUnit.prototype.disconnect = function(connectTo) {
+/**
+ * このオーディオユニットをdisconnectFromから切断します。
+ */
+snd.AudioUnit.prototype.disconnect = function(disconnectFrom) {
     // PLEASE OVERRIDE ME
 };
 
+/**
+ * このオーディオユニットのconnect/disconnectメソッドを持つオブジェクトを返します。<br/>
+ * AudioUnitクラス、SoundEnvironmentクラスなどのオブジェクトから呼び出されるメソッドですので、通常は
+ * AudioUnit#connect/AudioUnit#disconnectメソッドを使用してください。
+ */
 snd.AudioUnit.prototype.getConnector = function() {
     // PLEASE OVERRIDE ME
 };

@@ -344,7 +344,7 @@ ul.inheritsList
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/snd.AudioDataManager.html#add">add</a></b>(key, url)
 								</div>
-								<div class="description">keyがキー値となるAudioBufferを追加します。<br/></div>
+								<div class="description">keyがキー値となるAudioBufferを追加します。</div>
 							</td>
 						</tr>
 					
@@ -365,10 +365,37 @@ addAllを使用した時点ではまだ読込は開始されません。<br/>
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/snd.AudioDataManager.html#addAllDataLoadListener">addAllDataLoadListener</a></b>(func)
+								</div>
+								<div class="description">全データ読込み終了イベントのリスナへfuncで指定されたメソッドを追加します。</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/snd.AudioDataManager.html#addOnloadListener">addOnloadListener</a></b>(key, func)
 								</div>
 								<div class="description">keyで指定されたAudioBufferの読込が終了した際に呼ばれるコールバック関数を設定します。<br/>
 全てのAudioBufferの読込が終了した時に呼ばれるコールバック関数を設定したい場合、snd.AudioDataManager.onloadをオーバーライドしてください。</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/snd.AudioDataManager.html#doesAllDataLoaded">doesAllDataLoaded</a></b>()
+								</div>
+								<div class="description">設定された全データのロードが完了しているかどうかを返します。</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/snd.AudioDataManager.html#getAudioBuffer">getAudioBuffer</a></b>(key)
+								</div>
+								<div class="description">keyで指定されたAudioBufferを取得します。</div>
 							</td>
 						</tr>
 					
@@ -392,6 +419,34 @@ addAllを使用した時点ではまだ読込は開始されません。<br/>
 								</div>
 								<div class="description">keyで取得されるAudioBufferの読込が終了した際にsnd.AUDIO_CONTEXTから呼ばれるコールバック関数です。<br/>
 AudioDataManagerが内部で使用するための関数なので、オーバーライドはしないでください。</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/snd.AudioDataManager.html#onload">onload</a></b>()
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/snd.AudioDataManager.html#removeAllDataLoadListener">removeAllDataLoadListener</a></b>(func)
+								</div>
+								<div class="description">全データ読込み終了イベントのリスナからfuncで指定されたメソッドを削除します。</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/snd.AudioDataManager.html#removeOnloadListener">removeOnloadListener</a></b>(key)
+								</div>
+								<div class="description">keyで指定されたAudioBufferの読込が終了した際に呼び出されるコールバック関数を削除します。<br/>
+指定されたkeyで追加されたコールバック関数がない場合、削除は行いません。</div>
 							</td>
 						</tr>
 					
@@ -525,7 +580,7 @@ AudioDataManagerが内部で使用するための関数なので、オーバー�
 					
 					</div>
 					<div class="description">
-						keyがキー値となるAudioBufferを追加します。<br/>
+						keyがキー値となるAudioBufferを追加します。
 						
 						
 					</div>
@@ -607,6 +662,42 @@ addAllを使用した時点ではまだ読込は開始されません。<br/>
 
 					<hr />
 				
+					<a name="addAllDataLoadListener"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>addAllDataLoadListener</b>(func)
+					
+					</div>
+					<div class="description">
+						全データ読込み終了イベントのリスナへfuncで指定されたメソッドを追加します。
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{type}</span> <b>func</b>
+									
+								</dt>
+								<dd>全データの読込みが終了した際に呼び出されるメソッド。呼び出す時は引数なしでfunc()を実行します。</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="addOnloadListener"> </a>
 					<div class="fixedFont">
 					
@@ -653,6 +744,81 @@ addAllを使用した時点ではまだ読込は開始されません。<br/>
 								<dd></dd>
 							
 							</dl>
+						
+
+					<hr />
+				
+					<a name="doesAllDataLoaded"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Boolean}</span>
+					<b>doesAllDataLoaded</b>()
+					
+					</div>
+					<div class="description">
+						設定された全データのロードが完了しているかどうかを返します。
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Boolean}</span> 全データのロードが完了しているか否か</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="getAudioBuffer"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{AudioBuffer}</span>
+					<b>getAudioBuffer</b>(key)
+					
+					</div>
+					<div class="description">
+						keyで指定されたAudioBufferを取得します。
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{type}</span> <b>key</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{AudioBuffer}</span> 音データオブジェクト</dd>
+							
+							</dl>
+						
+						
 						
 
 					<hr />
@@ -747,6 +913,118 @@ AudioDataManagerが内部で使用するための関数なので、オーバー�
 						
 						
 
+					<hr />
+				
+					<a name="onload"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>onload</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="removeAllDataLoadListener"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Boolean}</span>
+					<b>removeAllDataLoadListener</b>(func)
+					
+					</div>
+					<div class="description">
+						全データ読込み終了イベントのリスナからfuncで指定されたメソッドを削除します。
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{type}</span> <b>func</b>
+									
+								</dt>
+								<dd>リストから外すメソッド</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Boolean}</span> 削除した場合はtrue, 削除しなかった場合はfalse</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="removeOnloadListener"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{undefined}</span>
+					<b>removeOnloadListener</b>(key)
+					
+					</div>
+					<div class="description">
+						keyで指定されたAudioBufferの読込が終了した際に呼び出されるコールバック関数を削除します。<br/>
+指定されたkeyで追加されたコールバック関数がない場合、削除は行いません。
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{type}</span> <b>key</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{undefined}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
 					
 				
 			
@@ -761,7 +1039,7 @@ AudioDataManagerが内部で使用するための関数なので、オーバー�
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sat Feb 22 2014 02:47:20 GMT+0900 (JST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sat Mar 01 2014 11:28:57 GMT+0900 (JST)
 		</div>
 	</body>
 </html>

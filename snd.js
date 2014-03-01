@@ -206,14 +206,24 @@ snd.Source = function(id) {
     this.status = snd.status.NONE;
 };
 
+/**
+ * 音源の再生を開始します。
+ */
 snd.Source.prototype.start = function() {
     // PLEASE OVERRIDE ME
 };
 
+/**
+ * 音源の再生を停止します。
+ */
 snd.Source.prototype.stop = function() {
     // PLEASE OVERRIDE ME
 };
 
+/**
+ * 詳細はAudioUnitクラスのconnectを参照してください。
+ * @param {type} connectTo 接続先
+ */
 snd.Source.prototype.connect = function(connectTo) {
     if (connectTo.isAudioUnit) {
         this.gain.connect(connectTo.getConnector());
@@ -222,6 +232,10 @@ snd.Source.prototype.connect = function(connectTo) {
     }
 };
 
+/**
+ * 詳細はAudioUnitクラスのdisconnectFromを参照してください。
+ * @param {type} disconnectFrom 切断する接続先
+ */
 snd.Source.prototype.disconnect = function(disconnectFrom) {
     if (disconnectFrom.isAudioUnit) {
         this.gain.disconnect(disconnectFrom);
@@ -513,10 +527,18 @@ snd.AudioUnit.prototype.connect = function(connectTo) {
     // PLEASE OVERRIDE ME
 };
 
-snd.AudioUnit.prototype.disconnect = function(connectTo) {
+/**
+ * このオーディオユニットをdisconnectFromから切断します。
+ */
+snd.AudioUnit.prototype.disconnect = function(disconnectFrom) {
     // PLEASE OVERRIDE ME
 };
 
+/**
+ * このオーディオユニットのconnect/disconnectメソッドを持つオブジェクトを返します。<br/>
+ * AudioUnitクラス、SoundEnvironmentクラスなどのオブジェクトから呼び出されるメソッドですので、通常は
+ * AudioUnit#connect/AudioUnit#disconnectメソッドを使用してください。
+ */
 snd.AudioUnit.prototype.getConnector = function() {
     // PLEASE OVERRIDE ME
 };
@@ -723,10 +745,41 @@ snd.AudioDataManager = function() {
      * {キー:{onload:[function]}}
      */
     this.eventListeners = {};
+    
+    this.allLoadEventListeners = [];
 };
 
+/**
+ * 
+ */
 snd.AudioDataManager.prototype.onload = function() {
-    // PLEASE OVERRIDE ME
+    for (var i = 0; i < this.allLoadEventListeners.length; i++) {
+        this.allLoadEventListeners[i]();
+    }
+};
+
+/**
+ * 全データ読込み終了イベントのリスナへfuncで指定されたメソッドを追加します。
+ * @param {type} func 全データの読込みが終了した際に呼び出されるメソッド。呼び出す時は引数なしでfunc()を実行します。
+ */
+snd.AudioDataManager.prototype.addAllDataLoadListener = function(func) {
+    this.allLoadEventListeners.push(func);
+};
+
+/**
+ * 全データ読込み終了イベントのリスナからfuncで指定されたメソッドを削除します。
+ * @param {type} func リストから外すメソッド
+ * @returns {Boolean} 削除した場合はtrue, 削除しなかった場合はfalse
+ */
+snd.AudioDataManager.prototype.removeAllDataLoadListener = function(func) {
+    for (var i = 0; i < this.allLoadEventListeners.length; i++) {
+        var f = this.allLoadEventListeners[i];
+        if (f === func) {
+            delete this.allLoadEventListeners[i];
+            return true;
+        }
+    }
+    return false;
 };
 
 /**
@@ -743,7 +796,26 @@ snd.AudioDataManager.prototype.addOnloadListener = function(key, func) {
     this.eventListeners.onload[key].push(func);
 };
 
+/**
+ * keyで指定されたAudioBufferの読込が終了した際に呼び出されるコールバック関数を削除します。<br/>
+ * 指定されたkeyで追加されたコールバック関数がない場合、削除は行いません。
+ * @param {type} key
+ * @returns {undefined}
+ */
+snd.AudioDataManager.prototype.removeOnloadListener = function(key) {
+    if (this.eventListeners.onload[key] != null) {
+        delete this.eventListeners.onload[key];
+        return true;
+    }
+    
+    return false;
+};
 
+/**
+ * keyで指定されたAudioBufferを取得します。
+ * @param {type} key
+ * @returns {AudioBuffer} 音データオブジェクト
+ */
 snd.AudioDataManager.prototype.getAudioBuffer = function(key) {
     if (this.dataMap[key] != null) {
         return this.dataMap[key].data;
@@ -753,8 +825,7 @@ snd.AudioDataManager.prototype.getAudioBuffer = function(key) {
 };
 
 /**
- * keyがキー値となるAudioBufferを追加します。<br/>
- * 
+ * keyがキー値となるAudioBufferを追加します。
  * @param {type} key 追加されるAudioBufferのキー値
  * @param {type} url 追加されるAudioBufferが読込むURL
  */
@@ -779,6 +850,10 @@ snd.AudioDataManager.prototype.add = function(key, url) {
     this.requests[key] = request;
 };
 
+/**
+ * 設定された全データのロードが完了しているかどうかを返します。
+ * @returns {Boolean} 全データのロードが完了しているか否か
+ */
 snd.AudioDataManager.prototype.doesAllDataLoaded = function() {
     for (var key in this.dataMap) {
         if (!this.dataMap[key].doesLoaded) {
@@ -942,8 +1017,44 @@ snd.SoundEnvironment.prototype.disconnectAudioUnit = function(key) {
 };
 snd.util = {};
 
-snd.util.createBufferSoundNode = function(id, url) {
+/**
+ * 
+ * @param {HashMap} dataSet 音源のIDを読込むURLの配列 {ID1: "URL1", ID2: "URL2", ... IDn: "URLn"}
+ * @param {function} func 読込みが終了し、音源の準備が完了した時に呼ばれるコールバック関数
+ */
+snd.util.createBufferSources = function(dataSet, func) {
+    var sourceMap = {};
+    var urlMap = {};
     
+    for (var id in dataSet) {
+        var url = dataSet[id];
+        if (sourceMap[url] == null) {
+            sourceMap[url] = [];
+        }
+        
+        var source = new snd.BufferSource(id);
+        sourceMap[url].push(source);
+    }
+    
+    for (var url in sourceMap) {
+        urlMap[url] = url;
+    }
+    snd.AUDIO_DATA_MANAGER.addAll(urlMap);
+
+    snd.AUDIO_DATA_MANAGER.addAllDataLoadListener(function() {
+        var ret = {};
+        
+        for (var url in sourceMap) {
+            for (var i = 0; i < sourceMap[url].length; i++) {
+                sourceMap[url][i].setAudioBuffer(snd.AUDIO_DATA_MANAGER.getAudioBuffer(url));
+                ret[sourceMap[url][i].id] = sourceMap[url][i];
+            }
+        }
+        
+        func(ret);
+    });
+    
+    snd.AUDIO_DATA_MANAGER.load();
 };
 
 
