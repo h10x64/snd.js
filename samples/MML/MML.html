@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <title>MMLプラグイン サンプル</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <script src="../../snd.js"></script>
+        <script src="../../plugins/snd.mml.js"></script>
+        <script>
+            var MML_PLAYER_ID = "TEST";
+            
+            window.onload = function() {
+                snd.init();
+                
+                var mmlPlayerTest = new snd.mml.MMLPlayer(MML_PLAYER_ID);
+                mmlPlayerTest.buffer = "";
+                
+                snd.SOUND_ENVIRONMENT.connectAudioUnit(mmlPlayerTest.id, mmlPlayerTest);
+            };
+            
+            button1Click = function() {
+                var mmlPlayer = snd.SOUND_ENVIRONMENT.getAudioUnit(MML_PLAYER_ID);
+                
+                if (mmlPlayer != null) {
+                    // 演奏を中断
+                    mmlPlayer.stopMML();
+                    
+                    // 入力された楽譜に切り替え
+                    var score = window.document.getElementById("score").value;
+                    mmlPlayer.buffer = score;
+                    
+                    // 演奏開始
+                    mmlPlayer.startMML();
+                }
+            };
+        </script>
+    </head>
+    <body>
+        <h3>MML プラグイン(beta)</h3>
+        C,D,E,F,G,A,B : ドレミ<br/>
+        R : 休符<br/>
+        &gt; : オクターブ1UP<br/>
+        &lt; : オクターブ1DOWN<br/>
+        O〔数値〕 : オクターブを指定された高さに変更(A=440[Hz]がo3) 初期値:120<br/>
+        T〔数値〕 : テンポを指定された数値に変更(1分間の4分音符の個数で指定) 初期値:120<br/>
+        L〔数値〕 : デフォルトの音価を指定された数値に変更 初期値:4<br/>
+        [ : ループ始点<br/>
+        / : ループ途中抜け。繰り返し回数がループ終点で指定された数になっている場合、その時点でループから抜けます。<br/>
+        ] 〔数値(無くても良い)〕: ループ終点。数値で指定されている場合は、その回数でループを終了します。<br/>
+        <input type="text" size="40" id="score" value="l8 cdefg>abc< r4 l16 [[cdef]2/g>abc]2 gedccdc"/>
+        <input type="button" value="出力" onclick="button1Click();"/><br/>
+        <div>
+        ※数値は整数のみです。<br/>
+        ※L3 (音価=3分音符)なども可能です。<br/>
+        ※ループは入れ子が可能です。
+        ※ループは始点に戻る際にオクターブなどの設定がループ開始時の状態にリセットされます。
+        </div>
+    </body>
+</html>

@@ -11,8 +11,7 @@ snd.OscillatorSource = function(id) {
     this.type = snd.srctype.OSCILLATOR;
     this.status = snd.status.NONE;
     
-    this.source = snd.AUDIO_CONTEXT.createOscillator();
-    this.source.connect(this.gain);
+    this.resetOscillator();
 };
 snd.OscillatorSource.prototype = Object.create(snd.Source.prototype);
 snd.OscillatorSource.prototype.constructor = snd.OscillatorSource;
@@ -113,12 +112,14 @@ snd.OscillatorSource.prototype.setPeriodicWave = function(periodicWave) {
  * @param {type} duration 使用しません
  */
 snd.OscillatorSource.prototype.start = function(when, offset, duration) {
-    if (this.source != null) {
+    if (this.source != null && this.status != snd.status.STARTED) {
         if (when == null) {
-            this.source.start();
+            this.source.start(0);
         } else {
             this.source.start(when);
         }
+        
+        this.status = snd.status.STARTED;
     }
 };
 
@@ -127,8 +128,33 @@ snd.OscillatorSource.prototype.start = function(when, offset, duration) {
  * 波形の再生を終了します。
  * @param {float} when 終了するタイミング
  */
-snd.OscillatorSource.prototype.end = function(when) {
+snd.OscillatorSource.prototype.stop = function(when) {
+    this.resetOscillator(when);
+    this.status = snd.status.READY;
+};
+
+snd.OscillatorSource.prototype.resetOscillator = function(when) {
+    var freq = null;
+    var cent = null;
+    
     if (this.source != null) {
-        this.source.end(when);
+        freq = this.getFrequency();
+        cent = this.getDetune();
+        if (this.status == snd.status.STARTED) {
+            if (when == null) {
+                this.source.stop(0);
+            } else {
+                this.source.stop(when);
+            }
+        }
+    }
+    
+    this.source = snd.AUDIO_CONTEXT.createOscillator();
+    this.source.connect(this.gain);
+    if (freq != null) {
+        this.setFrequency(freq);
+    }
+    if (cent != null) {
+        this.setDetune(cent);
     }
 };
