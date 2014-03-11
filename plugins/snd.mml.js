@@ -103,7 +103,8 @@ snd.mml.MMLPlayer.prototype.reset = function() {
 
 snd.mml.MMLPlayer.prototype.noteOn = function(note) {
     var _this = this;
-
+    var _pos = this.mmlStatus.pos;
+    
     var sec = snd.util.noteToSec(this.mmlStatus.tempo, note.value);
     if (note.pitch != snd.mml.REST) {
         this.setFrequency(snd.util.noteToFrequency(this.mmlStatus.octave, note.pitch));
@@ -112,6 +113,9 @@ snd.mml.MMLPlayer.prototype.noteOn = function(note) {
 
     setTimeout(function() {
         _this.noteOff();
+        if (_this.mmlStatus.pos == _pos) {
+            _this.next();
+        }
     }, sec * 1000);
 
     for (var i = 0; i < this.noteOnEventListener.length; i++) {
@@ -120,16 +124,13 @@ snd.mml.MMLPlayer.prototype.noteOn = function(note) {
 };
 
 snd.mml.MMLPlayer.prototype.noteOff = function() {
-    console.log("Off");
     if (this.status == snd.status.STARTED) {
         this.stop();
-    }
 
-    for (var i = 0; i < this.noteOffEventListener.length; i++) {
-        this.noteOffEventListener[i].noteOff(this);
+        for (var i = 0; i < this.noteOffEventListener.length; i++) {
+            this.noteOffEventListener[i].noteOff(this);
+        }
     }
-
-    this.next();
 };
 
 snd.mml.MMLPlayer.prototype.next = function() {

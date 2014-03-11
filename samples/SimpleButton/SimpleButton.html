@@ -99,7 +99,7 @@
                 // snd.util.createBufferSoundNode(連想配列{"音源データのID":"URL" ... }, ロード終了時に呼び出されるコールバック関数});
                 snd.util.createBufferSources(SOUND_DATA_SETTINGS, function(_loadedData) {
                     // _loadDataの内容: 連想配列{"音源データのID":音源オブジェクト}
-                    
+
                     main(_loadedData); // メイン関数の呼出し
                 });
             };
@@ -162,11 +162,15 @@
             <button onclick="pushButton1()">ポチッとな</button> <button onclick="pushButton2()">こっちもポチッ</button><br/>
             <br/>
         </div>
-        <div/>
-        どっちも音は同じ！！<br/>
-        ↑の意味は↓でコードを読んで確認してください。<br/>
-        <div/>
-        <div id="switch" style="text-decoration: underline" onclick='$("#code").toggle("fade");if ($("#switch").text() === "{コードを表示}") {$("#switch").text("{コードを隠す}");fadeout();} else {$("#switch").text("{コードを表示}");fadein();}'>{コードを表示}</div>
+        <div id="switch" style="text-decoration: underline" onclick='
+            $("#code").toggle("fade");
+                if ($("#switch").text() === "{コードを表示}") {
+                    $("#switch").text("{コードを隠す}");
+                    fadeout();
+                } else {
+                    $("#switch").text("{コードを表示}");
+                    fadein();
+                }'>{コードを表示}</div>
         <div id="code" style="background-color: #000; color: #FFF; margin: 1em; padding: 2em;">
             <p>&lt;!DOCTYPE&nbsp;html&gt;<br>
                 &lt;!--<br>
@@ -267,7 +271,7 @@
             <p><span style="position:relative;left:16ex;">/*&nbsp;音源オブジェクトの作成&nbsp;*/</span><br>
                 <span style="position:relative;left:16ex;">//&nbsp;snd.utilの音源作成メソッドを呼び出します。</span><br>
                 <span style="position:relative;left:16ex;">//&nbsp;snd.util.createBufferSoundNode(連想配列{&quot;音源データのID&quot;:&quot;URL&quot;&nbsp;...&nbsp;},&nbsp;ロード終了時に呼び出されるコールバック関数});</span><br>
-                <span style="position:relative;left:16ex;">snd.util.createBufferSoundNode(SOUND_DATA_SETTINGS,&nbsp;function(_loadedData)&nbsp;{</span><br>
+                <span style="position:relative;left:16ex;">snd.util.createBufferSources(SOUND_DATA_SETTINGS,&nbsp;function(_loadedData)&nbsp;{</span><br>
                 <span style="position:relative;left:20ex;">//&nbsp;_loadDataの内容:&nbsp;連想配列{&quot;音源データのID&quot;:音源オブジェクト}</span><br>
                 <span style="position:relative;left:20ex;"></span></p>
             <p><span style="position:relative;left:20ex;">main(_loadedData);&nbsp;//&nbsp;メイン関数の呼出し</span><br>
@@ -332,13 +336,9 @@
                 <span style="position:relative;left:12ex;">&lt;button&nbsp;onclick=&quot;pushButton1()&quot;&gt;ポチッとな&lt;/button&gt;&nbsp;&lt;button&nbsp;onclick=&quot;pushButton2()&quot;&gt;こっちもポチッ&lt;/button&gt;&lt;br/&gt;</span><br>
                 <span style="position:relative;left:12ex;">&lt;br/&gt;</span><br>
                 <span style="position:relative;left:8ex;">&lt;/div&gt;</span><br>
-                <span style="position:relative;left:8ex;">&lt;div/&gt;</span><br>
-                <span style="position:relative;left:8ex;">どっちも音は同じ！！&lt;br/&gt;</span><br>
-                <span style="position:relative;left:8ex;">↑の意味は↓でコードを読んで確認してください。&lt;br/&gt;</span><br>
-                <span style="position:relative;left:8ex;">&lt;div/&gt;</span><br>
                 <span style="position:relative;left:8ex;">&lt;div&nbsp;id=&quot;switch&quot;&nbsp;style=&quot;text-decoration:&nbsp;underline&quot;&nbsp;onclick='$(&quot;#code&quot;).toggle(&quot;fade&quot;);if&nbsp;($(&quot;#switch&quot;).text()&nbsp;===&nbsp;&quot;{コードを表示}&quot;)&nbsp;{$(&quot;#switch&quot;).text(&quot;{コードを隠す}&quot;);fadeout();}&nbsp;else&nbsp;{$(&quot;#switch&quot;).text(&quot;{コードを表示}&quot;);fadein();}'&gt;{コードを表示}&lt;/div&gt;</span><br>
                 <span style="position:relative;left:8ex;">&lt;div&nbsp;id=&quot;code&quot;&nbsp;style=&quot;background-color:&nbsp;#000;&nbsp;color:&nbsp;#FFF;&nbsp;margin:&nbsp;1em;&nbsp;padding:&nbsp;2em;&quot;&gt;</span><br>
-                <span style="position:relative;left:4ex;"><span class="strong2">・・・</span></span><br>
+                <span style="position:relative;left:4ex;">…</span><br>
                 <span style="position:relative;left:8ex;">&lt;/div&gt;</span><br>
                 <span style="position:relative;left:8ex;">&lt;br/&gt;</span><br>
                 <span style="position:relative;left:8ex;">&lt;hr/&gt;</span><br>
