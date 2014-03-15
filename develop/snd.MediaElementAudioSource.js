@@ -6,7 +6,7 @@
  */
 snd.MediaElementAudioSource = function(id, htmlMediaElement) {
     snd.Source.apply(this, arguments);
-    this.source = snd.AUDIO_CONTEXT.createMediaElementAudioSource(htmlMediaElement);
+    this.source = snd.AUDIO_CONTEXT.createMediaElementSource(htmlMediaElement);
     this.source.connect(this.gain);
     this.type = snd.srctype.MEDIA_ELEMENT;
 };
