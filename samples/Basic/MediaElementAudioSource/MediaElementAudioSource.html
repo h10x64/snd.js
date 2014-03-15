@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MediaElementAudioSource</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <script src="../../../snd.js"></script>
+        <script>
+            window.onload = function() {
+                /* snd.jsの初期化 */
+                snd.init();
+                
+                /* 音源オブジェクトの作成 */
+                // DOMからオーディオタグを取得
+                var audioTag = document.getElementById("AUDIO_TAG");
+                // mp3に対応しているかどうかで取得するソースを変更
+                if (snd.DOES_MP3_SUPPORTED) {
+                    audioTag.src = "./Lee_Maddeford_-_09_-_Le_petit_jardin_with_Les_Gauchers_Orchestra.mp3";
+                } else {
+                    audioTag.src = "./Lee_Maddeford_-_09_-_Le_petit_jardin_with_Les_Gauchers_Orchestra.wav";
+                }
+                // 取得したエレメントを使って音源クラス(MediaElementAudioSourceクラス)のインスタンスを作る
+                var mediaElementAudioSource = new snd.MediaElementAudioSource("オーディオタグを使った音源", audioTag);
+                
+                /* 立体音エフェクトをかけるオーディオユニットの作成と設定 */
+                // 立体音エフェクトをかけるオーディオユニットクラス(SoundNodeクラス)のインスタンスを作る
+                var soundNode = new snd.SoundNode("立体音化エフェクト");
+                // ↑で作った音源オブジェクトを立体音エフェクトをかけるユニットに接続
+                mediaElementAudioSource.connect(soundNode);
+                
+                // snd.jsの音環境(snd.SOUND_ENVIRONMENT)にオーディオユニットを接続
+                snd.SOUND_ENVIRONMENT.connectAudioUnit(soundNode.id, soundNode);
+                
+                /* オーディオタグの操作 */
+                audioTag.load(); // データのロードを開始
+                audioTag.play(); // 再生を開始
+                
+                /* 0.1秒ごとに音の位置を0.1ラジアンずつ回すタイマーメソッド */
+                setInterval(function() {
+                    // 立体音化エフェクトのオブジェクト(soundNode)から位置情報(pos)を取得し、球座標に変換(toSphericalCoordinate())
+                    var s = soundNode.pos.toSphericalCoordinate(); // s.x : 方位角（横方向の角度）、s.y : 仰角（縦方向の角度）、s.z : 距離（原点からの距離）
+                    s.x += 0.1; // 方位角に0.1を加算(単位はラジアン)
+                    s.z = 1.0; // 距離は1.0で固定
+                    // 球座標を直交座標に変換
+                    var o = s.toOrthogonalCoordinate();
+                    // 音源の位置を設定
+                    soundNode.setPosition(o.x, o.y, o.z);
+                }, 100);
+            };
+        </script>
+    </head>
+    <body>
+        <div>
+            オーディオタグを音源としてエフェクトをかけるサンプルです。<br/>
+            詳細はソースを参照してください。
+        </div>
+        <audio id="AUDIO_TAG"></audio>
+    </body>
+</html>
