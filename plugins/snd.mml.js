@@ -61,6 +61,18 @@ snd.mml.LOOP_START = '[';
 snd.mml.LOOP_END = ']';
 
 /**
+ * 和音の始点を表すmml
+ * @type String
+ */
+snd.mml.CHORD_START = '(';
+
+/**
+ * 和音の終点を表すmml
+ * @type String
+ */
+snd.mml.CHORD_END = ')';
+
+/**
  * ループ途中
  * @type String
  */
