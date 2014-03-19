@@ -66,7 +66,7 @@ snd.status.STARTED = "started";
 /**
  * 音源の再生が中断・終了し、停止したことを表す値です。
  */
-snd.status.ENDED = "ended";
+snd.status.STOPPED= "ended";
 
 /**
  * @namespace 音源の種類をあらわす値を入れるネームスペースです。
@@ -476,8 +476,12 @@ snd.OscillatorSource.prototype.start = function(when, offset, duration) {
  * @param {float} when 終了するタイミング
  */
 snd.OscillatorSource.prototype.stop = function(when) {
-    this.resetOscillator(when);
-    this.status = snd.status.READY;
+    if (when == null) {
+        this.source.stop();
+    } else {
+        this.source.stop(when);
+    }
+    this.status = snd.status.STOPPED;
 };
 
 snd.OscillatorSource.prototype.resetOscillator = function(when) {
@@ -504,6 +508,8 @@ snd.OscillatorSource.prototype.resetOscillator = function(when) {
     if (cent != null) {
         this.setDetune(cent);
     }
+    
+    this.status = snd.status.READY;
 };
 /**
  * @class HTMLのメディアタグを音源として使用する音源クラスです。<br/>

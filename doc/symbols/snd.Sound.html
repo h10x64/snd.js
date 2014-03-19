@@ -235,7 +235,9 @@ ul.inheritsList
 					.<br />
 				
 			
-				BGM等の音源を表す抽象クラスです。<br/>AudioBufferSourceNode, MediaElementSourceNode, MediaStreamSourceNode, OscillatorなどのWebAudioAPIで定義された各種音源を同じように扱うための
+				BGM等の音源を表す抽象クラスです。<br/>
+AudioBufferSourceNode, MediaElementSourceNode, MediaStreamSourceNode, Oscillatorなどの
+WebAudioAPIで定義された各種音源を同じように扱うための
 				
 				
 					<br /><i>Defined in: </i> <a href="../symbols/src/public_html_snd.js.html">snd.js</a>.
@@ -288,7 +290,10 @@ ul.inheritsList
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/snd.Sound.html#onended">onended</a></b>()
 								</div>
-								<div class="description">再生終了時に呼び出されるメソッドです。<br>内部でstatusアトリビュートにsnd.status.ENDEDを設定しているため、このメソッドをオーバーライドする際は、オーバーライドしたメソッド内でsnd.Sound.prototype.onended.call(this)を使用して親クラスのonendedを呼び出すようにしてください。</div>
+								<div class="description">再生終了時に呼び出されるメソッドです。<br>
+内部でstatusアトリビュートにsnd.status.STOPPEDを設定しているため、このメソッドを
+オーバーライドする際は、オーバーライドしたメソッド内でsnd.Sound.prototype.onended.call(this)を使用して
+親クラスのonendedを呼び出すようにしてください。</div>
 							</td>
 						</tr>
 					
@@ -297,7 +302,8 @@ ul.inheritsList
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/snd.Sound.html#start">start</a></b>(when, offset, duration)
 								</div>
-								<div class="description">この音源の再生を開始します。<br/>when, offset, durationは、音源の種類によっては使用されない場合があります。<br/></div>
+								<div class="description">この音源の再生を開始します。<br/>
+when, offset, durationは、音源の種類によっては使用されない場合があります。<br/></div>
 							</td>
 						</tr>
 					
@@ -377,7 +383,10 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						再生終了時に呼び出されるメソッドです。<br>内部でstatusアトリビュートにsnd.status.ENDEDを設定しているため、このメソッドをオーバーライドする際は、オーバーライドしたメソッド内でsnd.Sound.prototype.onended.call(this)を使用して親クラスのonendedを呼び出すようにしてください。
+						再生終了時に呼び出されるメソッドです。<br>
+内部でstatusアトリビュートにsnd.status.STOPPEDを設定しているため、このメソッドを
+オーバーライドする際は、オーバーライドしたメソッド内でsnd.Sound.prototype.onended.call(this)を使用して
+親クラスのonendedを呼び出すようにしてください。
 						
 						
 					</div>
@@ -402,7 +411,8 @@ ul.inheritsList
 					
 					</div>
 					<div class="description">
-						この音源の再生を開始します。<br/>when, offset, durationは、音源の種類によっては使用されない場合があります。<br/>
+						この音源の再生を開始します。<br/>
+when, offset, durationは、音源の種類によっては使用されない場合があります。<br/>
 						
 						
 					</div>

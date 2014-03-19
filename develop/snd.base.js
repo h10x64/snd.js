@@ -40,7 +40,7 @@ snd.status.STARTED = "started";
 /**
  * 音源の再生が中断・終了し、停止したことを表す値です。
  */
-snd.status.ENDED = "ended";
+snd.status.STOPPED= "ended";
 
 /**
  * @namespace 音源の種類をあらわす値を入れるネームスペースです。

@@ -22,7 +22,7 @@ TestCanvas.prototype.setOnMouseMove = function() {
         var mousePosition = new MousePosition(e);
 
         // 位置設定できる音源が生成済みでデータの読み込みも終わっていたら
-        if ((_this.source != null) && (_this.source.status != snd.status.ENDED)) {
+        if ((_this.source != null) && (_this.source.status != snd.status.STOPPED)) {
             // マウスの位置を元にして音源の位置を設定
             _this.source.setPosition(mousePosition.posX, 0, mousePosition.posY);
         }
