@@ -130,7 +130,7 @@ snd.OscillatorSource.prototype.start = function(when, offset, duration) {
  */
 snd.OscillatorSource.prototype.stop = function(when) {
     if (when == null) {
-        this.source.stop();
+        this.source.stop(0);
     } else {
         this.source.stop(when);
     }

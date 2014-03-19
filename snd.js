@@ -259,7 +259,7 @@ snd.BufferSource.prototype.constructor = snd.BufferSource;
 snd.BufferSource.prototype.start = function(when, offset, duration) {
     if (this.source != null && this.status == snd.status.READY) {
         if (when == null) {
-            this.source.start();
+            this.source.start(0);
         } else if (offset == null) {
             this.source.start(when);
         } else if (duration == null) {
@@ -279,7 +279,7 @@ snd.BufferSource.prototype.start = function(when, offset, duration) {
 snd.BufferSource.prototype.stop = function(when) {
     if (this.source != null) {
         if (when == null) {
-            this.source.stop();
+            this.source.stop(0);
         } else {
             this.source.stop(when);
         }
@@ -477,7 +477,7 @@ snd.OscillatorSource.prototype.start = function(when, offset, duration) {
  */
 snd.OscillatorSource.prototype.stop = function(when) {
     if (when == null) {
-        this.source.stop();
+        this.source.stop(0);
     } else {
         this.source.stop(when);
     }
