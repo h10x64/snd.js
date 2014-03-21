@@ -354,10 +354,10 @@ snd.BufferSource.prototype.setLoopEnd = function(when) {
  */
 snd.OscillatorSource = function(id) {
     snd.Source.apply(this, arguments);
-    
+
     this.type = snd.srctype.OSCILLATOR;
     this.status = snd.status.NONE;
-    
+
     this.resetOscillator();
 };
 snd.OscillatorSource.prototype = Object.create(snd.Source.prototype);
@@ -411,7 +411,7 @@ snd.OscillatorSource.prototype.getFrequency = function() {
     if (this.source != null) {
         return this.source.frequency.value;
     } else {
-         return null;
+        return null;
     }
 };
 
@@ -465,7 +465,7 @@ snd.OscillatorSource.prototype.start = function(when, offset, duration) {
         } else {
             this.source.start(when);
         }
-        
+
         this.status = snd.status.STARTED;
     }
 };
@@ -476,10 +476,12 @@ snd.OscillatorSource.prototype.start = function(when, offset, duration) {
  * @param {float} when 終了するタイミング
  */
 snd.OscillatorSource.prototype.stop = function(when) {
-    if (when == null) {
-        this.source.stop(0);
-    } else {
-        this.source.stop(when);
+    if (this.status != snd.status.STOPPED) {
+        if (when == null) {
+            this.source.stop(0);
+        } else {
+            this.source.stop(when);
+        }
     }
     this.status = snd.status.STOPPED;
 };
@@ -487,7 +489,7 @@ snd.OscillatorSource.prototype.stop = function(when) {
 snd.OscillatorSource.prototype.resetOscillator = function(when) {
     var freq = null;
     var cent = null;
-    
+
     if (this.source != null) {
         freq = this.getFrequency();
         cent = this.getDetune();
@@ -499,7 +501,7 @@ snd.OscillatorSource.prototype.resetOscillator = function(when) {
             }
         }
     }
-    
+
     this.source = snd.AUDIO_CONTEXT.createOscillator();
     this.source.connect(this.gain);
     if (freq != null) {
@@ -508,7 +510,7 @@ snd.OscillatorSource.prototype.resetOscillator = function(when) {
     if (cent != null) {
         this.setDetune(cent);
     }
-    
+
     this.status = snd.status.READY;
 };
 /**
@@ -548,8 +550,9 @@ snd.MediaStreamAudioSource.prototype.constructor = snd.MediaStreamAudioSource;
  *      インタフェースクラスなので、継承されることを前提としています。
  *      引数にAudioUnitを要求するメソッドに渡すオブジェクトは、ここで定義されている各メソッドを実装している必要があります。
  */
-snd.AudioUnit = function() {
+snd.AudioUnit = function(id) {
     this.isAudioUnit = true;
+    this.id = id;
 };
 
 /**
@@ -581,7 +584,7 @@ snd.AudioUnit.prototype.getConnector = function() {
  * @class 主ボリュームのみの単純なユニットです。
  * @extends snd.AudioUnit
  */
-snd.GainOnlyUnit = function() {
+snd.GainOnlyUnit = function(id) {
     snd.AudioUnit.apply(this, arguments);
     this.gain = snd.AUDIO_CONTEXT.createGain();
 };

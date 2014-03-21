@@ -80,6 +80,10 @@ snd.mml.CHORD_END = ')';
 
 snd.mml.FAILED = -1;
 
+/**
+ * @class 
+ * @param {type} id
+ */
 snd.mml.MMLPlayer = function(id) {
     this.stack = [];
     this.mmlStatus = new snd.mml.MMLStatus();
@@ -93,7 +97,7 @@ snd.mml.MMLPlayer = function(id) {
 };
 
 snd.mml.MMLPlayer.prototype.startMML = function() {
-    this.mmlStatus.pos = 0;
+    this.mmlStatus = new snd.mml.MMLStatus();
     this.mmlStatus.play = true;
     for (var i = 0; i < this.startEventListeners.length; i++) {
         this.startEventListeners[i].onMMLStart(this);
@@ -108,14 +112,42 @@ snd.mml.MMLPlayer.prototype.stopMML = function() {
     }
 };
 
+snd.mml.MMLPlayer.prototype.addStartEventListener = function(listener) {
+    this.startEventListeners.put(listener);
+};
+
+snd.mml.MMLPlayer.prototype.removeStartEventListener = function(listener) {
+    for (var i = 0; i < this.startEventListeners.length; i++) {
+        if (this.startEventListeners[i] === listener) {
+            this.startEventListeners.splice(i, 1);
+            return true;
+        }
+    }
+    return false;
+};
+
+snd.mml.MMLPlayer.prototype.addStopEventListener = function(listener) {
+    this.stopEventListeners.push(listener);
+};
+
+snd.mml.MMLPlayer.prototype.removeStopEventListener = function(listener) {
+    for (var i = 0; i < this.stopEventListeners.length; i++) {
+        if (this.stopEventListeners[i] === listener) {
+            this.stopEventListeners.splice(i, 1);
+            return true;
+        }
+    }
+    return false;
+};
+
 snd.mml.MMLPlayer.prototype.addNoteOnEventListener = function(listener) {
-    this.noteOnEventListener.push(listener);
+    this.noteOnEventListeners.push(listener);
 };
 
 snd.mml.MMLPlayer.prototype.removeNoteOnEventListener = function(listener) {
-    for (var i = 0; i < this.noteOnEventListener.length; i++) {
-        if (listener === this.noteOnEventListener[i]) {
-            delete this.noteOnEventListener[i];
+    for (var i = 0; i < this.noteOnEventListeners.length; i++) {
+        if (listener === this.noteOnEventListeners[i]) {
+            this.noteOnEventListeners.splice(i, 1);
             return true;
         }
     }
@@ -127,13 +159,25 @@ snd.mml.MMLPlayer.prototype.addNoteOffEventListener = function(listener) {
 };
 
 snd.mml.MMLPlayer.prototype.removeNoteOffEventListener = function(listener) {
-    for (var i = 0; i < this.noteOffEventListener.length; i++) {
-        if (listener === this.noteOffEventListener[i]) {
-            delete this.noteOffEventListener[i];
+    for (var i = 0; i < this.noteOffEventListeners.length; i++) {
+        if (listener === this.noteOffEventListeners[i]) {
+            this.noteOffEventListeners.splice(i, 1);
             return true;
         }
     }
     return false;
+};
+
+snd.mml.MMLPlayer.prototype.onNoteOn = function(note) {
+    for (var i = 0; i < this.noteOnEventListeners.length; i++) {
+        this.noteOnEventListeners[i].onNoteOn(note);
+    }
+};
+
+snd.mml.MMLPlayer.prototype.onNoteOff = function(note) {
+    for (var i = 0; i < this.noteOffEventListeners.length; i++) {
+        this.noteOffEventListeners[i].onNoteOff(note);
+    }
 };
 
 snd.mml.MMLPlayer.prototype.reset = function() {
@@ -330,18 +374,6 @@ snd.mml.MMLPlayer.prototype.endLoop = function(pos) {
     return {status: this.mmlStatus.pos, result: null};
 };
 
-snd.mml.MMLPlayer.prototype.onNoteOn = function(note) {
-    for (var i = 0; i < this.noteOnEventListeners.length; i++) {
-        this.noteOnEventListeners[i].onNoteOn(note);
-    }
-};
-
-snd.mml.MMLPlayer.prototype.onNoteOff = function(note) {
-    for (var i = 0; i < this.noteOffEventListeners.length; i++) {
-        this.noteOffEventListeners[i].onNoteOff(note);
-    }
-};
-
 snd.mml.MMLPlayer.prototype.readChord = function(pos) {
     if (pos >= this.buffer.length) {
         return {status: snd.mml.FAILED, result: null};
@@ -349,11 +381,14 @@ snd.mml.MMLPlayer.prototype.readChord = function(pos) {
     
     var p = pos;
     var c = this.buffer.charAt(p).toUpperCase();
-    var chord = new snd.mml.Chord(this);
+    var chord;
     var res;
     
     if (c === snd.mml.CHORD_START) {
         var nextChar;
+        
+        chord = new snd.mml.Chord(this);
+        this.addStopEventListener(chord);
         
         p++;
         
@@ -377,8 +412,12 @@ snd.mml.MMLPlayer.prototype.readChord = function(pos) {
     } else {
         res = this.readNote(p);
         if (res.status != snd.mml.FAILED) {
+            chord = new snd.mml.Chord(this);
+            this.addStopEventListener(chord);
+            
             chord.addNote(res.result.pitch, res.result.value);
             p = res.status;
+            
             return {status: p, result: chord};
         }
     }
@@ -524,7 +563,7 @@ snd.mml.MMLStatus = function(tempo, octave, value, pos, play, loop, loopEnd, loo
     this.tempo = (tempo == null) ? snd.mml.DEFAULT_TEMPO : tempo;
     this.octave = (octave == null) ? snd.mml.DEFAULT_OCTAVE : octave;
     this.value = (value == null) ? 4 : value;
-    this.pos = (value == null) ? 0 : pos;
+    this.pos = (pos == null || pos < 0) ? 0 : pos;
     this.play = (play == null) ? false : play;
     this.loop = loop;
     this.loopEnd = loopEnd;
@@ -535,6 +574,7 @@ snd.mml.Chord = function(parent) {
     this.parent = parent;
     this.notes = {};
     this.minNote = null;
+    this.stopTick = false;
 };
 
 snd.mml.Chord.prototype.addNote = function(pitch, value) {
@@ -557,12 +597,19 @@ snd.mml.Chord.prototype.off = function() {
     }
 };
 
+snd.mml.Chord.prototype.onMMLStop = function(player) {
+    this.stopTick = true;
+    for (var id in this.notes) {
+        this.notes[id].off();
+    }
+};
+
 snd.mml.Chord.prototype.onNoteOn = function(note) {
     this.parent.onNoteOn(note);
 };
 
 snd.mml.Chord.prototype.onNoteOff = function(note) {
-    if (note === this.minNote) {
+    if (note === this.minNote && !this.stopTick) {
         this.parent.next();
     }
     this.parent.onNoteOff(note);
@@ -620,7 +667,6 @@ snd.mml.Note.prototype.setting = function() {
     snd.SOUND_ENVIRONMENT.connectAudioUnit(this.id, this);
 };
 
-
 /**
  * 新しい音符IDを取得します
  * @returns {String|Number}
@@ -628,4 +674,3 @@ snd.mml.Note.prototype.setting = function() {
 snd.mml.Note.getNoteId = function() {
     return new Date().getTime().toString() + Math.floor(Math.random() * 9999);
 };
-
