@@ -115,10 +115,10 @@
                 var fadeOutSound = loadedData[FADE_OUT_SOUND_ID];
 
                 /* 取得した音データをオーディオ環境にセット */
-                snd.SOUND_ENVIRONMENT.connectAudioUnit(buttonSound1.id, buttonSound1);
-                snd.SOUND_ENVIRONMENT.connectAudioUnit(buttonSound2.id, buttonSound2);
-                snd.SOUND_ENVIRONMENT.connectAudioUnit(fadeInSound.id, fadeInSound);
-                snd.SOUND_ENVIRONMENT.connectAudioUnit(fadeOutSound.id, fadeOutSound);
+                snd.MASTER.connectAudioUnit(buttonSound1.id, buttonSound1);
+                snd.MASTER.connectAudioUnit(buttonSound2.id, buttonSound2);
+                snd.MASTER.connectAudioUnit(fadeInSound.id, fadeInSound);
+                snd.MASTER.connectAudioUnit(fadeOutSound.id, fadeOutSound);
 
                 /* 再生メソッドの書き換え */
                 // コードフェードイン時に呼び出されるfadeinメソッドを書き換える
@@ -289,10 +289,10 @@
                 <span style="position:relative;left:16ex;">var&nbsp;fadeOutSound&nbsp;=&nbsp;loadedData[FADE_OUT_SOUND_ID];</span><br>
             </p>
             <p><span style="position:relative;left:16ex;">/*&nbsp;取得した音データをオーディオ環境にセット&nbsp;*/</span><br>
-                <span style="position:relative;left:16ex;">snd.SOUND_ENVIRONMENT.connectAudioUnit(buttonSound1.id,&nbsp;buttonSound1);</span><br>
-                <span style="position:relative;left:16ex;">snd.SOUND_ENVIRONMENT.connectAudioUnit(buttonSound2.id,&nbsp;buttonSound2);</span><br>
-                <span style="position:relative;left:16ex;">snd.SOUND_ENVIRONMENT.connectAudioUnit(fadeInSound.id,&nbsp;fadeInSound);</span><br>
-                <span style="position:relative;left:16ex;">snd.SOUND_ENVIRONMENT.connectAudioUnit(fadeOutSound.id,&nbsp;fadeOutSound);</span><br>
+                <span style="position:relative;left:16ex;">snd.MASTER.connectAudioUnit(buttonSound1.id,&nbsp;buttonSound1);</span><br>
+                <span style="position:relative;left:16ex;">snd.MASTER.connectAudioUnit(buttonSound2.id,&nbsp;buttonSound2);</span><br>
+                <span style="position:relative;left:16ex;">snd.MASTER.connectAudioUnit(fadeInSound.id,&nbsp;fadeInSound);</span><br>
+                <span style="position:relative;left:16ex;">snd.MASTER.connectAudioUnit(fadeOutSound.id,&nbsp;fadeOutSound);</span><br>
             </p>
             <p><span style="position:relative;left:16ex;">/*&nbsp;再生メソッドの書き換え&nbsp;*/</span><br>
                 <span style="position:relative;left:16ex;">//&nbsp;コードフェードイン時に呼び出されるfadeinメソッドを書き換える</span><br>

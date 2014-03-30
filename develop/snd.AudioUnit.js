@@ -3,8 +3,9 @@
  *      インタフェースクラスなので、継承されることを前提としています。
  *      引数にAudioUnitを要求するメソッドに渡すオブジェクトは、ここで定義されている各メソッドを実装している必要があります。
  */
-snd.AudioUnit = function() {
+snd.AudioUnit = function(id) {
     this.isAudioUnit = true;
+    this.id = id;
 };
 
 /**
@@ -36,7 +37,7 @@ snd.AudioUnit.prototype.getConnector = function() {
  * @class 主ボリュームのみの単純なユニットです。
  * @extends snd.AudioUnit
  */
-snd.GainOnlyUnit = function() {
+snd.GainOnlyUnit = function(id) {
     snd.AudioUnit.apply(this, arguments);
     this.gain = snd.AUDIO_CONTEXT.createGain();
 };

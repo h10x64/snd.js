@@ -58,8 +58,8 @@
                 // 音源オブジェクトをオーディオユニットに接続 (音データの設定は後で大丈夫です)
                source.connect(sourceNode);
 
-                snd.SOUND_ENVIRONMENT.connectAudioUnit(KEY_SOURCE_NODE, sourceNode);
-                snd.SOUND_ENVIRONMENT.connectAudioUnit(KEY_BGM, bgm);
+                snd.MASTER.connectAudioUnit(KEY_SOURCE_NODE, sourceNode);
+                snd.MASTER.connectAudioUnit(KEY_BGM, bgm);
 
                 //// 音データのローディング ////
                 // 読込み予定にSOUND_DATAの中身を追加 (追加するデータセットは{"音源名":"データのURL"}の連想配列)

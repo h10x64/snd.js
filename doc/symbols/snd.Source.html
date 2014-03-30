@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>snd.js Reference - snd.MediaElementAudioSource</title>
+		<title>snd.js Reference - snd.Source</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -237,7 +237,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class snd.MediaElementAudioSource
+				Class snd.Source
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -245,8 +245,7 @@ ul.inheritsList
 				
 				
 			
-				HTMLのメディアタグを音源として使用する音源クラスです。<br/>
-詳細は<a href="http://g200kg.github.io/web-audio-api-ja/#MediaElementAudioSourceNode">WebAudioAPI仕様を参照してください。
+				各種音源クラスの親クラスとなる抽象クラスです。
 				
 				
 					<br /><i>Defined in: </i> <a href="../symbols/src/public_html_snd.js.html">snd.js</a>.
@@ -255,7 +254,7 @@ ul.inheritsList
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class snd.MediaElementAudioSource.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class snd.Source.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -268,7 +267,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/snd.MediaElementAudioSource.html#constructor">snd.MediaElementAudioSource</a></b>(id, htmlMediaElement)
+								<b><a href="../symbols/snd.Source.html#constructor">snd.Source</a></b>(id)
 							</div>
 							<div class="description"></div>
 						</td>
@@ -282,6 +281,60 @@ ul.inheritsList
 
 <!-- ============================== methods summary ======================== -->
 			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class snd.Source.">
+					<caption>Method Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Method Attributes</th>
+							<th scope="col">Method Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/snd.Source.html#connect">connect</a></b>(connectTo)
+								</div>
+								<div class="description">詳細はAudioUnitクラスのconnectを参照してください。</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/snd.Source.html#disconnect">disconnect</a></b>(disconnectFrom)
+								</div>
+								<div class="description">詳細はAudioUnitクラスのdisconnectFromを参照してください。</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/snd.Source.html#start">start</a></b>()
+								</div>
+								<div class="description">音源の再生を開始します。</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/snd.Source.html#stop">stop</a></b>()
+								</div>
+								<div class="description">音源の再生を停止します。</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+			
 <!-- ============================== events summary ======================== -->
 			
 
@@ -293,7 +346,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>snd.MediaElementAudioSource</b>(id, htmlMediaElement)
+						<b>snd.Source</b>(id)
 				</div>
 				
 				<div class="description">
@@ -314,12 +367,6 @@ ul.inheritsList
 							</dt>
 								<dd>この音源のID</dd>
 						
-							<dt>
-								<span class="light fixedFont">{HTMLMediaElement}</span>  <b>htmlMediaElement</b>
-								
-							</dt>
-								<dd>HTMLのメディアタグ要素</dd>
-						
 						</dl>
 					
 					
@@ -336,6 +383,133 @@ ul.inheritsList
 			
 
 <!-- ============================== method details ========================= -->		
+			
+				<div class="sectionTitle">
+					Method Detail
+				</div>
+				
+					<a name="connect"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>connect</b>(connectTo)
+					
+					</div>
+					<div class="description">
+						詳細はAudioUnitクラスのconnectを参照してください。
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{type}</span> <b>connectTo</b>
+									
+								</dt>
+								<dd>接続先</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="disconnect"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>disconnect</b>(disconnectFrom)
+					
+					</div>
+					<div class="description">
+						詳細はAudioUnitクラスのdisconnectFromを参照してください。
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{type}</span> <b>disconnectFrom</b>
+									
+								</dt>
+								<dd>切断する接続先</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="start"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>start</b>()
+					
+					</div>
+					<div class="description">
+						音源の再生を開始します。
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="stop"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>stop</b>()
+					
+					</div>
+					<div class="description">
+						音源の再生を停止します。
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					
+				
 			
 			
 <!-- ============================== event details ========================= -->		

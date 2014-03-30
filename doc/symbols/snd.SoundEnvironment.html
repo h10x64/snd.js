@@ -212,9 +212,15 @@ ul.inheritsList
 	
 	<li><a href="../symbols/snd.PosDir.html">snd.PosDir</a></li>
 	
+	<li><a href="../symbols/snd.PosDirTime.html">snd.PosDirTime</a></li>
+	
 	<li><a href="../symbols/snd.SoundEnvironment.html">snd.SoundEnvironment</a></li>
 	
+	<li><a href="../symbols/snd.SoundEnvironment.UpdateError.html">snd.SoundEnvironment.UpdateError</a></li>
+	
 	<li><a href="../symbols/snd.SoundNode.html">snd.SoundNode</a></li>
+	
+	<li><a href="../symbols/snd.Source.html">snd.Source</a></li>
 	
 	<li><a href="../symbols/snd.srctype.html">snd.srctype</a></li>
 	
@@ -239,7 +245,7 @@ ul.inheritsList
 				
 				
 			
-				シミュレーションする音環境を表すクラスです。<br>リスナーやユニットなどを管理します。<br>さまざまなユニットは最終的にSoundEnvironment#connectAudioUnitメソッドを使って、実際の出力へ反映されるようになります。
+				
 				
 				
 					<br /><i>Defined in: </i> <a href="../symbols/src/public_html_snd.js.html">snd.js</a>.
@@ -272,81 +278,26 @@ ul.inheritsList
 
 <!-- ============================== properties summary ===================== -->
 			
-
-<!-- ============================== methods summary ======================== -->
-			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class snd.SoundEnvironment.">
-					<caption>Method Summary</caption>
+				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class snd.SoundEnvironment.">
+					<caption>Field Summary</caption>
 					<thead>
 						<tr>
-							<th scope="col">Method Attributes</th>
-							<th scope="col">Method Name and Description</th>
+							<th scope="col">Field Attributes</th>
+							<th scope="col">Field Name and Description</th>
 						</tr>
 					</thead>
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&nbsp;</td>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/snd.SoundEnvironment.html#connectAudioUnit">connectAudioUnit</a></b>(key, audioUnit)
+								<div class="fixedFont">
+								snd.SoundEnvironment.<b><a href="../symbols/snd.SoundEnvironment.html#.DEFAULT_BUFFER_MAX">DEFAULT_BUFFER_MAX</a></b>
 								</div>
-								<div class="description">新しいユニットを接続します。<br>各種ユニットは、最終的にこのメソッドを使って実際の出力へ反映されます。</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/snd.SoundEnvironment.html#createListener">createListener</a></b>(key)
-								</div>
-								<div class="description">新しいリスナを生成します。<br>リスナーはこのクラスの内部でHashMapとして管理されるため、キー値を引数として渡す必要があります。<br>複数のリスナーを生成することもできますが、switchListenerメソッドでsnd.LISTENER定数を切り替えるまで実際の出力には影響を及ぼしません。</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/snd.SoundEnvironment.html#deleteListener">deleteListener</a></b>(key)
-								</div>
-								<div class="description">リスナーを削除します。</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/snd.SoundEnvironment.html#disconnectAudioUnit">disconnectAudioUnit</a></b>(key)
-								</div>
-								<div class="description">接続されたユニットを切断します。</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/snd.SoundEnvironment.html#getAudioUnit">getAudioUnit</a></b>(key)
-								</div>
-								<div class="description">接続済みのユニットを取得します。</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/snd.SoundEnvironment.html#getListener">getListener</a></b>(key)
-								</div>
-								<div class="description">リスナーを取得します。</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/snd.SoundEnvironment.html#switchListener">switchListener</a></b>(key)
-								</div>
-								<div class="description">keyで指定されたリスナーへsnd.LISTENER定数を切り替えます。<br>このメソッドでリスナーを選択しない限り、snd.Listenerへ行った変更は実際の出力へ影響を与えません。<br>snd.LISTENER定数の内容が選択されたリスナーへ変更されるため、(snd.LISTENER定数を使用する限り)多数のリスナーを次々と切り替えたとしても、常にユニークなリスナを使用することができます。<br></div>
+								<div class="description">バッファに姿勢情報を記録する最大数のデフォルト値。<br/>
+30フレーム/秒として60秒分</div>
 							</td>
 						</tr>
 					
@@ -355,6 +306,9 @@ ul.inheritsList
 				
 				
 				
+			
+
+<!-- ============================== methods summary ======================== -->
 			
 <!-- ============================== events summary ======================== -->
 			
@@ -391,292 +345,26 @@ ul.inheritsList
 
 <!-- ============================== field details ========================== -->		
 			
-
-<!-- ============================== method details ========================= -->		
-			
 				<div class="sectionTitle">
-					Method Detail
+					Field Detail
 				</div>
 				
-					<a name="connectAudioUnit"> </a>
-					<div class="fixedFont">
+					<a name=".DEFAULT_BUFFER_MAX"> </a>
+					<div class="fixedFont">&lt;static&gt; 
 					
-					
-					<b>connectAudioUnit</b>(key, audioUnit)
+					<span class="light">{Integer}</span>
+					<span class="light">snd.SoundEnvironment.</span><b>DEFAULT_BUFFER_MAX</b>
 					
 					</div>
 					<div class="description">
-						新しいユニットを接続します。<br>各種ユニットは、最終的にこのメソッドを使って実際の出力へ反映されます。
+						バッファに姿勢情報を記録する最大数のデフォルト値。<br/>
+30フレーム/秒として60秒分
 						
 						
 					</div>
 					
 					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{type}</span> <b>key</b>
-									
-								</dt>
-								<dd>接続するユニットを表すキー値</dd>
-							
-								<dt>
-									<span class="light fixedFont">{<a href="../symbols/snd.AudioUnit.html">snd.AudioUnit</a>}</span> <b>audioUnit</b>
-									
-								</dt>
-								<dd>接続するユニット</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
 
-					<hr />
-				
-					<a name="createListener"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{<a href="../symbols/snd.Listener.html">snd.Listener</a>}</span>
-					<b>createListener</b>(key)
-					
-					</div>
-					<div class="description">
-						新しいリスナを生成します。<br>リスナーはこのクラスの内部でHashMapとして管理されるため、キー値を引数として渡す必要があります。<br>複数のリスナーを生成することもできますが、switchListenerメソッドでsnd.LISTENER定数を切り替えるまで実際の出力には影響を及ぼしません。
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>key</b>
-									
-								</dt>
-								<dd>このリスナーを表すキー値</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{<a href="../symbols/snd.Listener.html">snd.Listener</a>}</span> 生成されたリスナー</dd>
-							
-							</dl>
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">See:</dt>
-							
-								<dd><a href="../symbols/snd.SoundEnvironment.html#switchListener">snd.SoundEnvironment#switchListener</a></dd>
-							
-							</dl>
-						
-
-					<hr />
-				
-					<a name="deleteListener"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>deleteListener</b>(key)
-					
-					</div>
-					<div class="description">
-						リスナーを削除します。
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>key</b>
-									
-								</dt>
-								<dd>削除するリスナー</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="disconnectAudioUnit"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>disconnectAudioUnit</b>(key)
-					
-					</div>
-					<div class="description">
-						接続されたユニットを切断します。
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{type}</span> <b>key</b>
-									
-								</dt>
-								<dd>切断するユニット</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="getAudioUnit"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>getAudioUnit</b>(key)
-					
-					</div>
-					<div class="description">
-						接続済みのユニットを取得します。
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{type}</span> <b>key</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="getListener"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{<a href="../symbols/snd.Listener.html">snd.Listener</a>}</span>
-					<b>getListener</b>(key)
-					
-					</div>
-					<div class="description">
-						リスナーを取得します。
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>key</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{<a href="../symbols/snd.Listener.html">snd.Listener</a>}</span> </dd>
-							
-							</dl>
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">See:</dt>
-							
-								<dd></dd>
-							
-							</dl>
-						
-
-					<hr />
-				
-					<a name="switchListener"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>switchListener</b>(key)
-					
-					</div>
-					<div class="description">
-						keyで指定されたリスナーへsnd.LISTENER定数を切り替えます。<br>このメソッドでリスナーを選択しない限り、snd.Listenerへ行った変更は実際の出力へ影響を与えません。<br>snd.LISTENER定数の内容が選択されたリスナーへ変更されるため、(snd.LISTENER定数を使用する限り)多数のリスナーを次々と切り替えたとしても、常にユニークなリスナを使用することができます。<br>
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{type}</span> <b>key</b>
-									
-								</dt>
-								<dd>次の選択リスナーを表すキー値</dd>
-							
-							</dl>
-						
-						
-						
 						
 						
 						
@@ -684,6 +372,9 @@ ul.inheritsList
 
 					
 				
+			
+
+<!-- ============================== method details ========================= -->		
 			
 			
 <!-- ============================== event details ========================= -->		
@@ -696,7 +387,7 @@ ul.inheritsList
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Thu Mar 20 2014 00:17:27 GMT+0900 (JST)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sun Mar 30 2014 17:00:51 GMT+0900 (JST)
 		</div>
 	</body>
 </html>

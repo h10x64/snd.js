@@ -7,14 +7,18 @@
  */
 snd.OscillatorSource = function(id) {
     snd.Source.apply(this, arguments);
-    
+
     this.type = snd.srctype.OSCILLATOR;
     this.status = snd.status.NONE;
     
+    this.addEvent("onended", "Stop", function(){this.status = snd.status.STOPPED; this.resetOscillator();});
+
     this.resetOscillator();
 };
 snd.OscillatorSource.prototype = Object.create(snd.Source.prototype);
 snd.OscillatorSource.prototype.constructor = snd.OscillatorSource;
+
+snd.OscillatorSource.DEFAULT_FREQUENCY = 440;
 
 /**
  * 波形の種類を設定します。<br/>
@@ -64,7 +68,7 @@ snd.OscillatorSource.prototype.getFrequency = function() {
     if (this.source != null) {
         return this.source.frequency.value;
     } else {
-         return null;
+        return null;
     }
 };
 
@@ -112,14 +116,12 @@ snd.OscillatorSource.prototype.setPeriodicWave = function(periodicWave) {
  * @param {type} duration 使用しません
  */
 snd.OscillatorSource.prototype.start = function(when, offset, duration) {
-    if (this.source != null && this.status != snd.status.STARTED) {
+    if (this.source != null && this.status != snd.status.STARTED && this.status != snd.status.STOPPED) {
         if (when == null) {
             this.source.start(0);
         } else {
             this.source.start(when);
         }
-        
-        this.status = snd.status.STARTED;
     }
 };
 
@@ -129,38 +131,39 @@ snd.OscillatorSource.prototype.start = function(when, offset, duration) {
  * @param {float} when 終了するタイミング
  */
 snd.OscillatorSource.prototype.stop = function(when) {
-    if (when == null) {
-        this.source.stop(0);
-    } else {
-        this.source.stop(when);
+    if (this.status != snd.status.STOPPED) {
+        if (when == null) {
+            this.source.stop(0);
+        } else {
+            this.source.stop(when);
+        }
     }
-    this.status = snd.status.STOPPED;
 };
 
-snd.OscillatorSource.prototype.resetOscillator = function(when) {
+snd.OscillatorSource.prototype.resetOscillator = function() {
     var freq = null;
     var cent = null;
-    
+
     if (this.source != null) {
         freq = this.getFrequency();
         cent = this.getDetune();
-        if (this.status == snd.status.STARTED) {
-            if (when == null) {
-                this.source.stop(0);
-            } else {
-                this.source.stop(when);
-            }
+        if (this.status != snd.status.STOPPED) {
+            this.source.stop(0);
         }
     }
-    
+
     this.source = snd.AUDIO_CONTEXT.createOscillator();
     this.source.connect(this.gain);
     if (freq != null) {
         this.setFrequency(freq);
+    } else {
+        this.setFrequency(snd.OscillatorSource.DEFAULT_FREQUENCY);
     }
     if (cent != null) {
         this.setDetune(cent);
+    } else {
+        this.setFrequency(0);
     }
-    
+
     this.status = snd.status.READY;
 };

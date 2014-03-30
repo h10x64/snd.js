@@ -71,7 +71,7 @@ snd.PosDir.prototype.setDir = function(x, y, z) {
     this.dir.normalize();
 };
 
-snd.PosDir.prototype.setTop = function(x, y, z) {
+snd.PosDir.prototype.setUp = function(x, y, z) {
     this.up.x = x;
     this.up.y = y;
     this.up.z = z;
@@ -100,3 +100,28 @@ snd.PosDir.prototype.setOrientationBySpherical = function(dir, up) {
     this.setDir(orthDir.x, orthDir.y, orthDir.z);
 };
 
+snd.PosDir.interpolation = function(left, right, ratio) {
+    var calc = {};
+    var values = {
+        px : {left: left.pos.x, right: right.pos.x},
+        py : {left: left.pos.y, right: right.pos.y},
+        pz : {left: left.pos.z, right: right.pos.z},
+        ux : {left: left.up.x, right: right.up.x},
+        uy : {left: left.up.y, right: right.up.y},
+        uz : {left: left.up.z, right: right.up.z},
+        dx : {left: left.dir.x, right: right.dir.x},
+        dy : {left: left.dir.y, right: right.dir.y},
+        dz : {left: left.dir.z, right: right.dir.z}
+    };
+    
+    for (var key in values) {
+        calc[key] = values[key].left + (values[key].right - values[key].left) * ratio;
+    }
+    
+    var ret = new snd.PosDir();
+    ret.setPos(calc.px, calc.py, calc.pz);
+    ret.setUp(calc.ux, calc.uy, calc.uz);
+    ret.setDir(calc.dx, calc.dy, calc.dz);
+    
+    return ret;
+};

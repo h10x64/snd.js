@@ -664,7 +664,7 @@ snd.mml.Note.prototype.setting = function() {
     this.setFrequency(snd.util.noteToFrequency(this.octave, this.pitch));
     this.sec = snd.util.noteToSec(this.tempo, this.value);
     // SOUND_ENVIRONMENTへ接続
-    snd.SOUND_ENVIRONMENT.connectAudioUnit(this.id, this);
+    snd.MASTER.connectAudioUnit(this.id, this);
 };
 
 /**

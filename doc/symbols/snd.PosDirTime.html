@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>snd.js Reference - snd.MediaElementAudioSource</title>
+		<title>snd.js Reference - snd.PosDirTime</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -237,7 +237,7 @@ ul.inheritsList
 <!-- ============================== class title ============================ -->
 			<h1 class="classTitle">
 				
-				Class snd.MediaElementAudioSource
+				Class snd.PosDirTime
 			</h1>
 
 <!-- ============================== class summary ========================== -->			
@@ -245,8 +245,10 @@ ul.inheritsList
 				
 				
 			
-				HTMLのメディアタグを音源として使用する音源クラスです。<br/>
-詳細は<a href="http://g200kg.github.io/web-audio-api-ja/#MediaElementAudioSourceNode">WebAudioAPI仕様を参照してください。
+				snd.PosDirに時系列情報を付加したクラスです。<br/>
+updateが呼ばれるたびにバッファに姿勢情報を追記します。<br/>
+バッファに記録する個数はbufferMaxで指定された数が最大で、それ以上になると過去の情報から順に消されます。<br/>
+bufferMaxのデフォルト値はsnd.SoundEnvironment.DEFAULT_BUFFER_MAXで定義されています。
 				
 				
 					<br /><i>Defined in: </i> <a href="../symbols/src/public_html_snd.js.html">snd.js</a>.
@@ -255,7 +257,7 @@ ul.inheritsList
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class snd.MediaElementAudioSource.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class snd.PosDirTime.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -268,7 +270,7 @@ ul.inheritsList
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/snd.MediaElementAudioSource.html#constructor">snd.MediaElementAudioSource</a></b>(id, htmlMediaElement)
+								<b><a href="../symbols/snd.PosDirTime.html#constructor">snd.PosDirTime</a></b>(data, bufferMax)
 							</div>
 							<div class="description"></div>
 						</td>
@@ -293,7 +295,7 @@ ul.inheritsList
 				</div>
 				
 				<div class="fixedFont">
-						<b>snd.MediaElementAudioSource</b>(id, htmlMediaElement)
+						<b>snd.PosDirTime</b>(data, bufferMax)
 				</div>
 				
 				<div class="description">
@@ -309,16 +311,16 @@ ul.inheritsList
 						<dt class="heading">Parameters:</dt>
 						
 							<dt>
-								<span class="light fixedFont">{String}</span>  <b>id</b>
+								 <b>data</b>
 								
 							</dt>
-								<dd>この音源のID</dd>
+								<dd></dd>
 						
 							<dt>
-								<span class="light fixedFont">{HTMLMediaElement}</span>  <b>htmlMediaElement</b>
+								 <b>bufferMax</b>
 								
 							</dt>
-								<dd>HTMLのメディアタグ要素</dd>
+								<dd></dd>
 						
 						</dl>
 					

@@ -64,7 +64,11 @@ snd.status.READY = "ready";
  */
 snd.status.STARTED = "started";
 /**
- * 音源の再生が中断・終了し、停止したことを表す値です。
+ * 音源の再生が中断し、停止中であることを表す値です。
+ */
+snd.status.PAUSED = "paused";
+/**
+ * 音源の再生が終了し、停止したことを表す値です。
  */
 snd.status.STOPPED= "ended";
 
@@ -165,7 +169,7 @@ snd.PosDir.prototype.setDir = function(x, y, z) {
     this.dir.normalize();
 };
 
-snd.PosDir.prototype.setTop = function(x, y, z) {
+snd.PosDir.prototype.setUp = function(x, y, z) {
     this.up.x = x;
     this.up.y = y;
     this.up.z = z;
@@ -194,8 +198,33 @@ snd.PosDir.prototype.setOrientationBySpherical = function(dir, up) {
     this.setDir(orthDir.x, orthDir.y, orthDir.z);
 };
 
+snd.PosDir.interpolation = function(left, right, ratio) {
+    var calc = {};
+    var values = {
+        px : {left: left.pos.x, right: right.pos.x},
+        py : {left: left.pos.y, right: right.pos.y},
+        pz : {left: left.pos.z, right: right.pos.z},
+        ux : {left: left.up.x, right: right.up.x},
+        uy : {left: left.up.y, right: right.up.y},
+        uz : {left: left.up.z, right: right.up.z},
+        dx : {left: left.dir.x, right: right.dir.x},
+        dy : {left: left.dir.y, right: right.dir.y},
+        dz : {left: left.dir.z, right: right.dir.z}
+    };
+    
+    for (var key in values) {
+        calc[key] = values[key].left + (values[key].right - values[key].left) * ratio;
+    }
+    
+    var ret = new snd.PosDir();
+    ret.setPos(calc.px, calc.py, calc.pz);
+    ret.setUp(calc.ux, calc.uy, calc.uz);
+    ret.setDir(calc.dx, calc.dy, calc.dz);
+    
+    return ret;
+};
 /**
- * 各種音源クラスの親クラスとなる抽象クラスです。
+ * @class 各種音源クラスの親クラスとなる抽象クラスです。
  * @param {String} id この音源のID
  */
 snd.Source = function(id) {
@@ -204,6 +233,9 @@ snd.Source = function(id) {
     this.id = id;
     this.type = snd.srctype.NONE;
     this.status = snd.status.NONE;
+    
+    this.listeners = {};
+    this.sourceEventNames = [];
 };
 
 /**
@@ -243,6 +275,47 @@ snd.Source.prototype.disconnect = function(disconnectFrom) {
         this.gain.disconnect(disconnectFrom);
     }
 };
+
+snd.Source.prototype.addEvent = function(sourceEventName, eventName, additionalMethod) {
+    var _this = this;
+    this[sourceEventName] = function() {
+        if (additionalMethod != null) {
+            additionalMethod(_this);
+        }
+        if (_this.listeners[eventName] != null) {
+            for (var i = 0; _this.listeners[eventName].length; i++) {
+                _this.listeners[eventName][i]["on" + eventName](_this);
+            }
+        }
+    };
+    if (this.sourceEventNames.indexOf(sourceEventName)) {
+        this.sourceEventNames.push(sourceEventName);
+    }
+    this.listeners[eventName] = [];
+    this["add" + eventName + "EventListener"] = function(listener) {
+        _this.listeners[eventName].push(listener);
+    };
+    this["remove" + eventName + "EventListener"] = function(listener) {
+        var i = _this.listeners[eventName].indexOf(listener);
+        if (i < 0) {
+            return false;
+        } else {
+            _this.listeners[eventName].splice(i, 1);
+        }
+    };
+};
+
+snd.Source.prototype.setEventMethod = function(src) {
+    for (var i = 0; i < this.sourceEventNames.length; i++) {
+        src[this.sourceEventNames[i]] = this[this.sourceEventNames[i]];
+    }
+};
+
+snd.Source.prototype.resetEventMethod = function(src) {
+    for (var i = 0; i < this.sourceEventNames.length; i++) {
+        src[this.sourceEventNames[i]] = function(){};
+    }
+};
 /**
  * @class バイナリデータを再生する音源です。<br/>
  * 詳細はWebAudioAPIの仕様を参照してください。<br/>
@@ -252,6 +325,9 @@ snd.Source.prototype.disconnect = function(disconnectFrom) {
 snd.BufferSource = function(id) {
     snd.Source.apply(this, arguments);
     this.type = snd.srctype.AUDIO_BUFFER;
+    this.status = snd.status.NONE;
+    
+    this.addEvent("onended", "Stop", function(_this){_this.status = snd.status.STOPPED;});
 };
 snd.BufferSource.prototype = Object.create(snd.Source.prototype);
 snd.BufferSource.prototype.constructor = snd.BufferSource;
@@ -269,7 +345,7 @@ snd.BufferSource.prototype.start = function(when, offset, duration) {
         }
         this.status = snd.status.STARTED;
     } else {
-        if (this.audioBuffer != null && this.type == snd.srctype.AUDIO_BUFFER) {
+        if (this.audioBuffer != null) {
             this.setAudioBuffer(this.audioBuffer);
             this.start(when, offset, duration);
         }
@@ -307,12 +383,14 @@ snd.BufferSource.prototype.setAudioBuffer = function(audioBuffer) {
     this.audioBuffer = audioBuffer;
 
     var src = snd.AUDIO_CONTEXT.createBufferSource();
+    if (this.source != null) {
+        this.resetEventMethod(this.source);
+    }
     this.source = src;
     this.source.buffer = this.audioBuffer;
     this.source.connect(this.gain);
-    this.source.onended = this.onended;
+    this.setEventMethod(this.source);
 
-    this.type = snd.srctype.AUDIO_BUFFER;
     this.status = snd.status.READY;
 };
 
@@ -346,6 +424,7 @@ snd.BufferSource.prototype.setLoopEnd = function(when) {
     }
 };
 
+
 /**
  * @class 任意の波形を再生するオシレータ音源を生成します。<br/>
  * 詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#dfn-OscillatorNode">WebAudioAPIの仕様<a/>を参照してください。
@@ -357,11 +436,15 @@ snd.OscillatorSource = function(id) {
 
     this.type = snd.srctype.OSCILLATOR;
     this.status = snd.status.NONE;
+    
+    this.addEvent("onended", "Stop", function(){this.status = snd.status.STOPPED; this.resetOscillator();});
 
     this.resetOscillator();
 };
 snd.OscillatorSource.prototype = Object.create(snd.Source.prototype);
 snd.OscillatorSource.prototype.constructor = snd.OscillatorSource;
+
+snd.OscillatorSource.DEFAULT_FREQUENCY = 440;
 
 /**
  * 波形の種類を設定します。<br/>
@@ -459,14 +542,12 @@ snd.OscillatorSource.prototype.setPeriodicWave = function(periodicWave) {
  * @param {type} duration 使用しません
  */
 snd.OscillatorSource.prototype.start = function(when, offset, duration) {
-    if (this.source != null && this.status != snd.status.STARTED) {
+    if (this.source != null && this.status != snd.status.STARTED && this.status != snd.status.STOPPED) {
         if (when == null) {
             this.source.start(0);
         } else {
             this.source.start(when);
         }
-
-        this.status = snd.status.STARTED;
     }
 };
 
@@ -483,22 +564,17 @@ snd.OscillatorSource.prototype.stop = function(when) {
             this.source.stop(when);
         }
     }
-    this.status = snd.status.STOPPED;
 };
 
-snd.OscillatorSource.prototype.resetOscillator = function(when) {
+snd.OscillatorSource.prototype.resetOscillator = function() {
     var freq = null;
     var cent = null;
 
     if (this.source != null) {
         freq = this.getFrequency();
         cent = this.getDetune();
-        if (this.status == snd.status.STARTED) {
-            if (when == null) {
-                this.source.stop(0);
-            } else {
-                this.source.stop(when);
-            }
+        if (this.status != snd.status.STOPPED) {
+            this.source.stop(0);
         }
     }
 
@@ -506,9 +582,13 @@ snd.OscillatorSource.prototype.resetOscillator = function(when) {
     this.source.connect(this.gain);
     if (freq != null) {
         this.setFrequency(freq);
+    } else {
+        this.setFrequency(snd.OscillatorSource.DEFAULT_FREQUENCY);
     }
     if (cent != null) {
         this.setDetune(cent);
+    } else {
+        this.setFrequency(0);
     }
 
     this.status = snd.status.READY;
@@ -524,9 +604,52 @@ snd.MediaElementAudioSource = function(id, htmlMediaElement) {
     this.source = snd.AUDIO_CONTEXT.createMediaElementSource(htmlMediaElement);
     this.source.connect(this.gain);
     this.type = snd.srctype.MEDIA_ELEMENT;
+    this.element = htmlMediaElement;
+    this.status = snd.status.NONE;
+    
+    this.addEvent("onplay", "Start", function(_this) {_this.status = snd.status.STARTED;});
+    this.addEvent("pause", "Pause", function(_this) {_this.status = snd.status.PAUSED;});
+    this.addEvent("onended", "Stop", function(_this) {_this.status = snd.status.STOPPED;});
+    this.addEvent("onabort", "Abort");
+    this.addEvent("oncanplay", "CanPlay", function(_this){_this.status = snd.status.READY;});
+    this.addEvent("oncanplaythrough", "CanPlayThrough");
+    this.addEvent("ondurationchange", "DurationChange");
+    this.addEvent("onemptied", "Emptied");
+    this.addEvent("onerror", "Error");
+    this.addEvent("onloadeddata", "LoadedData");
+    this.addEvent("onloadedmetadata", "LoadedMetaData");
+    this.addEvent("onloadstart", "LoadStart");
+    this.addEvent("onplaying", "Playing");
+    this.addEvent("onprogress", "Progress");
+    this.addEvent("onratechange", "RateChange");
+    this.addEvent("onseeked", "Seeked");
+    this.addEvent("onseeking", "Seeking");
+    this.addEvent("onstalled", "Stalled");
+    this.addEvent("onsuspend", "Suspend");
+    this.addEvent("ontimeupdate", "TimeUpdate");
+    this.addEvent("onvalumechange", "VolumeChange");
+    this.addEvent("onwaiting", "Wating");
+    
+    this.setEventMethod(this.source);
 };
 snd.MediaElementAudioSource.prototype = Object.create(snd.Source.prototype);
 snd.MediaElementAudioSource.prototype.constructor = snd.MediaElementAudioSource;
+
+snd.MediaElementAudioSource.prototype.load = function() {
+    this.source.load();
+};
+
+snd.MediaElementAudioSource.prototype.start = function() {
+    this.source.play();
+};
+
+snd.MediaElementAudioSource.prototype.pause = function() {
+    this.source.pause();
+};
+
+snd.MediaElementAudioSource.prototype.stop = function() {
+    this.source.stop();
+};
 
 
 /**
@@ -956,70 +1079,11 @@ snd.AudioDataManager.prototype.loaded = function(key, buffer) {
     this.onload();
 };
 
-/**
- * @class シミュレーションする音環境を表すクラスです。<br>
- * リスナーやユニットなどを管理します。<br>
- * さまざまなユニットは最終的にSoundEnvironment#connectAudioUnitメソッドを使って、実際の出力へ反映されるようになります。
- */
-snd.SoundEnvironment = function() {
-    this.id = 0;
-    this.listener = snd.AUDIO_CONTEXT.listener;
-    this.listenerList = {};
+snd.AudioMaster = function() {
     this.unitList = {};
+    this.gain = snd.AUDIO_CONTEXT.createGain();
     
-    this.createListener("DEFAULT");
-};
-
-/**
- * 新しいリスナを生成します。<br>
- * リスナーはこのクラスの内部でHashMapとして管理されるため、キー値を引数として渡す必要があります。<br>
- * 複数のリスナーを生成することもできますが、switchListenerメソッドでsnd.LISTENER定数を切り替えるまで実際の出力には影響を及ぼしません。
- * 
- * @param {String} key このリスナーを表すキー値
- * @returns {snd.Listener} 生成されたリスナー
- * @see snd.SoundEnvironment#switchListener
- */
-snd.SoundEnvironment.prototype.createListener = function(key) {
-    var listener = new snd.Listener();
-    this.listenerList[key] = listener;
-    return listener;
-};
-
-/**
- * リスナーを取得します。
- * @param {String} key
- * @returns {snd.Listener}
- * @see {snd.SoundEnvironment#switchListener}
- */
-snd.SoundEnvironment.prototype.getListener = function(key) {
-    return this.listenerList[key];
-};
-
-/**
- * keyで指定されたリスナーへsnd.LISTENER定数を切り替えます。<br>
- * このメソッドでリスナーを選択しない限り、snd.Listenerへ行った変更は実際の出力へ影響を与えません。<br>
- * snd.LISTENER定数の内容が選択されたリスナーへ変更されるため、(snd.LISTENER定数を使用する限り)多数のリスナーを次々と切り替えたとしても、
- * 常にユニークなリスナを使用することができます。<br>
- * @param {type} key 次の選択リスナーを表すキー値
- */
-snd.SoundEnvironment.prototype.switchListener = function(key) {
-    for (var k in this.listenerList) {
-        this.listenerList[k].resetListener();
-    }
-    this.listenerList[key].setListener(this.listener);
-    
-    snd.LISTENER = this.listenerList[key];
-};
-
-/**
- * リスナーを削除します。
- * @param {String} key 削除するリスナー
- */
-snd.SoundEnvironment.prototype.deleteListener = function(key) {
-    if (snd.LISTENER == this.listenerList[key].listener) {
-        this.listenerList.resetListener();
-    }
-    delete this.listenerList[key];
+    this.gain.connect(snd.AUDIO_CONTEXT.destination);
 };
 
 /**
@@ -1028,16 +1092,16 @@ snd.SoundEnvironment.prototype.deleteListener = function(key) {
  * @param {type} key 接続するユニットを表すキー値
  * @param {snd.AudioUnit} audioUnit 接続するユニット
  */
-snd.SoundEnvironment.prototype.connectAudioUnit = function(key, audioUnit) {
+snd.AudioMaster.prototype.connectAudioUnit = function(key, audioUnit) {
     this.unitList[key] = audioUnit;
-    audioUnit.connect(snd.AUDIO_CONTEXT.destination);
+    audioUnit.connect(this.gain);
 };
 
 /**
  * 接続済みのユニットを取得します。
  * @param {type} key
  */
-snd.SoundEnvironment.prototype.getAudioUnit = function(key) {
+snd.AudioMaster.prototype.getAudioUnit = function(key) {
     return this.unitList[key];
 };
 
@@ -1045,11 +1109,139 @@ snd.SoundEnvironment.prototype.getAudioUnit = function(key) {
  * 接続されたユニットを切断します。
  * @param {type} key 切断するユニット
  */
-snd.SoundEnvironment.prototype.disconnectAudioUnit = function(key) {
+snd.AudioMaster.prototype.disconnectAudioUnit = function(key) {
     var audioUnit = this.unitList[key];
-    audioUnit.getConnector().disconnect(snd.AUDIO_CONTEXT.destination);
+    audioUnit.getConnector().disconnect(this.gain);
     delete this.unitList[key];
 };
+/**
+ * @class
+ */
+snd.SoundEnvironment = function() {
+    this.now = 0;
+    this.listener = snd.AUDIO_CONTEXT.listener;
+    this.listeners = {};
+    this.soundNodes = {};
+};
+
+/**
+ * バッファに姿勢情報を記録する最大数のデフォルト値。<br/>
+ * 30フレーム/秒として60秒分
+ * @type Integer
+ */
+snd.SoundEnvironment.DEFAULT_BUFFER_MAX = 1800;
+
+snd.SoundEnvironment.prototype.addListener = function(id, listener) {
+    this.listeners[id] = new PosDirTime(listener, 1);
+};
+
+snd.SoundEnvironment.prototype.removeListener = function(id) {
+    if (this.soundNodes[id] != null) {
+        delete this.soundNodes[id];
+    }
+};
+
+snd.SoundEnvironment.prototype.addSoundNode = function(id, soundNode) {
+    this.soundNodes[id] = new PosDirTime(soundNode);
+};
+
+snd.SoundEnvironment.prototype.removeSoundNode = function(id) {
+    if (this.soundNodes[id] != null) {
+        delete this.soundNodes[id];
+    }
+};
+
+snd.SoundEnvironment.prototype.update = function(time) {
+    if (this.now > time) {
+        throw new snd.SoundEnvironment.UpdateError(this, "time < this.now (time: " + time  + ", this.now: " + this.now);
+    }
+    
+    for (var key in this.listeners) {
+        this.listeners[key].update(time);
+    }
+    for (var key in this.soundNodes) {
+        this.soundNodes[key].update(time);
+    }
+};
+
+/**
+ * @class フレーム更新時にエラーが発生した時にthrowするオブジェクト
+ */
+snd.SoundEnvironment.UpdateError = function(_this, message) {
+    this._this = _this;
+    this.message = message;
+};
+
+/**
+ * @class snd.PosDirに時系列情報を付加したクラスです。<br/>
+ * updateが呼ばれるたびにバッファに姿勢情報を追記します。<br/>
+ * バッファに記録する個数はbufferMaxで指定された数が最大で、それ以上になると過去の情報から順に消されます。<br/>
+ * bufferMaxのデフォルト値はsnd.SoundEnvironment.DEFAULT_BUFFER_MAXで定義されています。
+ */
+snd.PosDirTime = function(data, bufferMax) {
+    this.data = data;
+    this.history = []; // [{time: milli second, posture: posture}]
+    this.bufferMax = bufferMax;
+};
+
+snd.PosDirTime.prototype.update = function(time) {
+    if (this.history.length == 0) {
+        this.history.push({time: 0, posture: Object.create(this.data)});
+    }
+    if (this.history.length > this.bufferMax) {
+        this.history.splice(0, 1);
+    }
+    this.history.push({time:time, posture:Object.create(this.data)});
+};
+
+snd.PosDirTime.prototype.getPosture = function(time) {
+    var res = this.search(time);
+    if (res == null) {
+        return null;
+    } else if (res.left == res.right) {
+        return this.history[res.left];
+    }
+    
+    var left = this.history[left];
+    var right = this.history[right];
+    var ratio = (time - left.time) / (right.time - left.time);
+    
+    return snd.PosDir.interpolation(left, right, ratio);
+};
+
+snd.PosDirTime.prototype.search = function(time) {
+    if (this.history.length <= 0) {
+        return null;
+    } else if (this.history.length == 1) {
+        return {left: 0, right: 0};
+    } else if (this.history[this.history.length - 1].time < time) {
+        return {left: this.history.length - 1, right: this.history.legnth - 1};
+    } else if (this.history[0].time > time) {
+        return {left: 0, right: 0};
+    }
+    
+    var left = 0, right = this.history.length - 1;
+    var mid = Math.floor(right / 2);
+    
+    while (true) {
+        mid = Math.floor((time - this.history[left].time) * (right - left) / (this.history[right].time - this.history[left].time)) + left;
+        if (this.history[mid].time < time) {
+            if (this.history[mid + 1] > time) {
+                return {left: mid, right: mid + 1};
+            }
+            left = mid + 1;
+        } else if (this.history[mid].time > time) {
+            if (this.history[mid - 1].time < time) {
+                return {left: mid - 1, right: mid};
+            }
+            right = mid - 1;
+        } else {
+            return {left: mid, right: mid};
+        }
+    }
+};
+
+
 snd.util = {};
 
 /**
@@ -1122,17 +1314,24 @@ snd.util.noteToSec = function(tempo, noteValue) {
  * @type AudioContext
  */
 snd.AUDIO_CONTEXT = null;
+
 /**
- * シミュレーション上の聴取環境を管理するクラスのインスタンスが入ります。
- *      リスナーや音源の操作などはこのインスタンスを介して行います。
+ * シミュレーション上の聴取環境を管理するクラスのインスタンスが入ります。<br/>
  * @type snd.SoundEnvironment 
  */
 snd.SOUND_ENVIRONMENT = null;
+/**
+ * snd.jsのPAミキサーです。<br/>
+ * 各種エフェクトや音源は、snd.Master.connectAudioUnitメソッドを使ってここに接続することで音が出力されるようになります。
+ * @type snd.AudioMaster
+ */
+snd.MASTER = null;
 /**
  * 
  * @type type
  */
 snd.AUDIO_DATA_MANAGER = null;
+
 /**
  * 現在選択中のリスナーが入ります。
  *      リスナーは複数用意することが可能ですが、出力へ反映されるリスナは常に選択中の1つのみになっています。
@@ -1150,7 +1349,7 @@ snd.LISTENER = null;
 snd.init = function() {
     snd.resetAudioContext();
     snd.SOUND_ENVIRONMENT = new snd.SoundEnvironment();
-    snd.SOUND_ENVIRONMENT.switchListener("DEFAULT");
+    snd.MASTER = new snd.AudioMaster();
     snd.AUDIO_DATA_MANAGER = new snd.AudioDataManager();
 };
 
@@ -1162,10 +1361,10 @@ snd.init = function() {
 snd.resetAudioContext = function() {
     if (snd.AUDIO_CONTEXT == null) {
         // Create AudioContext
-        if (window.AudioContext) {
+        if ('AudioContext' in window) {
             // firefox
             snd.AUDIO_CONTEXT = new AudioContext();
-        } else if (window.webkitAudioContext) {
+        } else if ('webkitAudioContext' in window) {
             // crome etc
             snd.AUDIO_CONTEXT = new webkitAudioContext();
         }

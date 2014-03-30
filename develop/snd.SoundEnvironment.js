@@ -1,94 +1,128 @@
 /**
- * @class シミュレーションする音環境を表すクラスです。<br>
- * リスナーやユニットなどを管理します。<br>
- * さまざまなユニットは最終的にSoundEnvironment#connectAudioUnitメソッドを使って、実際の出力へ反映されるようになります。
+ * @class
  */
 snd.SoundEnvironment = function() {
-    this.id = 0;
+    this.now = 0;
     this.listener = snd.AUDIO_CONTEXT.listener;
-    this.listenerList = {};
-    this.unitList = {};
-    
-    this.createListener("DEFAULT");
+    this.listeners = {};
+    this.soundNodes = {};
 };
 
 /**
- * 新しいリスナを生成します。<br>
- * リスナーはこのクラスの内部でHashMapとして管理されるため、キー値を引数として渡す必要があります。<br>
- * 複数のリスナーを生成することもできますが、switchListenerメソッドでsnd.LISTENER定数を切り替えるまで実際の出力には影響を及ぼしません。
- * 
- * @param {String} key このリスナーを表すキー値
- * @returns {snd.Listener} 生成されたリスナー
- * @see snd.SoundEnvironment#switchListener
+ * バッファに姿勢情報を記録する最大数のデフォルト値。<br/>
+ * 30フレーム/秒として60秒分
+ * @type Integer
  */
-snd.SoundEnvironment.prototype.createListener = function(key) {
-    var listener = new snd.Listener();
-    this.listenerList[key] = listener;
-    return listener;
+snd.SoundEnvironment.DEFAULT_BUFFER_MAX = 1800;
+
+snd.SoundEnvironment.prototype.addListener = function(id, listener) {
+    this.listeners[id] = new PosDirTime(listener, 1);
 };
 
-/**
- * リスナーを取得します。
- * @param {String} key
- * @returns {snd.Listener}
- * @see {snd.SoundEnvironment#switchListener}
- */
-snd.SoundEnvironment.prototype.getListener = function(key) {
-    return this.listenerList[key];
-};
-
-/**
- * keyで指定されたリスナーへsnd.LISTENER定数を切り替えます。<br>
- * このメソッドでリスナーを選択しない限り、snd.Listenerへ行った変更は実際の出力へ影響を与えません。<br>
- * snd.LISTENER定数の内容が選択されたリスナーへ変更されるため、(snd.LISTENER定数を使用する限り)多数のリスナーを次々と切り替えたとしても、
- * 常にユニークなリスナを使用することができます。<br>
- * @param {type} key 次の選択リスナーを表すキー値
- */
-snd.SoundEnvironment.prototype.switchListener = function(key) {
-    for (var k in this.listenerList) {
-        this.listenerList[k].resetListener();
+snd.SoundEnvironment.prototype.removeListener = function(id) {
+    if (this.soundNodes[id] != null) {
+        delete this.soundNodes[id];
     }
-    this.listenerList[key].setListener(this.listener);
-    
-    snd.LISTENER = this.listenerList[key];
 };
 
-/**
- * リスナーを削除します。
- * @param {String} key 削除するリスナー
- */
-snd.SoundEnvironment.prototype.deleteListener = function(key) {
-    if (snd.LISTENER == this.listenerList[key].listener) {
-        this.listenerList.resetListener();
+snd.SoundEnvironment.prototype.addSoundNode = function(id, soundNode) {
+    this.soundNodes[id] = new PosDirTime(soundNode);
+};
+
+snd.SoundEnvironment.prototype.removeSoundNode = function(id) {
+    if (this.soundNodes[id] != null) {
+        delete this.soundNodes[id];
     }
-    delete this.listenerList[key];
+};
+
+snd.SoundEnvironment.prototype.update = function(time) {
+    if (this.now > time) {
+        throw new snd.SoundEnvironment.UpdateError(this, "time < this.now (time: " + time  + ", this.now: " + this.now);
+    }
+    
+    for (var key in this.listeners) {
+        this.listeners[key].update(time);
+    }
+    for (var key in this.soundNodes) {
+        this.soundNodes[key].update(time);
+    }
 };
 
 /**
- * 新しいユニットを接続します。<br>
- * 各種ユニットは、最終的にこのメソッドを使って実際の出力へ反映されます。
- * @param {type} key 接続するユニットを表すキー値
- * @param {snd.AudioUnit} audioUnit 接続するユニット
+ * @class フレーム更新時にエラーが発生した時にthrowするオブジェクト
  */
-snd.SoundEnvironment.prototype.connectAudioUnit = function(key, audioUnit) {
-    this.unitList[key] = audioUnit;
-    audioUnit.connect(snd.AUDIO_CONTEXT.destination);
+snd.SoundEnvironment.UpdateError = function(_this, message) {
+    this._this = _this;
+    this.message = message;
 };
 
 /**
- * 接続済みのユニットを取得します。
- * @param {type} key
+ * @class snd.PosDirに時系列情報を付加したクラスです。<br/>
+ * updateが呼ばれるたびにバッファに姿勢情報を追記します。<br/>
+ * バッファに記録する個数はbufferMaxで指定された数が最大で、それ以上になると過去の情報から順に消されます。<br/>
+ * bufferMaxのデフォルト値はsnd.SoundEnvironment.DEFAULT_BUFFER_MAXで定義されています。
  */
-snd.SoundEnvironment.prototype.getAudioUnit = function(key) {
-    return this.unitList[key];
+snd.PosDirTime = function(data, bufferMax) {
+    this.data = data;
+    this.history = []; // [{time: milli second, posture: posture}]
+    this.bufferMax = bufferMax;
 };
 
-/**
- * 接続されたユニットを切断します。
- * @param {type} key 切断するユニット
- */
-snd.SoundEnvironment.prototype.disconnectAudioUnit = function(key) {
-    var audioUnit = this.unitList[key];
-    audioUnit.getConnector().disconnect(snd.AUDIO_CONTEXT.destination);
-    delete this.unitList[key];
+snd.PosDirTime.prototype.update = function(time) {
+    if (this.history.length == 0) {
+        this.history.push({time: 0, posture: Object.create(this.data)});
+    }
+    if (this.history.length > this.bufferMax) {
+        this.history.splice(0, 1);
+    }
+    this.history.push({time:time, posture:Object.create(this.data)});
 };
+
+snd.PosDirTime.prototype.getPosture = function(time) {
+    var res = this.search(time);
+    if (res == null) {
+        return null;
+    } else if (res.left == res.right) {
+        return this.history[res.left];
+    }
+    
+    var left = this.history[left];
+    var right = this.history[right];
+    var ratio = (time - left.time) / (right.time - left.time);
+    
+    return snd.PosDir.interpolation(left, right, ratio);
+};
+
+snd.PosDirTime.prototype.search = function(time) {
+    if (this.history.length <= 0) {
+        return null;
+    } else if (this.history.length == 1) {
+        return {left: 0, right: 0};
+    } else if (this.history[this.history.length - 1].time < time) {
+        return {left: this.history.length - 1, right: this.history.legnth - 1};
+    } else if (this.history[0].time > time) {
+        return {left: 0, right: 0};
+    }
+    
+    var left = 0, right = this.history.length - 1;
+    var mid = Math.floor(right / 2);
+    
+    while (true) {
+        mid = Math.floor((time - this.history[left].time) * (right - left) / (this.history[right].time - this.history[left].time)) + left;
+        if (this.history[mid].time < time) {
+            if (this.history[mid + 1] > time) {
+                return {left: mid, right: mid + 1};
+            }
+            left = mid + 1;
+        } else if (this.history[mid].time > time) {
+            if (this.history[mid - 1].time < time) {
+                return {left: mid - 1, right: mid};
+            }
+            right = mid - 1;
+        } else {
+            return {left: mid, right: mid};
+        }
+    }
+};
+
+

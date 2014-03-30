@@ -28,12 +28,12 @@
                 // ↑で作った音源オブジェクトを立体音エフェクトをかけるユニットに接続
                 mediaElementAudioSource.connect(soundNode);
                 
-                // snd.jsの音環境(snd.SOUND_ENVIRONMENT)にオーディオユニットを接続
-                snd.SOUND_ENVIRONMENT.connectAudioUnit(soundNode.id, soundNode);
+                // snd.jsのオーディオマスタ(snd.MASTER)にオーディオユニットを接続
+                snd.MASTER.connectAudioUnit(soundNode.id, soundNode);
                 
-                /* オーディオタグの操作 */
-                audioTag.load(); // データのロードを開始
-                audioTag.play(); // 再生を開始
+                /* オーディオの操作 */
+                mediaElementAudioSource.load();
+                mediaElementAudioSource.start();
                 
                 /* 0.1秒ごとに音の位置を0.1ラジアンずつ回すタイマーメソッド */
                 setInterval(function() {

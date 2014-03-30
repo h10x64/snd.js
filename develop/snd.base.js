@@ -38,7 +38,11 @@ snd.status.READY = "ready";
  */
 snd.status.STARTED = "started";
 /**
- * 音源の再生が中断・終了し、停止したことを表す値です。
+ * 音源の再生が中断し、停止中であることを表す値です。
+ */
+snd.status.PAUSED = "paused";
+/**
+ * 音源の再生が終了し、停止したことを表す値です。
  */
 snd.status.STOPPED= "ended";
 

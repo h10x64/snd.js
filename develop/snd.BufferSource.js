@@ -7,6 +7,9 @@
 snd.BufferSource = function(id) {
     snd.Source.apply(this, arguments);
     this.type = snd.srctype.AUDIO_BUFFER;
+    this.status = snd.status.NONE;
+    
+    this.addEvent("onended", "Stop", function(_this){_this.status = snd.status.STOPPED;});
 };
 snd.BufferSource.prototype = Object.create(snd.Source.prototype);
 snd.BufferSource.prototype.constructor = snd.BufferSource;
@@ -24,7 +27,7 @@ snd.BufferSource.prototype.start = function(when, offset, duration) {
         }
         this.status = snd.status.STARTED;
     } else {
-        if (this.audioBuffer != null && this.type == snd.srctype.AUDIO_BUFFER) {
+        if (this.audioBuffer != null) {
             this.setAudioBuffer(this.audioBuffer);
             this.start(when, offset, duration);
         }
@@ -62,12 +65,14 @@ snd.BufferSource.prototype.setAudioBuffer = function(audioBuffer) {
     this.audioBuffer = audioBuffer;
 
     var src = snd.AUDIO_CONTEXT.createBufferSource();
+    if (this.source != null) {
+        this.resetEventMethod(this.source);
+    }
     this.source = src;
     this.source.buffer = this.audioBuffer;
     this.source.connect(this.gain);
-    this.source.onended = this.onended;
+    this.setEventMethod(this.source);
 
-    this.type = snd.srctype.AUDIO_BUFFER;
     this.status = snd.status.READY;
 };
 
@@ -100,3 +105,4 @@ snd.BufferSource.prototype.setLoopEnd = function(when) {
         this.source.loopEnd = when;
     }
 };
+
