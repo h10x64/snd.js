@@ -6,6 +6,28 @@ snd.SoundEnvironment = function() {
     this.listener = snd.AUDIO_CONTEXT.listener;
     this.listeners = {};
     this.soundNodes = {};
+    this.unit = 1.0;
+};
+
+/**
+ * SI単位系の接頭辞です。<br/>
+ * snd.SOUND_ENVIRONMENT.setUnitPrefix(prefix)メソッドで距離の単位を指定する際に使用してください。<br/>
+ * k: 1000[m]<br/>
+ * h: 100[m]<br/>
+ * da: 10[m]<br/>
+ * d: 0.1[m]<br/>
+ * c: 0.01[m]<br/>
+ * m: 0.001[m]<br/>
+ * 
+ */
+snd.SoundEnvironment.prefix = {
+    kilo: 1000,
+    hecto: 100,
+    deca: 10,
+    metre: 1.0,
+    deci: 0.1,
+    centi: 0.01,
+    milli: 0.001
 };
 
 /**
@@ -15,8 +37,12 @@ snd.SoundEnvironment = function() {
  */
 snd.SoundEnvironment.DEFAULT_BUFFER_MAX = 1800;
 
+snd.SoundEnvironment.prototype.setUnitPrefix = function(prefix) {
+    this.unit = prefix;
+};
+
 snd.SoundEnvironment.prototype.addListener = function(id, listener) {
-    this.listeners[id] = new PosDirTime(listener, 1);
+    this.listeners[id] = new snd.PosDirTime(listener, 1);
 };
 
 snd.SoundEnvironment.prototype.removeListener = function(id) {
@@ -26,7 +52,7 @@ snd.SoundEnvironment.prototype.removeListener = function(id) {
 };
 
 snd.SoundEnvironment.prototype.addSoundNode = function(id, soundNode) {
-    this.soundNodes[id] = new PosDirTime(soundNode);
+    this.soundNodes[id] = new snd.PosDirTime(soundNode);
 };
 
 snd.SoundEnvironment.prototype.removeSoundNode = function(id) {

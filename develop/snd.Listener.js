@@ -44,7 +44,10 @@ snd.Listener.prototype.resetListener = function() {
 snd.Listener.prototype.setPosition = function(x, y, z) {
     snd.PosDir.prototype.setPosition.call(this, x, y, z);
     if (this.listener != null) {
-        this.listener.setPosition(x, y, z);
+        this.listener.setPosition(
+                snd.SOUND_ENVIRONMENT.unit * this.pos.x,
+                snd.SOUND_ENVIRONMENT.unit * this.pos.y,
+                snd.SOUND_ENVIRONMENT.unit * this.pos.z);
     }
 };
 
@@ -84,7 +87,10 @@ snd.Listener.prototype.setOrientationBySpherical = function(dir, up) {
  */
 snd.Listener.prototype.setVelocity = function(x, y, z) {
     if (this.listener != null) {
-        this.listener.setVelocity(x, y, z);
+        this.listener.setVelocity(
+                snd.SOUND_ENVIRONMENT.unit * x,
+                snd.SOUND_ENVIRONMENT.unit * y,
+                snd.SOUND_ENVIRONMENT.unit * z);
     }
 };
 

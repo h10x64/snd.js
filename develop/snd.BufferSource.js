@@ -68,6 +68,7 @@ snd.BufferSource.prototype.setAudioBuffer = function(audioBuffer) {
     if (this.source != null) {
         this.resetEventMethod(this.source);
     }
+    delete this.source;
     this.source = src;
     this.source.buffer = this.audioBuffer;
     this.source.connect(this.gain);

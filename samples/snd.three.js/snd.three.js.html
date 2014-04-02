@@ -15,15 +15,40 @@
 
             var container, stats;
             var camera, scene, projector, renderer;
+            
+            ///   snd.three.js add start  ///
+            var CLICK_SOUND_DATA_ID = "clickSoundData";
+            
+            var clock;
+            var soundDataSet = {};
+            soundDataSet[CLICK_SOUND_DATA_ID] = "./se_maoudamashii_onepoint26.wav";
+            
+            var soundNodes = [];
+            ///   snd.three.js add end  ///
 
-            init();
-            animate();
+            ///   snd.three.js add start  ///
+            window.onload = function() {
+                clock = new THREE.Clock(true);
+                
+                snd.init();
+                
+                snd.SOUND_ENVIRONMENT.setUnitPrefix(snd.SoundEnvironment.prefix.centi);
+                
+                snd.AUDIO_DATA_MANAGER.addAll(soundDataSet);
+                snd.AUDIO_DATA_MANAGER.addAllDataLoadListener(function() {
+                    init();
+                    animate();
+                });
+                
+                snd.AUDIO_DATA_MANAGER.load();
+            };
+            ///   snd.three.js add end  ///
 
             function init() {
 
                 container = document.createElement('div');
                 document.body.appendChild(container);
-
+                
                 var info = document.createElement('div');
                 info.style.position = 'absolute';
                 info.style.top = '10px';
@@ -53,6 +78,20 @@
                     object.rotation.y = Math.random() * 2 * Math.PI;
                     object.rotation.z = Math.random() * 2 * Math.PI;
                     scene.add(object);
+                    
+                    ///  snd.three.js add start  ///
+                    var soundNode = new snd.SoundNode(object.id + "_Sound");
+                    
+                    var sound = new snd.BufferSource(object.id + "_SoundSource");
+                    sound.setAudioBuffer(snd.AUDIO_DATA_MANAGER.getAudioBuffer(CLICK_SOUND_DATA_ID));
+                    sound.connect(soundNode);
+                    soundNode.start = function() {
+                        sound.start(0);
+                    };
+                    snd.MASTER.connectAudioUnit(soundNode.id, soundNode);
+                    
+                    snd.three.attach(object, soundNode);
+                    ///  snd.three.js add end  ///
 
                 }
 
@@ -74,7 +113,17 @@
                 //
 
                 window.addEventListener('resize', onWindowResize, false);
-
+                
+                /// snd.three.js add start ///
+                
+                camera.position.x = 0;
+                camera.position.y = 0;
+                camera.position.z = 1;
+                camera.lookAt(scene.position);
+                
+                snd.three.addCamera(camera);
+                
+                /// snd.three.js add end ///
             }
 
             function onWindowResize() {
@@ -98,6 +147,13 @@
                 var intersects = raycaster.intersectObjects(scene.children);
 
                 if (intersects.length > 0) {
+                    
+                    ///  snd.three.js add start  ///
+                    var soundNodes = snd.three.getSoundNodes(intersects[0].object);
+                    for (var i = 0; i < soundNodes.length; i++) {
+                        soundNodes[i].start();
+                    }
+                    ///  snd.three.js add end  ///
 
                     new TWEEN.Tween(intersects[ 0 ].object.position).to({
                         x: Math.random() * 800 - 400,
@@ -131,7 +187,6 @@
 
                 render();
                 stats.update();
-
             }
 
             var radius = 600;
@@ -148,6 +203,12 @@
                 camera.position.z = radius * Math.cos(THREE.Math.degToRad(theta));
                 camera.lookAt(scene.position);
 
+                /// snd.three.js add start ///
+                
+                snd.three.update(camera, clock.getElapsedTime());
+                
+                /// snd.three.js add end ///
+                
                 renderer.render(scene, camera);
 
             }

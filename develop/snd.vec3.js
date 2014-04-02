@@ -80,7 +80,7 @@ snd.PosDir.prototype.setUp = function(x, y, z) {
 
 snd.PosDir.prototype.setOrientation = function(x, y, z, ux, uy, uz) {
     this.setDir(x, y, z);
-    this.setTop(ux, uy, uz);
+    this.setUp(ux, uy, uz);
 };
 
 snd.PosDir.prototype.setOrientationBySpherical = function(dir, up) {

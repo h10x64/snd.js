@@ -5,9 +5,16 @@
 
 snd.three = {version: 0.1, beta: true};
 
-snd.SOUND_ENVIRONMENT.cameras = {}; // {id: {camera: three.js.Camera, listener: snd.js.listener}}
-snd.SOUND_ENVIRONMENT.attaches = {}; // {id: {object: three.js.Object3D, sources: snd.js.SoundNode[]}}
-snd.SOUND_ENVIRONMENT.linkMap = {};
+snd.three.mode = {};
+snd.three.mode.NONE = 0x0000;
+snd.three.mode.POSTURE = 0x0001;
+snd.three.mode.DOPPLER = 0x0002;
+snd.three.mode.DELAY = 0x0004;
+snd.three.mode.ALL = 0x0007;
+
+snd.SoundEnvironment.prototype.cameras = {}; // {id: {camera: three.js.Camera, listener: snd.js.listener}}
+snd.SoundEnvironment.prototype.attaches = {}; // {id: {object: three.js.Object3D, sources: snd.js.SoundNode[]}}
+snd.SoundEnvironment.prototype.linkMap = {};
 
 snd.three.update = function(mainCamera, time) {
     if (snd.SOUND_ENVIRONMENT.cameras[mainCamera.id] == null) {
@@ -18,7 +25,7 @@ snd.three.update = function(mainCamera, time) {
         for (var id in snd.SOUND_ENVIRONMENT.cameras) {
             snd.SOUND_ENVIRONMENT.cameras[id].listener.resetListener();
         }
-        snd.SOUND_ENVIRONMENTcameras[mainCamera.id].listener.setListener(snd.AUDIO_CONTEXT.listener);
+        snd.SOUND_ENVIRONMENT.cameras[mainCamera.id].listener.setListener(snd.AUDIO_CONTEXT.listener);
     }
     
     // update listener posture
@@ -79,21 +86,21 @@ snd.three.detach = function(source) {
     }
 };
 
+snd.three.getSoundNodes = function(object) {
+    return snd.SOUND_ENVIRONMENT.attaches[object.id].sources;
+};
+
 snd.three.link = function(object3D, posdir) {
-    var objPosture = object3D.matrixWorld.elements;
+    if (!isNaN(object3D.position.x) && !isNaN(object3D.position.y) && !isNaN(object3D.position.z)
+            && !isNaN(object3D.quaternion.x) && !isNaN(object3D.quaternion.y) && !isNaN(object3D.quaternion.z) && !isNaN(object3D.quaternion.w)) {
+        var objPos = object3D.position;
+        var objDir = new THREE.Vector3(0, 0, 1).applyQuaternion(object3D.quaternion);
+        var objUp = new THREE.Vector3();
+        objUp.copy(object3D.up);
+        objUp.applyQuaternion(object3D.quaternion);
+        objUp.negate();
     
-    var pos = new snd.vec3(objPosture[12], objPosture[13], objPosture[14]);
-    var dir = new snd.vec3(objPosture[8], objPosture[9], objPosture[10]);
-    
-    var objUp = Object.create(object3D.up);
-    var objRot = new THREE.Matrix4(
-            objPosture[0], objPosture[4], objPosture[7], 0,
-            objPosture[1], objPosture[5], objPosture[8], 0,
-            objPosture[2], objPosture[6], objPosture[9], 0,
-            0, 0, 0, 1);
-    objUp.applyMatrix4(objRot);
-    objUp.negate();
-    
-    posdir.setPosition(pos.x, pos.y, pos.z);
-    posdir.setOrientation(dir.x, dir.y, dir.z, objUp.x, objUp.y, objUp.z);
+        posdir.setPosition(objPos.x, objPos.y, objPos.z);
+        posdir.setOrientation(objDir.x, objDir.y, objDir.z, objUp.x, objUp.y, objUp.z);
+    }
 };

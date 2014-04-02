@@ -178,7 +178,7 @@ snd.PosDir.prototype.setUp = function(x, y, z) {
 
 snd.PosDir.prototype.setOrientation = function(x, y, z, ux, uy, uz) {
     this.setDir(x, y, z);
-    this.setTop(ux, uy, uz);
+    this.setUp(ux, uy, uz);
 };
 
 snd.PosDir.prototype.setOrientationBySpherical = function(dir, up) {
@@ -386,6 +386,7 @@ snd.BufferSource.prototype.setAudioBuffer = function(audioBuffer) {
     if (this.source != null) {
         this.resetEventMethod(this.source);
     }
+    delete this.source;
     this.source = src;
     this.source.buffer = this.audioBuffer;
     this.source.connect(this.gain);
@@ -781,7 +782,10 @@ snd.Listener.prototype.resetListener = function() {
 snd.Listener.prototype.setPosition = function(x, y, z) {
     snd.PosDir.prototype.setPosition.call(this, x, y, z);
     if (this.listener != null) {
-        this.listener.setPosition(x, y, z);
+        this.listener.setPosition(
+                snd.SOUND_ENVIRONMENT.unit * this.pos.x,
+                snd.SOUND_ENVIRONMENT.unit * this.pos.y,
+                snd.SOUND_ENVIRONMENT.unit * this.pos.z);
     }
 };
 
@@ -821,7 +825,10 @@ snd.Listener.prototype.setOrientationBySpherical = function(dir, up) {
  */
 snd.Listener.prototype.setVelocity = function(x, y, z) {
     if (this.listener != null) {
-        this.listener.setVelocity(x, y, z);
+        this.listener.setVelocity(
+                snd.SOUND_ENVIRONMENT.unit * x,
+                snd.SOUND_ENVIRONMENT.unit * y,
+                snd.SOUND_ENVIRONMENT.unit * z);
     }
 };
 
@@ -850,6 +857,18 @@ snd.SoundNode.prototype.connect = function(connectTo) {
     }
 };
 
+snd.SoundNode.start = function(when, offset, duration) {
+    // PLEASE OVERIDE ME
+};
+
+snd.SoundNode.stop = function(when) {
+    // PLEASE OVERRIDE ME
+};
+
+snd.SoundNode.pause = function() {
+    // PLEASE OVERRIDE ME
+};
+
 /**
  * この音源の位置を設定します。
  * @param {type} x 設定する位置のX値
@@ -858,18 +877,45 @@ snd.SoundNode.prototype.connect = function(connectTo) {
  */
  snd.SoundNode.prototype.setPosition = function(x, y, z) {
     snd.PosDir.prototype.setPosition.call(this, x, y, z);
-    this.pannerNode.setPosition(x, y, z);
+    this.pannerNode.setPosition(
+            snd.SOUND_ENVIRONMENT.unit * this.pos.x,
+            snd.SOUND_ENVIRONMENT.unit * this.pos.y,
+            snd.SOUND_ENVIRONMENT.unit * this.pos.z);
 };
 
 /**
  * この音源の向きを設定します
- * @param {type} x 正面方向ベクトルのX値
- * @param {type} y 正面方向ベクトルのY値
- * @param {type} z 正面方向ベクトルのZ値
+ * @param {Number} x 正面方向ベクトルのX値
+ * @param {Number} y 正面方向ベクトルのY値
+ * @param {Number} z 正面方向ベクトルのZ値
  */
- snd.SoundNode.prototype.setOrientation = function(x, y, z) {
-    snd.PosDir.prototype.setOrientation.call(this, x, y, z);
-    this.pannerNode.setOrientation(x, y, z);
+ snd.SoundNode.prototype.setDir = function(x, y, z) {
+    snd.PosDir.prototype.setDir.call(this, x, y, z);
+    this.pannerNode.setOrientation(this.dir.x, this.dir.y, this.dir.z);
+};
+
+/**
+ * この音源の上向きベクトルを設定します。
+ * @param {Number} x 上向きベクトルのX値
+ * @param {Number} y 上向きベクトルのY値
+ * @param {Number} z 上向きベクトルのZ値
+ */
+ snd.SoundNode.prototype.setUp = function(x, y, z) {
+    snd.PosDir.prototype.setUp.call(this, x, y, z);
+};
+
+/**
+ * この音源の向きを設定します
+ * @param {Number} dx 正面方向ベクトルのX値
+ * @param {Number} dy 正面方向ベクトルのY値
+ * @param {Number} dz 正面方向ベクトルのZ値
+ * @param {Number} ux 上方向ベクトルのX値
+ * @param {Number} uy 上方向ベクトルのY値
+ * @param {Number} uz 上方向ベクトルのZ値
+ */
+snd.SoundNode.prototype.setOrientation = function(dx, dy, dz, ux, uy, uz) {
+    snd.PosDir.prototype.setOrientation.call(this, dx, dy, dz, ux, uy, uz);
+    this.pannerNode.setOrientation(this.dir.x, this.dir.y, this.dir.z);
 };
 
 /**
@@ -879,7 +925,10 @@ snd.SoundNode.prototype.connect = function(connectTo) {
  * @param {type} z 速度ベクトルのZ値
  */
  snd.SoundNode.prototype.setVelocity = function(x, y, z) {
-    this.pannerNode.setVelocity(x, y, z);
+    this.pannerNode.setVelocity(
+            snd.SOUND_ENVIRONMENT.unit * x,
+            snd.SOUND_ENVIRONMENT.unit * y,
+            snd.SOUND_ENVIRONMENT.unit * z);
 };
 
 
@@ -1122,6 +1171,28 @@ snd.SoundEnvironment = function() {
     this.listener = snd.AUDIO_CONTEXT.listener;
     this.listeners = {};
     this.soundNodes = {};
+    this.unit = 1.0;
+};
+
+/**
+ * SI単位系の接頭辞です。<br/>
+ * snd.SOUND_ENVIRONMENT.setUnitPrefix(prefix)メソッドで距離の単位を指定する際に使用してください。<br/>
+ * k: 1000[m]<br/>
+ * h: 100[m]<br/>
+ * da: 10[m]<br/>
+ * d: 0.1[m]<br/>
+ * c: 0.01[m]<br/>
+ * m: 0.001[m]<br/>
+ * 
+ */
+snd.SoundEnvironment.prefix = {
+    kilo: 1000,
+    hecto: 100,
+    deca: 10,
+    metre: 1.0,
+    deci: 0.1,
+    centi: 0.01,
+    milli: 0.001
 };
 
 /**
@@ -1131,8 +1202,12 @@ snd.SoundEnvironment = function() {
  */
 snd.SoundEnvironment.DEFAULT_BUFFER_MAX = 1800;
 
+snd.SoundEnvironment.prototype.setUnitPrefix = function(prefix) {
+    this.unit = prefix;
+};
+
 snd.SoundEnvironment.prototype.addListener = function(id, listener) {
-    this.listeners[id] = new PosDirTime(listener, 1);
+    this.listeners[id] = new snd.PosDirTime(listener, 1);
 };
 
 snd.SoundEnvironment.prototype.removeListener = function(id) {
@@ -1142,7 +1217,7 @@ snd.SoundEnvironment.prototype.removeListener = function(id) {
 };
 
 snd.SoundEnvironment.prototype.addSoundNode = function(id, soundNode) {
-    this.soundNodes[id] = new PosDirTime(soundNode);
+    this.soundNodes[id] = new snd.PosDirTime(soundNode);
 };
 
 snd.SoundEnvironment.prototype.removeSoundNode = function(id) {
