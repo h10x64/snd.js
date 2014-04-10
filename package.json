@@ -1,0 +1,21 @@
+{
+  "name": "snd.js",
+  "version": "0.1.0",
+  "description": "The Sound Liblary with the Web Audio API",
+  "devDependencies": {
+    "grunt": "^0.4.4",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-contrib-concat": "~0.4.0",
+    "grunt-contrib-uglify": "~0.4.0",
+    "grunt-jsdoc": "~0.5.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/h10x64/snd.js.git"
+  },
+  "author": {
+    "name": "n_h",
+    "email": "h.10x64@gmail.com"
+  },
+  "license": "MIT"
+}

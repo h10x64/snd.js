@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>snd.js - The Sound Library for JavaScript with WebAudioAPI - Index</title>
+	<title>snd.js - The Sound Library for JavaScript with WebAudioAPI - Class: AudioUnit</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -127,52 +127,321 @@
 					
 
 
-	
-	<span class="page-title">Index</span>
-	
-	
+	<h1 class="page-title">Class: AudioUnit</h1>
+<section>
 
+<header>
+    <h2>
+    AudioUnit
+    </h2>
+    
+        <div class="class-description">1つのオーディオユニットを定義するクラスです。     インタフェースクラスなので、継承されることを前提としています。     引数にAudioUnitを要求するメソッドに渡すオブジェクトは、ここで定義されている各メソッドを実装している必要があります。</div>
+    
+</header>
 
+<article>
+    <div class="container-overview">
+    
 
+    
+        
+<dt>
+    <h4 class="name" id="AudioUnit"><span class="type-signature"></span>new AudioUnit<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
 
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-	
-	
+    
 
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 705
+    </li></ul></dd>
+    
 
+    
 
+    
 
+    
+</dl>
 
-    <section>
-        <article><h1>snd.js -The Sound Library for JavaScript with WebAudioAPI -</h1>
-<p>WebAudioAPIを使用したJavaScriptのサウンドライブラリです。<br>distフォルダに入っている*.jsファイルを使用してください。<br>(srcフォルダにはビルド前のソースコードが入っています。)  </p>
-<h3>自分でビルドする時は</h3>
-<p>ビルドに以下のソフトを使用しています。  </p>
-<ul>
-<li>Node.js</li>
-<li>Grunt</li>
-</ul>
-<p>上記ソフトをインストールした後、package.jsonなどのあるフォルダをカレントディレクトリにし、コンソールで</p>
-<pre><code>npm install</code></pre>
-<p>を実行してください。
-その後、</p>
-<pre><code>grunt</code></pre>
-<p>を実行することでdistフォルダにjsファイルがビルドされます。</p>
-<h3>変更点</h3>
-<p>バージョンを0.1に変更しました。<br>ビルドツールにGruntを使用するようにし、ディレクトリの構成を変更しました。</p>
-<h3>課題・目標など</h3>
-<p>課題や、今後扱う目標などはGithubのIssuesを参照してください。<br><a href="https://github.com/h10x64/snd.js/issues">https://github.com/h10x64/snd.js/issues</a></p></article>
-    </section>
+    
+    
 
+    
 
+    
+    
+    
+    
+    
+    
+    
+</dd>
 
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+            
+<dt>
+    <h4 class="name" id="connect"><span class="type-signature"></span>connect<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        このオーディオユニットをconnectToで指定されたオーディオユニットまたはノードに接続します。
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 713
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="disconnect"><span class="type-signature"></span>disconnect<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        このオーディオユニットをdisconnectFromから切断します。
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 720
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="getConnector"><span class="type-signature"></span>getConnector<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        このオーディオユニットのconnect/disconnectメソッドを持つオブジェクトを返します。<br/>AudioUnitクラス、SoundEnvironmentクラスなどのオブジェクトから呼び出されるメソッドですので、通常はAudioUnit#connect/AudioUnit#disconnectメソッドを使用してください。
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 729
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        </dl>
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 
