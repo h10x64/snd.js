@@ -1,12 +1,13 @@
 /**
- * @namespace snd.jsの基幹ネームスペースです。
- * @version 62190 beta
+ * snd.jsの基幹ネームスペースです。
+ * @namespase
  */
 snd = {VERSION: "62190", IS_BETA:true};
 
 /**
  * ブラウザ名です
  * @type String
+ * @memberOf snd
  */
 snd.BLOWSER = window.navigator.userAgent.toLowerCase();
 
@@ -22,7 +23,9 @@ if (snd.BLOWSER.indexOf("chrome") != -1) {
 /*** CONSTANTS ***/
 
 /**
- * @namespace 音源のステータスを表す値を入れるネームスペースです。
+ * 音源のステータスを表す値を入れるネームスペースです。
+ * @memberOf snd
+ * @namespace
  */
 snd.status = {};
 /**
@@ -47,7 +50,9 @@ snd.status.PAUSED = "paused";
 snd.status.STOPPED= "ended";
 
 /**
- * @namespace 音源の種類をあらわす値を入れるネームスペースです。
+ * 音源の種類をあらわす値を入れるネームスペースです。
+ * @memberOf snd
+ * @namespace
  */
 snd.srctype = {};
 /**

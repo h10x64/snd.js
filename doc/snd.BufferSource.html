@@ -29,15 +29,11 @@
 					<ul class="dropdown-menu ">
 						
 						<li>
-							<a href="__.html">jsの基幹ネームスペースです。</a>
+							<a href="snd.srctype.html">srctype</a>
 						</li>
 						
 						<li>
-							<a href="______.html">音源のステータスを表す値を入れるネームスペースです。</a>
-						</li>
-						
-						<li>
-							<a href="_______.html">音源の種類をあらわす値を入れるネームスペースです。</a>
+							<a href="snd.status.html">status</a>
 						</li>
 						
 
@@ -99,15 +95,29 @@
 						</li>
 						
 						<li>
-							<a href="___.html">フレーム更新時にエラーが発生した時にthrowするオブジェクト</a>
+							<a href="__.html">フレーム更新時にエラーが発生した時にthrowするオブジェクト</a>
 						</li>
 						
 						<li>
-							<a href="____.html">主ボリュームのみの単純なユニットです。</a>
+							<a href="___.html">主ボリュームのみの単純なユニットです。</a>
 						</li>
 						
 						<li>
-							<a href="_____.html">各種音源クラスの親クラスとなる抽象クラスです。</a>
+							<a href="____.html">各種音源クラスの親クラスとなる抽象クラスです。</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+				<li class="dropdown">
+					<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="global.html#snd">snd</a>
 						</li>
 						
 
@@ -132,6 +142,8 @@
 
 <header>
     <h2>
+        <span class="ancestors"><a href="global.html#snd">snd</a>.</span>
+    
     BufferSource
     </h2>
     
@@ -192,7 +204,7 @@
             <td class="type">
             
                 
-<span class="param-type">type</span>
+<span class="param-type">String</span>
 
 
             
@@ -234,7 +246,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 331
+        snd.js, line 346
     </li></ul></dd>
     
 
@@ -280,6 +292,242 @@
         <dl>
             
 <dt>
+    <h4 class="name" id="connect"><span class="type-signature"></span>connect<span class="signature">(connectTo)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        この音源をsnd.AudioUnitを継承するオブジェクトやWebAudioAPIのエフェクトに接続します。
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>connectTo</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="snd.AudioUnit.html">snd.AudioUnit</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">接続先</td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 412
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="disconnect"><span class="type-signature"></span>disconnect<span class="signature">(disconnectFrom)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        この音源をdisconnectFromで指定されたオブジェクトから切断します。
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>disconnectFrom</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="snd.AudioUnit.html">snd.AudioUnit</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">切断元</td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 424
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
     <h4 class="name" id="setAudioBuffer"><span class="type-signature"></span>setAudioBuffer<span class="signature">(audioBuffer)</span><span class="type-signature"></span></h4>
     
     
@@ -288,7 +536,7 @@
     
     
     <div class="description">
-        オーディオバッファを設定するメソッドです。<br>
+        オーディオバッファを設定するメソッドです。
     </div>
     
 
@@ -328,7 +576,7 @@
             <td class="type">
             
                 
-<span class="param-type">type</span>
+<span class="param-type">AudioBuffer</span>
 
 
             
@@ -370,7 +618,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 396
+        snd.js, line 432
     </li></ul></dd>
     
 
@@ -488,7 +736,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 423
+        snd.js, line 459
     </li></ul></dd>
     
 
@@ -606,7 +854,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 445
+        snd.js, line 481
     </li></ul></dd>
     
 
@@ -724,7 +972,292 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 434
+        snd.js, line 470
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="start"><span class="type-signature"></span>start<span class="signature">(when, offset, duration)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        この音源の再生を開始します。<br/>
+v0.1時点では、途中で止める(AudioタグのPauseに相当)事はできません。<br/>
+start()とすると、すぐにデータの頭から終わりまでの再生が開始されます。
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>when</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">何秒後に再生を開始するか</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>offset</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">音源の再生開始位置（単位:秒）</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>duration</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">音源の再生終了位置（単位:秒）</td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 368
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="stop"><span class="type-signature"></span>stop<span class="signature">(when)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        この音源を停止します。<br/>
+WebAudioAPIのBufferSourceと異なり、停止後も再度startメソッドを呼ぶことで何度でも再生が可能です。
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>when</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">何秒後に再生を停止するか</td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 398
     </li></ul></dd>
     
 
@@ -778,7 +1311,7 @@
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a>
-		on Fri Apr 11 2014 04:48:54 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		on Thu Apr 17 2014 01:38:26 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
 			</div>

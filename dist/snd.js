@@ -28,14 +28,15 @@
  
 
 /**
- * @namespace snd.jsの基幹ネームスペースです。
- * @version 62190 beta
+ * snd.jsの基幹ネームスペースです。
+ * @namespase
  */
 snd = {VERSION: "62190", IS_BETA:true};
 
 /**
  * ブラウザ名です
  * @type String
+ * @memberOf snd
  */
 snd.BLOWSER = window.navigator.userAgent.toLowerCase();
 
@@ -51,7 +52,9 @@ if (snd.BLOWSER.indexOf("chrome") != -1) {
 /*** CONSTANTS ***/
 
 /**
- * @namespace 音源のステータスを表す値を入れるネームスペースです。
+ * 音源のステータスを表す値を入れるネームスペースです。
+ * @memberOf snd
+ * @namespace
  */
 snd.status = {};
 /**
@@ -76,7 +79,9 @@ snd.status.PAUSED = "paused";
 snd.status.STOPPED= "ended";
 
 /**
- * @namespace 音源の種類をあらわす値を入れるネームスペースです。
+ * 音源の種類をあらわす値を入れるネームスペースです。
+ * @memberOf snd
+ * @namespace
  */
 snd.srctype = {};
 /**
@@ -259,7 +264,7 @@ snd.Source.prototype.stop = function() {
 
 /**
  * 詳細はAudioUnitクラスのconnectを参照してください。
- * @param {type} connectTo 接続先
+ * @param {AudioUnit} connectTo 接続先
  */
 snd.Source.prototype.connect = function(connectTo) {
     if (connectTo.isAudioUnit) {
@@ -271,7 +276,7 @@ snd.Source.prototype.connect = function(connectTo) {
 
 /**
  * 詳細はAudioUnitクラスのdisconnectFromを参照してください。
- * @param {type} disconnectFrom 切断する接続先
+ * @param {AudioUnit} disconnectFrom 切断する接続先
  */
 snd.Source.prototype.disconnect = function(disconnectFrom) {
     if (disconnectFrom.isAudioUnit) {
@@ -281,6 +286,16 @@ snd.Source.prototype.disconnect = function(disconnectFrom) {
     }
 };
 
+/**
+ * 多数のリスナへイベントを通知できるように、this.sourceのsourceEventNameメソッドを上書きし、
+ * addFOOEventListener, removeFOOEventListenerメソッドを追加するメソッドです。<br/>
+ * 各種メソッドは動的にthisオブジェクトを書き換えますので、コンストラクタなど、クラス内部から呼び出すようにしてください。
+ * 
+ * @param {String} sourceEventName this.sourceに設定するイベント名
+ * @param {String} eventName 追加するイベント名
+ * @param {function} additionalMethod this.source.sourceEventName()が発生したときに必ず行われる処理（_this用の処理）
+ * @private
+ */
 snd.Source.prototype.addEvent = function(sourceEventName, eventName, additionalMethod) {
     var _this = this;
     this[sourceEventName] = function() {
@@ -326,7 +341,7 @@ snd.Source.prototype.resetEventMethod = function(src) {
  * @class バイナリデータを再生する音源です。<br/>
  * 詳細はWebAudioAPIの仕様を参照してください。<br/>
  * どのブラウザも、基本的にwav形式のファイルには対応していますが、mp3については対応状況がまばらです。<br/>
- * @param {type} id この音源のID
+ * @param {String} id この音源のID
  */
 snd.BufferSource = function(id) {
     snd.Source.apply(this, arguments);
@@ -341,6 +356,15 @@ snd.BufferSource = function(id) {
 snd.BufferSource.prototype = Object.create(snd.Source.prototype);
 snd.BufferSource.prototype.constructor = snd.BufferSource;
 
+/**
+ * この音源の再生を開始します。<br/>
+ * v0.1時点では、途中で止める(AudioタグのPauseに相当)事はできません。<br/>
+ * start()とすると、すぐにデータの頭から終わりまでの再生が開始されます。
+ * 
+ * @param {Number} when 何秒後に再生を開始するか
+ * @param {Number} offset 音源の再生開始位置（単位:秒）
+ * @param {Number} duration 音源の再生終了位置（単位:秒）
+ */
 snd.BufferSource.prototype.start = function(when, offset, duration) {
     if (this.source != null && this.status == snd.status.READY) {
         if (when == null) {
@@ -366,6 +390,11 @@ snd.BufferSource.prototype.start = function(when, offset, duration) {
     }
 };
 
+/**
+ * この音源を停止します。<br/>
+ * WebAudioAPIのBufferSourceと異なり、停止後も再度startメソッドを呼ぶことで何度でも再生が可能です。
+ * @param {Number} when 何秒後に再生を停止するか 
+ */
 snd.BufferSource.prototype.stop = function(when) {
     if (this.source != null) {
         if (when == null) {
@@ -376,6 +405,10 @@ snd.BufferSource.prototype.stop = function(when) {
     }
 };
 
+/**
+ * この音源をsnd.AudioUnitを継承するオブジェクトやWebAudioAPIのエフェクトに接続します。
+ * @param {snd.AudioUnit} connectTo 接続先
+ */
 snd.BufferSource.prototype.connect = function(connectTo) {
     if (connectTo.isAudioUnit) {
         this.gain.connect(connectTo.getConnector());
@@ -384,14 +417,17 @@ snd.BufferSource.prototype.connect = function(connectTo) {
     }
 };
 
+/**
+ * この音源をdisconnectFromで指定されたオブジェクトから切断します。
+ * @param {snd.AudioUnit} disconnectFrom 切断元
+ */
 snd.BufferSource.prototype.disconnect = function(disconnectFrom) {
     this.gain.disconnect(disconnectFrom);
 };
 
 /**
- * オーディオバッファを設定するメソッドです。<br>
- * 
- * @param {type} audioBuffer
+ * オーディオバッファを設定するメソッドです。
+ * @param {AudioBuffer} audioBuffer
  */
 snd.BufferSource.prototype.setAudioBuffer = function(audioBuffer) {
     this.audioBuffer = audioBuffer;
@@ -766,12 +802,11 @@ snd.GainOnlyUnit.prototype.getGain = function() {
 
 
 /**
- * @class リスナを表すクラスです。
- *      AudioContext#Listenerをラップしています。
- *      <a href="#setListener">setListener</a>メソッドを呼び出すまではthis.listenerはnullで、実際の出力へは反映されません。
- *      this.listenerがnullである間も位置は記録されるので、<a href="#setListener">setListener</a>メソッドが呼び出された時点で
- *      WebAudioAPIのListenerに、そのオブジェクトで設定された姿勢が反映されます。
- * @param {Listener} listener AudioContext.listener
+ * @class リスナを表すクラスです。<br/>
+ * AudioContext#Listenerをラップしています。<br/>
+ * <a href="#setListener">setListener</a>メソッドを呼び出すまでは実際の出力へは反映されませんが、setPositionなどで設定された位置情報は保持されます。<br/>
+ * （setListenerメソッドでListenerをセットした時点でListenerにこのオブジェクトの姿勢情報が反映されるようになります。）<br/>
+ * @param {Listener} listener AudioContext.Listener (nullでもよい)
  */
 snd.Listener = function(listener) {
     snd.PosDir.apply(this, arguments);
@@ -785,9 +820,9 @@ snd.Listener.prototype = Object.create(snd.PosDir.prototype);
 snd.Listener.prototype.constructor = snd.Listener;
 
 /**
- * listenerを設定します。
- *      このメソッドで設定されるまで、WebAudioAPIのlistenerには反映されません。
- * @param {Listener} listener
+ * listenerを設定します。<br/>
+ * このメソッドで設定されるまで、WebAudioAPIのlistenerには反映されません。
+ * @param {Listener} AudioContext.Listener
  */
 snd.Listener.prototype.setListener = function(listener) {
     this.listener = listener;

@@ -1,10 +1,9 @@
 /**
- * @class リスナを表すクラスです。
- *      AudioContext#Listenerをラップしています。
- *      <a href="#setListener">setListener</a>メソッドを呼び出すまではthis.listenerはnullで、実際の出力へは反映されません。
- *      this.listenerがnullである間も位置は記録されるので、<a href="#setListener">setListener</a>メソッドが呼び出された時点で
- *      WebAudioAPIのListenerに、そのオブジェクトで設定された姿勢が反映されます。
- * @param {Listener} listener AudioContext.listener
+ * @class リスナを表すクラスです。<br/>
+ * AudioContext#Listenerをラップしています。<br/>
+ * <a href="#setListener">setListener</a>メソッドを呼び出すまでは実際の出力へは反映されませんが、setPositionなどで設定された位置情報は保持されます。<br/>
+ * （setListenerメソッドでListenerをセットした時点でListenerにこのオブジェクトの姿勢情報が反映されるようになります。）<br/>
+ * @param {Listener} listener AudioContext.Listener (nullでもよい)
  */
 snd.Listener = function(listener) {
     snd.PosDir.apply(this, arguments);
@@ -18,9 +17,9 @@ snd.Listener.prototype = Object.create(snd.PosDir.prototype);
 snd.Listener.prototype.constructor = snd.Listener;
 
 /**
- * listenerを設定します。
- *      このメソッドで設定されるまで、WebAudioAPIのlistenerには反映されません。
- * @param {Listener} listener
+ * listenerを設定します。<br/>
+ * このメソッドで設定されるまで、WebAudioAPIのlistenerには反映されません。
+ * @param {Listener} AudioContext.Listener
  */
 snd.Listener.prototype.setListener = function(listener) {
     this.listener = listener;

@@ -2,7 +2,7 @@
  * @class バイナリデータを再生する音源です。<br/>
  * 詳細はWebAudioAPIの仕様を参照してください。<br/>
  * どのブラウザも、基本的にwav形式のファイルには対応していますが、mp3については対応状況がまばらです。<br/>
- * @param {type} id この音源のID
+ * @param {String} id この音源のID
  */
 snd.BufferSource = function(id) {
     snd.Source.apply(this, arguments);
@@ -17,6 +17,15 @@ snd.BufferSource = function(id) {
 snd.BufferSource.prototype = Object.create(snd.Source.prototype);
 snd.BufferSource.prototype.constructor = snd.BufferSource;
 
+/**
+ * この音源の再生を開始します。<br/>
+ * v0.1時点では、途中で止める(AudioタグのPauseに相当)事はできません。<br/>
+ * start()とすると、すぐにデータの頭から終わりまでの再生が開始されます。
+ * 
+ * @param {Number} when 何秒後に再生を開始するか
+ * @param {Number} offset 音源の再生開始位置（単位:秒）
+ * @param {Number} duration 音源の再生終了位置（単位:秒）
+ */
 snd.BufferSource.prototype.start = function(when, offset, duration) {
     if (this.source != null && this.status == snd.status.READY) {
         if (when == null) {
@@ -42,6 +51,11 @@ snd.BufferSource.prototype.start = function(when, offset, duration) {
     }
 };
 
+/**
+ * この音源を停止します。<br/>
+ * WebAudioAPIのBufferSourceと異なり、停止後も再度startメソッドを呼ぶことで何度でも再生が可能です。
+ * @param {Number} when 何秒後に再生を停止するか 
+ */
 snd.BufferSource.prototype.stop = function(when) {
     if (this.source != null) {
         if (when == null) {
@@ -52,6 +66,10 @@ snd.BufferSource.prototype.stop = function(when) {
     }
 };
 
+/**
+ * この音源をsnd.AudioUnitを継承するオブジェクトやWebAudioAPIのエフェクトに接続します。
+ * @param {snd.AudioUnit} connectTo 接続先
+ */
 snd.BufferSource.prototype.connect = function(connectTo) {
     if (connectTo.isAudioUnit) {
         this.gain.connect(connectTo.getConnector());
@@ -60,14 +78,17 @@ snd.BufferSource.prototype.connect = function(connectTo) {
     }
 };
 
+/**
+ * この音源をdisconnectFromで指定されたオブジェクトから切断します。
+ * @param {snd.AudioUnit} disconnectFrom 切断元
+ */
 snd.BufferSource.prototype.disconnect = function(disconnectFrom) {
     this.gain.disconnect(disconnectFrom);
 };
 
 /**
- * オーディオバッファを設定するメソッドです。<br>
- * 
- * @param {type} audioBuffer
+ * オーディオバッファを設定するメソッドです。
+ * @param {AudioBuffer} audioBuffer
  */
 snd.BufferSource.prototype.setAudioBuffer = function(audioBuffer) {
     this.audioBuffer = audioBuffer;
