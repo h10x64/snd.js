@@ -24,18 +24,25 @@ module.exports = function(grunt) {
               'src/snd.MediaStreamAudioSource.js',
               'src/snd.AudioUnit.js',
               'src/snd.Listener.js',
-              'src/snd.SoundNode.js',
               'src/snd.AudioDataManager.js',
               'src/snd.AudioMaster.js',
-              'src/snd.SoundEnvironment.js',
               'src/snd.util.js',
               'src/snd.static.js'
           ],
           'dist/plugins/snd.mml.js': [
+              'src/plugins/mml/COPYRIGHT',
               'src/plugins/mml/snd.mml.js'
           ],
           'dist/plugins/snd.three.js': [
-              'src/plugins/three/snd.three.js'
+              'src/plugins/three/COPYRIGHT',
+              'src/plugins/three/snd.three.static.js',
+              'src/plugins/three/snd.Listener.js',
+              'src/plugins/three/snd.SoundEnvironment.js',
+              'src/plugins/three/snd.SoundNode.js',
+              'src/plugins/three/snd.BufferSoundNode.js',
+              'src/plugins/three/snd.MediaElementAudioNode.js',
+              'src/plugins/three/snd.three.js',
+              'src/plugins/three/snd.three.util.js'
           ]
         }
       }
@@ -46,7 +53,9 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          'dist/snd.min.js' : ['dist/snd.js']
+          'dist/snd.min.js' : ['dist/snd.js'],
+          'dist/plugins/snd.mml.min.js' : ['dist/plugins/snd.mml.js'],
+          'dist/plugins/snd.three.min.js' : ['dist/plugins/snd.three.js']
         }
       }
     },

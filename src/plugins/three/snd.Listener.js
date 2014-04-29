@@ -1,4 +1,5 @@
 /**
+ * 新しいインスタンスを作ります。
  * @class リスナを表すクラスです。<br/>
  * AudioContext#Listenerをラップしています。<br/>
  * <a href="#setListener">setListener</a>メソッドを呼び出すまでは実際の出力へは反映されませんが、setPositionなどで設定された位置情報は保持されます。<br/>

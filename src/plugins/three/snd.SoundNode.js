@@ -23,6 +23,14 @@ snd.SoundNode.prototype.connect = function(connectTo) {
     }
 };
 
+snd.SoundNode.prototype.disconnect = function(disconnectFrom) {
+    if (disconnectFrom.isAudioUnit) {
+        this.pannerNode.disconnect(disconnectFrom.getConnector());
+    } else {
+        this.pannerNode.disconnect(disconnectFrom);
+    }
+};
+
 snd.SoundNode.start = function(when, offset, duration) {
     // PLEASE OVERIDE ME
 };

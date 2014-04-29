@@ -1,7 +1,8 @@
 /**
- * @class 1つのオーディオユニットを定義するクラスです。
- *      インタフェースクラスなので、継承されることを前提としています。
- *      引数にAudioUnitを要求するメソッドに渡すオブジェクトは、ここで定義されている各メソッドを実装している必要があります。
+ * 新しいオーディオユニットを生成します。
+ * @class 1つのオーディオユニットを定義する抽象クラスです。<br/>
+ * 引数にAudioUnitを要求するメソッドに渡すオブジェクトは、ここで定義されている各メソッドを実装している必要があります。
+ * @param id このオーディオユニットのID
  */
 snd.AudioUnit = function(id) {
     this.isAudioUnit = true;
@@ -9,7 +10,8 @@ snd.AudioUnit = function(id) {
 };
 
 /**
- * このオーディオユニットをconnectToで指定されたオーディオユニットまたはノードに接続します。
+ * このオーディオユニットをconnectToで指定されたオーディオユニットまたはノードに接続します。<br/>
+ * @param {snd.AudioUnit} connectTo 接続するAudioUnit
  */
 snd.AudioUnit.prototype.connect = function(connectTo) {
     // PLEASE OVERRIDE ME
@@ -17,6 +19,7 @@ snd.AudioUnit.prototype.connect = function(connectTo) {
 
 /**
  * このオーディオユニットをdisconnectFromから切断します。
+ * @param {snd.AudioUnit} disconnectFrom 切断するAudioUnit
  */
 snd.AudioUnit.prototype.disconnect = function(disconnectFrom) {
     // PLEASE OVERRIDE ME
@@ -34,8 +37,10 @@ snd.AudioUnit.prototype.getConnector = function() {
 /*** GAIN ONLY UNIT ***/
 
 /**
- * @class 主ボリュームのみの単純なユニットです。
- * @extends snd.AudioUnit
+ * 新しくボリュームユニットを生成します。
+ * @param {String} id このユニットのID
+ * @class 主ボリュームのみのもっとも単純なユニットです。<br/>
+ * ボリュームの使用法については<a href="http://g200kg.github.io/web-audio-api-ja/#GainNode">web audio api仕様のGainNode</a>を参照してください。
  */
 snd.GainOnlyUnit = function(id) {
     snd.AudioUnit.apply(this, arguments);
@@ -45,20 +50,38 @@ snd.GainOnlyUnit.prototype = Object.create(snd.AudioUnit.prototype);
 snd.GainOnlyUnit.prototype.constructor = snd.GainOnlyUnit;
 
 /**
- * @see snd.AudioUnit#getConnector
+ * このユニットをconnectToに接続します。
+ * @param {type} connectTo
  */
 snd.GainOnlyUnit.prototype.connect = function(connectTo) {
-    snd.AudioUnit.connect.apply(this, connectTo);
-    this.gain.connect(connectTo);
+    if (connectTo.isAudioUnit) {
+        this.gain.connect(connectTo.getConnector());
+    } else {
+        this.gain.connect(connectTo);
+    }
 };
 
+/**
+ * このユニットをdisconnectFromから切断します。
+ * @param {type} disconnectFrom
+ */
+snd.GainOnlyUnit.prototype.disconnect = function(disconnectFrom) {
+    if (disconnectFrom.isAudioUnit) {
+        this.gain.disconnect(disconnectFrom.getConnector());
+    } else {
+        this.gain.disconnet(disconnectFrom);
+    }
+}
+
+/**
+ * @see snd.AudioUnit#getConnector
+ */
 snd.GainOnlyUnit.prototype.getConnector = function() {
     return this.gain;
 };
 
 /**
- * メインボリュームを取得します。
- *      ボリュームの使用法については<a href="http://g200kg.github.io/web-audio-api-ja/#GainNode">web audio api仕様のGainNode</a>を参照してください。
+ * メインボリュームを取得します。<br/>
  * @returns {snd.GainNode} this.gain
  */
 snd.GainOnlyUnit.prototype.getGain = function() {

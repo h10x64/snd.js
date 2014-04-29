@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>snd.js - The Sound Library for JavaScript with WebAudioAPI - Namespace: status</title>
+	<title>snd.js - The Sound Library for JavaScript with WebAudioAPI - Class: Source</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -125,15 +125,18 @@
 					
 
 
-	<h1 class="page-title">Namespace: status</h1>
+	<h1 class="page-title">Class: Source</h1>
 <section>
 
 <header>
     <h2>
         <span class="ancestors"><a href="global.html#snd">snd</a>.</span>
     
-    status
+    Source
     </h2>
+    
+        <div class="class-description">各種音源クラスの親クラスとなる抽象クラスです。<br/>
+start, stopの抽象メソッドは継承する子クラスで実装してください。</div>
     
 </header>
 
@@ -143,10 +146,78 @@
 
     
         
-            <div class="description">音源のステータスを表す値を入れるネームスペースです。</div>
+<dt>
+    <h4 class="name" id="Source"><span class="type-signature"></span>new Source<span class="signature">(id)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        音源を生成します。<br/>
+typeプロパティはsnd.srctype.NONEに<br/>
+statusプロパティはsnd.status.NONEに<br/>
+それぞれ設定されます。
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
         
 
-        
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">この音源のID</td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
 <dl class="details">
     
 
@@ -169,7 +240,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 56
+        snd.js, line 255
     </li></ul></dd>
     
 
@@ -180,8 +251,20 @@
     
 </dl>
 
+    
+    
 
-        
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
     
     </div>
 
@@ -196,34 +279,80 @@
     
 
     
-        <h3 class="subsection-title">Members</h3>
+
+    
+        <h3 class="subsection-title">Methods</h3>
 
         <dl>
             
 <dt>
-    <h4 class="name" id="NONE"><span class="type-signature">&lt;static> </span>NONE<span class="type-signature"> :String</span></h4>
+    <h4 class="name" id="connect"><span class="type-signature"></span>connect<span class="signature">(connectTo)</span><span class="type-signature"></span></h4>
     
     
 </dt>
 <dd>
     
+    
     <div class="description">
-        音源が未設定などの理由で、ステータスがまだ定まっていないことを表す値です。
+        詳細はAudioUnitクラスのconnectを参照してください。
     </div>
     
+
     
     
-        <h5>Type:</h5>
-        <ul>
-            <li>
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>connectTo</code></td>
+            
+
+            <td class="type">
+            
                 
-<span class="param-type">String</span>
+<span class="param-type">AudioUnit</span>
 
 
-            </li>
-        </ul>
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">接続先</td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
     
-
+    
     
 <dl class="details">
     
@@ -247,7 +376,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 61
+        snd.js, line 281
     </li></ul></dd>
     
 
@@ -258,6 +387,16 @@
     
 </dl>
 
+    
+    
+
+    
+
+    
+    
+    
+    
+    
     
     
 </dd>
@@ -265,29 +404,73 @@
         
             
 <dt>
-    <h4 class="name" id="PAUSED"><span class="type-signature">&lt;static> </span>PAUSED<span class="type-signature"> :String</span></h4>
+    <h4 class="name" id="disconnect"><span class="type-signature"></span>disconnect<span class="signature">(disconnectFrom)</span><span class="type-signature"></span></h4>
     
     
 </dt>
 <dd>
     
+    
     <div class="description">
-        音源の再生が中断し、停止中であることを表す値です。
+        詳細はAudioUnitクラスのdisconnectFromを参照してください。
     </div>
     
+
     
     
-        <h5>Type:</h5>
-        <ul>
-            <li>
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>disconnectFrom</code></td>
+            
+
+            <td class="type">
+            
                 
-<span class="param-type">String</span>
+<span class="param-type">AudioUnit</span>
 
 
-            </li>
-        </ul>
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">切断する接続先</td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
     
-
+    
     
 <dl class="details">
     
@@ -311,7 +494,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 76
+        snd.js, line 293
     </li></ul></dd>
     
 
@@ -322,6 +505,16 @@
     
 </dl>
 
+    
+    
+
+    
+
+    
+    
+    
+    
+    
     
     
 </dd>
@@ -329,29 +522,24 @@
         
             
 <dt>
-    <h4 class="name" id="READY"><span class="type-signature">&lt;static> </span>READY<span class="type-signature"> :String</span></h4>
+    <h4 class="name" id="start"><span class="type-signature"></span>start<span class="signature">()</span><span class="type-signature"></span></h4>
     
     
 </dt>
 <dd>
     
+    
     <div class="description">
-        音源の読込が終了するなどして、音源の再生が可能な状態になっていることを表す値です。
+        音源の再生を開始します。
     </div>
     
+
     
     
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">String</span>
-
-
-            </li>
-        </ul>
     
-
+    
+    
+    
     
 <dl class="details">
     
@@ -375,7 +563,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 66
+        snd.js, line 266
     </li></ul></dd>
     
 
@@ -386,6 +574,16 @@
     
 </dl>
 
+    
+    
+
+    
+
+    
+    
+    
+    
+    
     
     
 </dd>
@@ -393,29 +591,24 @@
         
             
 <dt>
-    <h4 class="name" id="STARTED"><span class="type-signature">&lt;static> </span>STARTED<span class="type-signature"> :String</span></h4>
+    <h4 class="name" id="stop"><span class="type-signature"></span>stop<span class="signature">()</span><span class="type-signature"></span></h4>
     
     
 </dt>
 <dd>
     
+    
     <div class="description">
-        音源の再生が開始され、再生中であることを表す値です。
+        音源の再生を停止します。
     </div>
     
+
     
     
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">String</span>
-
-
-            </li>
-        </ul>
     
-
+    
+    
+    
     
 <dl class="details">
     
@@ -439,7 +632,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 71
+        snd.js, line 273
     </li></ul></dd>
     
 
@@ -452,75 +645,19 @@
 
     
     
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="STOPPED"><span class="type-signature">&lt;static> </span>STOPPED<span class="type-signature"> :String</span></h4>
-    
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        音源の再生が終了し、停止したことを表す値です。
-    </div>
-    
-    
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">String</span>
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
 
     
 
     
-
     
-
     
-
     
-
     
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 81
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
     
     
 </dd>
 
         </dl>
-    
-
     
 
     

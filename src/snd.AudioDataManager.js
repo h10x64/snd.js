@@ -1,4 +1,5 @@
 /**
+ * コンストラクタは使用せず、snd.AUDIO_DATA_MANAGERを使用してください。<br/>
  * @class AudioBufferの管理を行うクラスです。<br/>
  * データの読み込みだけでなく、複数のAudioBufferのローディングを待機するときなどに使用してください。
  */

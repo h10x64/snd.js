@@ -36,6 +36,10 @@
 							<a href="snd.status.html">status</a>
 						</li>
 						
+						<li>
+							<a href="snd.util.html">util</a>
+						</li>
+						
 
 					</ul>
 				</li>
@@ -47,11 +51,11 @@
 					<ul class="dropdown-menu ">
 						
 						<li>
-							<a href="_.html">PannerNodeを使用するパンニングに対応したユニットです。</a>
+							<a href="snd.AudioDataManager.html">AudioDataManager</a>
 						</li>
 						
 						<li>
-							<a href="snd.AudioDataManager.html">AudioDataManager</a>
+							<a href="snd.AudioMaster.html">AudioMaster</a>
 						</li>
 						
 						<li>
@@ -63,7 +67,7 @@
 						</li>
 						
 						<li>
-							<a href="snd.Listener.html">Listener</a>
+							<a href="snd.GainOnlyUnit.html">GainOnlyUnit</a>
 						</li>
 						
 						<li>
@@ -83,27 +87,11 @@
 						</li>
 						
 						<li>
-							<a href="snd.PosDirTime.html">PosDirTime</a>
-						</li>
-						
-						<li>
-							<a href="snd.SoundEnvironment.html">SoundEnvironment</a>
+							<a href="snd.Source.html">Source</a>
 						</li>
 						
 						<li>
 							<a href="snd.vec3.html">vec3</a>
-						</li>
-						
-						<li>
-							<a href="__.html">フレーム更新時にエラーが発生した時にthrowするオブジェクト</a>
-						</li>
-						
-						<li>
-							<a href="___.html">主ボリュームのみの単純なユニットです。</a>
-						</li>
-						
-						<li>
-							<a href="____.html">各種音源クラスの親クラスとなる抽象クラスです。</a>
 						</li>
 						
 
@@ -147,8 +135,8 @@
     OscillatorSource
     </h2>
     
-        <div class="class-description">任意の波形を再生するオシレータ音源を生成します。<br/>
-詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#dfn-OscillatorNode">WebAudioAPIの仕様<a/>を参照してください。</div>
+        <div class="class-description">任意の波形を再生するオシレータ音源を扱うクラスです。<br/>
+詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#dfn-OscillatorNode">WebAudioAPIの仕様</a>を参照してください。</div>
     
 </header>
 
@@ -165,6 +153,10 @@
 </dt>
 <dd>
     
+    
+    <div class="description">
+        新しくオシレータ音源を生成します。
+    </div>
     
 
     
@@ -245,7 +237,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 496
+        snd.js, line 527
     </li></ul></dd>
     
 
@@ -283,6 +275,74 @@
 
     
 
+    
+        <h3 class="subsection-title">Members</h3>
+
+        <dl>
+            
+<dt>
+    <h4 class="name" id="DEFAULT_FREQUENCY"><span class="type-signature">&lt;static> </span>DEFAULT_FREQUENCY<span class="type-signature"> :Number</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        基準となる周波数(440Hz)です。<br/>
+    </div>
+    
+    
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Number</span>
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 547
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+</dd>
+
+        </dl>
     
 
     
@@ -333,7 +393,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 579
+        snd.js, line 615
     </li></ul></dd>
     
 
@@ -425,7 +485,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 555
+        snd.js, line 591
     </li></ul></dd>
     
 
@@ -450,7 +510,7 @@
     
             
 <div class="param-desc">
-    周波数[hz]
+    周波数[Hz]
 </div>
 
 
@@ -519,7 +579,7 @@ OscillatorTypeの詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 531
+        snd.js, line 569
     </li></ul></dd>
     
 
@@ -661,7 +721,7 @@ OscillatorTypeの詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 568
+        snd.js, line 604
     </li></ul></dd>
     
 
@@ -747,7 +807,7 @@ OscillatorTypeの詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#
 
             
 
-            <td class="description last">周波数[hz]</td>
+            <td class="description last">周波数[Hz]</td>
         </tr>
 
 	
@@ -779,7 +839,7 @@ OscillatorTypeの詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 544
+        snd.js, line 581
     </li></ul></dd>
     
 
@@ -899,7 +959,7 @@ PriodicWaveオブジェクトの詳細は<a href="http://g200kg.github.io/web-au
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 593
+        snd.js, line 629
     </li></ul></dd>
     
 
@@ -1019,7 +1079,7 @@ OscillatorTypeの詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 518
+        snd.js, line 556
     </li></ul></dd>
     
 
@@ -1183,7 +1243,7 @@ OscillatorTypeの詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 606
+        snd.js, line 642
     </li></ul></dd>
     
 
@@ -1301,7 +1361,7 @@ OscillatorTypeの詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 621
+        snd.js, line 657
     </li></ul></dd>
     
 
@@ -1355,7 +1415,7 @@ OscillatorTypeの詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a>
-		on Thu Apr 17 2014 01:38:26 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		on Tue Apr 29 2014 21:25:12 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
 			</div>

@@ -36,6 +36,10 @@
 							<a href="snd.status.html">status</a>
 						</li>
 						
+						<li>
+							<a href="snd.util.html">util</a>
+						</li>
+						
 
 					</ul>
 				</li>
@@ -47,11 +51,11 @@
 					<ul class="dropdown-menu ">
 						
 						<li>
-							<a href="_.html">PannerNodeを使用するパンニングに対応したユニットです。</a>
+							<a href="snd.AudioDataManager.html">AudioDataManager</a>
 						</li>
 						
 						<li>
-							<a href="snd.AudioDataManager.html">AudioDataManager</a>
+							<a href="snd.AudioMaster.html">AudioMaster</a>
 						</li>
 						
 						<li>
@@ -63,7 +67,7 @@
 						</li>
 						
 						<li>
-							<a href="snd.Listener.html">Listener</a>
+							<a href="snd.GainOnlyUnit.html">GainOnlyUnit</a>
 						</li>
 						
 						<li>
@@ -83,27 +87,11 @@
 						</li>
 						
 						<li>
-							<a href="snd.PosDirTime.html">PosDirTime</a>
-						</li>
-						
-						<li>
-							<a href="snd.SoundEnvironment.html">SoundEnvironment</a>
+							<a href="snd.Source.html">Source</a>
 						</li>
 						
 						<li>
 							<a href="snd.vec3.html">vec3</a>
-						</li>
-						
-						<li>
-							<a href="__.html">フレーム更新時にエラーが発生した時にthrowするオブジェクト</a>
-						</li>
-						
-						<li>
-							<a href="___.html">主ボリュームのみの単純なユニットです。</a>
-						</li>
-						
-						<li>
-							<a href="____.html">各種音源クラスの親クラスとなる抽象クラスです。</a>
 						</li>
 						
 
@@ -166,6 +154,10 @@
 <dd>
     
     
+    <div class="description">
+        コンストラクタは使用せず、snd.AUDIO_DATA_MANAGERを使用してください。<br/>
+    </div>
+    
 
     
     
@@ -196,7 +188,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1005
+        snd.js, line 1571
     </li></ul></dd>
     
 
@@ -277,7 +269,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1015
+        snd.js, line 1581
     </li></ul></dd>
     
 
@@ -332,7 +324,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1020
+        snd.js, line 1586
     </li></ul></dd>
     
 
@@ -387,7 +379,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1010
+        snd.js, line 1576
     </li></ul></dd>
     
 
@@ -524,7 +516,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1107
+        snd.js, line 1673
     </li></ul></dd>
     
 
@@ -647,7 +639,7 @@ addAllを使用した時点ではまだ読込は開始されません。<br/>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1151
+        snd.js, line 1717
     </li></ul></dd>
     
 
@@ -772,7 +764,7 @@ addAllを使用した時点ではまだ読込は開始されません。<br/>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1040
+        snd.js, line 1606
     </li></ul></dd>
     
 
@@ -914,7 +906,7 @@ addAllを使用した時点ではまだ読込は開始されません。<br/>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1067
+        snd.js, line 1633
     </li></ul></dd>
     
 
@@ -990,7 +982,7 @@ addAllを使用した時点ではまだ読込は開始されません。<br/>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1132
+        snd.js, line 1698
     </li></ul></dd>
     
 
@@ -1131,7 +1123,7 @@ addAllを使用した時点ではまだ読込は開始されません。<br/>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1094
+        snd.js, line 1660
     </li></ul></dd>
     
 
@@ -1276,7 +1268,7 @@ addAllを使用した時点ではまだ読込は開始されません。<br/>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1167
+        snd.js, line 1733
     </li></ul></dd>
     
 
@@ -1427,7 +1419,7 @@ AudioDataManagerが内部で使用するための関数なので、オーバー�
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1183
+        snd.js, line 1749
     </li></ul></dd>
     
 
@@ -1498,7 +1490,7 @@ AudioDataManagerが内部で使用するための関数なので、オーバー�
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1030
+        snd.js, line 1596
     </li></ul></dd>
     
 
@@ -1616,7 +1608,7 @@ AudioDataManagerが内部で使用するための関数なので、オーバー�
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1049
+        snd.js, line 1615
     </li></ul></dd>
     
 
@@ -1758,7 +1750,7 @@ AudioDataManagerが内部で使用するための関数なので、オーバー�
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1080
+        snd.js, line 1646
     </li></ul></dd>
     
 
@@ -1831,7 +1823,7 @@ AudioDataManagerが内部で使用するための関数なので、オーバー�
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a>
-		on Thu Apr 17 2014 01:38:25 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		on Tue Apr 29 2014 21:25:10 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
 			</div>

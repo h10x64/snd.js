@@ -42,9 +42,14 @@
             <div display="block" right="5em" width="300px">
                 <h3>Sample: snd.three.js</h3>
                 The sample using <a href="http://threejs.org" target="_blank">three.js</a><br/>
+                <div>
+                    WASD:   Move Camera<br/>
+                    IJKL: Rotate Camera<br/>
+                </div>
                 <div id="debug"></div>
             </div>
         </div>
+        <div id="bgm"><div>
 
         <script src="../libs/three.js/three.min.js"></script>
         <script src="../libs/three.js/stats.min.js"></script>
@@ -53,12 +58,11 @@
 
         <script>
             /**** Initialize snd.js ****/
-
-            // Initialize snd.js
+            
             snd.init();
-
+            
             // Set three.js measurement length to "cm"
-            //  ex.) mesh.setPosition(100, 0, 0) mean setPosition(100cm, 0cm, 0cm)
+            //  ex.) obj3D.setPosition(100, 0, 0) mean setPosition(100cm, 0cm, 0cm)
             snd.SOUND_ENVIRONMENT.setUnitPrefix(snd.SoundEnvironment.prefix.centi);
 
             /**************************/
@@ -70,14 +74,17 @@
             var ROTATE_SPEED = Math.PI / 180;
 
             var container, stats;
-            var camera, scene, renderer, mesh, mesh2;
+            var camera, scene, renderer, matchSoundMesh, bgmSoundMesh;
             var cameraRig, activeCamera, activeHelper;
             var cameraPerspective, cameraOrtho;
             var cameraPerspectiveHelper, cameraOrthoHelper;
 
-            var SOUND_DATA = {"match": "./sound/test.wav"};
-            var SOUND_SOURCE = null;
-            var SOUND_NODE = new snd.SoundNode("match_node");
+            var SOUND_DATA = {
+                "match": "./sound/test.wav",
+                "BGM": "./sound/01 Liftoff (Get High).wav"
+            };
+            var MATCH_SOUND_NODE = null;
+            var BGM_SOUND_NODE = null;
             var clock = new THREE.Clock();
 
             var cameraMove = {
@@ -92,26 +99,37 @@
             };
             var cameraEulerAngle = new THREE.Euler(0, 0, 0, "YXZ");
 
-            snd.util.createBufferSources(SOUND_DATA, function(sources) {
+            /* Load sound effect(s) into AudioBuffer and callback initialize methods when the sound(s) are loaded. */
+            
+            snd.three.util.createBufferSoundNodes(SOUND_DATA, true, function(ret) {
+                // Set created sound into the global var.
+                MATCH_SOUND_NODE = ret["match"];
+                BGM_SOUND_NODE = ret["BGM"];
+
+                // Initialize 3D objects
                 init();
+                
+                // Initialize Sound objects
+                initSound();
 
-                SOUND_SOURCE = sources["match"];
-                SOUND_SOURCE.setLoop(true);
-
-                SOUND_SOURCE.connect(SOUND_NODE);
-                snd.MASTER.connectAudioUnit(SOUND_NODE.id, SOUND_NODE);
-
-                snd.three.attach(mesh, SOUND_NODE);
-                snd.three.addCamera(cameraPerspective);
-                snd.three.addCamera(cameraOrtho);
-
-                SOUND_SOURCE.start();
-
+                // Start animation
                 animate();
             });
+            
+            function initSound() {
+                snd.three.attach(bgmSoundMesh, BGM_SOUND_NODE);
+                BGM_SOUND_NODE.setLoop(true);
+                BGM_SOUND_NODE.start();
+                
+                snd.three.attach(matchSoundMesh, MATCH_SOUND_NODE);
+                MATCH_SOUND_NODE.setLoop(true);
+                MATCH_SOUND_NODE.start();
+                
+                snd.three.addCamera(cameraPerspective);
+                snd.three.addCamera(cameraOrtho);
+            };
 
             function init() {
-
                 container = document.createElement('div');
                 document.body.appendChild(container);
 
@@ -177,11 +195,11 @@
             
             function initGeometory() {
                 // Create Sound Object
-                mesh = new THREE.Mesh(new THREE.SphereGeometry(5, 16, 8), new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: true}));
-                scene.add(mesh);
+                matchSoundMesh = new THREE.Mesh(new THREE.SphereGeometry(5, 16, 8), new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: true}));
+                scene.add(matchSoundMesh);
 
-                mesh2 = new THREE.Mesh(new THREE.SphereGeometry(5, 16, 8), new THREE.MeshBasicMaterial({color: 0x00ff00, wireframe: true}));
-                scene.add(mesh2);
+                bgmSoundMesh = new THREE.Mesh(new THREE.SphereGeometry(5, 16, 8), new THREE.MeshBasicMaterial({color: 0x00ff00, wireframe: true}));
+                scene.add(bgmSoundMesh);
 
                 // Create Particles (Stars)
                 var geometry = new THREE.Geometry();
@@ -214,8 +232,8 @@
                 scene.add(grid);
             }
 
-            //
-
+            /** Events **/
+            
             function onKeyDown(event) {
                 switch (event.keyCode) {
                     case 79: /*O*/
@@ -253,8 +271,7 @@
                         cameraMove.turnRight = true;
                         break;
                 }
-            }
-            ;
+            };
 
             function onKeyUp(event) {
                 switch (event.keyCode) {
@@ -285,9 +302,7 @@
                         cameraMove.turnRight = false;
                         break;
                 }
-            }
-
-            //
+            };
 
             function onWindowResize(event) {
 
@@ -309,27 +324,24 @@
                 cameraOrtho.updateProjectionMatrix();
 
             }
+            
+            /** Animation & Render **/
 
             function animate() {
                 requestAnimationFrame(animate);
 
-                /* Move Objects */
-                
+                // Move Objects
                 moveObjects();
                 
-                /* Render */
-
+                // Render
                 render();
                 
-                /* Update stats */
-                
+                // Update stats
                 stats.update();
                 
-                /* Update snd.js */
-
+                // Update snd.js
                 snd.three.update(activeCamera, clock.getElapsedTime());
             }
-
 
             function render() {
                 renderer.clear();
@@ -348,11 +360,11 @@
             function moveObjects() {
                 var r = Date.now() * 0.0005;
 
-                mesh.position.x = 700 * Math.cos(r);
-                mesh.position.z = 700 * Math.sin(r);
+                matchSoundMesh.position.x = 700 * Math.cos(r);
+                matchSoundMesh.position.z = 700 * Math.sin(r);
 
-                mesh2.position.x = 0;
-                mesh2.position.z = 500;
+                bgmSoundMesh.position.x = 0;
+                bgmSoundMesh.position.z = 500;
 
                 if (activeCamera === cameraPerspective) {
                     cameraPerspective.updateProjectionMatrix();

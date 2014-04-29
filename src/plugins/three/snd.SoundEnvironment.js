@@ -7,6 +7,10 @@ snd.SoundEnvironment = function() {
     this.listeners = {};
     this.soundNodes = {};
     this.unit = 1.0;
+    
+    this.cameras = {}; // {id: {camera: three.js.Camera, listener: snd.js.listener}}
+    this.attaches = {}; // {id: {object: three.js.Object3D, sources: snd.js.SoundNode[]}}
+    this.linkMap = {};
 };
 
 /**

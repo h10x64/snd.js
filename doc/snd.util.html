@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>snd.js - The Sound Library for JavaScript with WebAudioAPI - Class: Listener</title>
+	<title>snd.js - The Sound Library for JavaScript with WebAudioAPI - Namespace: util</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -37,7 +37,7 @@
 						</li>
 						
 						<li>
-							<a href="_.html">util よく使う処理をまとめたネームスペースです。</a>
+							<a href="snd.util.html">util</a>
 						</li>
 						
 
@@ -55,6 +55,10 @@
 						</li>
 						
 						<li>
+							<a href="snd.AudioMaster.html">AudioMaster</a>
+						</li>
+						
+						<li>
 							<a href="snd.AudioUnit.html">AudioUnit</a>
 						</li>
 						
@@ -64,10 +68,6 @@
 						
 						<li>
 							<a href="snd.GainOnlyUnit.html">GainOnlyUnit</a>
-						</li>
-						
-						<li>
-							<a href="snd.Listener.html">Listener</a>
 						</li>
 						
 						<li>
@@ -125,17 +125,15 @@
 					
 
 
-	<h1 class="page-title">Class: Listener</h1>
+	<h1 class="page-title">Namespace: util</h1>
 <section>
 
 <header>
     <h2>
         <span class="ancestors"><a href="global.html#snd">snd</a>.</span>
     
-    Listener
+    util
     </h2>
-    
-        <div class="class-description">リスナを表すクラスです。<br/>AudioContext#Listenerをラップしています。<br/><a href="#setListener">setListener</a>メソッドを呼び出すまでは実際の出力へは反映されませんが、setPositionなどで設定された位置情報は保持されます。<br/>（setListenerメソッドでListenerをセットした時点でListenerにこのオブジェクトの姿勢情報が反映されるようになります。）<br/></div>
     
 </header>
 
@@ -145,71 +143,10 @@
 
     
         
-<dt>
-    <h4 class="name" id="Listener"><span class="type-signature"></span>new Listener<span class="signature">(listener)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
+            <div class="description">よく使う処理をまとめたネームスペースです。</div>
         
 
-<table class="params table table-striped">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-
-		<th>Type</th>
-
-		
-
-		
-
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-
-	<tbody>
-	
-
-        <tr>
-            
-                <td class="name"><code>listener</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Listener</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">AudioContext.Listener (nullでもよい)</td>
-        </tr>
-
-	
-	</tbody>
-</table>
-
-    
-    
-    
+        
 <dl class="details">
     
 
@@ -232,7 +169,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1547
+        snd.js, line 1822
     </li></ul></dd>
     
 
@@ -243,20 +180,8 @@
     
 </dl>
 
-    
-    
 
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
+        
     
     </div>
 
@@ -278,7 +203,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="resetListener"><span class="type-signature"></span>resetListener<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="createBufferSources"><span class="type-signature">&lt;static> </span>createBufferSources<span class="signature">(dataSet, connectToMaster, func)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -286,76 +211,15 @@
     
     
     <div class="description">
-        このオブジェクトに設定されているlistenerをnullへリセットします。
-    </div>
-    
-
-    
-    
-    
-    
-    
-    
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1572
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="setListener"><span class="type-signature"></span>setListener<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        listenerを設定します。<br/>このメソッドで設定されるまで、WebAudioAPIのlistenerには反映されません。
+        AudioBufferを使用した音源を複数作成するメソッドです。<br/>
+音源のIDとデータのURLをまとめたハッシュマップdataSetを渡すと、読み込み終了時に
+コールバック関数funcが呼び出されます。<br/>
+コールバック関数funcの引数には、BufferSourceクラスのオブジェクトをまとめたハッシュマップが渡されます。<br/>
+このマップのキー値にはデータセットで設定したIDが使用され、データURLの内容を出力する音源がその値として入っています。<br/>
+<br/>
+また、connectToMasterをtrueに設定した場合、自動でsnd.MASTER.connectAudioUnitを実行します。<br/>
+この場合、funcの中でBufferSourceオブジェクトのstartメソッドを使うだけで音が再生されるようになります。<br/>
+音源と出力の間にエフェクトを追加する必要が無い場合、connectToMasterをtrueに設定すると便利です。
     </div>
     
 
@@ -389,13 +253,13 @@
 
         <tr>
             
-                <td class="name"><code>AudioContext.Listener</code></td>
+                <td class="name"><code>dataSet</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Listener</span>
+<span class="param-type">HashMap</span>
 
 
             
@@ -405,7 +269,53 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last">音源のIDと、データURLのハッシュマップ {ID1: "URL1", ID2: "URL2", ... IDn: "URLn"}</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>connectToMaster</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">読み込み完了時にsnd.MASTERへ接続するかどうか</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>func</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">読込みが終了し、音源の準備が完了した時に呼ばれるコールバック関数</td>
         </tr>
 
 	
@@ -437,7 +347,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1563
+        snd.js, line 1879
     </li></ul></dd>
     
 
@@ -465,7 +375,7 @@
         
             
 <dt>
-    <h4 class="name" id="setOrientation"><span class="type-signature"></span>setOrientation<span class="signature">(x, y, z, ux, uy, uz)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="createMediaElementAudioSources"><span class="type-signature">&lt;static> </span>createMediaElementAudioSources<span class="signature">(dataSet, connectToMaster, element)</span><span class="type-signature"> &rarr; {HashMap}</span></h4>
     
     
 </dt>
@@ -473,7 +383,14 @@
     
     
     <div class="description">
-        リスナの向きを設定します。
+        Audioタグを使用した音源を複数作成するメソッドです。<br/>
+音源のIDとデータのURLをまとめたハッシュマップdataSetを渡すと、指定されたelementにAudioタグを追加し、
+MediaElementAudioSourceクラスのオブジェクトを生成し、ハッシュマップにまとめて返します。<br/>
+戻値のキー値にはデータセットで設定したIDが使用され、src属性がdataSetで指定されたURLとなったAudioタグのエレメントが値として入ります。<br/>
+<br/>
+また、connectToMasterをtrueに設定した場合、自動でsnd.MASTER.connectAudioUnitを実行します。<br/>
+この場合、funcの中でBufferSourceオブジェクトのstartメソッドを使うだけで音が再生されるようになります。<br/>
+音源と出力の間にエフェクトを追加する必要が無い場合、connectToMasterをtrueに設定すると便利です。
     </div>
     
 
@@ -507,13 +424,13 @@
 
         <tr>
             
-                <td class="name"><code>x</code></td>
+                <td class="name"><code>dataSet</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">flaot</span>
+<span class="param-type">HashMap</span>
 
 
             
@@ -523,20 +440,20 @@
 
             
 
-            <td class="description last">正面方向ベクトルのX値</td>
+            <td class="description last">音源のIDと、データURLのハッシュマップ {ID1: "URL1", ID2: "URL2", ... IDn: "URLn"}</td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>y</code></td>
+                <td class="name"><code>connectToMaster</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">flaot</span>
+<span class="param-type">boolean</span>
 
 
             
@@ -546,506 +463,14 @@
 
             
 
-            <td class="description last">正面方向ベクトルのY値</td>
+            <td class="description last">読み込み完了時にsnd.MASTERへ接続するかどうか</td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>z</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">flaot</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">正面方向ベクトルのZ値</td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>ux</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">flaot</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">上方向ベクトルのX値</td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>uy</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">flaot</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">上方向ベクトルのY値</td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>uz</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">flaot</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">上方向ベクトルのZ値</td>
-        </tr>
-
-	
-	</tbody>
-</table>
-
-    
-    
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1601
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="setOrientationBySpherical"><span class="type-signature"></span>setOrientationBySpherical<span class="signature">(dir, up)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        球座標でリスナーの向きを設定します。
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-
-		<th>Type</th>
-
-		
-
-		
-
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-
-	<tbody>
-	
-
-        <tr>
-            
-                <td class="name"><code>dir</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="snd.vec3.html">snd.vec3</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">dir.x:方位角 dir.y:仰角 dir.z:距離</td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>up</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="snd.vec3.html">snd.vec3</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">up.x:方位角 up.y:仰角 up.z:距離</td>
-        </tr>
-
-	
-	</tbody>
-</table>
-
-    
-    
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1613
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="setPosition"><span class="type-signature"></span>setPosition<span class="signature">(x, y, z)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        リスナの位置を設定します。
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-
-		<th>Type</th>
-
-		
-
-		
-
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-
-	<tbody>
-	
-
-        <tr>
-            
-                <td class="name"><code>x</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">float</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">X軸の値</td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>y</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">float</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Y軸の値</td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>z</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">float</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Z軸の値</td>
-        </tr>
-
-	
-	</tbody>
-</table>
-
-    
-    
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1582
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="setVelocity"><span class="type-signature"></span>setVelocity<span class="signature">(x, y, z)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        速度を設定します。
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-
-		<th>Type</th>
-
-		
-
-		
-
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-
-	<tbody>
-	
-
-        <tr>
-            
-                <td class="name"><code>x</code></td>
+                <td class="name"><code>element</code></td>
             
 
             <td class="type">
@@ -1061,53 +486,7 @@
 
             
 
-            <td class="description last">X軸方向の速度</td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>y</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">type</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Y軸方向の速度</td>
-        </tr>
-
-	
-
-        <tr>
-            
-                <td class="name"><code>z</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">type</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Z軸方向の速度</td>
+            <td class="description last">Audioタグを追加するDOMエレメント</td>
         </tr>
 
 	
@@ -1139,7 +518,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1626
+        snd.js, line 1934
     </li></ul></dd>
     
 
@@ -1160,6 +539,548 @@
     
     
     
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">HashMap</span>
+
+
+	</dd>
+</dl>
+
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="createSources"><span class="type-signature">&lt;static> </span>createSources<span class="signature">(dataSet, connectToMaster, element, func)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        dataSetで指定されたURLの音源をまとめて作成します。<br/>
+connectToMasterがtrueに設定されていた場合、snd.MASTERへの接続が同時に行われます。<br/>
+elementには&lt;Audio&gt;タグを追加するDOMエレメントを指定してください。<br/>
+全ての設定とAudioBufferの読み込みが終了すると、funcに設定されたコールバックメソッドが呼び出されます。<br/>
+<br/>
+以下にdataSetの具体例を例示します。<br/>
+<br/>
+dataSet = {<br/>
+  MediaElement: {'MediaSourceID01': './hoge/fuga/bgm1.wav', 'MediaSourceID02': './hoge/fuga/bgm2.mp3'},<br/>
+  AudioBuffer: {'BufferSourceID01': './hoge/fuga/sound1.wav', 'BufferSourceID02': './hoge/fuga/sound2.mp3'}<br/>
+};
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>dataSet</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HashMap</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">音源のIDとURLをまとめたデータセット</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>connectToMaster</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">snd.MASTERに接続するかどうか</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>element</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">HTMLElement</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Audioタグを追加するDOMエレメント</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>func</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">コールバックメソッド</td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 1843
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="noteToFrequency"><span class="type-signature">&lt;static> </span>noteToFrequency<span class="signature">(octave, pitch)</span><span class="type-signature"> &rarr; {Number}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        オクターブと音高から周波数を計算します。<br/>
+周波数の基準はA4(440[Hz])です。<br/>
+音高の指定は0～12の値(実数)で行い、整数部が1増えるごとに半音上昇します。
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>octave</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">オクターブ</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>pitch</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">音高(A=0, A#=1, B=2, ... G=10, G#=11)</td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 1965
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    周波数[hz]
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">Number</span>
+
+
+	</dd>
+</dl>
+
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="noteToSec"><span class="type-signature">&lt;static> </span>noteToSec<span class="signature">(tempo, noteValue)</span><span class="type-signature"> &rarr; {Number}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        テンポと音長から秒数を計算します。
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>tempo</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">type</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">テンポ(1分間に演奏する4分音符の個数)</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>noteValue</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">type</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">音長 (全音符=1, 半音符=2, 四分音符=4, 八分音符=8, ... )</td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 1976
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">Number</span>
+
+
+	</dd>
+</dl>
+
+
+        
     
     
 </dd>
@@ -1193,7 +1114,7 @@
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a>
-		on Tue Apr 29 2014 19:02:44 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		on Tue Apr 29 2014 21:25:12 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
 			</div>

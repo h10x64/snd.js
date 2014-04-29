@@ -1,9 +1,10 @@
 
 /**
- * @class 任意の波形を再生するオシレータ音源を生成します。<br/>
- * 詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#dfn-OscillatorNode">WebAudioAPIの仕様<a/>を参照してください。
- * 
+ * 新しくオシレータ音源を生成します。
  * @param {type} id この音源をあらわすID
+ * @class 任意の波形を再生するオシレータ音源を扱うクラスです。<br/>
+ * 詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#dfn-OscillatorNode">WebAudioAPIの仕様</a>を参照してください。
+ * @memberOf snd
  */
 snd.OscillatorSource = function(id) {
     snd.Source.apply(this, arguments);
@@ -11,13 +12,20 @@ snd.OscillatorSource = function(id) {
     this.type = snd.srctype.OSCILLATOR;
     this.status = snd.status.NONE;
     
-    this.addEvent("onended", "Stop", function(){this.status = snd.status.STOPPED; this.resetOscillator();});
+    this.listeners = {
+        onended: []
+    };
 
     this.resetOscillator();
 };
 snd.OscillatorSource.prototype = Object.create(snd.Source.prototype);
 snd.OscillatorSource.prototype.constructor = snd.OscillatorSource;
 
+/**
+ * 基準となる周波数(440Hz)です。<br/>
+ * @type Number
+ * @memberOf snd.OscillatorSource
+ */
 snd.OscillatorSource.DEFAULT_FREQUENCY = 440;
 
 /**
@@ -50,8 +58,7 @@ snd.OscillatorSource.prototype.getType = function() {
 
 /**
  * 周波数を設定します。
- * 
- * @param {type} hz 周波数[hz]
+ * @param {type} hz 周波数[Hz]
  */
 snd.OscillatorSource.prototype.setFrequency = function(hz) {
     if (this.source != null) {
@@ -61,8 +68,7 @@ snd.OscillatorSource.prototype.setFrequency = function(hz) {
 
 /**
  * 現在の周波数を取得します。
- * 
- * @returns {Number} 周波数[hz]
+ * @returns {Number} 周波数[Hz]
  */
 snd.OscillatorSource.prototype.getFrequency = function() {
     if (this.source != null) {
@@ -153,6 +159,9 @@ snd.OscillatorSource.prototype.resetOscillator = function() {
     }
 
     this.source = snd.AUDIO_CONTEXT.createOscillator();
+    
+    this.resetEventMethods();
+    
     this.source.connect(this.gain);
     if (freq != null) {
         this.setFrequency(freq);
@@ -166,4 +175,31 @@ snd.OscillatorSource.prototype.resetOscillator = function() {
     }
 
     this.status = snd.status.READY;
+};
+
+/* Add/Remove Event Listener Methods */
+
+snd.OscillatorSource.prototype.addOnEndedEventListener = function(listener) {
+    this.listeners['onended'].push(listener);
+};
+
+snd.OscillatorSource.prototype.removeOnEndedEventListener = function(listener) {
+    var a = this.listeners['onended'];
+    for (var i = 0; i < a.length; i++) {
+        if (a[i] === listener) {
+            a.splice(i, 1);
+            break;
+        }
+    }
+};
+
+snd.OscillatorSource.prototype.resetEventMethods = function() {
+    var _this = this;
+    
+    this.source.onended = function() {
+        var a = _this.listeners['onended'];
+        for (var i = 0; i < a.length; i++) {
+            a[i](_this);
+        }
+    };
 };

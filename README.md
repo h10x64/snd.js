@@ -24,11 +24,16 @@ distフォルダに入っている*.jsファイルを使用してください。
 
 ### 変更点
 
-バージョンを0.1に変更しました。  
+バージョンを0.1に変更しました。
 ビルドツールにGruntを使用するようにし、ディレクトリの構成を変更しました。
 
 ### 課題・目標など
 
 課題や、今後扱う目標などはGithubのIssuesを参照してください。  
 <https://github.com/h10x64/snd.js/issues>
+
+### ライセンス
+
+The MIT License (MIT)
+copyright (c) 2014 N_H <h.10x64@gmail.com>
 

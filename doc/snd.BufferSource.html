@@ -36,6 +36,10 @@
 							<a href="snd.status.html">status</a>
 						</li>
 						
+						<li>
+							<a href="snd.util.html">util</a>
+						</li>
+						
 
 					</ul>
 				</li>
@@ -47,11 +51,11 @@
 					<ul class="dropdown-menu ">
 						
 						<li>
-							<a href="_.html">PannerNodeを使用するパンニングに対応したユニットです。</a>
+							<a href="snd.AudioDataManager.html">AudioDataManager</a>
 						</li>
 						
 						<li>
-							<a href="snd.AudioDataManager.html">AudioDataManager</a>
+							<a href="snd.AudioMaster.html">AudioMaster</a>
 						</li>
 						
 						<li>
@@ -63,7 +67,7 @@
 						</li>
 						
 						<li>
-							<a href="snd.Listener.html">Listener</a>
+							<a href="snd.GainOnlyUnit.html">GainOnlyUnit</a>
 						</li>
 						
 						<li>
@@ -83,27 +87,11 @@
 						</li>
 						
 						<li>
-							<a href="snd.PosDirTime.html">PosDirTime</a>
-						</li>
-						
-						<li>
-							<a href="snd.SoundEnvironment.html">SoundEnvironment</a>
+							<a href="snd.Source.html">Source</a>
 						</li>
 						
 						<li>
 							<a href="snd.vec3.html">vec3</a>
-						</li>
-						
-						<li>
-							<a href="__.html">フレーム更新時にエラーが発生した時にthrowするオブジェクト</a>
-						</li>
-						
-						<li>
-							<a href="___.html">主ボリュームのみの単純なユニットです。</a>
-						</li>
-						
-						<li>
-							<a href="____.html">各種音源クラスの親クラスとなる抽象クラスです。</a>
 						</li>
 						
 
@@ -147,9 +135,9 @@
     BufferSource
     </h2>
     
-        <div class="class-description">バイナリデータを再生する音源です。<br/>
+        <div class="class-description">AudioBufferを使用してバイナリデータを再生する音源です。<br/>
 詳細はWebAudioAPIの仕様を参照してください。<br/>
-どのブラウザも、基本的にwav形式のファイルには対応していますが、mp3については対応状況がまばらです。<br/></div>
+wav, mp3などが再生可能ですが、ブラウザにより対応状況が異なります。</div>
     
 </header>
 
@@ -166,6 +154,10 @@
 </dt>
 <dd>
     
+    
+    <div class="description">
+        AudioBufferを使用する音源を新しく生成します。
+    </div>
     
 
     
@@ -246,7 +238,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 346
+        snd.js, line 308
     </li></ul></dd>
     
 
@@ -290,6 +282,125 @@
         <h3 class="subsection-title">Methods</h3>
 
         <dl>
+            
+<dt>
+    <h4 class="name" id="addOnEndedEventListener"><span class="type-signature"></span>addOnEndedEventListener<span class="signature">(listener)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        渡されたイベントリスナーをこの音源の再生終了イベントのリスナーリストへ追加します。<br/>
+追加されたlistenerは、この音源の再生が終了したとき(onendedイベント発生時)にコールバックメソッドとして呼び出されます<br/>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>listener</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">音源の再生終了イベント発生時に呼び出されるコールバックメソッド</td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 456
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
             
 <dt>
     <h4 class="name" id="connect"><span class="type-signature"></span>connect<span class="signature">(connectTo)</span><span class="type-signature"></span></h4>
@@ -382,7 +493,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 412
+        snd.js, line 376
     </li></ul></dd>
     
 
@@ -500,7 +611,491 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 424
+        snd.js, line 388
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="getLoop"><span class="type-signature"></span>getLoop<span class="signature">()</span><span class="type-signature"> &rarr; {Boolean}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        この音源がループするかどうかを取得します。
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 407
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    この音源がループするか否か
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">Boolean</span>
+
+
+	</dd>
+</dl>
+
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="getLoopEnd"><span class="type-signature"></span>getLoopEnd<span class="signature">()</span><span class="type-signature"> &rarr; {double}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        ループの終端を取得します。
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 445
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    ループの終了位置[秒]
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">double</span>
+
+
+	</dd>
+</dl>
+
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="getLoopStart"><span class="type-signature"></span>getLoopStart<span class="signature">()</span><span class="type-signature"> &rarr; {double}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        ループの開始位置を取得します。
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 426
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    ループの開始位置[秒]
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">double</span>
+
+
+	</dd>
+</dl>
+
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="removeOnEndedEventListener"><span class="type-signature"></span>removeOnEndedEventListener<span class="signature">(listener)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        渡されたイベントリスナーをこの音源の再生終了イベントのリスナーリストから削除します。<br/>
+与えられたlistenerが見つかった場合、削除を行いtrueを返します。<br/>
+見つからなかった場合は、何もせずにfalseを返します。
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>listener</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">イベントのリスナー</td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 467
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    listenerが見つかり、実際に削除が行われたらtrue, そうでなければfalse
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">boolean</span>
+
+
+	</dd>
+</dl>
+
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="resetEventMethods"><span class="type-signature">&lt;private> </span>resetEventMethods<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 508
     </li></ul></dd>
     
 
@@ -618,7 +1213,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 432
+        snd.js, line 482
     </li></ul></dd>
     
 
@@ -736,7 +1331,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 459
+        snd.js, line 396
     </li></ul></dd>
     
 
@@ -854,7 +1449,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 481
+        snd.js, line 434
     </li></ul></dd>
     
 
@@ -940,7 +1535,7 @@
 
             
 
-            <td class="description last"></td>
+            <td class="description last">ループの開始位置[秒]</td>
         </tr>
 
 	
@@ -972,7 +1567,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 470
+        snd.js, line 415
     </li></ul></dd>
     
 
@@ -1009,7 +1604,7 @@
     
     <div class="description">
         この音源の再生を開始します。<br/>
-v0.1時点では、途中で止める(AudioタグのPauseに相当)事はできません。<br/>
+一時停止はできません。<br/>
 start()とすると、すぐにデータの頭から終わりまでの再生が開始されます。
     </div>
     
@@ -1138,7 +1733,7 @@ start()とすると、すぐにデータの頭から終わりまでの再生が�
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 368
+        snd.js, line 332
     </li></ul></dd>
     
 
@@ -1175,7 +1770,7 @@ start()とすると、すぐにデータの頭から終わりまでの再生が�
     
     <div class="description">
         この音源を停止します。<br/>
-WebAudioAPIのBufferSourceと異なり、停止後も再度startメソッドを呼ぶことで何度でも再生が可能です。
+停止後も再度startメソッドを呼ぶことで何度でも再生が可能です。
     </div>
     
 
@@ -1257,7 +1852,7 @@ WebAudioAPIのBufferSourceと異なり、停止後も再度startメソッドを�
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 398
+        snd.js, line 362
     </li></ul></dd>
     
 
@@ -1311,7 +1906,7 @@ WebAudioAPIのBufferSourceと異なり、停止後も再度startメソッドを�
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a>
-		on Thu Apr 17 2014 01:38:26 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		on Tue Apr 29 2014 21:25:11 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
 			</div>
