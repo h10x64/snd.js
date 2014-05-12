@@ -29,6 +29,14 @@ snd.Source.prototype.stop = function() {
     // PLEASE OVERRIDE ME
 };
 
+snd.Source.prototype.setGain = function(value) {
+    this.gain.gain.value = value;
+};
+
+snd.Source.prototype.getGain = function(value) {
+    return this.gain.gain.value;
+};
+
 /**
  * 詳細はAudioUnitクラスのconnectを参照してください。
  * @param {AudioUnit} connectTo 接続先

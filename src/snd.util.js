@@ -141,12 +141,12 @@ snd.util.createMediaElementAudioSources = function(dataSet, connectToMaster, ele
  * 周波数の基準はA4(440[Hz])です。<br/>
  * 音高の指定は0～12の値(実数)で行い、整数部が1増えるごとに半音上昇します。
  * @param {Number} octave オクターブ
- * @param {Number} pitch 音高(A=0, A#=1, B=2, ... G=10, G#=11)
+ * @param {Number} pitch 音高(C=0, C#=1, ... B = )
  * @returns {Number} 周波数[hz]
  * @memberOf snd.util
  */
 snd.util.noteToFrequency = function(octave, pitch) {
-    return 440.0 * Math.pow(2.0, (12 * (octave - 4) + pitch) / 12);
+    return 440.0 * Math.pow(2.0, (12 * (octave - 4) + pitch - 9) / 12);
 };
 
 /**

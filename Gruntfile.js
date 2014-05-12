@@ -22,6 +22,7 @@ module.exports = function(grunt) {
               'src/snd.OscillatorSource.js',
               'src/snd.MediaElementAudioSource.js',
               'src/snd.MediaStreamAudioSource.js',
+              'src/snd.Synth.js',
               'src/snd.AudioUnit.js',
               'src/snd.Listener.js',
               'src/snd.AudioDataManager.js',

@@ -128,6 +128,7 @@ snd.OscillatorSource.prototype.start = function(when, offset, duration) {
         } else {
             this.source.start(when);
         }
+        this.status = snd.status.STARTED;
     }
 };
 
@@ -143,6 +144,7 @@ snd.OscillatorSource.prototype.stop = function(when) {
         } else {
             this.source.stop(when);
         }
+        this.status = snd.status.STOPPED;
     }
 };
 

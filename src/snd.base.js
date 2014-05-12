@@ -82,3 +82,17 @@ snd.srctype.MEDIA_ELEMENT = "MediaElement";
  * @type String
  */
 snd.srctype.OSCILLATOR = "Oscillator";
+
+
+snd.audioparam = {};
+/**
+ * オーディオパラメータの補間方法を指定する際に使用する定数をまとめた名前空間です。
+ * @memberof snd
+ * @namespace
+ */
+snd.audioparam.type = {};
+
+snd.audioparam.type.SET = "Set";
+snd.audioparam.type.LINER = "Liner";
+snd.audioparam.type.EXPONENTIALLY = "Exponentially";
+
