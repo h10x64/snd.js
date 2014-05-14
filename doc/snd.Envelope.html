@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>snd.js - The Sound Library for JavaScript with WebAudioAPI - Class: vec3</title>
+	<title>snd.js - The Sound Library for JavaScript with WebAudioAPI - Class: Envelope</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -133,17 +133,15 @@
 					
 
 
-	<h1 class="page-title">Class: vec3</h1>
+	<h1 class="page-title">Class: Envelope</h1>
 <section>
 
 <header>
     <h2>
         <span class="ancestors"><a href="global.html#snd">snd</a>.</span>
     
-    vec3
+    Envelope
     </h2>
-    
-        <div class="class-description">3次元ベクトルクラスです。<br/>球座標としても使われ、その場合、x, y, zの値はそれぞれ<br/>x: 方位角<br/>y: 仰角<br/>z: 距離<br/>として扱われます。</div>
     
 </header>
 
@@ -154,7 +152,7 @@
     
         
 <dt>
-    <h4 class="name" id="vec3"><span class="type-signature"></span>new vec3<span class="signature">(x, y, z)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Envelope"><span class="type-signature"></span>new Envelope<span class="signature">(attackTime, attack, attackType, decayTime, decayType, sustainTime, sutain, sustainType, releaseTime, release, releaseType)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -162,7 +160,18 @@
     
     
     <div class="description">
-        x, y, zで指定した値を持つ新しいインスタンスを生成します。
+        エンベロープの設定値を保持するクラスです。<br/>
+ADSR(Attack, Decay, Sustain, Release)を、時間と音量と補間処理の種類の3つの値で制御します。<br/>
+時間の単位は全て秒単位です。<br/>
+アタック、ディケイ、サスティーン、リリースの値はゲインの値で、出力に乗じる値を指定します(デシベルではありません)。<br/>
+補間処理の種類は、「補間なし」「直線補間」「対数補間」の3種類があり、snd.audioparam.type名前空間にある定数を使って、いずれか一つを指定します。<br/>
+<table>
+<tr>定数値<td></td><td>補間方法</td></tr>
+<tr><td>snd.audioparam.type.SET</td><td>補間なし</td></tr>
+<tr><td>snd.audioparam.type.LINER</td><td>直線補間</td></tr>
+<tr><td>snd.audioparam.type.EXPONENTIALLY</td><td>対数補間</td></tr>
+</table><br/>
+また、エンベロープについて詳しくは<a href="http://en.wikipedia.org/wiki/Synthesizer#ADSR_envelope">Wikipedia(英)</a>や<a href="http://ja.wikipedia.org/wiki/ADSR">Wikipedia(日)</a>を参照してください。<br/>
     </div>
     
 
@@ -196,13 +205,13 @@
 
         <tr>
             
-                <td class="name"><code>x</code></td>
+                <td class="name"><code>attackTime</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">type</span>
 
 
             
@@ -212,20 +221,20 @@
 
             
 
-            <td class="description last">ベクトルのX値</td>
+            <td class="description last">アタックタイム[秒]</td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>y</code></td>
+                <td class="name"><code>attack</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">type</span>
 
 
             
@@ -235,20 +244,20 @@
 
             
 
-            <td class="description last">ベクトルのY値</td>
+            <td class="description last">アタック</td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>z</code></td>
+                <td class="name"><code>attackType</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">type</span>
 
 
             
@@ -258,7 +267,191 @@
 
             
 
-            <td class="description last">ベクトルのZ値</td>
+            <td class="description last">アタックの補間法</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>decayTime</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">type</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">ディケイタイム[秒]</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>decayType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">type</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">ディケイの補間法</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>sustainTime</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">type</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">サスティーンタイム[秒](0以下の値が指定された場合、NoteOffまで変化なし)</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>sutain</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">type</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">サスティーン</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>sustainType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">type</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">サスティーンの補間法</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>releaseTime</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">type</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">リリースタイム[秒]</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>release</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">type</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">リリース</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>releaseType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">type</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">リリースの補間法</td>
         </tr>
 
 	
@@ -290,7 +483,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 141
+        snd.js, line 1699
     </li></ul></dd>
     
 
@@ -358,7 +551,7 @@
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a>
-		on Thu May 15 2014 01:54:26 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		on Thu May 15 2014 01:54:24 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
 			</div>

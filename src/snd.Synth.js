@@ -204,14 +204,14 @@ snd.Envelope = function(
         sustainTime, sustain, sustainType,
         releaseTime, release, releaseType) {
     this.attackTime = (attackTime == null) ? 0.1 : attackTime;
-    this.attack = (attack == null) ? 0.75 : attack;
+    this.attack = (attack == null) ? 0.25 : attack;
     this.attackType = (attackType == null) ? snd.audioparam.type.LINER : attackType;
     this.decayTime = (decayTime == null) ? 0.1 : decayTime;
     this.decayType = (decayType == null) ? snd.audioparam.type.LINER : decayType;
     this.sustainTime = (sustainTime == null) ? -1 : sustainTime;
-    this.sustain = (sustain == null) ? 0.25 : sustain;
+    this.sustain = (sustain == null) ? 0.125 : sustain;
     this.sustainType = (sustainType == null) ? snd.audioparam.type.LINER : sustainType;
     this.releaseTime = (releaseTime == null) ? 0.5 : releaseTime;
-    this.release = (release == null) ? 0.25 : release;
+    this.release = (release == null) ? 0.125 : release;
     this.releaseType = (releaseType == null) ? snd.audioparam.type.LINER : releaseType;
 };
