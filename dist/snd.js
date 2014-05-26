@@ -112,6 +112,11 @@ snd.srctype.MEDIA_ELEMENT = "MediaElement";
  */
 snd.srctype.OSCILLATOR = "Oscillator";
 
+snd.oscillatortype = {};
+snd.oscillatortype.SINE = "sine";
+snd.oscillatortype.SQUARE = "SQUARE";
+snd.oscillatortype.SAWTOOTH = "SAWTOOTH";
+snd.oscillatortype.TRIANGLE = "TRIANGLE";
 
 snd.audioparam = {};
 /**
@@ -542,8 +547,7 @@ snd.BufferSource.prototype.resetEventMethods = function() {
 /**
  * 新しくオシレータ音源を生成します。
  * @param {type} id この音源をあらわすID
- * @class 任意の波形を再生するオシレータ音源を扱うクラスです。<br/>
- * 詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#dfn-OscillatorNode">WebAudioAPIの仕様</a>を参照してください。
+ * @class 任意の波形を再生するオシレータ音源を扱うクラスです。
  * @memberOf snd
  */
 snd.OscillatorSource = function(id) {
@@ -551,6 +555,7 @@ snd.OscillatorSource = function(id) {
 
     this.type = snd.srctype.OSCILLATOR;
     this.status = snd.status.NONE;
+    this.periodicWave = null;
     
     this.listeners = {
         onended: []
@@ -568,14 +573,36 @@ snd.OscillatorSource.prototype.constructor = snd.OscillatorSource;
  */
 snd.OscillatorSource.DEFAULT_FREQUENCY = 440;
 
+snd.OscillatorSource.SINE = "sine";
+snd.OscillatorSource.SQUARE = "square";
+snd.OscillatorSource.SAWTOOTH = "sawtooth";
+snd.OscillatorSource.TRIANGLE = "triangle";
+
+/**
+ * 波形を設定します。<br/>
+ * waveformにはsnd.oscillatortype名前空間に定義されているSINEなどの定数か、またはPeriodicWaveオブジェクトを入れてください。<br/>
+ * 定数が使用された場合はsetWaveTypeメソッドを、そうでない場合はsetPeriodicWaveメソッドを使用して、このオシレータの波形を設定します。
+ * @param {String_or_PeriodicWave} waveform 波形データ。
+ * @returns {undefined}
+ */
+snd.OscillatorSource.prototype.setWaveForm = function(waveform) {
+    if (waveform === snd.oscillatortype.SINE
+            || waveform === snd.oscillatortype.SQUARE
+            || waveform === snd.oscillatortype.SAWTOOTH
+            || waveform === snd.oscillatortype.TRIANGLE) {
+        this.setOscillatorType(waveform);
+    } else {
+        this.setPeriodicWave(waveform);
+    }
+};
+
 /**
  * 波形の種類を設定します。<br/>
- * 引数のoscillatorTypeはWebAudioAPIで定義されたOscillatorType列挙型を使用してください。<br/>
- * OscillatorTypeの詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#dfn-OscillatorNode">WebAudioAPIの仕様<a/>を参照してください。
+ * 引数には、snd.oscillatortype.SINE, snd.oscillatortype.SQUARE, snd.oscillatortype.SAWTOOTH, snd.oscillatortype.TRIANGLEのいずれかを設定してください。
  * 
  * @param {OscillatorType} oscillatorType
  */
-snd.OscillatorSource.prototype.setType = function(oscillatorType) {
+snd.OscillatorSource.prototype.setOscillatorType = function(oscillatorType) {
     if (this.source != null) {
         this.source.type = oscillatorType;
     }
@@ -584,11 +611,11 @@ snd.OscillatorSource.prototype.setType = function(oscillatorType) {
 /**
  * このオシレータの波形の種類を返します。<br/>
  * 戻り値にはOscillatorTypeが使われます。<br/>
- * OscillatorTypeの詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#dfn-OscillatorNode">WebAudioAPIの仕様<a/>を参照してください。
+ * OscillatorTypeの詳細は、WebAudioAPIの仕様を参照してください。
  * 
  * @returns {OscillatorType} 波形の種類
  */
-snd.OscillatorSource.prototype.getType = function() {
+snd.OscillatorSource.prototype.getOscillatorType = function() {
     if (this.source != null) {
         return this.source.type;
     } else {
@@ -649,10 +676,19 @@ snd.OscillatorSource.prototype.getDetune = function() {
  * @param {PeriodicWave} periodicWave フーリエ級数で表された波形(1周期分)
  */
 snd.OscillatorSource.prototype.setPeriodicWave = function(periodicWave) {
+    this.periodicWave = periodicWave;
     if (this.source != null) {
         this.source.setPeriodicWave(periodicWave);
     }
 };
+
+/**
+ * この音源の波形データを返します。
+ * @returns {PeriodicWave}
+ */
+snd.OscillatorSource.prototype.getPeriodicWave = function() {
+    return this.periodicWave;
+}
 
 /**
  * 波形の再生をスタートします。
@@ -691,6 +727,7 @@ snd.OscillatorSource.prototype.stop = function(when) {
 snd.OscillatorSource.prototype.resetOscillator = function() {
     var freq = null;
     var cent = null;
+    var oscillatorType = null;
 
     if (this.source != null) {
         freq = this.getFrequency();
@@ -698,6 +735,7 @@ snd.OscillatorSource.prototype.resetOscillator = function() {
         if (this.status != snd.status.STOPPED) {
             this.source.stop(0);
         }
+        oscillatorType = this.getOscillatorType();
     }
 
     this.source = snd.AUDIO_CONTEXT.createOscillator();
@@ -714,6 +752,12 @@ snd.OscillatorSource.prototype.resetOscillator = function() {
         this.setDetune(cent);
     } else {
         this.setFrequency(0);
+    }
+    if (oscillatorType != null && oscillatorType != "custom") {
+        this.setOscillatorType(oscillatorType);
+    }
+    if (this.getPeriodicWave() != null) {
+        this.setPeriodicWave(this.getPeriodicWave());
     }
 
     this.status = snd.status.READY;
@@ -1496,44 +1540,70 @@ snd.MediaStreamAudioSource.prototype.constructor = snd.MediaStreamAudioSource;
 
 
 
-snd.Synth = function(id, polyphony, waveForm, envelope) {
+/**
+ * シンセサイザクラスです。<br/>
+ * 
+ * @param {type} id
+ * @param {type} polyphony
+ * @param {snd.Synth.Settings} settings
+ * @returns {undefined}
+ */
+snd.Synth = function(id, polyphony, settings) {
     snd.Source.apply(this, arguments);
     this.polyphony = polyphony;
+
+    this._settings = settings;
     
-    if (envelope == null) {
-        this.envelope = new snd.Envelope();
-    } else {
-        this.envelope = envelope;
-    }
-    
-    if (waveForm == null) {
-        var realArray = new Float32Array(2);
-        var imagArray = new Float32Array(2);
-        realArray[0] = 0;
-        realArray[1] = 1.0;
-        imagArray[0] = 0;
-        imagArray[1] = 0;
-        this.waveForm = {
-            real: realArray,
-            imag: imagArray
-        };
-    } else {
-        this.waveForm = waveForm;
-    }
-    this.periodicWave = snd.AUDIO_CONTEXT.createPeriodicWave(
-            this.waveForm.real,
-            this.waveForm.imag);
-           
     this.partes = [];
     for (var i = 0; i < this.polyphony; i++) {
-        var part = new snd.Synth.Partes(this.id + i, this);
+        var part = new snd.Synth.Partes(this.id + i, this._settings);
         part.connect(this.gain);
         this.partes.push(part);
     }
+    
+    Object.defineProperty(this, "settings", {
+        configurable: true,
+        enumerable: true,
+        get: function() {
+            return this._settings;
+        },
+        set: function(val) {
+            this.settings = val;
+            for (var i = 0; i < this.polyphony; i++) {
+                this.partes[i].settings = this.settings;
+            }
+        }
+    });
 };
 snd.Synth.prototype = Object.create(snd.Source.prototype);
 snd.Synth.prototype.constructor = snd.Synth;
 
+/**
+ * 波形を設定します。<br/>
+ * waveFormがsnd.oscillatortype名前空間にある定数（snd.ocillatortype.SINEなど）だった場合はその波形に設定されます。<br/>
+ * それ以外の場合、waveFormがPriodicWaveのインスタンスとして扱われ、波形に設定されます。
+ * @param {String or PeriodicWave} waveForm 波形
+ */
+snd.Synth.setWaveForm = function(waveForm) {
+    this.settings.waveform = waveForm;
+    if (waveForm === snd.oscillatortype.SINE
+            || waveForm === snd.oscillatortype.SQUARE
+            || waveForm === snd.oscillatortype.SAWTOOTH
+            || waveForm === snd.oscillatortype.TRIANGLE) {
+        for (i = 0; i < this.partes.length; i++) {
+            this.partes[i].setOscillatorType(waveForm);
+        }
+    } else {
+        for (i = 0; i < this.partes.length; i++) {
+            this.partes[i].setPeriodicWave(waveForm);
+        }
+    }
+};
+
+/**
+ * 
+ * @param {Array} partes 音を鳴らすパートの番号と周波数をまとめたハッシュマップの配列。[{no:noteOnするパートの番号, freq:鳴らす周波数}, {no:2, freq:440.0}...]
+ */
 snd.Synth.prototype.noteOn = function(partes) {
     for (var i = 0; i < partes.length; i++) {
         var no = partes[i].no;
@@ -1549,131 +1619,111 @@ snd.Synth.prototype.noteOff = function(partes) {
     }
 };
 
-snd.Synth.Partes = function(id, parent) {
+/**
+ * コンストラクタです。
+ * @param {type} id ID
+ * @param {type} parent 親のSynth
+ * @class シンセの1音分(monophony)を担当するクラスです。
+ */
+snd.Synth.Partes = function(id, settings) {
     snd.OscillatorSource.apply(this, arguments);
-    this.parent = parent;
-    this.source.setPeriodicWave(parent.periodicWave);
+    
+    var _this = this;
+    
     this.setGain(0.0);
+    this.settings = settings;
+    
+    this.settings.onchange = function() {
+        _this.setWaveType(_this.settings.waveform);
+    };
+    
+    this.ampEnvelope = new snd.Envelope(this.gain.gain, this.settings.amplitude.envelope);
+    this.ampLFO = new snd.Synth.LFO(this.id + "_AmpLFO", this.gain.gain, this.settings.amplitude.lfo);
+    this.freqEnvelope = new snd.Envelope(this.source.frequency, this.settings.frequency.envelope);
+    this.freqLFO = new snd.Synth.LFO(this.id + "_FreqLFO", this.source.frequency, this.settings.frequency.lfo);
 };
 snd.Synth.Partes.prototype = Object.create(snd.OscillatorSource.prototype);
 snd.Synth.Partes.prototype.constructor = snd.Synth.Note;
 
 snd.Synth.Partes.prototype.noteOn = function(freq) {
-    this.setFrequency(freq);
+    this.freqEnvelope.settings.max = freq;
     this.start(0);
-    
-    var now = snd.AUDIO_CONTEXT.currentTime;
-    this.gain.gain.cancelScheduledValues(now);
-    this.gain.gain.value = 0;
-    
-    if (this.parent.envelope.attackTime >= 0) {
-        switch (this.parent.envelope.attackType) {
-           case snd.audioparam.type.LINER:
-                this.gain.gain.linearRampToValueAtTime(
-                        this.parent.envelope.attack,
-                        now + this.parent.envelope.attackTime);
-                break;
-            case snd.audioparam.type.EXPONENTIALLY:
-                this.gain.gain.exponentialRampToValueAtTime(
-                        this.parent.envelope.attack,
-                        now + this.parent.envelope.attackTime);
-                break;
-            default:
-                this.gain.gain.setValueAtTime(
-                        this.parent.envelope.attack,
-                        now + this.parent.envelope.attackTime);
-                break;
-        };
-    }
-    
-    if (this.parent.envelope.decayTime >= 0) {
-        switch (this.parent.envelope.decayType) {
-            case snd.audioparam.type.LINER:
-                this.gain.gain.linearRampToValueAtTime(
-                        this.parent.envelope.sustain,
-                        now + this.parent.envelope.attackTime + this.parent.envelope.decayTime);
-                break;
-            case snd.audioparam.type.EXPONENTIALLY:
-                this.gain.gain.exponentialRampToValueAtTime(
-                        this.parent.envelope.sustain,
-                        now + this.parent.envelope.attackTime + this.parent.envelope.decayTime);
-                break;
-            default:
-                this.gain.gain.setValueAtTime(
-                        this.parent.envelope.sustain,
-                        now + this.parent.envelope.attackTime + this.parent.envelope.decayTime);
-                break;
-        }
-    }
-    
-    if (this.parent.envelope.sustainTime > 0) {
-        switch (this.parent.envelope.sustainType) {
-            case snd.audioparam.type.LINER:
-                this.gain.gain.linearRampToValueAtTime(
-                        this.parent.envelope.release,
-                        now + this.parent.envelope.attackTime + this.parent.envelope.decayTime + this.parent.envelope.sustainTime);
-                break;
-            case snd.audioparam.type.EXPONENTIALLY:
-                this.gain.gain.exponentialRampToValueAtTime(
-                        this.parent.envelope.release,
-                        now + this.parent.envelope.attackTime + this.parent.envelope.decayTime + this.parent.envelope.sustainTime);
-                break;
-            default:
-                this.gain.gain.setValueAtTime(
-                        this.parent.envelope.release,
-                        now + this.parent.envelope.attackTime + this.parent.envelope.decayTime + this.parent.envelope.sustainTime);
-                break;
-        }
-        
-        switch (this.parent.envelope.releaseType) {
-            case snd.audioparam.type.LINER:
-                this.gain.gain.linearRampToValueAtTime(
-                        0,
-                        now + this.parent.envelope.attackTime + this.parent.envelope.decayTime + this.parent.envelope.sustainTime + this.parent.envelope.releaseTime);
-                break;
-            case snd.audioparam.type.EXPONENTIALLY:
-                this.gain.gain.exponentialRampToValueAtTime(
-                        0,
-                        now + this.parent.envelope.attackTime + this.parent.envelope.decayTime + this.parent.envelope.sustainTime + this.parent.envelope.releaseTime);
-                break;
-            default:
-                this.gain.gain.setValueAtTime(
-                        0,
-                        now + this.parent.envelope.attackTime + this.parent.envelope.decayTime + this.parent.envelope.sustainTime + this.parent.envelope.releaseTime);
-                break;
-        }
-    }
+
+    this.ampEnvelope.noteOn();
+    this.ampLFO.noteOn();
+    this.freqEnvelope.noteOn();
+    this.freqLFO.noteOn();
 };
 
 snd.Synth.Partes.prototype.noteOff = function() {
-        var now = snd.AUDIO_CONTEXT.currentTime;
-        this.gain.gain.cancelScheduledValues(now);
-        
-        switch (this.parent.envelope.releaseType) {
-           case snd.audioparam.type.LINER:
-                this.gain.gain.linearRampToValueAtTime(
-                        0,
-                        now + this.parent.envelope.releaseTime);
-                break;
-            case snd.audioparam.type.EXPONENTIALLY:
-                this.gain.gain.exponentialRampToValueAtTime(
-                        0,
-                        now + this.parent.envelope.releaseTime);
-                break;
-            default:
-                this.gain.gain.setValueAtTime(
-                        0,
-                        now + this.parent.envelope.releaseTime);
-                break;
-        }
-    
+    this.ampEnvelope.noteOff();
+    this.ampLFO.noteOff();
+    this.freqEnvelope.noteOff();
+    this.freqLFO.noteOff();
 };
 
 /**
- * エンベロープの設定値を保持するクラスです。<br/>
- * ADSR(Attack, Decay, Sustain, Release)を、時間と音量と補間処理の種類の3つの値で制御します。<br/>
- * 時間の単位は全て秒単位です。<br/>
- * アタック、ディケイ、サスティーン、リリースの値はゲインの値で、出力に乗じる値を指定します(デシベルではありません)。<br/>
+ * コンストラクタです。
+ * @param {type} id
+ * @param {type} param 値を設定するAudioParam
+ * @class シンセのLFOクラスです。
+ */
+snd.Synth.LFO = function(id, param, lfoSettings) {
+    snd.OscillatorSource.apply(this, arguments);
+
+    var _this = this;
+
+    this.baseValue = 0;
+    this.param = param;
+    this.gain.connect(this.param);
+    this._settings = lfoSettings;
+    this.freqEnvelope = new snd.Envelope(this.source.frequency, lfoSettings.frequency);
+    this.ampEnvelope = new snd.Envelope(this.gain.gain, lfoSettings.amplitude);
+    this._settings.onchange = function() {
+        _this.source.setWaveForm(_this.settings.waveform);
+    };
+    
+    Object.defineProperty(this, "settings", {
+        configurable: true,
+        enumerable: true,
+        get: function() {
+            return this._settings;
+        },
+        set: function(val) {
+            this._settings = val;
+            this.setWaveForm(val.waveform);
+            this.freqEnvelope.settings = val.frequency;
+            this.ampEnvelope.settings = val.amplitude;
+        }
+    });
+};
+snd.Synth.LFO.prototype = Object.create(snd.OscillatorSource.prototype);
+snd.Synth.LFO.prototype.constructor = snd.Synth.LFO;
+
+snd.Synth.LFO.prototype.noteOn = function() {
+    this.start(0);
+    this.ampEnvelope.noteOn();
+    this.freqEnvelope.noteOn();
+};
+
+snd.Synth.LFO.prototype.noteOff = function() {
+    this.ampEnvelope.noteOff();
+    this.freqEnvelope.noteOff();
+};
+
+/**
+ * 引数で渡された内容のエンベロープを作ります。<br/>
+ * 
+ * @class エンベロープの設定値を保持するクラスです。<br/>
+ * コンストラクタのparamで設定されたAudioParamのADSR(Attack, Decay, Sustain, Release)を、時間と倍数と補間処理の種類の3つの値で制御します。<br/>
+ * 各値の変化は以下のようになります。<br/>
+ *   noteOn() -> 0 -(attackTime秒)-> attack * maxValue -(decayTime秒)-> sustain * maxValue<br/>
+ *   noteOff() -> sustain -(releaseTime秒)-> 0<br/>
+ * sustainTimeに0より大きな値が設定されている場合は、<br/>
+ *   noteOn() -> 0 -(attackTime秒)-> attack * maxValue -(decayTime秒)-> sustain * maxValue -(sustainTime秒)-> release -(releaseTime秒)-> 0<br/>
+ * <br/>
+ * アタック、ディケイ、サスティーン、リリースの値は倍数で、出力に乗じる値を指定します(デシベルではありません)。<br/>
+ * また、maxValueはアタック、ディケイ、サスティーン<br/>
  * 補間処理の種類は、「補間なし」「直線補間」「対数補間」の3種類があり、snd.audioparam.type名前空間にある定数を使って、いずれか一つを指定します。<br/>
  * <table>
  * <tr>定数値<td></td><td>補間方法</td></tr>
@@ -1681,37 +1731,376 @@ snd.Synth.Partes.prototype.noteOff = function() {
  * <tr><td>snd.audioparam.type.LINER</td><td>直線補間</td></tr>
  * <tr><td>snd.audioparam.type.EXPONENTIALLY</td><td>対数補間</td></tr>
  * </table><br/>
+ * 時間の単位は全て秒単位です。<br/>
  * また、エンベロープについて詳しくは<a href="http://en.wikipedia.org/wiki/Synthesizer#ADSR_envelope">Wikipedia(英)</a>や<a href="http://ja.wikipedia.org/wiki/ADSR">Wikipedia(日)</a>を参照してください。<br/>
  * 
- * @param {type} attackTime アタックタイム[秒]
- * @param {type} attack アタック
- * @param {type} attackType アタックの補間法
- * @param {type} decayTime ディケイタイム[秒]
- * @param {type} decayType ディケイの補間法
- * @param {type} sustainTime サスティーンタイム[秒](0以下の値が指定された場合、NoteOffまで変化なし)
- * @param {type} sutain サスティーン
- * @param {type} sustainType サスティーンの補間法
- * @param {type} releaseTime リリースタイム[秒]
- * @param {type} release リリース
- * @param {type} releaseType リリースの補間法
+ * @param {Number} max 最大値[秒]
+ * @param {Number} attackTime アタックタイム[秒]
+ * @param {Number} attack アタック
+ * @param {Number} attackType アタックの補間法
+ * @param {Number} decayTime ディケイタイム[秒]
+ * @param {Number} decayType ディケイの補間法
+ * @param {Number} sustainTime サスティーンタイム[秒](0以下の値が指定された場合、NoteOffまで変化なし)
+ * @param {Number} sustain サスティーン
+ * @param {Number} sustainType サスティーンの補間法
+ * @param {Number} releaseTime リリースタイム[秒]
+ * @param {Number} release リリース
+ * @param {Number} releaseType リリースの補間法
  * @class
  */
-snd.Envelope = function(
+snd.Envelope = function(param, settings) {
+    this.param = param;
+    this.settings = settings;
+};
+
+snd.Envelope.prototype.noteOn = function() {
+    var now = snd.AUDIO_CONTEXT.currentTime;
+    this.param.cancelScheduledValues(now);
+    this.param.value = 0;
+
+    if (this.settings.attackTime >= 0) {
+        switch (this.settings.attackType) {
+            case snd.audioparam.type.LINER:
+                this.param.linearRampToValueAtTime(
+                        this.settings.attack * this.settings.max,
+                        now + this.settings.attackTime);
+                break;
+            case snd.audioparam.type.EXPONENTIALLY:
+                this.param.exponentialRampToValueAtTime(
+                        this.settings.attack * this.settings.max,
+                        now + this.settings.attackTime);
+                break;
+            default:
+                this.param.setValueAtTime(
+                        this.settings.attack * this.settings.max,
+                        now + this.settings.attackTime);
+                break;
+        }
+        ;
+    }
+
+    if (this.settings.decayTime > 0) {
+        switch (this.settings.decayType) {
+            case snd.audioparam.type.LINER:
+                this.param.linearRampToValueAtTime(
+                        this.settings.sustain * this.settings.max,
+                        now + this.settings.attackTime + this.settings.decayTime);
+                break;
+            case snd.audioparam.type.EXPONENTIALLY:
+                this.param.exponentialRampToValueAtTime(
+                        this.settings.sustain * this.settings.max,
+                        now + this.settings.attackTime + this.settings.decayTime);
+                break;
+            default:
+                this.param.setValueAtTime(
+                        this.settings.sustain * this.settings.max,
+                        now + this.settings.attackTime + this.settings.decayTime);
+                break;
+        }
+    }
+
+    if (this.settings.sustainTime > 0) {
+        switch (this.settings.sustainType) {
+            case snd.audioparam.type.LINER:
+                this.param.linearRampToValueAtTime(
+                        this.settings.release * this.settings.max,
+                        now + this.settings.attackTime + this.settings.decayTime + this.settings.sustainTime);
+                break;
+            case snd.audioparam.type.EXPONENTIALLY:
+                this.param.exponentialRampToValueAtTime(
+                        this.settings.release * this.settings.max,
+                        now + this.settings.attackTime + this.settings.decayTime + this.settings.sustainTime);
+                break;
+            default:
+                this.param.setValueAtTime(
+                        this.settings.release * this.settings.max,
+                        now + this.settings.attackTime + this.settings.decayTime + this.settings.sustainTime);
+                break;
+        }
+
+        switch (this.settings.releaseType) {
+            case snd.audioparam.type.LINER:
+                this.param.linearRampToValueAtTime(
+                        0,
+                        now + this.settings.attackTime + this.settings.decayTime + this.settings.sustainTime + this.settings.releaseTime);
+                break;
+            case snd.audioparam.type.EXPONENTIALLY:
+                this.param.exponentialRampToValueAtTime(
+                        0,
+                        now + this.settings.attackTime + this.settings.decayTime + this.settings.sustainTime + this.settings.releaseTime);
+                break;
+            default:
+                this.param.setValueAtTime(
+                        0,
+                        now + this.settings.attackTime + this.settings.decayTime + this.settings.sustainTime + this.settings.releaseTime);
+                break;
+        }
+    }
+};
+
+snd.Envelope.prototype.noteOff = function() {
+    var now = snd.AUDIO_CONTEXT.currentTime;
+    this.param.cancelScheduledValues(now);
+
+    switch (this.settings.releaseType) {
+        case snd.audioparam.type.LINER:
+            this.param.linearRampToValueAtTime(
+                    0,
+                    now + this.settings.releaseTime);
+            break;
+        case snd.audioparam.type.EXPONENTIALLY:
+            this.param.exponentialRampToValueAtTime(
+                    0,
+                    now + this.settings.releaseTime);
+            break;
+        default:
+            this.param.setValueAtTime(
+                    0,
+                    now + this.settings.releaseTime);
+            break;
+    }
+};
+
+snd.Synth.Settings = function() {
+    this._waveform = "sine";
+    this.frequency = {
+        envelope: new snd.Synth.Settings.EnvelopeSettings(
+                440.0,
+                0, 1.0, snd.audioparam.LINER,
+                0, snd.audioparam.LINER,
+                0, 0, snd.audioparam.LINER,
+                0, 0, snd.audioparam.LINER),
+        lfo: new snd.Synth.Settings.LFOSettings(
+                "sine",
+                new snd.Synth.Settings.EnvelopeSettings(
+                        0.0,
+                        0, 0.0, snd.audioparam.LINER,
+                        0, snd.audioparam.LINER,
+                        0, 0, snd.audioparam.LINER,
+                        0, 0, snd.audioparam.LINER),
+                new snd.Synth.Settings.EnvelopeSettings(
+                        0.0,
+                        0, 0.0, snd.audioparam.LINER,
+                        0, snd.audioparam.LINER,
+                        0, 0, snd.audioparam.LINER,
+                        0, 0, snd.audioparam.LINER)
+                )
+    };
+    
+    this.amplitude = {
+        envelope: new snd.Synth.Settings.EnvelopeSettings(
+                0.2,
+                0, 1.0, snd.audioparam.LINER,
+                0, snd.audioparam.LINER,
+                0, 0, snd.audioparam.LINER,
+                0, 0, snd.audioparam.LINER),
+        lfo: new snd.Synth.Settings.LFOSettings(
+                "sine",
+                new snd.Synth.Settings.EnvelopeSettings(
+                        0.0,
+                        0, 1.0, snd.audioparam.LINER,
+                        0, snd.audioparam.LINER,
+                        0, 0, snd.audioparam.LINER,
+                        0, 0, snd.audioparam.LINER),
+                new snd.Synth.Settings.EnvelopeSettings(
+                        0.0,
+                        0, 1.0, snd.audioparam.LINER,
+                        0, snd.audioparam.LINER,
+                        0, 0, snd.audioparam.LINER,
+                        0, 0, snd.audioparam.LINER)
+                )
+    };
+
+    Object.defineProperty(this, "waveform", {
+        configurable: true,
+        enumerable: true,
+        gat: function() {
+            return this._waveform;
+        },
+        set: function(val) {
+            this._wavefrom = val;
+            this.onchange();
+        }
+    });
+};
+snd.Synth.Settings.prototype.onchange = function() {
+};
+
+snd.Synth.Settings.LFOSettings = function(waveform, freqEnvelopeSettings, ampEnvelopeSettings) {
+    this._waveform = waveform;
+    this.frequency = freqEnvelopeSettings;
+    this.amplitude = ampEnvelopeSettings;
+
+    Object.defineProperty(this, "waveform", {
+        configurable: true,
+        enumerable: true,
+        get: function() {
+            return this._waveform;
+        },
+        set: function(val) {
+            this._waveform = val;
+            this.onchange();
+        }
+    });
+};
+snd.Synth.Settings.LFOSettings.prototype.onchange = function() {
+};
+
+snd.Synth.Settings.EnvelopeSettings = function(
+        max,
         attackTime, attack, attackType,
         decayTime, decayType,
         sustainTime, sustain, sustainType,
         releaseTime, release, releaseType) {
-    this.attackTime = (attackTime == null) ? 0.1 : attackTime;
-    this.attack = (attack == null) ? 0.25 : attack;
-    this.attackType = (attackType == null) ? snd.audioparam.type.LINER : attackType;
-    this.decayTime = (decayTime == null) ? 0.1 : decayTime;
-    this.decayType = (decayType == null) ? snd.audioparam.type.LINER : decayType;
-    this.sustainTime = (sustainTime == null) ? -1 : sustainTime;
-    this.sustain = (sustain == null) ? 0.125 : sustain;
-    this.sustainType = (sustainType == null) ? snd.audioparam.type.LINER : sustainType;
-    this.releaseTime = (releaseTime == null) ? 0.5 : releaseTime;
-    this.release = (release == null) ? 0.125 : release;
-    this.releaseType = (releaseType == null) ? snd.audioparam.type.LINER : releaseType;
+    this._max = max;
+    this._attackTime = attackTime;
+    this._attack = attack;
+    this._attackType = attackType;
+    this._decayTime = decayTime;
+    this._decayType = decayType;
+    this._sustainTime = sustainTime;
+    this._sustain = sustain;
+    this._sustainType = sustainType;
+    this._releaseTime = releaseTime;
+    this._release = release;
+    this._releaseType = releaseType;
+
+    Object.defineProperties(this, {
+        max: {
+            configurable: true,
+            enumerable: true,
+            get: function() {
+                return this._max;
+            },
+            set: function(val) {
+                this._max = val;
+                this.onchange();
+            }
+        },
+        attackTime: {
+            configurable: true,
+            enumerable: true,
+            get: function() {
+                return this._attackTime;
+            },
+            set: function(val) {
+                this._attackTime = val;
+                this.onchange();
+            }
+        },
+        attack: {
+            configurable: true,
+            enumerable: true,
+            get: function() {
+                return this._attack;
+            },
+            set: function(val) {
+                this._attack = val;
+                this.onchange();
+            }
+        },
+        attackType: {
+            configurable: true,
+            enumerable: true,
+            get: function() {
+                return this._attackType;
+            },
+            set: function(val) {
+                this._attackType = val;
+                this.onchange();
+            }
+        },
+        decayTime: {
+            configurable: true,
+            enumerable: true,
+            get: function() {
+                return this._decayTime;
+            },
+            set: function(val) {
+                this._decayTime = val;
+                this.onchange();
+            }
+        },
+        decayType: {
+            configurable: true,
+            enumerable: true,
+            get: function() {
+                return this._decayType;
+            },
+            set: function(val) {
+                this._decayType = val;
+                this.onchange();
+            }
+        },
+        sustainTime: {
+            configurable: true,
+            enumerable: true,
+            get: function() {
+                return this._sustainTime;
+            },
+            set: function(val) {
+                this._sustainTime = val;
+                this.onchange();
+            }
+        },
+        sustain: {
+            configurable: true,
+            enumerable: true,
+            get: function() {
+                return this._sustain;
+            },
+            set: function(val) {
+                this._sustain = val;
+                this.onchange();
+            }
+        },
+        sustainType: {
+            configurable: true,
+            enumerable: true,
+            get: function() {
+                return this._sustainType;
+            },
+            set: function(val) {
+                this._sustainType = val;
+                this.onchange();
+            }
+        },
+        releaseTime: {
+            configurable: true,
+            enumerable: true,
+            get: function() {
+                return this._releaseTime;
+            },
+            set: function(val) {
+                this._releaseTime = val;
+                this.onchange();
+            }
+        },
+        release: {
+            configurable: true,
+            enumerable: true,
+            get: function() {
+                return this._release;
+            },
+            set: function(val) {
+                this._release = val;
+                this.onchange();
+            }
+        },
+        releaseType: {
+            configurable: true,
+            enumerable: true,
+            get: function() {
+                return this._releaseType;
+            },
+            set: function(val) {
+                this._releaseType = val;
+                this.onchange();
+            }
+        }
+    });
+};
+snd.Synth.Settings.EnvelopeSettings.prototype.onchange = function() {
 };
 
 /**

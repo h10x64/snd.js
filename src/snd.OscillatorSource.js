@@ -2,8 +2,7 @@
 /**
  * 新しくオシレータ音源を生成します。
  * @param {type} id この音源をあらわすID
- * @class 任意の波形を再生するオシレータ音源を扱うクラスです。<br/>
- * 詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#dfn-OscillatorNode">WebAudioAPIの仕様</a>を参照してください。
+ * @class 任意の波形を再生するオシレータ音源を扱うクラスです。
  * @memberOf snd
  */
 snd.OscillatorSource = function(id) {
@@ -11,6 +10,7 @@ snd.OscillatorSource = function(id) {
 
     this.type = snd.srctype.OSCILLATOR;
     this.status = snd.status.NONE;
+    this.periodicWave = null;
     
     this.listeners = {
         onended: []
@@ -28,14 +28,36 @@ snd.OscillatorSource.prototype.constructor = snd.OscillatorSource;
  */
 snd.OscillatorSource.DEFAULT_FREQUENCY = 440;
 
+snd.OscillatorSource.SINE = "sine";
+snd.OscillatorSource.SQUARE = "square";
+snd.OscillatorSource.SAWTOOTH = "sawtooth";
+snd.OscillatorSource.TRIANGLE = "triangle";
+
+/**
+ * 波形を設定します。<br/>
+ * waveformにはsnd.oscillatortype名前空間に定義されているSINEなどの定数か、またはPeriodicWaveオブジェクトを入れてください。<br/>
+ * 定数が使用された場合はsetWaveTypeメソッドを、そうでない場合はsetPeriodicWaveメソッドを使用して、このオシレータの波形を設定します。
+ * @param {String_or_PeriodicWave} waveform 波形データ。
+ * @returns {undefined}
+ */
+snd.OscillatorSource.prototype.setWaveForm = function(waveform) {
+    if (waveform === snd.oscillatortype.SINE
+            || waveform === snd.oscillatortype.SQUARE
+            || waveform === snd.oscillatortype.SAWTOOTH
+            || waveform === snd.oscillatortype.TRIANGLE) {
+        this.setOscillatorType(waveform);
+    } else {
+        this.setPeriodicWave(waveform);
+    }
+};
+
 /**
  * 波形の種類を設定します。<br/>
- * 引数のoscillatorTypeはWebAudioAPIで定義されたOscillatorType列挙型を使用してください。<br/>
- * OscillatorTypeの詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#dfn-OscillatorNode">WebAudioAPIの仕様<a/>を参照してください。
+ * 引数には、snd.oscillatortype.SINE, snd.oscillatortype.SQUARE, snd.oscillatortype.SAWTOOTH, snd.oscillatortype.TRIANGLEのいずれかを設定してください。
  * 
  * @param {OscillatorType} oscillatorType
  */
-snd.OscillatorSource.prototype.setType = function(oscillatorType) {
+snd.OscillatorSource.prototype.setOscillatorType = function(oscillatorType) {
     if (this.source != null) {
         this.source.type = oscillatorType;
     }
@@ -44,11 +66,11 @@ snd.OscillatorSource.prototype.setType = function(oscillatorType) {
 /**
  * このオシレータの波形の種類を返します。<br/>
  * 戻り値にはOscillatorTypeが使われます。<br/>
- * OscillatorTypeの詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#dfn-OscillatorNode">WebAudioAPIの仕様<a/>を参照してください。
+ * OscillatorTypeの詳細は、WebAudioAPIの仕様を参照してください。
  * 
  * @returns {OscillatorType} 波形の種類
  */
-snd.OscillatorSource.prototype.getType = function() {
+snd.OscillatorSource.prototype.getOscillatorType = function() {
     if (this.source != null) {
         return this.source.type;
     } else {
@@ -109,10 +131,19 @@ snd.OscillatorSource.prototype.getDetune = function() {
  * @param {PeriodicWave} periodicWave フーリエ級数で表された波形(1周期分)
  */
 snd.OscillatorSource.prototype.setPeriodicWave = function(periodicWave) {
+    this.periodicWave = periodicWave;
     if (this.source != null) {
         this.source.setPeriodicWave(periodicWave);
     }
 };
+
+/**
+ * この音源の波形データを返します。
+ * @returns {PeriodicWave}
+ */
+snd.OscillatorSource.prototype.getPeriodicWave = function() {
+    return this.periodicWave;
+}
 
 /**
  * 波形の再生をスタートします。
@@ -151,6 +182,7 @@ snd.OscillatorSource.prototype.stop = function(when) {
 snd.OscillatorSource.prototype.resetOscillator = function() {
     var freq = null;
     var cent = null;
+    var oscillatorType = null;
 
     if (this.source != null) {
         freq = this.getFrequency();
@@ -158,6 +190,7 @@ snd.OscillatorSource.prototype.resetOscillator = function() {
         if (this.status != snd.status.STOPPED) {
             this.source.stop(0);
         }
+        oscillatorType = this.getOscillatorType();
     }
 
     this.source = snd.AUDIO_CONTEXT.createOscillator();
@@ -174,6 +207,12 @@ snd.OscillatorSource.prototype.resetOscillator = function() {
         this.setDetune(cent);
     } else {
         this.setFrequency(0);
+    }
+    if (oscillatorType != null && oscillatorType != "custom") {
+        this.setOscillatorType(oscillatorType);
+    }
+    if (this.getPeriodicWave() != null) {
+        this.setPeriodicWave(this.getPeriodicWave());
     }
 
     this.status = snd.status.READY;

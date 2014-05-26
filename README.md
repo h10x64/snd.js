@@ -27,10 +27,10 @@ distフォルダに入っている*.jsファイルを使用してください。
 
 を実行することでdistフォルダにjsファイルがビルドされます。
 
-### 変更点
+### 各ブラウザのWebAudioAPI対応状況
 
-Synthクラスを追加し、シンセサイザのような事をできるようにしました。
-three.jsプラグインを追加し、3Dサウンドをthree.jsと連動させられるようにしました。
+スマホを含めた各ブラウザのWebAudioAPI対応状況はCan I use Web Audio API?を参照してください。
+<http://caniuse.com/audio-api>
 
 ### 課題・目標など
 

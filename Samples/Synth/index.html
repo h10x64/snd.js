@@ -11,9 +11,10 @@
             var SYNTH = new snd.Synth(
                     "シンセ",   // id: この音源のID
                     13,         // polyphony: 同時発音可能数
-                    null,       // waveForm: 波形の形
-                    null        // envelope: エンベロープ
+                    new snd.Synth.Settings()
             );
+            SYNTH.settings.amplitude.lfo.frequency.max = 4.4;
+            SYNTH.settings.amplitude.lfo.amplitude.max = 0.1;
             snd.MASTER.connectAudioUnit(SYNTH.id, SYNTH);
 
             // キーコードの定数

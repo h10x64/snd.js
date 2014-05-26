@@ -83,6 +83,11 @@ snd.srctype.MEDIA_ELEMENT = "MediaElement";
  */
 snd.srctype.OSCILLATOR = "Oscillator";
 
+snd.oscillatortype = {};
+snd.oscillatortype.SINE = "sine";
+snd.oscillatortype.SQUARE = "SQUARE";
+snd.oscillatortype.SAWTOOTH = "SAWTOOTH";
+snd.oscillatortype.TRIANGLE = "TRIANGLE";
 
 snd.audioparam = {};
 /**

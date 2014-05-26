@@ -100,7 +100,10 @@
             var cameraEulerAngle = new THREE.Euler(0, 0, 0, "YXZ");
 
             /* Load sound effect(s) into AudioBuffer and callback initialize methods when the sound(s) are loaded. */
-            
+            //snd.three.util.createBufferSoundNodes(data, connectToMaster, callback)
+            // @param data hashmap 読み込むオーディオデータのURLとIDをまとめたハッシュマップ
+            // @param connectToMaster boolean snd.MASTERへ接続するか否か
+            // @param callback function データ読み込み終了時に呼ばれるコールバック関数
             snd.three.util.createBufferSoundNodes(SOUND_DATA, true, function(ret) {
                 // Set created sound into the global var.
                 MATCH_SOUND_NODE = ret["match"];
