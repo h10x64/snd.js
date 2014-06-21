@@ -157,6 +157,18 @@ snd.MediaElementAudioSource = function(id, htmlMediaElement) {
             _this.listeners['onwaiting'][i](_this);
         }
     };
+    
+    Object.defineProperties(this, {
+        src: {
+            enumerable: true,
+            get: function() {
+                return this.element.src;
+            },
+            set: function(uri) {
+                this.element.src = uri;
+            }
+        }
+    });
 };
 snd.MediaElementAudioSource.prototype = Object.create(snd.Source.prototype);
 snd.MediaElementAudioSource.prototype.constructor = snd.MediaElementAudioSource;
