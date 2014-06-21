@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Demo - FileAPI,DataURI(Base64)</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="../../dist/snd.js"></script>
+        <!-- 
+        // ↓snd.three.jsを使用する場合はこれも必要です。
+        <script src="../../dist/plugins/snd.three.js"></script>
+        -->
+        <script>
+            snd.init();
+
+            var fileOpenButton = null;
+            var audioTagDiv = null;
+            var mediaElementAudioNode = null;
+
+            window.onload = function() {
+                // オーディオタグを追加する親エレメント
+                audioTagDiv = document.getElementById("audioTagDiv");
+
+                // 生成する音源のデータセット（URLに空文字列を指定）
+                var dataSet = {
+                    '音源ID': ""
+                };
+
+                // 音源を生成
+                var createdSources = snd.util.createMediaElementAudioSources(dataSet, true, audioTagDiv);
+                
+                /* 
+                 * 3Dサウンドを使用する場合は次のようにしてください。
+                 * その他の部分は変更不要です。
+                 * 
+                 * // 音源を生成（snd.three.js版）
+                 * var createdSources = snd.three.util.createMediaElementSourceNodes(dataSet, true, audioTagDiv);
+                 * // 音源の位置を変更するなどの処理
+                 * mediaElementAudioNode.setPosition(1, 0, 0);
+                 * // bra bra bra...
+                 * 
+                 */
+                
+                // 生成した音源を取得しておく
+                mediaElementAudioNode = createdSources['音源ID'];
+                // 音源のoncanplayイベントにリスナを追加
+                mediaElementAudioNode.addOnCanPlayEventListener(function() {
+                    // 再生可能になったら再生開始
+                    mediaElementAudioNode.start();
+                });
+
+                fileOpenButton = document.getElementById("selectFile");
+                fileOpenButton.addEventListener("change", function(evt) {
+                    var files = evt.target.files;
+                    if (files.length > 0) {
+                        if (!files[0].type.match("audio.*")) {
+                            aleart("オーディオファイルを選択してください。");
+                        } else {
+                            var fileReader = new FileReader();
+                            fileReader.onloadend = function(evt) {
+                                // 読み込んだデータ（DataURI形式）
+                                var data = fileReader.result;
+                                
+                                // MediaElementAudioNodeのsrcにDataURI形式の文字列を設定
+                                mediaElementAudioNode.src = data;
+                                
+                                // ロード開始
+                                mediaElementAudioNode.load();
+                            };
+                            fileReader.readAsDataURL(files[0]);
+                        }
+                    }
+                }, false);
+            };
+        </script>
+    </head>
+    <body>
+        <div>
+            FileAPIを使用してDataURI形式の文字列を取得し、再生するデモです。<br/>
+            DataURI形式の文字列を再生する場合は、MediaElementAudioSource(3D対応が必要な場合はMediaElementAudioNode)を使用し、srcプロパティに文字列を設定してください。<br/>
+            <br/>
+            Base64形式の文字列（DataURIのデータ部）のみが取得されるような場合は、"data:&lt;MIME-Type&gt;;base64,&lt;データ文字列&gt;"となるような文字列を生成し、srcプロパティに設定してください。<br/>
+            MIMETypeは元データのファイル形式によって内容を変える必要があります。<br/>
+            例（mp3の場合）:<br/>
+            // Chromeはaudio/mp3<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;mediaElementAudioSource.src = "data:audio/mpeg;base64," + base64DataString<br/>
+            <br/>
+            詳細はソースを参照してください。
+        </div>
+        <br/>
+        <div id="fileSelecter">
+            <input type="file" id="selectFile"/>
+        </div>
+        <div id="audioTagDiv">
+        </div>
+    </body>
+</html>

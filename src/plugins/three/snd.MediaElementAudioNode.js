@@ -11,8 +11,20 @@
  */
 snd.MediaElementAudioNode = function(id, source) {
     snd.SoundNode.apply(this, arguments);
-    this.src = source;
-    this.src.connect(this);
+    this.source = source;
+    this.source.connect(this);
+    
+    Object.defineProperties(this, {
+        src: {
+            enumerable: true,
+            get: function() {
+                return this.source.src;
+            },
+            set: function(uri) {
+                this.source.src = uri;
+            }
+        }
+    });
 };
 snd.MediaElementAudioNode.prototype = Object.create(snd.SoundNode.prototype);
 snd.MediaElementAudioNode.prototype.constructor = snd.MediaElementAudioNode;
@@ -21,28 +33,28 @@ snd.MediaElementAudioNode.prototype.constructor = snd.MediaElementAudioNode;
  * この音源の読み込みを開始します。
  */
 snd.MediaElementAudioNode.prototype.load = function() {
-    this.src.load();
+    this.source.load();
 };
 
 /**
  * この音源の再生を開始します。
  */
 snd.MediaElementAudioNode.prototype.start = function() {
-    this.src.play();
+    this.source.start();
 };
 
 /**
  * この音源を一時停止します。
  */
 snd.MediaElementAudioNode.prototype.pause = function() {
-    this.src.pause();
+    this.source.pause();
 };
 
 /**
  * この音源を停止し、時刻を0へ戻します。
  */
 snd.MediaElementAudioNode.prototype.stop = function() {
-    this.src.pause();
+    this.source.pause();
 };
 
 /**
@@ -52,7 +64,7 @@ snd.MediaElementAudioNode.prototype.stop = function() {
  * @param {type} doesLoop ループ再生するか否か
  */
 snd.MediaElementAudioNode.prototype.setLoop = function(doesLoop) {
-    this.src.setLoop(doesLoop);
+    this.source.setLoop(doesLoop);
 };
 
 /* Add/Remove Listener Methods */
@@ -62,7 +74,7 @@ snd.MediaElementAudioNode.prototype.setLoop = function(doesLoop) {
  * @param {function} listener 追加するコールバックメソッド
  */
 snd.MediaElementAudioNode.prototype.addOnPlayEventListener = function(listener) {
-    this.src.addOnPlayEventListener(listener);
+    this.source.addOnPlayEventListener(listener);
 };
 
 /**
@@ -71,7 +83,7 @@ snd.MediaElementAudioNode.prototype.addOnPlayEventListener = function(listener) 
  * @returns 削除されたらtrue, 削除されなかったらfalse
  */
 snd.MediaElementAudioNode.prototype.removeOnPlayEventListener = function(listener) {
-    return this.src.removeOnPlayEventListener(listener);
+    return this.source.removeOnPlayEventListener(listener);
 };
 
 /**
@@ -79,7 +91,7 @@ snd.MediaElementAudioNode.prototype.removeOnPlayEventListener = function(listene
  * @param {function} listener 追加するコールバックメソッド
  */
 snd.MediaElementAudioNode.prototype.addOnPauseEventListener = function(listener) {
-    this.src.addOnPauseEventListener(listener);
+    this.source.addOnPauseEventListener(listener);
 };
 
 /**
@@ -88,7 +100,7 @@ snd.MediaElementAudioNode.prototype.addOnPauseEventListener = function(listener)
  * @returns 削除されたらtrue, 削除されなかったらfalse
  */
 snd.MediaElementAudioNode.prototype.removeOnPauseEventListener = function(listener) {
-    return this.src.removeOnPauseEventListener(listener);
+    return this.source.removeOnPauseEventListener(listener);
 };
 
 /**
@@ -96,7 +108,7 @@ snd.MediaElementAudioNode.prototype.removeOnPauseEventListener = function(listen
  * @param {function} listener 追加するコールバックメソッド
  */
 snd.MediaElementAudioNode.prototype.addOnEndedEventListener = function(listener) {
-    this.src.addOnEndedEventListener(listener);
+    this.source.addOnEndedEventListener(listener);
 };
 
 /**
@@ -105,7 +117,7 @@ snd.MediaElementAudioNode.prototype.addOnEndedEventListener = function(listener)
  * @returns 削除されたらtrue, 削除されなかったらfalse
  */
 snd.MediaElementAudioNode.prototype.removeOnEndedEventListener = function(listener) {
-    return this.src.removeOnEndedEventListener(listener);
+    return this.source.removeOnEndedEventListener(listener);
 };
 
 /**
@@ -113,7 +125,7 @@ snd.MediaElementAudioNode.prototype.removeOnEndedEventListener = function(listen
  * @param {function} listener 追加するコールバックメソッド
  */
 snd.MediaElementAudioNode.prototype.addOnAbortEventListener = function(listener) {
-    this.src.addOnAbortEventListener(listener);
+    this.source.addOnAbortEventListener(listener);
 };
 
 /**
@@ -122,7 +134,7 @@ snd.MediaElementAudioNode.prototype.addOnAbortEventListener = function(listener)
  * @returns 削除されたらtrue, 削除されなかったらfalse
  */
 snd.MediaElementAudioNode.prototype.removeOnAbortEventListener = function(listener) {
-    return this.src.removeOnAbortEventListener(listener);
+    return this.source.removeOnAbortEventListener(listener);
 };
 
 /**
@@ -130,7 +142,7 @@ snd.MediaElementAudioNode.prototype.removeOnAbortEventListener = function(listen
  * @param {function} listener 追加するコールバックメソッド
  */
 snd.MediaElementAudioNode.prototype.addOnCanPlayEventListener = function(listener) {
-    this.src.addOnCanPlayEventListener(listener);
+    this.source.addOnCanPlayEventListener(listener);
 };
 
 /**
@@ -139,7 +151,7 @@ snd.MediaElementAudioNode.prototype.addOnCanPlayEventListener = function(listene
  * @returns 削除されたらtrue, 削除されなかったらfalse
  */
 snd.MediaElementAudioNode.prototype.removeOnCanPlayEventListener = function(listener) {
-    return this.src.removeOnCanPlayEventListener(listener);
+    return this.source.removeOnCanPlayEventListener(listener);
 };
 
 /**
@@ -147,7 +159,7 @@ snd.MediaElementAudioNode.prototype.removeOnCanPlayEventListener = function(list
  * @param {function} listener 追加するコールバックメソッド
  */
 snd.MediaElementAudioNode.prototype.addOnCanPlayThroughEventListener = function(listener) {
-    this.src.addOnCanPlayThroughEventListener(listener);
+    this.source.addOnCanPlayThroughEventListener(listener);
 };
 
 /**
@@ -156,7 +168,7 @@ snd.MediaElementAudioNode.prototype.addOnCanPlayThroughEventListener = function(
  * @returns 削除されたらtrue, 削除されなかったらfalse
  */
 snd.MediaElementAudioNode.prototype.removeOnCanPlayThroughEventListener = function(listener) {
-    return this.src.removeOnCanPlayThroughEventListener(listener);
+    return this.source.removeOnCanPlayThroughEventListener(listener);
 };
 
 /**
@@ -164,7 +176,7 @@ snd.MediaElementAudioNode.prototype.removeOnCanPlayThroughEventListener = functi
  * @param {function} listener 追加するコールバックメソッド
  */
 snd.MediaElementAudioNode.prototype.addOnDurationChangeEventListener = function(listener) {
-    this.src.addOnDurationChangeEventListener(listener);
+    this.source.addOnDurationChangeEventListener(listener);
 };
 
 /**
@@ -173,7 +185,7 @@ snd.MediaElementAudioNode.prototype.addOnDurationChangeEventListener = function(
  * @returns 削除されたらtrue, 削除されなかったらfalse
  */
 snd.MediaElementAudioNode.prototype.removeOnCanPlayThroughEventListener = function(listener) {
-    return this.src.removeOnCanPlayEventListener(listener);
+    return this.source.removeOnCanPlayEventListener(listener);
 };
 
 /**
@@ -181,7 +193,7 @@ snd.MediaElementAudioNode.prototype.removeOnCanPlayThroughEventListener = functi
  * @param {function} listener 追加するコールバックメソッド
  */
 snd.MediaElementAudioNode.prototype.addOnEmptiedEventListener = function(listener) {
-    this.src.addOnEmptiedEventListener(listener);
+    this.source.addOnEmptiedEventListener(listener);
 };
 
 /**
@@ -190,7 +202,7 @@ snd.MediaElementAudioNode.prototype.addOnEmptiedEventListener = function(listene
  * @returns 削除されたらtrue, 削除されなかったらfalse
  */
 snd.MediaElementAudioNode.prototype.removeOnEmptiedEventListener = function(listener) {
-    return this.src.removeOnEmptiedEventListener(listener);
+    return this.source.removeOnEmptiedEventListener(listener);
 };
 
 /**
@@ -198,7 +210,7 @@ snd.MediaElementAudioNode.prototype.removeOnEmptiedEventListener = function(list
  * @param {function} listener 追加するコールバックメソッド
  */
 snd.MediaElementAudioNode.prototype.addOnErrorEventListener = function(listener) {
-    this.src.addOnErrorEventListener(listener);
+    this.source.addOnErrorEventListener(listener);
 };
 
 /**
@@ -207,7 +219,7 @@ snd.MediaElementAudioNode.prototype.addOnErrorEventListener = function(listener)
  * @returns 削除されたらtrue, 削除されなかったらfalse
  */
 snd.MediaElementAudioNode.prototype.removeOnErrorEventListener = function(listener) {
-    return this.src.removeOnErrorEventListener(listener);
+    return this.source.removeOnErrorEventListener(listener);
 };
 
 /**
@@ -215,7 +227,7 @@ snd.MediaElementAudioNode.prototype.removeOnErrorEventListener = function(listen
  * @param {function} listener 追加するコールバックメソッド
  */
 snd.MediaElementAudioNode.prototype.addOnLoadedDataEventListener = function(listener) {
-    this.src.addOnLoadedDataEventListener(listener);
+    this.source.addOnLoadedDataEventListener(listener);
 };
 
 /**
@@ -224,7 +236,7 @@ snd.MediaElementAudioNode.prototype.addOnLoadedDataEventListener = function(list
  * @returns 削除されたらtrue, 削除されなかったらfalse
  */
 snd.MediaElementAudioNode.prototype.removeOnLoadedDataEventListener = function(listener) {
-    return this.src.removeOnLoadedDataEventListener(listener);
+    return this.source.removeOnLoadedDataEventListener(listener);
 };
 
 /**
@@ -232,7 +244,7 @@ snd.MediaElementAudioNode.prototype.removeOnLoadedDataEventListener = function(l
  * @param {function} listener 追加するコールバックメソッド
  */
 snd.MediaElementAudioNode.prototype.addOnLoadedMetadataEventListener = function(listener) {
-    this.src.addOnLoadedMetadataEventListener(listener);
+    this.source.addOnLoadedMetadataEventListener(listener);
 };
 
 /**
@@ -241,7 +253,7 @@ snd.MediaElementAudioNode.prototype.addOnLoadedMetadataEventListener = function(
  * @returns 削除されたらtrue, 削除されなかったらfalse
  */
 snd.MediaElementAudioNode.prototype.removeOnLoadedMetaDataEventListener = function(listener) {
-    return this.src.removeOnLoadedMetaDataEventListener(listener);
+    return this.source.removeOnLoadedMetaDataEventListener(listener);
 };
 
 /**
@@ -249,7 +261,7 @@ snd.MediaElementAudioNode.prototype.removeOnLoadedMetaDataEventListener = functi
  * @param {function} listener 追加するコールバックメソッド
  */
 snd.MediaElementAudioNode.prototype.addOnLoadStartEventListener = function(listener) {
-    this.src.addOnLoadStartEventListener(listener);
+    this.source.addOnLoadStartEventListener(listener);
 };
 
 /**
@@ -258,7 +270,7 @@ snd.MediaElementAudioNode.prototype.addOnLoadStartEventListener = function(liste
  * @returns 削除されたらtrue, 削除されなかったらfalse
  */
 snd.MediaElementAudioNode.prototype.removeOnLoadStartEventListener = function(listener) {
-    return this.src.removeOnLoadStartEventListener(listener);
+    return this.source.removeOnLoadStartEventListener(listener);
 };
 
 /**
@@ -266,7 +278,7 @@ snd.MediaElementAudioNode.prototype.removeOnLoadStartEventListener = function(li
  * @param {function} listener 追加するコールバックメソッド
  */
 snd.MediaElementAudioNode.prototype.addOnPlayingEventListener = function(listener) {
-    this.src.addOnPlayingEventListener(listener);
+    this.source.addOnPlayingEventListener(listener);
 };
 
 /**
@@ -275,7 +287,7 @@ snd.MediaElementAudioNode.prototype.addOnPlayingEventListener = function(listene
  * @returns 削除されたらtrue, 削除されなかったらfalse
  */
 snd.MediaElementAudioNode.prototype.removeOnPlayingEventListener = function(listener) {
-    return this.src.removeOnPlayingEventListener(listener);
+    return this.source.removeOnPlayingEventListener(listener);
 };
 
 /**
@@ -283,7 +295,7 @@ snd.MediaElementAudioNode.prototype.removeOnPlayingEventListener = function(list
  * @param {function} listener 追加するコールバックメソッド
  */
 snd.MediaElementAudioNode.prototype.addOnProgressEventListener = function(listener) {
-    this.src.addOnProgressEventListener(listener);
+    this.source.addOnProgressEventListener(listener);
 };
 
 /**
@@ -292,7 +304,7 @@ snd.MediaElementAudioNode.prototype.addOnProgressEventListener = function(listen
  * @returns 削除されたらtrue, 削除されなかったらfalse
  */
 snd.MediaElementAudioNode.prototype.removeOnProgressEventListener = function(listener) {
-    return this.src.removeOnProgressEventListener(listener);
+    return this.source.removeOnProgressEventListener(listener);
 };
 
 /**
@@ -300,7 +312,7 @@ snd.MediaElementAudioNode.prototype.removeOnProgressEventListener = function(lis
  * @param {function} listener 追加するコールバックメソッド
  */
 snd.MediaElementAudioNode.prototype.addOnRateChangeEventListener = function(listener) {
-    this.src.addOnRateChangeEventListener(listener);
+    this.source.addOnRateChangeEventListener(listener);
 };
 
 /**
@@ -309,7 +321,7 @@ snd.MediaElementAudioNode.prototype.addOnRateChangeEventListener = function(list
  * @returns 削除されたらtrue, 削除されなかったらfalse
  */
 snd.MediaElementAudioNode.prototype.removeOnRateChangeEventListener = function(listener) {
-    return this.src.removeOnRateChangeEventListener(listener);
+    return this.source.removeOnRateChangeEventListener(listener);
 };
 
 /**
@@ -317,7 +329,7 @@ snd.MediaElementAudioNode.prototype.removeOnRateChangeEventListener = function(l
  * @param {function} listener 追加するコールバックメソッド
  */
 snd.MediaElementAudioNode.prototype.addOnSeekedEventListener = function(listener) {
-    this.src.addOnSeekedEventListener(listener);
+    this.source.addOnSeekedEventListener(listener);
 };
 
 /**
@@ -326,7 +338,7 @@ snd.MediaElementAudioNode.prototype.addOnSeekedEventListener = function(listener
  * @returns 削除されたらtrue, 削除されなかったらfalse
  */
 snd.MediaElementAudioNode.prototype.removeOnSeekedEventListener = function(listener) {
-    return this.src.removeOnSeekedEventListener(listener);
+    return this.source.removeOnSeekedEventListener(listener);
 };
 
 /**
@@ -334,7 +346,7 @@ snd.MediaElementAudioNode.prototype.removeOnSeekedEventListener = function(liste
  * @param {function} listener 追加するコールバックメソッド
  */
 snd.MediaElementAudioNode.prototype.addOnSeekingEventListener = function(listener) {
-    this.src.addOnSeekingEventListener(listener);
+    this.source.addOnSeekingEventListener(listener);
 };
 
 /**
@@ -343,7 +355,7 @@ snd.MediaElementAudioNode.prototype.addOnSeekingEventListener = function(listene
  * @returns 削除されたらtrue, 削除されなかったらfalse
  */
 snd.MediaElementAudioNode.prototype.removeOnSeekingEventListener = function(listener) {
-    return this.src.removeOnSeekingEventListener(listener);
+    return this.source.removeOnSeekingEventListener(listener);
 };
 
 /**
@@ -351,7 +363,7 @@ snd.MediaElementAudioNode.prototype.removeOnSeekingEventListener = function(list
  * @param {function} listener 追加するコールバックメソッド
  */
 snd.MediaElementAudioNode.prototype.addOnStalledEventListener = function(listener) {
-    this.src.addOnStalledEventListener(listener);
+    this.source.addOnStalledEventListener(listener);
 };
 
 /**
@@ -360,7 +372,7 @@ snd.MediaElementAudioNode.prototype.addOnStalledEventListener = function(listene
  * @returns 削除されたらtrue, 削除されなかったらfalse
  */
 snd.MediaElementAudioNode.prototype.removeOnStalledEventListener = function(listener) {
-    return this.src.removeOnStalledEventListener(listener);
+    return this.source.removeOnStalledEventListener(listener);
 };
 
 /**
@@ -368,7 +380,7 @@ snd.MediaElementAudioNode.prototype.removeOnStalledEventListener = function(list
  * @param {function} listener 追加するコールバックメソッド
  */
 snd.MediaElementAudioNode.prototype.addOnSuspendEventListener = function(listener) {
-    this.src.addOnSuspendEventListener(listener);
+    this.source.addOnSuspendEventListener(listener);
 };
 
 /**
@@ -377,7 +389,7 @@ snd.MediaElementAudioNode.prototype.addOnSuspendEventListener = function(listene
  * @returns 削除されたらtrue, 削除されなかったらfalse
  */
 snd.MediaElementAudioNode.prototype.removeOnSuspendEventListener = function(listener) {
-    return this.src.removeOnSuspendEventListener(listener);
+    return this.source.removeOnSuspendEventListener(listener);
 };
 
 /**
@@ -385,7 +397,7 @@ snd.MediaElementAudioNode.prototype.removeOnSuspendEventListener = function(list
  * @param {function} listener 追加するコールバックメソッド
  */
 snd.MediaElementAudioNode.prototype.addOnTimeUpdateEventListener = function(listener) {
-    this.src.addOnTimeUpdateEventListener(listener);
+    this.source.addOnTimeUpdateEventListener(listener);
 };
 
 /**
@@ -394,7 +406,7 @@ snd.MediaElementAudioNode.prototype.addOnTimeUpdateEventListener = function(list
  * @returns 削除されたらtrue, 削除されなかったらfalse
  */
 snd.MediaElementAudioNode.prototype.removeOnTimeUpdateEventListener = function(listener) {
-    return this.src.removeOnTimeUpdateEventListener(listener);
+    return this.source.removeOnTimeUpdateEventListener(listener);
 };
 
 /**
@@ -402,7 +414,7 @@ snd.MediaElementAudioNode.prototype.removeOnTimeUpdateEventListener = function(l
  * @param {function} listener 追加するコールバックメソッド
  */
 snd.MediaElementAudioNode.prototype.addOnVolumeChangeEventListener = function(listener) {
-    this.src.addOnVolumeChangeEventListener(listener);
+    this.source.addOnVolumeChangeEventListener(listener);
 };
 
 /**
@@ -411,7 +423,7 @@ snd.MediaElementAudioNode.prototype.addOnVolumeChangeEventListener = function(li
  * @returns 削除されたらtrue, 削除されなかったらfalse
  */
 snd.MediaElementAudioNode.prototype.removeOnVolumeChangeEventListener = function(listener) {
-    return this.src.removeOnVolumeChangeEventListener(listener);
+    return this.source.removeOnVolumeChangeEventListener(listener);
 };
 
 /**
@@ -419,7 +431,7 @@ snd.MediaElementAudioNode.prototype.removeOnVolumeChangeEventListener = function
  * @param {function} listener 追加するコールバックメソッド
  */
 snd.MediaElementAudioNode.prototype.addOnWaitingEventListener = function(listener) {
-    this.src.addOnWaitingEventListener(listener);
+    this.source.addOnWaitingEventListener(listener);
 };
 
 /**
@@ -428,7 +440,7 @@ snd.MediaElementAudioNode.prototype.addOnWaitingEventListener = function(listene
  * @returns 削除されたらtrue, 削除されなかったらfalse
  */
 snd.MediaElementAudioNode.prototype.removeOnWaitingEventListener = function(listener) {
-    return this.src.removeOnWaitingEventListener(listener);
+    return this.source.removeOnWaitingEventListener(listener);
 };
 
 

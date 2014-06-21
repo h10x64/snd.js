@@ -91,10 +91,14 @@ snd.three.util.createBufferSoundNodes = function(dataSet, connectToMaster, func)
 snd.three.util.createMediaElementSourceNodes = function(dataSet, connectToMaster, element) {
     var ret = {};
     
-    var sources = snd.util.createMediaElementAudioSources(dataSet, connectToMaster, element);
+    var sourceSet = {};
+    for (var id in dataSet) {
+        sourceSet[id + "_src"] = dataSet[id];
+    }
+    var sources = snd.util.createMediaElementAudioSources(sourceSet, false, element);
     
-    for (var id in sources) {
-        ret[id] = new snd.MediaElementAudioNode(id, sources[id]);
+    for (var id in dataSet) {
+        ret[id] = new snd.MediaElementAudioNode(id, sources[id + "_src"]);
         if (connectToMaster) {
             snd.MASTER.connectAudioUnit(ret[id].id, ret[id]);
         }

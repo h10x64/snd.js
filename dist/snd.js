@@ -949,6 +949,18 @@ snd.MediaElementAudioSource = function(id, htmlMediaElement) {
             _this.listeners['onwaiting'][i](_this);
         }
     };
+    
+    Object.defineProperties(this, {
+        src: {
+            enumerable: true,
+            get: function() {
+                return this.element.src;
+            },
+            set: function(uri) {
+                this.element.src = uri;
+            }
+        }
+    });
 };
 snd.MediaElementAudioSource.prototype = Object.create(snd.Source.prototype);
 snd.MediaElementAudioSource.prototype.constructor = snd.MediaElementAudioSource;
@@ -2558,19 +2570,26 @@ snd.util.createBufferSources = function(dataSet, connectToMaster, func) {
  * 
  * @param {HashMap} dataSet 音源のIDと、データURLのハッシュマップ {ID1: "URL1", ID2: "URL2", ... IDn: "URLn"}
  * @param {boolean} connectToMaster 読み込み完了時にsnd.MASTERへ接続するかどうか
- * @param {type} element Audioタグを追加するDOMエレメント
+ * @param {type} parentElem Audioタグを追加するDOMエレメント
  * @returns {HashMap}
  * @memberOf snd.util
  */
-snd.util.createMediaElementAudioSources = function(dataSet, connectToMaster, element) {
+snd.util.createMediaElementAudioSources = function(dataSet, connectToMaster, parentElem) {
     var ret = {};
     
     for (var id in dataSet) {
-        var audioElem = new Audio(id);
-        audioElem.src = dataSet[id];
-        audioElem.autoBuffer = false;
+        var audioElem;
+        var docElem = document.getElementById(id);
+        if (docElem == null) {
+            audioElem = new Audio(id);
+            parentElem.appendChild(audioElem);
+        } else {
+            audioElem = docElem;
+        }
         
-        element.appendChild(audioElem);
+        if (dataSet[id] != null && dataSet[id] != "") {
+            audioElem.src = dataSet[id];
+        }
         
         var source = new snd.MediaElementAudioSource(id, audioElem);
         
