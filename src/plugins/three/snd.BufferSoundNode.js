@@ -2,7 +2,7 @@
  * 新しいインスタンスを作成します。<br/>
  * sourceで渡すオブジェクトは、snd.BufferSoundSourceクラスである必要があります。
  * @param {String} id この音源オブジェクトのID
- * @param {snd.BufferSoundSource} source 使用する音源
+ * @param {snd.BufferSource} source 使用する音源
  * @class BufferSourceクラスを使用するSoundNodeクラスです。<br/>
  * startやstopなどの各種メソッドを移譲しているため、音源とエフェクトの区別をつけないまま操作が可能です。<br/>
  * MediaElementAudioSource/Nodeと比較して、一時停止ができないなどの不便さがありますが、
@@ -12,11 +12,23 @@
 snd.BufferSoundNode = function(id, source) {
     snd.SoundNode.apply(this, arguments);
     
-    this.src = source;
-    this.src.connect(this);
+    if (source == null) {
+        this.source = new snd.BufferSource(id + "_src");
+    } else {
+        this.source = source;
+    }
+    this.source.connect(this);
 };
 snd.BufferSoundNode.prototype = Object.create(snd.SoundNode.prototype);
 snd.BufferSoundNode.prototype.constructor = snd.BufferSoundNode;
+
+/**
+ * オーディオバッファを設定するメソッドです。
+ * @param {AudioBuffer} audioBuffer
+ */
+snd.BufferSoundNode.prototype.setAudioBuffer = function(audioBuffer) {
+    this.source.setAudioBuffer(audioBuffer);
+};
 
 
 /**
@@ -29,7 +41,7 @@ snd.BufferSoundNode.prototype.constructor = snd.BufferSoundNode;
  * @param {Number} duration 音源の再生終了位置（単位:秒）
  */
 snd.BufferSoundNode.prototype.start = function(when, offset, duration) {
-    this.src.start(when, offset, duration);
+    this.source.start(when, offset, duration);
 };
 
 /**
@@ -38,7 +50,7 @@ snd.BufferSoundNode.prototype.start = function(when, offset, duration) {
  * @param {Number} when 何秒後に再生を停止するか 
  */
 snd.BufferSoundNode.prototype.stop = function(when) {
-    this.src.stop(when);
+    this.source.stop(when);
 };
 
 
@@ -47,7 +59,7 @@ snd.BufferSoundNode.prototype.stop = function(when) {
  * @param {boolean} status ループするか否か
  */
 snd.BufferSoundNode.prototype.setLoop = function(status) {
-    this.src.setLoop(status);
+    this.source.setLoop(status);
 };
 
 /**
@@ -55,7 +67,7 @@ snd.BufferSoundNode.prototype.setLoop = function(status) {
  * @returns {Boolean} この音源がループするか否か
  */
 snd.BufferSoundNode.prototype.getLoop = function() {
-    return this.src.getLoop();
+    return this.source.getLoop();
 };
 
 /**
@@ -63,7 +75,7 @@ snd.BufferSoundNode.prototype.getLoop = function() {
  * @param {double} when ループの開始位置[秒]
  */
 snd.BufferSoundNode.prototype.setLoopStart = function(when) {
-    this.src.setLoopStart(when);
+    this.source.setLoopStart(when);
 };
 
 /**
@@ -71,7 +83,7 @@ snd.BufferSoundNode.prototype.setLoopStart = function(when) {
  * @returns {double} ループの開始位置[秒]
  */
 snd.BufferSoundNode.prototype.getLoopStart = function() {
-    return this.src.getLoopStart();
+    return this.source.getLoopStart();
 };
 
 /**
@@ -79,7 +91,7 @@ snd.BufferSoundNode.prototype.getLoopStart = function() {
  * @param {double} when
  */
 snd.BufferSoundNode.prototype.setLoopEnd = function(when) {
-    this.src.setLoopEnd(when);
+    this.source.setLoopEnd(when);
 };
 
 /**
@@ -87,7 +99,7 @@ snd.BufferSoundNode.prototype.setLoopEnd = function(when) {
  * @returns {double} ループの終了位置[秒]
  */
 snd.BufferSoundNode.prototype.getLoopEnd = function() {
-    return this.src.getLoopEnd()
+    return this.source.getLoopEnd()
 };
 
 /* Add/Remove Event Listener Methods */
@@ -98,7 +110,7 @@ snd.BufferSoundNode.prototype.getLoopEnd = function() {
  * @param {function} listener 音源の再生終了イベント発生時に呼び出されるコールバックメソッド
  */
 snd.BufferSoundNode.prototype.addOnEndedEventListener = function(listener) {
-    this.src.addOnEndedEventListener(listener);
+    this.source.addOnEndedEventListener(listener);
 };
 
 /**
@@ -109,6 +121,6 @@ snd.BufferSoundNode.prototype.addOnEndedEventListener = function(listener) {
  * @return {boolean} listenerが見つかり、実際に削除が行われたらtrue, そうでなければfalse
  */
 snd.BufferSoundNode.prototype.removeOnEndedEventListener = function(listener) {
-    return this.src.removeOnEndedEventListener(listener);
+    return this.source.removeOnEndedEventListener(listener);
 };
 

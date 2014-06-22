@@ -41,7 +41,7 @@ snd.util.createSources = function(dataSet, connectToMaster, element, func) {
         ret['AudioBuffer'] = null;
         func(ret);
     }
-}
+};
 
 /**
  * AudioBufferを使用した音源を複数作成するメソッドです。<br/>

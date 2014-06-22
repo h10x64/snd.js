@@ -127,6 +127,43 @@ snd.AudioDataManager.prototype.add = function(key, url) {
 };
 
 /**
+ * keyがキー値となるAudioBufferを追加します。<br/>
+ * このメソッドはBase64形式のデータ文字列をAudioBufferにデコードして使用します。
+ * @param {String} key キー値
+ * @param {String} base64String Base64形式のデータ文字列
+ **/
+snd.AudioDataManager.prototype.addBase64 = function(key, base64String) {
+    var _this = this;
+    this.dataMap[key] = {doesLoaded:false};
+    
+    var base64DataString = "";
+    var matches = base64String.match(/^data:audio.*base64,(.*)$/);
+    if (matches) {
+        base64DataString = matches[1];
+    } else {
+        base64DataString = base64String;
+    }
+    
+    var data = atob(base64DataString);
+    var dataArray = new ArrayBuffer(data.length);
+    var dataBytes = new Uint8Array(dataArray);
+    for (var i = 0; i < dataArray.byteLength; i++) {
+        dataBytes[i] = data.charCodeAt(i) & 0xFF;
+    }
+    
+    this.requests[key] = {};
+    this.requests[key].send = function() {
+        snd.AUDIO_CONTEXT.decodeAudioData(
+            dataArray,
+            function(buf) {
+                _this.dataMap[key].data = buf;
+                _this.dataMap[key].doesLoaded = true;
+                _this.loaded(key, buf);
+            });
+    }
+};
+
+/**
  * 設定された全データのロードが完了しているかどうかを返します。
  * @returns {Boolean} 全データのロードが完了しているか否か
  */
@@ -143,6 +180,7 @@ snd.AudioDataManager.prototype.doesAllDataLoaded = function() {
  * dataSetsで渡された全てのurlを追加します。<br/>
  * dataSetsには{キー:URL}となっているハッシュマップを渡してください。<br/>
  * キーが追加されるAudioBufferのキー値として使用され、URLがAudioBufferが読込むURLとして設定されます。<br/>
+ * 渡されたURLが正規表現「/^data:audio.*base64,.*$/」とマッチする場合はDataURI文字列とし、base64の文字列部分をデータとして使用します。
  * <br/>
  * addAllを使用した時点ではまだ読込は開始されません。<br/>
  * データの読込を開始するには、load関数を使用する必要があります。
@@ -151,9 +189,44 @@ snd.AudioDataManager.prototype.doesAllDataLoaded = function() {
  */
 snd.AudioDataManager.prototype.addAll = function(dataSets) {
     for (var key in dataSets) {
-        this.add(key, dataSets[key]);
+        var uri = dataSets[key];
+        if (uri != null) {
+            var uriMatches = uri.toLowerCase().match(/^data:audio.*base64,(.*)$/);
+            if (uriMatches) {
+                var base64Data = uriMatches[1];
+                this.addBase64(key, base64Data);
+            } else {
+                this.add(key, uri);
+            }
+        }
     }
 };
+
+/**
+ * キーで指定されたデータをこのオブジェクトから削除します。
+ * @param {type} key
+ */
+snd.AudioDataManager.prototype.removeData = function(key) {
+    if (this.requests[key] != null) {
+        delete this.requests[key];
+    }
+    if (this.dataMap[key] != null) {
+        delete this.dataMap[key];
+    }
+    if (this.eventListeners[key] != null) {
+        delete this.eventLiteners[key];
+    }
+}
+
+/**
+ * keySetで指定された全てのデータをこのオブジェクトから削除します
+ * @param {Array} keySet key文字列の配列
+ */
+snd.AudioDataManager.prototype.removeAll = function(keySet) {
+    for (var i = 0; i < keySet.length; i++) {
+        removeData(keySet[i]);
+    }
+}
 
 /**
  * keyで指定されたAudioBufferの読込を開始します。<br/>
@@ -168,10 +241,16 @@ snd.AudioDataManager.prototype.addAll = function(dataSets) {
 snd.AudioDataManager.prototype.load = function(key) {
     if (key == null) {
         for (var key in this.requests) {
-            this.requests[key].send();
+            if (this.dataMap[key].doesLoaded == false) {
+                if (this.requests[key].readyState == null || this.requests[key].readyState == 0) {
+                    this.requests[key].send();
+                }
+            }
         }
     } else {
-        this.requests[key].send();
+        if (this.requests[key].readyState == null || this.requests[key].readyState == 0) {
+            this.requests[key].send();
+        }
     }
 };
 
