@@ -85,10 +85,10 @@ snd.util.createBufferSources = function(dataSet, connectToMaster, func) {
             for (var i = 0; i < sourceMap[url].length; i++) {
                 sourceMap[url][i].setAudioBuffer(snd.AUDIO_DATA_MANAGER.getAudioBuffer(url));
                 ret[sourceMap[url][i].id] = sourceMap[url][i];
-            }
-            
-            if (connectToMaster) {
-                snd.MASTER.connectAudioUnit(sourceMap[url][i].id, sourceMap[url][i]);
+                
+                if (connectToMaster) {
+                    snd.MASTER.connectAudioUnit(sourceMap[url][i].id, sourceMap[url][i]);
+                }
             }
         }
         

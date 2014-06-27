@@ -242,13 +242,13 @@ snd.AudioDataManager.prototype.load = function(key) {
     if (key == null) {
         for (var key in this.requests) {
             if (this.dataMap[key].doesLoaded == false) {
-                if (this.requests[key].readyState == null || this.requests[key].readyState == 0) {
+                if (this.requests[key].readyState == null || this.requests[key].readyState < 2) {
                     this.requests[key].send();
                 }
             }
         }
     } else {
-        if (this.requests[key].readyState == null || this.requests[key].readyState == 0) {
+        if (this.requests[key].readyState == null || this.requests[key].readyState < 2) {
             this.requests[key].send();
         }
     }
