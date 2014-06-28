@@ -1,4 +1,4 @@
-/* snd.js - The Sound Library for JavaScript with WebAudioAPI - v.0.1.0 */
+/* snd.js - The Sound Library for JavaScript with WebAudioAPI - v.0 */
 /**
  * snd.js
  * mml plugin

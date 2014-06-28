@@ -1,4 +1,4 @@
-/* snd.js - The Sound Library for JavaScript with WebAudioAPI - v.0.1.0 */
+/* snd.js - The Sound Library for JavaScript with WebAudioAPI - v.0 */
 /**
  * snd.js
  * 
@@ -2122,8 +2122,31 @@ snd.Synth.Settings.EnvelopeSettings.prototype.onchange = function() {
  * @param id このオーディオユニットのID
  */
 snd.AudioUnit = function(id) {
-    this.isAudioUnit = true;
-    this.id = id;
+    this._isAudioUnit = true;
+    this._id = id;
+    this._connection = [];
+    
+    Object.defineProperties(this, {
+        isAudioUnit: {
+            enumerable: true,
+            get: function() {
+                return this._isAudioUnit;
+            }
+        },
+        id : {
+            enumerable: true,
+            get: function() {
+                return this._id;
+            }
+        },
+        connection : {
+            enumerable: true,
+            get: function() {
+                var ret = Object.create(this._connection);
+                return ret;
+            }
+        }
+    });
 };
 
 /**
@@ -2131,7 +2154,12 @@ snd.AudioUnit = function(id) {
  * @param {snd.AudioUnit} connectTo 接続するAudioUnit
  */
 snd.AudioUnit.prototype.connect = function(connectTo) {
-    // PLEASE OVERRIDE ME
+    this._connection.push(connectTo.id);
+    
+    // PLEASE OVERRIDE ME LIKE THIS
+    // SubClass.prototype.connect = function(connectTo, bra, bra) {
+    //     AudioUnit.prototype.connect.apply(this, arguments);
+    // };
 };
 
 /**
@@ -2139,7 +2167,15 @@ snd.AudioUnit.prototype.connect = function(connectTo) {
  * @param {snd.AudioUnit} disconnectFrom 切断するAudioUnit
  */
 snd.AudioUnit.prototype.disconnect = function(disconnectFrom) {
-    // PLEASE OVERRIDE ME
+    var i = this._connection.indexOf(disconnectFrom.id);
+    if (i >= 0) {
+        this._connection.splice(i, 1);
+    }
+    
+    // PLEASE OVERRIDE ME LIKE THIS
+    // SubClass.prototype.connect = function(connectTo, bra, bra) {
+    //     AudioUnit.prototype.disconnect.apply(this, arguments);
+    // };
 };
 
 /**
@@ -2450,13 +2486,13 @@ snd.AudioDataManager.prototype.load = function(key) {
     if (key == null) {
         for (var key in this.requests) {
             if (this.dataMap[key].doesLoaded == false) {
-                if (this.requests[key].readyState == null || this.requests[key].readyState == 0) {
+                if (this.requests[key].readyState == null || this.requests[key].readyState < 2) {
                     this.requests[key].send();
                 }
             }
         }
     } else {
-        if (this.requests[key].readyState == null || this.requests[key].readyState == 0) {
+        if (this.requests[key].readyState == null || this.requests[key].readyState < 2) {
             this.requests[key].send();
         }
     }
@@ -2624,10 +2660,10 @@ snd.util.createBufferSources = function(dataSet, connectToMaster, func) {
             for (var i = 0; i < sourceMap[url].length; i++) {
                 sourceMap[url][i].setAudioBuffer(snd.AUDIO_DATA_MANAGER.getAudioBuffer(url));
                 ret[sourceMap[url][i].id] = sourceMap[url][i];
-            }
-            
-            if (connectToMaster) {
-                snd.MASTER.connectAudioUnit(sourceMap[url][i].id, sourceMap[url][i]);
+                
+                if (connectToMaster) {
+                    snd.MASTER.connectAudioUnit(sourceMap[url][i].id, sourceMap[url][i]);
+                }
             }
         }
         
