@@ -97,7 +97,7 @@
                 /* 音源オブジェクトの作成 */
                 // snd.utilの音源作成メソッドを呼び出します。
                 // snd.util.createBufferSoundNode(連想配列{"音源データのID":"URL" ... }, ロード終了時に呼び出されるコールバック関数});
-                snd.util.createBufferSources(SOUND_DATA_SETTINGS, function(_loadedData) {
+                snd.util.createBufferSources(SOUND_DATA_SETTINGS, true, function(_loadedData) {
                     // _loadDataの内容: 連想配列{"音源データのID":音源オブジェクト}
 
                     main(_loadedData); // メイン関数の呼出し
