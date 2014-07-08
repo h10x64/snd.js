@@ -7,8 +7,7 @@
  */
 snd.BufferSource = function(id) {
     snd.Source.apply(this, arguments);
-    this.type = snd.srctype.AUDIO_BUFFER;
-    this.status = snd.status.NONE;
+    this._status.type = snd.srctype.AUDIO_BUFFER;
     this.loop = false;
     this.loopStart = null;
     this.loopEnd = null;
@@ -40,12 +39,12 @@ snd.BufferSource.prototype.start = function(when, offset, duration) {
         } else {
             this.source.start(when, offset, duration);
         }
-        this.status = snd.status.STARTED;
+        this._status.status = snd.status.STARTED;
     } else {
         if (this.audioBuffer != null) {
             if (this.status == snd.status.STARTED) {
                 this.stop(0);
-                this.status = snd.status.STOPPED;
+                this._status.status = snd.status.STOPPED;
             } else {
                 this.setAudioBuffer(this.audioBuffer);
             }
@@ -67,26 +66,6 @@ snd.BufferSource.prototype.stop = function(when) {
             this.source.stop(when);
         }
     }
-};
-
-/**
- * この音源をsnd.AudioUnitを継承するオブジェクトやWebAudioAPIのエフェクトに接続します。
- * @param {snd.AudioUnit} connectTo 接続先
- */
-snd.BufferSource.prototype.connect = function(connectTo) {
-    if (connectTo.isAudioUnit) {
-        this.gain.connect(connectTo.getConnector());
-    } else {
-        this.gain.connect(connectTo);
-    }
-};
-
-/**
- * この音源をdisconnectFromで指定されたオブジェクトから切断します。
- * @param {snd.AudioUnit} disconnectFrom 切断元
- */
-snd.BufferSource.prototype.disconnect = function(disconnectFrom) {
-    this.gain.disconnect(disconnectFrom);
 };
 
 /**
@@ -184,12 +163,12 @@ snd.BufferSource.prototype.setAudioBuffer = function(audioBuffer) {
 
     var src = snd.AUDIO_CONTEXT.createBufferSource();
     if (this.source != null) {
-        this.source.disconnect(this.gain);
+        this.source.disconnect(this._gain);
     }
     delete this.source;
     this.source = src;
     this.source.buffer = this.audioBuffer;
-    this.source.connect(this.gain);
+    this.source.connect(this._gain);
     this.resetEventMethods(this.source);
 
     this.source.loop = this.loop;
@@ -199,7 +178,7 @@ snd.BufferSource.prototype.setAudioBuffer = function(audioBuffer) {
     if (this.loopEnd != null) {
         this.source.loopEnd = this.loopEnd;
     }
-    this.status = snd.status.READY;
+    this._status.status = snd.status.READY;
 };
 
 /**

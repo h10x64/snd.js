@@ -1,15 +1,15 @@
 
 /**
  * 新しくオシレータ音源を生成します。
+ * @class 任意の波形を再生するオシレータ音源を扱うクラスです。<br/>
+ * snd.OscillatorSource.SINEなどの定数値でサイン波・矩形波・のこぎり波・三角波を設定できる他、波形はPeriodicWaveクラスでも定義が可能です。
  * @param {type} id この音源をあらわすID
- * @class 任意の波形を再生するオシレータ音源を扱うクラスです。
- * @memberOf snd
  */
 snd.OscillatorSource = function(id) {
     snd.Source.apply(this, arguments);
 
-    this.type = snd.srctype.OSCILLATOR;
-    this.status = snd.status.NONE;
+    this._status.type = snd.srctype.OSCILLATOR;
+    this._status.status = snd.status.NONE;
     this.periodicWave = null;
     
     this.listeners = {
@@ -22,23 +22,42 @@ snd.OscillatorSource.prototype = Object.create(snd.Source.prototype);
 snd.OscillatorSource.prototype.constructor = snd.OscillatorSource;
 
 /**
- * 基準となる周波数(440Hz)です。<br/>
+ * 基準となる周波数(440Hz)です。
  * @type Number
  * @memberOf snd.OscillatorSource
  */
 snd.OscillatorSource.DEFAULT_FREQUENCY = 440;
 
+/**
+ * サイン波を表す定数値です。
+ * @type String
+ * @memberOf snd.OscillatorSource
+ */
 snd.OscillatorSource.SINE = "sine";
+/**
+ * 矩形波を表す定数値です。
+ * @type String
+ * @memberOf snd.OscillatorSource
+ */
 snd.OscillatorSource.SQUARE = "square";
+/**
+ * のこぎり波を表す定数値です。
+ * @type String
+ * @memberOf snd.OscillatorSource
+ */
 snd.OscillatorSource.SAWTOOTH = "sawtooth";
+/**
+ * 三角波を表す定数値です。
+ * @type String
+ * @memberOf snd.OscillatorSource
+ */
 snd.OscillatorSource.TRIANGLE = "triangle";
 
 /**
  * 波形を設定します。<br/>
  * waveformにはsnd.oscillatortype名前空間に定義されているSINEなどの定数か、またはPeriodicWaveオブジェクトを入れてください。<br/>
  * 定数が使用された場合はsetWaveTypeメソッドを、そうでない場合はsetPeriodicWaveメソッドを使用して、このオシレータの波形を設定します。
- * @param {String_or_PeriodicWave} waveform 波形データ。
- * @returns {undefined}
+ * @param {String | PeriodicWave} waveform 波形データ。
  */
 snd.OscillatorSource.prototype.setWaveForm = function(waveform) {
     if (waveform === snd.oscillatortype.SINE
@@ -159,7 +178,7 @@ snd.OscillatorSource.prototype.start = function(when, offset, duration) {
         } else {
             this.source.start(when);
         }
-        this.status = snd.status.STARTED;
+        this._status.status = snd.status.STARTED;
     }
 };
 
@@ -175,7 +194,7 @@ snd.OscillatorSource.prototype.stop = function(when) {
         } else {
             this.source.stop(when);
         }
-        this.status = snd.status.STOPPED;
+        this._status.status = snd.status.STOPPED;
     }
 };
 
@@ -197,7 +216,7 @@ snd.OscillatorSource.prototype.resetOscillator = function() {
     
     this.resetEventMethods();
     
-    this.source.connect(this.gain);
+    this.source.connect(this._gain);
     if (freq != null) {
         this.setFrequency(freq);
     } else {
@@ -215,7 +234,7 @@ snd.OscillatorSource.prototype.resetOscillator = function() {
         this.setPeriodicWave(this.getPeriodicWave());
     }
 
-    this.status = snd.status.READY;
+    this._status.status = snd.status.READY;
 };
 
 /* Add/Remove Event Listener Methods */

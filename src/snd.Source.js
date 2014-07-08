@@ -4,16 +4,57 @@
  * statusプロパティはsnd.status.NONEに<br/>
  * それぞれ設定されます。
  * @class 各種音源クラスの親クラスとなる抽象クラスです。<br/>
- * start, stopの抽象メソッドは継承する子クラスで実装してください。
+ * start, stopなどの抽象メソッドは継承する子クラスで実装してください。
  * @param {String} id この音源のID
  */
 snd.Source = function(id) {
+    snd.AudioUnit.apply(this, arguments);
+    
     this.isSource = true;
-    this.gain = snd.AUDIO_CONTEXT.createGain();
-    this.id = id;
-    this.type = snd.srctype.NONE;
-    this.status = snd.status.NONE;
+    
+    this._gain = snd.AUDIO_CONTEXT.createGain();
+    
+    Object.defineProperties(this, {
+        /**
+         * @propertie {Boolean} このオブジェクトがsnd.Sourceクラスであることを表すブール値
+         */
+        isSource: {
+            get: function() {
+                return this._status.isSource;
+            }
+        },
+        /**
+         * @property {Float} このオブジェクトのメインボリュームの値
+         */
+        volume: {
+            get: function() {
+                return this._gain.gain.value;
+            },
+            set: function(val) {
+                this._gain.gain.value = val;
+                this._status.volume = val;
+            }
+        },
+        /**
+         * @property {snd.status} このオブジェクトの種類
+         */
+        type: {
+            get: function() {
+                return this._status.type;
+            }
+        },
+        /**
+         * @property {snd.status} このオブジェクトの状態
+         */
+        status: {
+            get: function() {
+                return this._status.status;
+            }
+        }
+    });
 };
+snd.Source.prototype = Object.create(snd.AudioUnit.prototype);
+snd.Source.prototype.constructor = snd.Source;
 
 /**
  * 音源の再生を開始します。
@@ -29,23 +70,39 @@ snd.Source.prototype.stop = function() {
     // PLEASE OVERRIDE ME
 };
 
+/**
+ * @deprecated このメソッドは削除予定です。<br/> volumeプロパティを使用するようにしてください。
+ */
 snd.Source.prototype.setGain = function(value) {
-    this.gain.gain.value = value;
+    this._gain.gain.value = value;
 };
 
+/**
+ * @deprecated このメソッドは削除予定です。 volumeプロパティを使用するようにしてください。
+ */
 snd.Source.prototype.getGain = function(value) {
-    return this.gain.gain.value;
+    return this._gain.gain.value;
+};
+
+/**
+ * 詳細はAudioUnitクラスの createStatus を参照してください。
+ * @return {snd.AudioUnit.Status} このオブジェクトのデフォルト設定値
+ */
+snd.Source.prototype.createStatus = function() {
+    return new snd.Source.Status();
 };
 
 /**
  * 詳細はAudioUnitクラスのconnectを参照してください。
  * @param {AudioUnit} connectTo 接続先
  */
-snd.Source.prototype.connect = function(connectTo) {
+snd.Source.prototype.connect = function(connectTo, id) {
+    snd.AudioUnit.prototype.connect.apply(this, arguments);
+    
     if (connectTo.isAudioUnit) {
-        this.gain.connect(connectTo.getConnector());
+        this._gain.connect(connectTo.getConnector());
     } else {
-        this.gain.connect(connectTo);
+        this._gain.connect(connectTo);
     }
 };
 
@@ -53,10 +110,30 @@ snd.Source.prototype.connect = function(connectTo) {
  * 詳細はAudioUnitクラスのdisconnectFromを参照してください。
  * @param {AudioUnit} disconnectFrom 切断する接続先
  */
-snd.Source.prototype.disconnect = function(disconnectFrom) {
+snd.Source.prototype.disconnect = function(disconnectFrom, id) {
+    snd.AudioUnit.prototype.disconnect.apply(this, arguments);
+    
     if (disconnectFrom.isAudioUnit) {
-        this.gain.disconnect(disconnectFrom.getConnector());
+        this._gain.disconnect(disconnectFrom.getConnector());
     } else {
-        this.gain.disconnect(disconnectFrom);
+        this._gain.disconnect(disconnectFrom);
     }
+};
+
+snd.Source.prototype.toJSON = function() {
+    var ret = snd.AudioUnit.prototype.toJSON.apply(this, arguments);
+    // volume プロパティを経由せずに _gain.gain.value に値が設定された場合
+    // _status の volume には値が反映されないため、ここで改めて volume に値を設定
+    ret.volume = this.volume;
+    
+    return ret;
+};
+
+snd.Source.Status = function() {
+    snd.AudioUnit.Status.apply(this, arguments);
+    
+    this.isSource = true;
+    this.type = snd.srctype.NONE;
+    this.status = snd.status.NONE;
+    this.volume = 1;
 };

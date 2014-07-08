@@ -9,10 +9,10 @@
 snd.MediaElementAudioSource = function(id, htmlMediaElement) {
     snd.Source.apply(this, arguments);
     this.source = snd.AUDIO_CONTEXT.createMediaElementSource(htmlMediaElement);
-    this.source.connect(this.gain);
-    this.type = snd.srctype.MEDIA_ELEMENT;
+    this.source.connect(this._gain);
+    this._status.type = snd.srctype.MEDIA_ELEMENT;
     this.element = htmlMediaElement;
-    this.status = snd.status.NONE;
+    this._status.status = snd.status.NONE;
     
     this.listeners = {
         onplay: [],
@@ -42,19 +42,19 @@ snd.MediaElementAudioSource = function(id, htmlMediaElement) {
     var _this = this;
     
     this.element.onplay = function() {
-        _this.status = snd.status.STARTED;
+        _this._status.status = snd.status.STARTED;
         for (var i = 0; i < _this.listeners['onplay'].length; i++) {
             _this.listeners['onplay'][i](_this);
         }
     };
     this.element.onpause = function() {
-        _this.status = snd.status.PAUSED;
+        _this._status.status = snd.status.PAUSED;
         for (var i = 0; i < _this.listeners['onpause'].length; i++) {
             _this.listeners['onpause'][i](_this);
         }
     };
     this.element.onended = function() {
-        _this.status = snd.status.PAUSED;
+        _this._status.status = snd.status.PAUSED;
         for (var i = 0; i < _this.listeners['onended'].length; i++) {
             _this.listeners['onended'][i](_this);
         }
@@ -66,7 +66,7 @@ snd.MediaElementAudioSource = function(id, htmlMediaElement) {
     };
     this.element.oncanplay = function() {
         if (_this.status == snd.status.NONE) {
-            _this.status = snd.status.READY;
+            _this._status.status = snd.status.READY;
         }
         for (var i = 0; i < _this.listeners['oncanplay'].length; i++) {
             _this.listeners['oncanplay'][i](_this);

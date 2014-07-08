@@ -1,10 +1,10 @@
 /**
- * シンセサイザクラスです。<br/>
- * 
+ * コンストラクタです。<br/>
+ * @class シンセサイザクラスです。<br/>
+ * ドキュメントはまだできていませんので、サンプルを参照してください。
  * @param {type} id
  * @param {type} polyphony
  * @param {snd.Synth.Settings} settings
- * @returns {undefined}
  */
 snd.Synth = function(id, polyphony, settings) {
     snd.Source.apply(this, arguments);
@@ -15,7 +15,7 @@ snd.Synth = function(id, polyphony, settings) {
     this.partes = [];
     for (var i = 0; i < this.polyphony; i++) {
         var part = new snd.Synth.Partes(this.id + i, this._settings);
-        part.connect(this.gain);
+        part.connect(this._gain);
         this.partes.push(part);
     }
     
@@ -40,7 +40,7 @@ snd.Synth.prototype.constructor = snd.Synth;
  * 波形を設定します。<br/>
  * waveFormがsnd.oscillatortype名前空間にある定数（snd.ocillatortype.SINEなど）だった場合はその波形に設定されます。<br/>
  * それ以外の場合、waveFormがPriodicWaveのインスタンスとして扱われ、波形に設定されます。
- * @param {String or PeriodicWave} waveForm 波形
+ * @param {String | PeriodicWave} waveForm 波形
  */
 snd.Synth.setWaveForm = function(waveForm) {
     this.settings.waveform = waveForm;
@@ -79,9 +79,10 @@ snd.Synth.prototype.noteOff = function(partes) {
 
 /**
  * コンストラクタです。
+ * @class モノフォニー（monophony）を表すクラスです<br/>
+ * 一音のみを出力します。
  * @param {type} id ID
  * @param {type} parent 親のSynth
- * @class シンセの1音分(monophony)を担当するクラスです。
  */
 snd.Synth.Partes = function(id, settings) {
     snd.OscillatorSource.apply(this, arguments);
@@ -95,8 +96,8 @@ snd.Synth.Partes = function(id, settings) {
         _this.setWaveType(_this.settings.waveform);
     };
     
-    this.ampEnvelope = new snd.Envelope(this.gain.gain, this.settings.amplitude.envelope);
-    this.ampLFO = new snd.Synth.LFO(this.id + "_AmpLFO", this.gain.gain, this.settings.amplitude.lfo);
+    this.ampEnvelope = new snd.Envelope(this._gain.gain, this.settings.amplitude.envelope);
+    this.ampLFO = new snd.Synth.LFO(this.id + "_AmpLFO", this._gain.gain, this.settings.amplitude.lfo);
     this.freqEnvelope = new snd.Envelope(this.source.frequency, this.settings.frequency.envelope);
     this.freqLFO = new snd.Synth.LFO(this.id + "_FreqLFO", this.source.frequency, this.settings.frequency.lfo);
 };
@@ -122,9 +123,10 @@ snd.Synth.Partes.prototype.noteOff = function() {
 
 /**
  * コンストラクタです。
- * @param {type} id
+ * @class シンセのLFOクラスです。<br/>
+ * 音に揺らぎをつけるとき等に使用してください。
+ * @param {type} id ID
  * @param {type} param 値を設定するAudioParam
- * @class シンセのLFOクラスです。
  */
 snd.Synth.LFO = function(id, param, lfoSettings) {
     snd.OscillatorSource.apply(this, arguments);
@@ -133,10 +135,10 @@ snd.Synth.LFO = function(id, param, lfoSettings) {
 
     this.baseValue = 0;
     this.param = param;
-    this.gain.connect(this.param);
+    this._gain.connect(this.param);
     this._settings = lfoSettings;
     this.freqEnvelope = new snd.Envelope(this.source.frequency, lfoSettings.frequency);
-    this.ampEnvelope = new snd.Envelope(this.gain.gain, lfoSettings.amplitude);
+    this.ampEnvelope = new snd.Envelope(this._gain.gain, lfoSettings.amplitude);
     this._settings.onchange = function() {
         _this.source.setWaveForm(_this.settings.waveform);
     };
@@ -204,7 +206,6 @@ snd.Synth.LFO.prototype.noteOff = function() {
  * @param {Number} releaseTime リリースタイム[秒]
  * @param {Number} release リリース
  * @param {Number} releaseType リリースの補間法
- * @class
  */
 snd.Envelope = function(param, settings) {
     this.param = param;
