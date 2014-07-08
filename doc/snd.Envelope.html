@@ -75,10 +75,6 @@
 						</li>
 						
 						<li>
-							<a href="snd.GainOnlyUnit.html">GainOnlyUnit</a>
-						</li>
-						
-						<li>
 							<a href="snd.MediaElementAudioSource.html">MediaElementAudioSource</a>
 						</li>
 						
@@ -99,6 +95,18 @@
 						</li>
 						
 						<li>
+							<a href="snd.Synth.html">Synth</a>
+						</li>
+						
+						<li>
+							<a href="snd.Synth.LFO.html">LFO</a>
+						</li>
+						
+						<li>
+							<a href="snd.Synth.Partes.html">Partes</a>
+						</li>
+						
+						<li>
 							<a href="snd.vec3.html">vec3</a>
 						</li>
 						
@@ -113,7 +121,23 @@
 					<ul class="dropdown-menu ">
 						
 						<li>
+							<a href="global.html#isSource">isSource</a>
+						</li>
+						
+						<li>
 							<a href="global.html#snd">snd</a>
+						</li>
+						
+						<li>
+							<a href="global.html#status">status</a>
+						</li>
+						
+						<li>
+							<a href="global.html#type">type</a>
+						</li>
+						
+						<li>
+							<a href="global.html#volume">volume</a>
 						</li>
 						
 
@@ -143,6 +167,26 @@
     Envelope
     </h2>
     
+        <div class="class-description">エンベロープの設定値を保持するクラスです。<br/>
+コンストラクタのparamで設定されたAudioParamのADSR(Attack, Decay, Sustain, Release)を、時間と倍数と補間処理の種類の3つの値で制御します。<br/>
+各値の変化は以下のようになります。<br/>
+  noteOn() -> 0 -(attackTime秒)-> attack * maxValue -(decayTime秒)-> sustain * maxValue<br/>
+  noteOff() -> sustain -(releaseTime秒)-> 0<br/>
+sustainTimeに0より大きな値が設定されている場合は、<br/>
+  noteOn() -> 0 -(attackTime秒)-> attack * maxValue -(decayTime秒)-> sustain * maxValue -(sustainTime秒)-> release -(releaseTime秒)-> 0<br/>
+<br/>
+アタック、ディケイ、サスティーン、リリースの値は倍数で、出力に乗じる値を指定します(デシベルではありません)。<br/>
+また、maxValueはアタック、ディケイ、サスティーン<br/>
+補間処理の種類は、「補間なし」「直線補間」「対数補間」の3種類があり、snd.audioparam.type名前空間にある定数を使って、いずれか一つを指定します。<br/>
+<table>
+<tr>定数値<td></td><td>補間方法</td></tr>
+<tr><td>snd.audioparam.type.SET</td><td>補間なし</td></tr>
+<tr><td>snd.audioparam.type.LINER</td><td>直線補間</td></tr>
+<tr><td>snd.audioparam.type.EXPONENTIALLY</td><td>対数補間</td></tr>
+</table><br/>
+時間の単位は全て秒単位です。<br/>
+また、エンベロープについて詳しくは<a href="http://en.wikipedia.org/wiki/Synthesizer#ADSR_envelope">Wikipedia(英)</a>や<a href="http://ja.wikipedia.org/wiki/ADSR">Wikipedia(日)</a>を参照してください。<br/></div>
+    
 </header>
 
 <article>
@@ -152,7 +196,7 @@
     
         
 <dt>
-    <h4 class="name" id="Envelope"><span class="type-signature"></span>new Envelope<span class="signature">(attackTime, attack, attackType, decayTime, decayType, sustainTime, sutain, sustainType, releaseTime, release, releaseType)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Envelope"><span class="type-signature"></span>new Envelope<span class="signature">(max, attackTime, attack, attackType, decayTime, decayType, sustainTime, sustain, sustainType, releaseTime, release, releaseType)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -160,18 +204,7 @@
     
     
     <div class="description">
-        エンベロープの設定値を保持するクラスです。<br/>
-ADSR(Attack, Decay, Sustain, Release)を、時間と音量と補間処理の種類の3つの値で制御します。<br/>
-時間の単位は全て秒単位です。<br/>
-アタック、ディケイ、サスティーン、リリースの値はゲインの値で、出力に乗じる値を指定します(デシベルではありません)。<br/>
-補間処理の種類は、「補間なし」「直線補間」「対数補間」の3種類があり、snd.audioparam.type名前空間にある定数を使って、いずれか一つを指定します。<br/>
-<table>
-<tr>定数値<td></td><td>補間方法</td></tr>
-<tr><td>snd.audioparam.type.SET</td><td>補間なし</td></tr>
-<tr><td>snd.audioparam.type.LINER</td><td>直線補間</td></tr>
-<tr><td>snd.audioparam.type.EXPONENTIALLY</td><td>対数補間</td></tr>
-</table><br/>
-また、エンベロープについて詳しくは<a href="http://en.wikipedia.org/wiki/Synthesizer#ADSR_envelope">Wikipedia(英)</a>や<a href="http://ja.wikipedia.org/wiki/ADSR">Wikipedia(日)</a>を参照してください。<br/>
+        引数で渡された内容のエンベロープを作ります。<br/>
     </div>
     
 
@@ -205,13 +238,36 @@ ADSR(Attack, Decay, Sustain, Release)を、時間と音量と補間処理の種�
 
         <tr>
             
+                <td class="name"><code>max</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">最大値[秒]</td>
+        </tr>
+
+	
+
+        <tr>
+            
                 <td class="name"><code>attackTime</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">type</span>
+<span class="param-type">Number</span>
 
 
             
@@ -234,7 +290,7 @@ ADSR(Attack, Decay, Sustain, Release)を、時間と音量と補間処理の種�
             <td class="type">
             
                 
-<span class="param-type">type</span>
+<span class="param-type">Number</span>
 
 
             
@@ -257,7 +313,7 @@ ADSR(Attack, Decay, Sustain, Release)を、時間と音量と補間処理の種�
             <td class="type">
             
                 
-<span class="param-type">type</span>
+<span class="param-type">Number</span>
 
 
             
@@ -280,7 +336,7 @@ ADSR(Attack, Decay, Sustain, Release)を、時間と音量と補間処理の種�
             <td class="type">
             
                 
-<span class="param-type">type</span>
+<span class="param-type">Number</span>
 
 
             
@@ -303,7 +359,7 @@ ADSR(Attack, Decay, Sustain, Release)を、時間と音量と補間処理の種�
             <td class="type">
             
                 
-<span class="param-type">type</span>
+<span class="param-type">Number</span>
 
 
             
@@ -326,7 +382,7 @@ ADSR(Attack, Decay, Sustain, Release)を、時間と音量と補間処理の種�
             <td class="type">
             
                 
-<span class="param-type">type</span>
+<span class="param-type">Number</span>
 
 
             
@@ -343,13 +399,13 @@ ADSR(Attack, Decay, Sustain, Release)を、時間と音量と補間処理の種�
 
         <tr>
             
-                <td class="name"><code>sutain</code></td>
+                <td class="name"><code>sustain</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">type</span>
+<span class="param-type">Number</span>
 
 
             
@@ -372,7 +428,7 @@ ADSR(Attack, Decay, Sustain, Release)を、時間と音量と補間処理の種�
             <td class="type">
             
                 
-<span class="param-type">type</span>
+<span class="param-type">Number</span>
 
 
             
@@ -395,7 +451,7 @@ ADSR(Attack, Decay, Sustain, Release)を、時間と音量と補間処理の種�
             <td class="type">
             
                 
-<span class="param-type">type</span>
+<span class="param-type">Number</span>
 
 
             
@@ -418,7 +474,7 @@ ADSR(Attack, Decay, Sustain, Release)を、時間と音量と補間処理の種�
             <td class="type">
             
                 
-<span class="param-type">type</span>
+<span class="param-type">Number</span>
 
 
             
@@ -441,7 +497,7 @@ ADSR(Attack, Decay, Sustain, Release)を、時間と音量と補間処理の種�
             <td class="type">
             
                 
-<span class="param-type">type</span>
+<span class="param-type">Number</span>
 
 
             
@@ -483,7 +539,7 @@ ADSR(Attack, Decay, Sustain, Release)を、時間と音量と補間処理の種�
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1699
+        snd.js, line 1996
     </li></ul></dd>
     
 
@@ -551,7 +607,7 @@ ADSR(Attack, Decay, Sustain, Release)を、時間と音量と補間処理の種�
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a>
-		on Sun May 18 2014 20:03:22 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		on Wed Jul 09 2014 00:36:22 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
 			</div>

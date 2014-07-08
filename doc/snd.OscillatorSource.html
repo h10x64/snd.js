@@ -75,10 +75,6 @@
 						</li>
 						
 						<li>
-							<a href="snd.GainOnlyUnit.html">GainOnlyUnit</a>
-						</li>
-						
-						<li>
 							<a href="snd.MediaElementAudioSource.html">MediaElementAudioSource</a>
 						</li>
 						
@@ -99,6 +95,18 @@
 						</li>
 						
 						<li>
+							<a href="snd.Synth.html">Synth</a>
+						</li>
+						
+						<li>
+							<a href="snd.Synth.LFO.html">LFO</a>
+						</li>
+						
+						<li>
+							<a href="snd.Synth.Partes.html">Partes</a>
+						</li>
+						
+						<li>
 							<a href="snd.vec3.html">vec3</a>
 						</li>
 						
@@ -113,7 +121,23 @@
 					<ul class="dropdown-menu ">
 						
 						<li>
+							<a href="global.html#isSource">isSource</a>
+						</li>
+						
+						<li>
 							<a href="global.html#snd">snd</a>
+						</li>
+						
+						<li>
+							<a href="global.html#status">status</a>
+						</li>
+						
+						<li>
+							<a href="global.html#type">type</a>
+						</li>
+						
+						<li>
+							<a href="global.html#volume">volume</a>
 						</li>
 						
 
@@ -144,7 +168,7 @@
     </h2>
     
         <div class="class-description">任意の波形を再生するオシレータ音源を扱うクラスです。<br/>
-詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#dfn-OscillatorNode">WebAudioAPIの仕様</a>を参照してください。</div>
+snd.OscillatorSource.SINEなどの定数値でサイン波・矩形波・のこぎり波・三角波を設定できる他、波形はPeriodicWaveクラスでも定義が可能です。</div>
     
 </header>
 
@@ -203,7 +227,7 @@
             <td class="type">
             
                 
-<span class="param-type">type</span>
+<span class="param-type"><a href="global.html#type">type</a></span>
 
 
             
@@ -245,7 +269,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 549
+        snd.js, line 766
     </li></ul></dd>
     
 
@@ -296,7 +320,7 @@
 <dd>
     
     <div class="description">
-        基準となる周波数(440Hz)です。<br/>
+        基準となる周波数(440Hz)です。
     </div>
     
     
@@ -335,7 +359,263 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 569
+        snd.js, line 787
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="SAWTOOTH"><span class="type-signature">&lt;static> </span>SAWTOOTH<span class="type-signature"> :String</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        のこぎり波を表す定数値です。
+    </div>
+    
+    
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">String</span>
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 806
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="SINE"><span class="type-signature">&lt;static> </span>SINE<span class="type-signature"> :String</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        サイン波を表す定数値です。
+    </div>
+    
+    
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">String</span>
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 794
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="SQUARE"><span class="type-signature">&lt;static> </span>SQUARE<span class="type-signature"> :String</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        矩形波を表す定数値です。
+    </div>
+    
+    
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">String</span>
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 800
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="TRIANGLE"><span class="type-signature">&lt;static> </span>TRIANGLE<span class="type-signature"> :String</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        三角波を表す定数値です。
+    </div>
+    
+    
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">String</span>
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 812
     </li></ul></dd>
     
 
@@ -401,7 +681,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 637
+        snd.js, line 896
     </li></ul></dd>
     
 
@@ -493,7 +773,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 613
+        snd.js, line 872
     </li></ul></dd>
     
 
@@ -544,7 +824,7 @@
         
             
 <dt>
-    <h4 class="name" id="getType"><span class="type-signature"></span>getType<span class="signature">()</span><span class="type-signature"> &rarr; {OscillatorType}</span></h4>
+    <h4 class="name" id="getOscillatorType"><span class="type-signature"></span>getOscillatorType<span class="signature">()</span><span class="type-signature"> &rarr; {OscillatorType}</span></h4>
     
     
 </dt>
@@ -554,7 +834,7 @@
     <div class="description">
         このオシレータの波形の種類を返します。<br/>
 戻り値にはOscillatorTypeが使われます。<br/>
-OscillatorTypeの詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#dfn-OscillatorNode">WebAudioAPIの仕様<a/>を参照してください。
+OscillatorTypeの詳細は、WebAudioAPIの仕様を参照してください。
     </div>
     
 
@@ -587,7 +867,7 @@ OscillatorTypeの詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 591
+        snd.js, line 850
     </li></ul></dd>
     
 
@@ -624,6 +904,94 @@ OscillatorTypeの詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#
 	<dd>
 		
 <span class="param-type">OscillatorType</span>
+
+
+	</dd>
+</dl>
+
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="getPeriodicWave"><span class="type-signature"></span>getPeriodicWave<span class="signature">()</span><span class="type-signature"> &rarr; {PeriodicWave}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        この音源の波形データを返します。
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 921
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">PeriodicWave</span>
 
 
 	</dd>
@@ -729,7 +1097,7 @@ OscillatorTypeの詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 626
+        snd.js, line 885
     </li></ul></dd>
     
 
@@ -805,7 +1173,7 @@ OscillatorTypeの詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#
             <td class="type">
             
                 
-<span class="param-type">type</span>
+<span class="param-type"><a href="global.html#type">type</a></span>
 
 
             
@@ -847,7 +1215,126 @@ OscillatorTypeの詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 603
+        snd.js, line 862
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="setOscillatorType"><span class="type-signature"></span>setOscillatorType<span class="signature">(oscillatorType)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        波形の種類を設定します。<br/>
+引数には、snd.oscillatortype.SINE, snd.oscillatortype.SQUARE, snd.oscillatortype.SAWTOOTH, snd.oscillatortype.TRIANGLEのいずれかを設定してください。
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>oscillatorType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">OscillatorType</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 837
     </li></ul></dd>
     
 
@@ -967,7 +1454,7 @@ PriodicWaveオブジェクトの詳細は<a href="http://g200kg.github.io/web-au
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 651
+        snd.js, line 910
     </li></ul></dd>
     
 
@@ -995,7 +1482,7 @@ PriodicWaveオブジェクトの詳細は<a href="http://g200kg.github.io/web-au
         
             
 <dt>
-    <h4 class="name" id="setType"><span class="type-signature"></span>setType<span class="signature">(oscillatorType)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="setWaveForm"><span class="type-signature"></span>setWaveForm<span class="signature">(waveform)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -1003,9 +1490,9 @@ PriodicWaveオブジェクトの詳細は<a href="http://g200kg.github.io/web-au
     
     
     <div class="description">
-        波形の種類を設定します。<br/>
-引数のoscillatorTypeはWebAudioAPIで定義されたOscillatorType列挙型を使用してください。<br/>
-OscillatorTypeの詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#dfn-OscillatorNode">WebAudioAPIの仕様<a/>を参照してください。
+        波形を設定します。<br/>
+waveformにはsnd.oscillatortype名前空間に定義されているSINEなどの定数か、またはPeriodicWaveオブジェクトを入れてください。<br/>
+定数が使用された場合はsetWaveTypeメソッドを、そうでない場合はsetPeriodicWaveメソッドを使用して、このオシレータの波形を設定します。
     </div>
     
 
@@ -1039,13 +1526,16 @@ OscillatorTypeの詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#
 
         <tr>
             
-                <td class="name"><code>oscillatorType</code></td>
+                <td class="name"><code>waveform</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">OscillatorType</span>
+<span class="param-type">String</span>
+|
+
+<span class="param-type">PeriodicWave</span>
 
 
             
@@ -1055,7 +1545,7 @@ OscillatorTypeの詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#
 
             
 
-            <td class="description last"></td>
+            <td class="description last">波形データ。</td>
         </tr>
 
 	
@@ -1087,7 +1577,7 @@ OscillatorTypeの詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 578
+        snd.js, line 820
     </li></ul></dd>
     
 
@@ -1186,7 +1676,7 @@ OscillatorTypeの詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#
             <td class="type">
             
                 
-<span class="param-type">type</span>
+<span class="param-type"><a href="global.html#type">type</a></span>
 
 
             
@@ -1209,7 +1699,7 @@ OscillatorTypeの詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#
             <td class="type">
             
                 
-<span class="param-type">type</span>
+<span class="param-type"><a href="global.html#type">type</a></span>
 
 
             
@@ -1251,7 +1741,7 @@ OscillatorTypeの詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 664
+        snd.js, line 932
     </li></ul></dd>
     
 
@@ -1369,7 +1859,7 @@ OscillatorTypeの詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 680
+        snd.js, line 948
     </li></ul></dd>
     
 
@@ -1423,7 +1913,7 @@ OscillatorTypeの詳細は、<a href="http://g200kg.github.io/web-audio-api-ja/#
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a>
-		on Sun May 18 2014 20:03:23 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		on Wed Jul 09 2014 00:36:23 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
 			</div>

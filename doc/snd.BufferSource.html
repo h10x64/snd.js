@@ -75,10 +75,6 @@
 						</li>
 						
 						<li>
-							<a href="snd.GainOnlyUnit.html">GainOnlyUnit</a>
-						</li>
-						
-						<li>
 							<a href="snd.MediaElementAudioSource.html">MediaElementAudioSource</a>
 						</li>
 						
@@ -99,6 +95,18 @@
 						</li>
 						
 						<li>
+							<a href="snd.Synth.html">Synth</a>
+						</li>
+						
+						<li>
+							<a href="snd.Synth.LFO.html">LFO</a>
+						</li>
+						
+						<li>
+							<a href="snd.Synth.Partes.html">Partes</a>
+						</li>
+						
+						<li>
 							<a href="snd.vec3.html">vec3</a>
 						</li>
 						
@@ -113,7 +121,23 @@
 					<ul class="dropdown-menu ">
 						
 						<li>
+							<a href="global.html#isSource">isSource</a>
+						</li>
+						
+						<li>
 							<a href="global.html#snd">snd</a>
+						</li>
+						
+						<li>
+							<a href="global.html#status">status</a>
+						</li>
+						
+						<li>
+							<a href="global.html#type">type</a>
+						</li>
+						
+						<li>
+							<a href="global.html#volume">volume</a>
 						</li>
 						
 
@@ -246,7 +270,7 @@ wav, mp3などが再生可能ですが、ブラウザにより対応状況が異
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 330
+        snd.js, line 569
     </li></ul></dd>
     
 
@@ -383,243 +407,7 @@ wav, mp3などが再生可能ですが、ブラウザにより対応状況が異
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 478
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="connect"><span class="type-signature"></span>connect<span class="signature">(connectTo)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        この音源をsnd.AudioUnitを継承するオブジェクトやWebAudioAPIのエフェクトに接続します。
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-
-		<th>Type</th>
-
-		
-
-		
-
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-
-	<tbody>
-	
-
-        <tr>
-            
-                <td class="name"><code>connectTo</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="snd.AudioUnit.html">snd.AudioUnit</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">接続先</td>
-        </tr>
-
-	
-	</tbody>
-</table>
-
-    
-    
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 398
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="disconnect"><span class="type-signature"></span>disconnect<span class="signature">(disconnectFrom)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        この音源をdisconnectFromで指定されたオブジェクトから切断します。
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-
-		<th>Type</th>
-
-		
-
-		
-
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-
-	<tbody>
-	
-
-        <tr>
-            
-                <td class="name"><code>disconnectFrom</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="snd.AudioUnit.html">snd.AudioUnit</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">切断元</td>
-        </tr>
-
-	
-	</tbody>
-</table>
-
-    
-    
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 410
+        snd.js, line 696
     </li></ul></dd>
     
 
@@ -688,7 +476,7 @@ wav, mp3などが再生可能ですが、ブラウザにより対応状況が異
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 429
+        snd.js, line 647
     </li></ul></dd>
     
 
@@ -780,7 +568,7 @@ wav, mp3などが再生可能ですが、ブラウザにより対応状況が異
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 467
+        snd.js, line 685
     </li></ul></dd>
     
 
@@ -872,7 +660,7 @@ wav, mp3などが再生可能ですが、ブラウザにより対応状況が異
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 448
+        snd.js, line 666
     </li></ul></dd>
     
 
@@ -1015,7 +803,7 @@ wav, mp3などが再生可能ですが、ブラウザにより対応状況が異
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 489
+        snd.js, line 707
     </li></ul></dd>
     
 
@@ -1103,7 +891,7 @@ wav, mp3などが再生可能ですが、ブラウザにより対応状況が異
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 530
+        snd.js, line 748
     </li></ul></dd>
     
 
@@ -1221,7 +1009,7 @@ wav, mp3などが再生可能ですが、ブラウザにより対応状況が異
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 504
+        snd.js, line 722
     </li></ul></dd>
     
 
@@ -1339,7 +1127,7 @@ wav, mp3などが再生可能ですが、ブラウザにより対応状況が異
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 418
+        snd.js, line 636
     </li></ul></dd>
     
 
@@ -1457,7 +1245,7 @@ wav, mp3などが再生可能ですが、ブラウザにより対応状況が異
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 456
+        snd.js, line 674
     </li></ul></dd>
     
 
@@ -1575,7 +1363,7 @@ wav, mp3などが再生可能ですが、ブラウザにより対応状況が異
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 437
+        snd.js, line 655
     </li></ul></dd>
     
 
@@ -1741,7 +1529,7 @@ start()とすると、すぐにデータの頭から終わりまでの再生が�
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 354
+        snd.js, line 592
     </li></ul></dd>
     
 
@@ -1860,7 +1648,7 @@ start()とすると、すぐにデータの頭から終わりまでの再生が�
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 384
+        snd.js, line 622
     </li></ul></dd>
     
 
@@ -1914,7 +1702,7 @@ start()とすると、すぐにデータの頭から終わりまでの再生が�
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a>
-		on Sun May 18 2014 20:03:21 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		on Wed Jul 09 2014 00:36:22 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
 			</div>

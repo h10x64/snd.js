@@ -75,10 +75,6 @@
 						</li>
 						
 						<li>
-							<a href="snd.GainOnlyUnit.html">GainOnlyUnit</a>
-						</li>
-						
-						<li>
 							<a href="snd.MediaElementAudioSource.html">MediaElementAudioSource</a>
 						</li>
 						
@@ -99,6 +95,18 @@
 						</li>
 						
 						<li>
+							<a href="snd.Synth.html">Synth</a>
+						</li>
+						
+						<li>
+							<a href="snd.Synth.LFO.html">LFO</a>
+						</li>
+						
+						<li>
+							<a href="snd.Synth.Partes.html">Partes</a>
+						</li>
+						
+						<li>
 							<a href="snd.vec3.html">vec3</a>
 						</li>
 						
@@ -113,7 +121,23 @@
 					<ul class="dropdown-menu ">
 						
 						<li>
+							<a href="global.html#isSource">isSource</a>
+						</li>
+						
+						<li>
 							<a href="global.html#snd">snd</a>
+						</li>
+						
+						<li>
+							<a href="global.html#status">status</a>
+						</li>
+						
+						<li>
+							<a href="global.html#type">type</a>
+						</li>
+						
+						<li>
+							<a href="global.html#volume">volume</a>
 						</li>
 						
 
@@ -196,7 +220,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1813
+        snd.js, line 2356
     </li></ul></dd>
     
 
@@ -277,7 +301,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1823
+        snd.js, line 2366
     </li></ul></dd>
     
 
@@ -332,7 +356,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1828
+        snd.js, line 2371
     </li></ul></dd>
     
 
@@ -387,7 +411,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1818
+        snd.js, line 2361
     </li></ul></dd>
     
 
@@ -459,7 +483,7 @@
             <td class="type">
             
                 
-<span class="param-type">type</span>
+<span class="param-type"><a href="global.html#type">type</a></span>
 
 
             
@@ -482,7 +506,7 @@
             <td class="type">
             
                 
-<span class="param-type">type</span>
+<span class="param-type"><a href="global.html#type">type</a></span>
 
 
             
@@ -524,7 +548,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1915
+        snd.js, line 2458
     </li></ul></dd>
     
 
@@ -563,6 +587,7 @@
         dataSetsで渡された全てのurlを追加します。<br/>
 dataSetsには{キー:URL}となっているハッシュマップを渡してください。<br/>
 キーが追加されるAudioBufferのキー値として使用され、URLがAudioBufferが読込むURLとして設定されます。<br/>
+渡されたURLが正規表現「/^data:audio.*base64,.*$/」とマッチする場合はDataURI文字列とし、base64の文字列部分をデータとして使用します。
 <br/>
 addAllを使用した時点ではまだ読込は開始されません。<br/>
 データの読込を開始するには、load関数を使用する必要があります。
@@ -647,7 +672,7 @@ addAllを使用した時点ではまだ読込は開始されません。<br/>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1959
+        snd.js, line 2540
     </li></ul></dd>
     
 
@@ -730,7 +755,7 @@ addAllを使用した時点ではまだ読込は開始されません。<br/>
             <td class="type">
             
                 
-<span class="param-type">type</span>
+<span class="param-type"><a href="global.html#type">type</a></span>
 
 
             
@@ -772,7 +797,149 @@ addAllを使用した時点ではまだ読込は開始されません。<br/>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1848
+        snd.js, line 2391
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="addBase64"><span class="type-signature"></span>addBase64<span class="signature">(key, base64String)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        keyがキー値となるAudioBufferを追加します。<br/>
+このメソッドはBase64形式のデータ文字列をAudioBufferにデコードして使用します。
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>key</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">キー値</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>base64String</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Base64形式のデータ文字列</td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 2485
     </li></ul></dd>
     
 
@@ -849,7 +1016,7 @@ addAllを使用した時点ではまだ読込は開始されません。<br/>
             <td class="type">
             
                 
-<span class="param-type">type</span>
+<span class="param-type"><a href="global.html#type">type</a></span>
 
 
             
@@ -914,7 +1081,7 @@ addAllを使用した時点ではまだ読込は開始されません。<br/>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1875
+        snd.js, line 2418
     </li></ul></dd>
     
 
@@ -990,7 +1157,7 @@ addAllを使用した時点ではまだ読込は開始されません。<br/>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1940
+        snd.js, line 2520
     </li></ul></dd>
     
 
@@ -1089,7 +1256,7 @@ addAllを使用した時点ではまだ読込は開始されません。<br/>
             <td class="type">
             
                 
-<span class="param-type">type</span>
+<span class="param-type"><a href="global.html#type">type</a></span>
 
 
             
@@ -1131,7 +1298,7 @@ addAllを使用した時点ではまだ読込は開始されません。<br/>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1902
+        snd.js, line 2445
     </li></ul></dd>
     
 
@@ -1276,7 +1443,7 @@ addAllを使用した時点ではまだ読込は開始されません。<br/>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1975
+        snd.js, line 2591
     </li></ul></dd>
     
 
@@ -1362,7 +1529,7 @@ AudioDataManagerが内部で使用するための関数なので、オーバー�
             <td class="type">
             
                 
-<span class="param-type">type</span>
+<span class="param-type"><a href="global.html#type">type</a></span>
 
 
             
@@ -1427,7 +1594,7 @@ AudioDataManagerが内部で使用するための関数なので、オーバー�
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1991
+        snd.js, line 2613
     </li></ul></dd>
     
 
@@ -1498,7 +1665,125 @@ AudioDataManagerが内部で使用するための関数なので、オーバー�
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1838
+        snd.js, line 2381
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="removeAll"><span class="type-signature"></span>removeAll<span class="signature">(keySet)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        keySetで指定された全てのデータをこのオブジェクトから削除します
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>keySet</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">key文字列の配列</td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 2575
     </li></ul></dd>
     
 
@@ -1574,7 +1859,7 @@ AudioDataManagerが内部で使用するための関数なので、オーバー�
             <td class="type">
             
                 
-<span class="param-type">type</span>
+<span class="param-type"><a href="global.html#type">type</a></span>
 
 
             
@@ -1616,7 +1901,7 @@ AudioDataManagerが内部で使用するための関数なので、オーバー�
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1857
+        snd.js, line 2400
     </li></ul></dd>
     
 
@@ -1660,6 +1945,124 @@ AudioDataManagerが内部で使用するための関数なので、オーバー�
 
 
         
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="removeData"><span class="type-signature"></span>removeData<span class="signature">(key)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        キーで指定されたデータをこのオブジェクトから削除します。
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>key</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#type">type</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 2559
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
     
     
 </dd>
@@ -1716,7 +2119,7 @@ AudioDataManagerが内部で使用するための関数なので、オーバー�
             <td class="type">
             
                 
-<span class="param-type">type</span>
+<span class="param-type"><a href="global.html#type">type</a></span>
 
 
             
@@ -1758,7 +2161,7 @@ AudioDataManagerが内部で使用するための関数なので、オーバー�
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1888
+        snd.js, line 2431
     </li></ul></dd>
     
 
@@ -1831,7 +2234,7 @@ AudioDataManagerが内部で使用するための関数なので、オーバー�
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a>
-		on Sun May 18 2014 20:03:21 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		on Wed Jul 09 2014 00:36:21 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
 			</div>

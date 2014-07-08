@@ -263,21 +263,219 @@ snd.PosDir.interpolation = function(left, right, ratio) {
 };
 
 /**
+ * 新しいオーディオユニットを生成します。
+ * @class 1つのオーディオユニットを定義する抽象クラスです。<br/>
+ * 引数にAudioUnitを要求するメソッドに渡すオブジェクトは、ここで定義されている各メソッドを実装している必要があります。<br/>
+ * パラメータ "_status" はオーディオユニットのパラメータをまとめたオブジェクトで、JSONを使って保存・読み込みする際に使用されます。<br/>
+ * _status内の値はプロパティから取得できるようになっているので、直接_statusを使用しないようにしてください。
+ * @param id このオーディオユニットのID
+ */
+snd.AudioUnit = function(id) {
+    this._status = this.createStatus();
+    
+    this._status.id = id;
+    this._status.className = "snd.AudioUnit";
+    this._status.connection = [];
+    
+    Object.defineProperties(this, {
+        isAudioUnit: {
+            enumerable: true,
+            get: function() {
+                return this._status.isAudioUnit;
+            }
+        },
+        id : {
+            enumerable: true,
+            get: function() {
+                return this._status.id;
+            }
+        },
+        connection : {
+            enumerable: true,
+            get: function() {
+                var ret = Object.create(this._status.connection);
+                return ret;
+            }
+        }
+    });
+};
+
+/**
+ * デフォルトの設定値(_status変数の値)を作るメソッドです。<br/>
+ * snd.AudioUnit を継承するクラスはこのメソッドをオーバーライドしてください。<br/>
+ * 戻り値は、snd.AudioUnit.Status を継承したクラスである必要があります。<br/>
+ * @returns {snd.AudioUnit.Status} このクラスのデフォルト設定値
+ */
+snd.AudioUnit.prototype.createStatus = function() {
+    // PLEASE OVERRIDE ME
+    return new snd.AudioUnit.Status();
+};
+
+snd.AudioUnit.prototype.connect = function(connectTo) {
+    this.connect(connectTo, connectTo.id);
+};
+
+/**
+ * このオーディオユニットをconnectToで指定されたオーディオユニットまたはノードに接続します。<br/>
+ * このメソッドを使って connectTo に接続した時に connection プロパティに connectTo.id が追加されます。<br/>
+ * 引数 connectTo が id を持たない場合（connectTo.id == nullの場合）、connection プロパティには引数 id の値が追加されますので、 gain や frequency など、id を持たないパラメータへ接続する時は、引数 id に値を設定するようにしてください。<br/>
+ * connectTo.id, id が両方とも null の場合は connection プロパティには何も追加されません。<br/>
+ * このクラスを継承するクラスを作る場合、オーバーライドが必要です。(オーバーライドの際、apply必須)
+ * @param {snd.AudioUnit} connectTo 接続するAudioUnit
+ * @param {String} id connectTo.idがnullの場合に使用されるID
+ */
+snd.AudioUnit.prototype.connect = function(connectTo, id) {
+    if (connectTo.id != null) {
+        this._status.connection.push(connectTo.id);
+    } else if (id != null) {
+        this._status.connection.push(id);
+    }
+    
+    // PLEASE OVERRIDE ME LIKE THIS
+    // SubClass.prototype.connect = function(connectTo, bra, bra) {
+    //     AudioUnit.prototype.connect.apply(this, arguments);
+    // };
+};
+
+snd.AudioUnit.prototype.disconnect = function(disconnectFrom) {
+    this.disconnect(disconnectFrom, disconnectForm.id);
+};
+
+/**
+ * このオーディオユニットをdisconnectFromから切断します。<br/>
+ * このメソッドを使って disconnectFrom との接続を切断した時、connection プロパティから disconnectFrom.id が削除されます。<br/>
+ * 引数 disconnectFrom が id を持たない場合（disconnectFrom.id == nullの場合）、引数 id に設定された値が connection プロパティから削除されます。<br/>
+ * connectTo.id, id が両方とも null の場合は connection プロパティからは何も削除されません。<br/>
+ * このクラスを継承するクラスを作る場合、オーバーライドが必要です。(オーバーライドの際、apply必須)
+ * @param {snd.AudioUnit} disconnectFrom 切断するAudioUnit
+ * @param {String} id disconnectFrom.id が null の場合に使用されるID
+ */
+snd.AudioUnit.prototype.disconnect = function(disconnectFrom, id) {
+    var i = -1;
+    if (disconnectFrom.id != null) {
+        i = this._status.connection.indexOf(disconnectFrom.id);
+    } else if (id != null) {
+        i = this._status.connection.indexOf(id);
+    }
+    
+    if (i >= 0) {
+        this._connection.splice(i, 1);
+    }
+    
+    // PLEASE OVERRIDE ME LIKE THIS
+    // SubClass.prototype.connect = function(connectTo, bra, bra) {
+    //     AudioUnit.prototype.disconnect.apply(this, arguments);
+    // };
+};
+
+/**
+ * このオーディオユニットの入り口となる、connect/disconnectメソッドを持つオブジェクトを返します。<br/>
+ * AudioUnitクラス、SoundEnvironmentクラスなどのオブジェクトが使用する他、
+ * AudioUnitクラスを既存のWebAudioAPIで作られたチェーンに組み込む場合などに使用されます。<br/>
+ * このクラスを継承するクラスを作る場合、オーバーライドが必要です。
+ */
+snd.AudioUnit.prototype.getConnector = function() {
+    // PLEASE OVERRIDE ME
+};
+
+/**
+ * JSON.stringifyで使用されるメソッドです。<br/>
+ * このメソッドの戻り値がJSON.stringifyの出力に使用されます。
+ * @returns {snd.AudioUnit.Status}
+ */
+snd.AudioUnit.prototype.toJSON = function() {
+    return this._status;
+};
+
+/**
+ * 引数jsonで渡された値をパースし、各種パラメータを設定します。<br/>
+ * 接続先のリストは読み込みますが、このメソッドでは<strong>接続は行いません</strong>。<br/>
+ * オーディオユニット同士のチェーンの再構築は別途実装が必要です。<br/>
+ * このクラスを継承するクラスを作る場合、オーバーライドが必要です。(オーバーライドの際、apply必須)
+ * 
+ * @param {String} json 読み込むJSON文字列
+ * @returns {snd.AudioUnit} jsonを内容を読み込んだAudioUnit
+ */
+snd.AudioUnit.prototype.fromJSON = function(json) {
+    var data = JSON.parse(json);
+    this._status.id = data["id"];
+    this._status.connection = data["connection"];
+    
+    // PLEASE OVERRIDE ME LIKE THIS
+    // SubClass.prototype.connect = function(connectTo, bra, bra) {
+    //     AudioUnit.prototype.disconnect.apply(this, arguments);
+    // };
+};
+
+/**
+ * オーディオユニットの各種設定情報を保持するクラスです。
+ */
+snd.AudioUnit.Status = function() {
+    this.isAudioUnit = true;
+    this.id = "";
+    this.className = "";
+    this.connection = [];
+};
+
+
+
+/**
  * 音源を生成します。<br/>
  * typeプロパティはsnd.srctype.NONEに<br/>
  * statusプロパティはsnd.status.NONEに<br/>
  * それぞれ設定されます。
  * @class 各種音源クラスの親クラスとなる抽象クラスです。<br/>
- * start, stopの抽象メソッドは継承する子クラスで実装してください。
+ * start, stopなどの抽象メソッドは継承する子クラスで実装してください。
  * @param {String} id この音源のID
  */
 snd.Source = function(id) {
+    snd.AudioUnit.apply(this, arguments);
+    
     this.isSource = true;
-    this.gain = snd.AUDIO_CONTEXT.createGain();
-    this.id = id;
-    this.type = snd.srctype.NONE;
-    this.status = snd.status.NONE;
+    
+    this._gain = snd.AUDIO_CONTEXT.createGain();
+    
+    Object.defineProperties(this, {
+        /**
+         * @propertie {Boolean} このオブジェクトがsnd.Sourceクラスであることを表すブール値
+         */
+        isSource: {
+            get: function() {
+                return this._status.isSource;
+            }
+        },
+        /**
+         * @property {Float} このオブジェクトのメインボリュームの値
+         */
+        volume: {
+            get: function() {
+                return this._gain.gain.value;
+            },
+            set: function(val) {
+                this._gain.gain.value = val;
+                this._status.volume = val;
+            }
+        },
+        /**
+         * @property {snd.status} このオブジェクトの種類
+         */
+        type: {
+            get: function() {
+                return this._status.type;
+            }
+        },
+        /**
+         * @property {snd.status} このオブジェクトの状態
+         */
+        status: {
+            get: function() {
+                return this._status.status;
+            }
+        }
+    });
 };
+snd.Source.prototype = Object.create(snd.AudioUnit.prototype);
+snd.Source.prototype.constructor = snd.Source;
 
 /**
  * 音源の再生を開始します。
@@ -293,23 +491,39 @@ snd.Source.prototype.stop = function() {
     // PLEASE OVERRIDE ME
 };
 
+/**
+ * @deprecated このメソッドは削除予定です。<br/> volumeプロパティを使用するようにしてください。
+ */
 snd.Source.prototype.setGain = function(value) {
-    this.gain.gain.value = value;
+    this._gain.gain.value = value;
 };
 
+/**
+ * @deprecated このメソッドは削除予定です。 volumeプロパティを使用するようにしてください。
+ */
 snd.Source.prototype.getGain = function(value) {
-    return this.gain.gain.value;
+    return this._gain.gain.value;
+};
+
+/**
+ * 詳細はAudioUnitクラスの createStatus を参照してください。
+ * @return {snd.AudioUnit.Status} このオブジェクトのデフォルト設定値
+ */
+snd.Source.prototype.createStatus = function() {
+    return new snd.Source.Status();
 };
 
 /**
  * 詳細はAudioUnitクラスのconnectを参照してください。
  * @param {AudioUnit} connectTo 接続先
  */
-snd.Source.prototype.connect = function(connectTo) {
+snd.Source.prototype.connect = function(connectTo, id) {
+    snd.AudioUnit.prototype.connect.apply(this, arguments);
+    
     if (connectTo.isAudioUnit) {
-        this.gain.connect(connectTo.getConnector());
+        this._gain.connect(connectTo.getConnector());
     } else {
-        this.gain.connect(connectTo);
+        this._gain.connect(connectTo);
     }
 };
 
@@ -317,12 +531,32 @@ snd.Source.prototype.connect = function(connectTo) {
  * 詳細はAudioUnitクラスのdisconnectFromを参照してください。
  * @param {AudioUnit} disconnectFrom 切断する接続先
  */
-snd.Source.prototype.disconnect = function(disconnectFrom) {
+snd.Source.prototype.disconnect = function(disconnectFrom, id) {
+    snd.AudioUnit.prototype.disconnect.apply(this, arguments);
+    
     if (disconnectFrom.isAudioUnit) {
-        this.gain.disconnect(disconnectFrom.getConnector());
+        this._gain.disconnect(disconnectFrom.getConnector());
     } else {
-        this.gain.disconnect(disconnectFrom);
+        this._gain.disconnect(disconnectFrom);
     }
+};
+
+snd.Source.prototype.toJSON = function() {
+    var ret = snd.AudioUnit.prototype.toJSON.apply(this, arguments);
+    // volume プロパティを経由せずに _gain.gain.value に値が設定された場合
+    // _status の volume には値が反映されないため、ここで改めて volume に値を設定
+    ret.volume = this.volume;
+    
+    return ret;
+};
+
+snd.Source.Status = function() {
+    snd.AudioUnit.Status.apply(this, arguments);
+    
+    this.isSource = true;
+    this.type = snd.srctype.NONE;
+    this.status = snd.status.NONE;
+    this.volume = 1;
 };
 
 /**
@@ -334,8 +568,7 @@ snd.Source.prototype.disconnect = function(disconnectFrom) {
  */
 snd.BufferSource = function(id) {
     snd.Source.apply(this, arguments);
-    this.type = snd.srctype.AUDIO_BUFFER;
-    this.status = snd.status.NONE;
+    this._status.type = snd.srctype.AUDIO_BUFFER;
     this.loop = false;
     this.loopStart = null;
     this.loopEnd = null;
@@ -367,12 +600,12 @@ snd.BufferSource.prototype.start = function(when, offset, duration) {
         } else {
             this.source.start(when, offset, duration);
         }
-        this.status = snd.status.STARTED;
+        this._status.status = snd.status.STARTED;
     } else {
         if (this.audioBuffer != null) {
             if (this.status == snd.status.STARTED) {
                 this.stop(0);
-                this.status = snd.status.STOPPED;
+                this._status.status = snd.status.STOPPED;
             } else {
                 this.setAudioBuffer(this.audioBuffer);
             }
@@ -394,26 +627,6 @@ snd.BufferSource.prototype.stop = function(when) {
             this.source.stop(when);
         }
     }
-};
-
-/**
- * この音源をsnd.AudioUnitを継承するオブジェクトやWebAudioAPIのエフェクトに接続します。
- * @param {snd.AudioUnit} connectTo 接続先
- */
-snd.BufferSource.prototype.connect = function(connectTo) {
-    if (connectTo.isAudioUnit) {
-        this.gain.connect(connectTo.getConnector());
-    } else {
-        this.gain.connect(connectTo);
-    }
-};
-
-/**
- * この音源をdisconnectFromで指定されたオブジェクトから切断します。
- * @param {snd.AudioUnit} disconnectFrom 切断元
- */
-snd.BufferSource.prototype.disconnect = function(disconnectFrom) {
-    this.gain.disconnect(disconnectFrom);
 };
 
 /**
@@ -511,12 +724,12 @@ snd.BufferSource.prototype.setAudioBuffer = function(audioBuffer) {
 
     var src = snd.AUDIO_CONTEXT.createBufferSource();
     if (this.source != null) {
-        this.source.disconnect(this.gain);
+        this.source.disconnect(this._gain);
     }
     delete this.source;
     this.source = src;
     this.source.buffer = this.audioBuffer;
-    this.source.connect(this.gain);
+    this.source.connect(this._gain);
     this.resetEventMethods(this.source);
 
     this.source.loop = this.loop;
@@ -526,7 +739,7 @@ snd.BufferSource.prototype.setAudioBuffer = function(audioBuffer) {
     if (this.loopEnd != null) {
         this.source.loopEnd = this.loopEnd;
     }
-    this.status = snd.status.READY;
+    this._status.status = snd.status.READY;
 };
 
 /**
@@ -546,15 +759,15 @@ snd.BufferSource.prototype.resetEventMethods = function() {
 
 /**
  * 新しくオシレータ音源を生成します。
+ * @class 任意の波形を再生するオシレータ音源を扱うクラスです。<br/>
+ * snd.OscillatorSource.SINEなどの定数値でサイン波・矩形波・のこぎり波・三角波を設定できる他、波形はPeriodicWaveクラスでも定義が可能です。
  * @param {type} id この音源をあらわすID
- * @class 任意の波形を再生するオシレータ音源を扱うクラスです。
- * @memberOf snd
  */
 snd.OscillatorSource = function(id) {
     snd.Source.apply(this, arguments);
 
-    this.type = snd.srctype.OSCILLATOR;
-    this.status = snd.status.NONE;
+    this._status.type = snd.srctype.OSCILLATOR;
+    this._status.status = snd.status.NONE;
     this.periodicWave = null;
     
     this.listeners = {
@@ -567,23 +780,42 @@ snd.OscillatorSource.prototype = Object.create(snd.Source.prototype);
 snd.OscillatorSource.prototype.constructor = snd.OscillatorSource;
 
 /**
- * 基準となる周波数(440Hz)です。<br/>
+ * 基準となる周波数(440Hz)です。
  * @type Number
  * @memberOf snd.OscillatorSource
  */
 snd.OscillatorSource.DEFAULT_FREQUENCY = 440;
 
+/**
+ * サイン波を表す定数値です。
+ * @type String
+ * @memberOf snd.OscillatorSource
+ */
 snd.OscillatorSource.SINE = "sine";
+/**
+ * 矩形波を表す定数値です。
+ * @type String
+ * @memberOf snd.OscillatorSource
+ */
 snd.OscillatorSource.SQUARE = "square";
+/**
+ * のこぎり波を表す定数値です。
+ * @type String
+ * @memberOf snd.OscillatorSource
+ */
 snd.OscillatorSource.SAWTOOTH = "sawtooth";
+/**
+ * 三角波を表す定数値です。
+ * @type String
+ * @memberOf snd.OscillatorSource
+ */
 snd.OscillatorSource.TRIANGLE = "triangle";
 
 /**
  * 波形を設定します。<br/>
  * waveformにはsnd.oscillatortype名前空間に定義されているSINEなどの定数か、またはPeriodicWaveオブジェクトを入れてください。<br/>
  * 定数が使用された場合はsetWaveTypeメソッドを、そうでない場合はsetPeriodicWaveメソッドを使用して、このオシレータの波形を設定します。
- * @param {String_or_PeriodicWave} waveform 波形データ。
- * @returns {undefined}
+ * @param {String | PeriodicWave} waveform 波形データ。
  */
 snd.OscillatorSource.prototype.setWaveForm = function(waveform) {
     if (waveform === snd.oscillatortype.SINE
@@ -704,7 +936,7 @@ snd.OscillatorSource.prototype.start = function(when, offset, duration) {
         } else {
             this.source.start(when);
         }
-        this.status = snd.status.STARTED;
+        this._status.status = snd.status.STARTED;
     }
 };
 
@@ -720,7 +952,7 @@ snd.OscillatorSource.prototype.stop = function(when) {
         } else {
             this.source.stop(when);
         }
-        this.status = snd.status.STOPPED;
+        this._status.status = snd.status.STOPPED;
     }
 };
 
@@ -742,7 +974,7 @@ snd.OscillatorSource.prototype.resetOscillator = function() {
     
     this.resetEventMethods();
     
-    this.source.connect(this.gain);
+    this.source.connect(this._gain);
     if (freq != null) {
         this.setFrequency(freq);
     } else {
@@ -760,7 +992,7 @@ snd.OscillatorSource.prototype.resetOscillator = function() {
         this.setPeriodicWave(this.getPeriodicWave());
     }
 
-    this.status = snd.status.READY;
+    this._status.status = snd.status.READY;
 };
 
 /* Add/Remove Event Listener Methods */
@@ -801,10 +1033,10 @@ snd.OscillatorSource.prototype.resetEventMethods = function() {
 snd.MediaElementAudioSource = function(id, htmlMediaElement) {
     snd.Source.apply(this, arguments);
     this.source = snd.AUDIO_CONTEXT.createMediaElementSource(htmlMediaElement);
-    this.source.connect(this.gain);
-    this.type = snd.srctype.MEDIA_ELEMENT;
+    this.source.connect(this._gain);
+    this._status.type = snd.srctype.MEDIA_ELEMENT;
     this.element = htmlMediaElement;
-    this.status = snd.status.NONE;
+    this._status.status = snd.status.NONE;
     
     this.listeners = {
         onplay: [],
@@ -834,19 +1066,19 @@ snd.MediaElementAudioSource = function(id, htmlMediaElement) {
     var _this = this;
     
     this.element.onplay = function() {
-        _this.status = snd.status.STARTED;
+        _this._status.status = snd.status.STARTED;
         for (var i = 0; i < _this.listeners['onplay'].length; i++) {
             _this.listeners['onplay'][i](_this);
         }
     };
     this.element.onpause = function() {
-        _this.status = snd.status.PAUSED;
+        _this._status.status = snd.status.PAUSED;
         for (var i = 0; i < _this.listeners['onpause'].length; i++) {
             _this.listeners['onpause'][i](_this);
         }
     };
     this.element.onended = function() {
-        _this.status = snd.status.PAUSED;
+        _this._status.status = snd.status.PAUSED;
         for (var i = 0; i < _this.listeners['onended'].length; i++) {
             _this.listeners['onended'][i](_this);
         }
@@ -858,7 +1090,7 @@ snd.MediaElementAudioSource = function(id, htmlMediaElement) {
     };
     this.element.oncanplay = function() {
         if (_this.status == snd.status.NONE) {
-            _this.status = snd.status.READY;
+            _this._status.status = snd.status.READY;
         }
         for (var i = 0; i < _this.listeners['oncanplay'].length; i++) {
             _this.listeners['oncanplay'][i](_this);
@@ -1544,8 +1776,8 @@ snd.MediaElementAudioSource.prototype.removeOnWaitingEventListener = function(li
 snd.MediaStreamAudioSource = function(id, mediaStream) {
     snd.Source.apply(this, arguments);
     this.source = snd.AUDIO_CONTEXT.createMediaStreamAudioSource(mediaStream);
-    this.source.connect(this.gain);
-    this.type = snd.srctype.MEDIA_STREAM;
+    this.source.connect(this._gain);
+    this._status.type = snd.srctype.MEDIA_STREAM;
 };
 snd.MediaStreamAudioSource.prototype = Object.create(snd.Source.prototype);
 snd.MediaStreamAudioSource.prototype.constructor = snd.MediaStreamAudioSource;
@@ -1553,12 +1785,12 @@ snd.MediaStreamAudioSource.prototype.constructor = snd.MediaStreamAudioSource;
 
 
 /**
- * シンセサイザクラスです。<br/>
- * 
+ * コンストラクタです。<br/>
+ * @class シンセサイザクラスです。<br/>
+ * ドキュメントはまだできていませんので、サンプルを参照してください。
  * @param {type} id
  * @param {type} polyphony
  * @param {snd.Synth.Settings} settings
- * @returns {undefined}
  */
 snd.Synth = function(id, polyphony, settings) {
     snd.Source.apply(this, arguments);
@@ -1569,7 +1801,7 @@ snd.Synth = function(id, polyphony, settings) {
     this.partes = [];
     for (var i = 0; i < this.polyphony; i++) {
         var part = new snd.Synth.Partes(this.id + i, this._settings);
-        part.connect(this.gain);
+        part.connect(this._gain);
         this.partes.push(part);
     }
     
@@ -1594,7 +1826,7 @@ snd.Synth.prototype.constructor = snd.Synth;
  * 波形を設定します。<br/>
  * waveFormがsnd.oscillatortype名前空間にある定数（snd.ocillatortype.SINEなど）だった場合はその波形に設定されます。<br/>
  * それ以外の場合、waveFormがPriodicWaveのインスタンスとして扱われ、波形に設定されます。
- * @param {String or PeriodicWave} waveForm 波形
+ * @param {String | PeriodicWave} waveForm 波形
  */
 snd.Synth.setWaveForm = function(waveForm) {
     this.settings.waveform = waveForm;
@@ -1633,9 +1865,10 @@ snd.Synth.prototype.noteOff = function(partes) {
 
 /**
  * コンストラクタです。
+ * @class モノフォニー（monophony）を表すクラスです<br/>
+ * 一音のみを出力します。
  * @param {type} id ID
  * @param {type} parent 親のSynth
- * @class シンセの1音分(monophony)を担当するクラスです。
  */
 snd.Synth.Partes = function(id, settings) {
     snd.OscillatorSource.apply(this, arguments);
@@ -1649,8 +1882,8 @@ snd.Synth.Partes = function(id, settings) {
         _this.setWaveType(_this.settings.waveform);
     };
     
-    this.ampEnvelope = new snd.Envelope(this.gain.gain, this.settings.amplitude.envelope);
-    this.ampLFO = new snd.Synth.LFO(this.id + "_AmpLFO", this.gain.gain, this.settings.amplitude.lfo);
+    this.ampEnvelope = new snd.Envelope(this._gain.gain, this.settings.amplitude.envelope);
+    this.ampLFO = new snd.Synth.LFO(this.id + "_AmpLFO", this._gain.gain, this.settings.amplitude.lfo);
     this.freqEnvelope = new snd.Envelope(this.source.frequency, this.settings.frequency.envelope);
     this.freqLFO = new snd.Synth.LFO(this.id + "_FreqLFO", this.source.frequency, this.settings.frequency.lfo);
 };
@@ -1676,9 +1909,10 @@ snd.Synth.Partes.prototype.noteOff = function() {
 
 /**
  * コンストラクタです。
- * @param {type} id
+ * @class シンセのLFOクラスです。<br/>
+ * 音に揺らぎをつけるとき等に使用してください。
+ * @param {type} id ID
  * @param {type} param 値を設定するAudioParam
- * @class シンセのLFOクラスです。
  */
 snd.Synth.LFO = function(id, param, lfoSettings) {
     snd.OscillatorSource.apply(this, arguments);
@@ -1687,10 +1921,10 @@ snd.Synth.LFO = function(id, param, lfoSettings) {
 
     this.baseValue = 0;
     this.param = param;
-    this.gain.connect(this.param);
+    this._gain.connect(this.param);
     this._settings = lfoSettings;
     this.freqEnvelope = new snd.Envelope(this.source.frequency, lfoSettings.frequency);
-    this.ampEnvelope = new snd.Envelope(this.gain.gain, lfoSettings.amplitude);
+    this.ampEnvelope = new snd.Envelope(this._gain.gain, lfoSettings.amplitude);
     this._settings.onchange = function() {
         _this.source.setWaveForm(_this.settings.waveform);
     };
@@ -1758,7 +1992,6 @@ snd.Synth.LFO.prototype.noteOff = function() {
  * @param {Number} releaseTime リリースタイム[秒]
  * @param {Number} release リリース
  * @param {Number} releaseType リリースの補間法
- * @class
  */
 snd.Envelope = function(param, settings) {
     this.param = param;
@@ -2114,133 +2347,6 @@ snd.Synth.Settings.EnvelopeSettings = function(
 };
 snd.Synth.Settings.EnvelopeSettings.prototype.onchange = function() {
 };
-
-/**
- * 新しいオーディオユニットを生成します。
- * @class 1つのオーディオユニットを定義する抽象クラスです。<br/>
- * 引数にAudioUnitを要求するメソッドに渡すオブジェクトは、ここで定義されている各メソッドを実装している必要があります。
- * @param id このオーディオユニットのID
- */
-snd.AudioUnit = function(id) {
-    this._isAudioUnit = true;
-    this._id = id;
-    this._connection = [];
-    
-    Object.defineProperties(this, {
-        isAudioUnit: {
-            enumerable: true,
-            get: function() {
-                return this._isAudioUnit;
-            }
-        },
-        id : {
-            enumerable: true,
-            get: function() {
-                return this._id;
-            }
-        },
-        connection : {
-            enumerable: true,
-            get: function() {
-                var ret = Object.create(this._connection);
-                return ret;
-            }
-        }
-    });
-};
-
-/**
- * このオーディオユニットをconnectToで指定されたオーディオユニットまたはノードに接続します。<br/>
- * @param {snd.AudioUnit} connectTo 接続するAudioUnit
- */
-snd.AudioUnit.prototype.connect = function(connectTo) {
-    this._connection.push(connectTo.id);
-    
-    // PLEASE OVERRIDE ME LIKE THIS
-    // SubClass.prototype.connect = function(connectTo, bra, bra) {
-    //     AudioUnit.prototype.connect.apply(this, arguments);
-    // };
-};
-
-/**
- * このオーディオユニットをdisconnectFromから切断します。
- * @param {snd.AudioUnit} disconnectFrom 切断するAudioUnit
- */
-snd.AudioUnit.prototype.disconnect = function(disconnectFrom) {
-    var i = this._connection.indexOf(disconnectFrom.id);
-    if (i >= 0) {
-        this._connection.splice(i, 1);
-    }
-    
-    // PLEASE OVERRIDE ME LIKE THIS
-    // SubClass.prototype.connect = function(connectTo, bra, bra) {
-    //     AudioUnit.prototype.disconnect.apply(this, arguments);
-    // };
-};
-
-/**
- * このオーディオユニットのconnect/disconnectメソッドを持つオブジェクトを返します。<br/>
- * AudioUnitクラス、SoundEnvironmentクラスなどのオブジェクトから呼び出されるメソッドですので、通常は
- * AudioUnit#connect/AudioUnit#disconnectメソッドを使用してください。
- */
-snd.AudioUnit.prototype.getConnector = function() {
-    // PLEASE OVERRIDE ME
-};
-
-/*** GAIN ONLY UNIT ***/
-
-/**
- * 新しくボリュームユニットを生成します。
- * @param {String} id このユニットのID
- * @class 主ボリュームのみのもっとも単純なユニットです。<br/>
- * ボリュームの使用法については<a href="http://g200kg.github.io/web-audio-api-ja/#GainNode">web audio api仕様のGainNode</a>を参照してください。
- */
-snd.GainOnlyUnit = function(id) {
-    snd.AudioUnit.apply(this, arguments);
-    this.gain = snd.AUDIO_CONTEXT.createGain();
-};
-snd.GainOnlyUnit.prototype = Object.create(snd.AudioUnit.prototype);
-snd.GainOnlyUnit.prototype.constructor = snd.GainOnlyUnit;
-
-/**
- * このユニットをconnectToに接続します。
- * @param {type} connectTo
- */
-snd.GainOnlyUnit.prototype.connect = function(connectTo) {
-    if (connectTo.isAudioUnit) {
-        this.gain.connect(connectTo.getConnector());
-    } else {
-        this.gain.connect(connectTo);
-    }
-};
-
-/**
- * このユニットをdisconnectFromから切断します。
- * @param {type} disconnectFrom
- */
-snd.GainOnlyUnit.prototype.disconnect = function(disconnectFrom) {
-    if (disconnectFrom.isAudioUnit) {
-        this.gain.disconnect(disconnectFrom.getConnector());
-    } else {
-        this.gain.disconnet(disconnectFrom);
-    }
-}
-
-/**
- * @see snd.AudioUnit#getConnector
- */
-snd.GainOnlyUnit.prototype.getConnector = function() {
-    return this.gain;
-};
-
-/**
- * メインボリュームを取得します。<br/>
- * @returns {snd.GainNode} this.gain
- */
-snd.GainOnlyUnit.prototype.getGain = function() {
-    return this.gain;
-};
-
 
 /**
  * コンストラクタは使用せず、snd.AUDIO_DATA_MANAGERを使用してください。<br/>

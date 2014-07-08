@@ -3,19 +3,23 @@
   * @param {String} id このユニットを表す固有のID
   */
 snd.SoundNode = function(id) {
-    snd.GainOnlyUnit.apply(this, arguments);
+    snd.AudioUnit.apply(this, arguments);
     snd.PosDir.apply(this, arguments);
     
+    this.gain = snd.AUDIO_CONTEXT.createGain();
     this.pannerNode = snd.AUDIO_CONTEXT.createPanner();
+    
     this.gain.connect(this.pannerNode);
 };
-snd.SoundNode.prototype = Object.create(snd.GainOnlyUnit.prototype);
+snd.SoundNode.prototype = Object.create(snd.AudioUnit.prototype);
 snd.SoundNode.prototype.constructor = snd.SoundNode;
 
 /**
  * @see snd.AudioUnit#connect
  */
 snd.SoundNode.prototype.connect = function(connectTo) {
+    snd.AudioUnit.prototype.connect.apply(this, arguments);
+    
     if (connectTo.isAudioUnit) {
         this.pannerNode.connect(connectTo.getConnector());
     } else {
@@ -23,13 +27,34 @@ snd.SoundNode.prototype.connect = function(connectTo) {
     }
 };
 
+/**
+ * @see snd.AudioUnit#disconnect
+ */
 snd.SoundNode.prototype.disconnect = function(disconnectFrom) {
+    snd.AudioUnit.prototype.disconnect.apply(this, arguments);
+    
     if (disconnectFrom.isAudioUnit) {
         this.pannerNode.disconnect(disconnectFrom.getConnector());
     } else {
         this.pannerNode.disconnect(disconnectFrom);
     }
 };
+
+/**
+ * @see snd.AudioUnit#getConnector
+ */
+snd.SoundNode.prototype.getConnector = function() {
+    return this.gain;
+};
+
+/**
+ * メインボリュームを取得します。<br/>
+ * @returns {snd.GainNode} this.gain
+ */
+snd.SoundNode.prototype.getGain = function() {
+    return this.gain;
+};
+
 
 snd.SoundNode.start = function(when, offset, duration) {
     // PLEASE OVERIDE ME

@@ -75,10 +75,6 @@
 						</li>
 						
 						<li>
-							<a href="snd.GainOnlyUnit.html">GainOnlyUnit</a>
-						</li>
-						
-						<li>
 							<a href="snd.MediaElementAudioSource.html">MediaElementAudioSource</a>
 						</li>
 						
@@ -99,6 +95,18 @@
 						</li>
 						
 						<li>
+							<a href="snd.Synth.html">Synth</a>
+						</li>
+						
+						<li>
+							<a href="snd.Synth.LFO.html">LFO</a>
+						</li>
+						
+						<li>
+							<a href="snd.Synth.Partes.html">Partes</a>
+						</li>
+						
+						<li>
 							<a href="snd.vec3.html">vec3</a>
 						</li>
 						
@@ -113,7 +121,23 @@
 					<ul class="dropdown-menu ">
 						
 						<li>
+							<a href="global.html#isSource">isSource</a>
+						</li>
+						
+						<li>
 							<a href="global.html#snd">snd</a>
+						</li>
+						
+						<li>
+							<a href="global.html#status">status</a>
+						</li>
+						
+						<li>
+							<a href="global.html#type">type</a>
+						</li>
+						
+						<li>
+							<a href="global.html#volume">volume</a>
 						</li>
 						
 
@@ -143,7 +167,7 @@
     AudioUnit
     </h2>
     
-        <div class="class-description">1つのオーディオユニットを定義する抽象クラスです。<br/>引数にAudioUnitを要求するメソッドに渡すオブジェクトは、ここで定義されている各メソッドを実装している必要があります。</div>
+        <div class="class-description">1つのオーディオユニットを定義する抽象クラスです。<br/>引数にAudioUnitを要求するメソッドに渡すオブジェクトは、ここで定義されている各メソッドを実装している必要があります。<br/>パラメータ "_status" はオーディオユニットのパラメータをまとめたオブジェクトで、JSONを使って保存・読み込みする際に使用されます。<br/>_status内の値はプロパティから取得できるようになっているので、直接_statusを使用しないようにしてください。</div>
     
 </header>
 
@@ -239,7 +263,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1723
+        snd.js, line 273
     </li></ul></dd>
     
 
@@ -285,7 +309,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="connect"><span class="type-signature"></span>connect<span class="signature">(connectTo)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Status"><span class="type-signature">&lt;static> </span>Status<span class="signature">()</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -293,7 +317,76 @@
     
     
     <div class="description">
-        このオーディオユニットをconnectToで指定されたオーディオユニットまたはノードに接続します。<br/>
+        オーディオユニットの各種設定情報を保持するクラスです。
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 413
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="connect"><span class="type-signature"></span>connect<span class="signature">(connectTo, id)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        このオーディオユニットをconnectToで指定されたオーディオユニットまたはノードに接続します。<br/>このメソッドを使って connectTo に接続した時に connection プロパティに connectTo.id が追加されます。<br/>引数 connectTo が id を持たない場合（connectTo.id == nullの場合）、connection プロパティには引数 id の値が追加されますので、 gain や frequency など、id を持たないパラメータへ接続する時は、引数 id に値を設定するようにしてください。<br/>connectTo.id, id が両方とも null の場合は connection プロパティには何も追加されません。<br/>このクラスを継承するクラスを作る場合、オーバーライドが必要です。(オーバーライドの際、apply必須)
     </div>
     
 
@@ -347,6 +440,29 @@
         </tr>
 
 	
+
+        <tr>
+            
+                <td class="name"><code>id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">connectTo.idがnullの場合に使用されるID</td>
+        </tr>
+
+	
 	</tbody>
 </table>
 
@@ -375,7 +491,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1732
+        snd.js, line 327
     </li></ul></dd>
     
 
@@ -403,7 +519,7 @@
         
             
 <dt>
-    <h4 class="name" id="disconnect"><span class="type-signature"></span>disconnect<span class="signature">(disconnectFrom)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="createStatus"><span class="type-signature"></span>createStatus<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="snd.AudioUnit.html#Status">snd.AudioUnit.Status</a>}</span></h4>
     
     
 </dt>
@@ -411,7 +527,99 @@
     
     
     <div class="description">
-        このオーディオユニットをdisconnectFromから切断します。
+        デフォルトの設定値(_status変数の値)を作るメソッドです。<br/>snd.AudioUnit を継承するクラスはこのメソッドをオーバーライドしてください。<br/>戻り値は、snd.AudioUnit.Status を継承したクラスである必要があります。<br/>
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 309
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    このクラスのデフォルト設定値
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type"><a href="snd.AudioUnit.html#Status">snd.AudioUnit.Status</a></span>
+
+
+	</dd>
+</dl>
+
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="disconnect"><span class="type-signature"></span>disconnect<span class="signature">(disconnectFrom, id)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        このオーディオユニットをdisconnectFromから切断します。<br/>このメソッドを使って disconnectFrom との接続を切断した時、connection プロパティから disconnectFrom.id が削除されます。<br/>引数 disconnectFrom が id を持たない場合（disconnectFrom.id == nullの場合）、引数 id に設定された値が connection プロパティから削除されます。<br/>connectTo.id, id が両方とも null の場合は connection プロパティからは何も削除されません。<br/>このクラスを継承するクラスを作る場合、オーバーライドが必要です。(オーバーライドの際、apply必須)
     </div>
     
 
@@ -465,6 +673,29 @@
         </tr>
 
 	
+
+        <tr>
+            
+                <td class="name"><code>id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">disconnectFrom.id が null の場合に使用されるID</td>
+        </tr>
+
+	
 	</tbody>
 </table>
 
@@ -493,7 +724,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1740
+        snd.js, line 353
     </li></ul></dd>
     
 
@@ -521,6 +752,147 @@
         
             
 <dt>
+    <h4 class="name" id="fromJSON"><span class="type-signature"></span>fromJSON<span class="signature">(json)</span><span class="type-signature"> &rarr; {<a href="snd.AudioUnit.html">snd.AudioUnit</a>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        引数jsonで渡された値をパースし、各種パラメータを設定します。<br/>接続先のリストは読み込みますが、このメソッドでは<strong>接続は行いません</strong>。<br/>オーディオユニット同士のチェーンの再構築は別途実装が必要です。<br/>このクラスを継承するクラスを作る場合、オーバーライドが必要です。(オーバーライドの際、apply必須)
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>json</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">読み込むJSON文字列</td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 399
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    jsonを内容を読み込んだAudioUnit
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type"><a href="snd.AudioUnit.html">snd.AudioUnit</a></span>
+
+
+	</dd>
+</dl>
+
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
     <h4 class="name" id="getConnector"><span class="type-signature"></span>getConnector<span class="signature">()</span><span class="type-signature"></span></h4>
     
     
@@ -529,7 +901,7 @@
     
     
     <div class="description">
-        このオーディオユニットのconnect/disconnectメソッドを持つオブジェクトを返します。<br/>AudioUnitクラス、SoundEnvironmentクラスなどのオブジェクトから呼び出されるメソッドですので、通常はAudioUnit#connect/AudioUnit#disconnectメソッドを使用してください。
+        このオーディオユニットの入り口となる、connect/disconnectメソッドを持つオブジェクトを返します。<br/>AudioUnitクラス、SoundEnvironmentクラスなどのオブジェクトが使用する他、AudioUnitクラスを既存のWebAudioAPIで作られたチェーンに組み込む場合などに使用されます。<br/>このクラスを継承するクラスを作る場合、オーバーライドが必要です。
     </div>
     
 
@@ -562,7 +934,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1749
+        snd.js, line 377
     </li></ul></dd>
     
 
@@ -583,6 +955,94 @@
     
     
     
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="toJSON"><span class="type-signature"></span>toJSON<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="snd.AudioUnit.html#Status">snd.AudioUnit.Status</a>}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        JSON.stringifyで使用されるメソッドです。<br/>このメソッドの戻り値がJSON.stringifyの出力に使用されます。
+    </div>
+    
+
+    
+    
+    
+    
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 386
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type"><a href="snd.AudioUnit.html#Status">snd.AudioUnit.Status</a></span>
+
+
+	</dd>
+</dl>
+
+
+        
     
     
 </dd>
@@ -616,7 +1076,7 @@
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a>
-		on Sun May 18 2014 20:03:21 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		on Wed Jul 09 2014 00:36:22 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
 			</div>
