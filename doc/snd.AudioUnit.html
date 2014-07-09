@@ -75,6 +75,10 @@
 						</li>
 						
 						<li>
+							<a href="snd.Exception.html">Exception</a>
+						</li>
+						
+						<li>
 							<a href="snd.MediaElementAudioSource.html">MediaElementAudioSource</a>
 						</li>
 						
@@ -92,6 +96,10 @@
 						
 						<li>
 							<a href="snd.Source.html">Source</a>
+						</li>
+						
+						<li>
+							<a href="snd.Source.Status.html">Status</a>
 						</li>
 						
 						<li>
@@ -263,7 +271,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 273
+        snd.js, line 296
     </li></ul></dd>
     
 
@@ -350,7 +358,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 413
+        snd.js, line 457
     </li></ul></dd>
     
 
@@ -491,7 +499,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 327
+        snd.js, line 350
     </li></ul></dd>
     
 
@@ -560,7 +568,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 309
+        snd.js, line 332
     </li></ul></dd>
     
 
@@ -724,7 +732,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 353
+        snd.js, line 376
     </li></ul></dd>
     
 
@@ -752,7 +760,7 @@
         
             
 <dt>
-    <h4 class="name" id="fromJSON"><span class="type-signature"></span>fromJSON<span class="signature">(json)</span><span class="type-signature"> &rarr; {<a href="snd.AudioUnit.html">snd.AudioUnit</a>}</span></h4>
+    <h4 class="name" id="fromJSON"><span class="type-signature"></span>fromJSON<span class="signature">(json)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -760,7 +768,7 @@
     
     
     <div class="description">
-        引数jsonで渡された値をパースし、各種パラメータを設定します。<br/>接続先のリストは読み込みますが、このメソッドでは<strong>接続は行いません</strong>。<br/>オーディオユニット同士のチェーンの再構築は別途実装が必要です。<br/>このクラスを継承するクラスを作る場合、オーバーライドが必要です。(オーバーライドの際、apply必須)
+        引数jsonで渡された値をパースし、各種パラメータを設定します。<br/>接続先のリストは読み込みますが、このメソッドでは<strong>接続やイベントリスナの設定は行いません</strong>。<br/>オーディオユニット同士のチェーンの再構築やイベントリスナの登録は別途で実装が必要です。<br/>JSONの内容に不備があるなど、ロード中にエラーが発生した場合、snd.Exception 例外が throw されます。
     </div>
     
 
@@ -842,7 +850,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 399
+        snd.js, line 422
     </li></ul></dd>
     
 
@@ -861,31 +869,35 @@
     
     
     
-    
-    
-    <h5>Returns:</h5>
+    <h5>Throws:</h5>
     
             
-<div class="param-desc">
-    jsonを内容を読み込んだAudioUnit
-</div>
-
-
 
 <dl>
-	<dt>
-		Type
-	</dt>
-	<dd>
-		
-<span class="param-type"><a href="snd.AudioUnit.html">snd.AudioUnit</a></span>
+    <dt>
+        <div class="param-desc">
+        データ読込みでエラーが発生した場合
+        </div>
+    </dt>
+    <dt>
+        <dl>
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
+<span class="param-type"><a href="snd.Exception.html">snd.Exception</a></span>
 
 
-	</dd>
+            </dd>
+        </dl>
+    </dt>
 </dl>
 
 
         
+    
+    
     
     
 </dd>
@@ -934,7 +946,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 377
+        snd.js, line 400
     </li></ul></dd>
     
 
@@ -953,6 +965,151 @@
     
     
     
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="loadData"><span class="type-signature"></span>loadData<span class="signature">(data)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        JSON文字列をパースしたデータオブジェクトを使って、このオブジェクトの各種設定値のロードを行います。<br/>また、このメソッドはfromJSONメソッド内で呼び出されます。<br/>このクラスを継承するクラスを作る場合、オーバーライドが必要です。(オーバーライドの際、apply必須)<br/>オーバーライドする時は、toJSON メソッドで出力した内容を含むデータが渡される前提で作成し、不足などのエラーが発生した場合は snd.Exception クラスのオブジェクトを throw してください。
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">JSON文字列をパースした結果。</td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 443
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    <h5>Throws:</h5>
+    
+            
+
+<dl>
+    <dt>
+        <div class="param-desc">
+        データロード中に不足データなどの例外が発生した場合
+        </div>
+    </dt>
+    <dt>
+        <dl>
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
+<span class="param-type">snd.AudioUnit.Exception</span>
+
+
+            </dd>
+        </dl>
+    </dt>
+</dl>
+
+
+        
     
     
     
@@ -1003,7 +1160,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 386
+        snd.js, line 409
     </li></ul></dd>
     
 
@@ -1076,7 +1233,7 @@
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a>
-		on Wed Jul 09 2014 00:36:22 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		on Thu Jul 10 2014 03:59:53 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
 			</div>

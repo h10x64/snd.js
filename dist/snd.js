@@ -131,6 +131,29 @@ snd.audioparam.type.LINER = "Liner";
 snd.audioparam.type.EXPONENTIALLY = "Exponentially";
 
 
+
+/**
+ * コンストラクタです。<br/>
+ * 引数 message にエラー内容を表す文字列を設定してください。
+ * @class snd.jsで使用される例外クラスです。<br/>
+ * JSON文字列からのデータロードなどで例外が発生した場合に使用されます。<br/>
+ * @param {String} message エラー内容を表す文字列
+ */
+snd.Exception = function(message) {
+    this._message = message;
+    
+    Object.defineProperties(this, {
+        message: {
+            enumerable: true,
+            get: function() {
+                return this._message;
+            }
+        }
+    });
+};
+
+
+
 /**
  * x, y, zで指定した値を持つ新しいインスタンスを生成します。
  * @param {Number} x ベクトルのX値
@@ -389,17 +412,38 @@ snd.AudioUnit.prototype.toJSON = function() {
 
 /**
  * 引数jsonで渡された値をパースし、各種パラメータを設定します。<br/>
- * 接続先のリストは読み込みますが、このメソッドでは<strong>接続は行いません</strong>。<br/>
- * オーディオユニット同士のチェーンの再構築は別途実装が必要です。<br/>
- * このクラスを継承するクラスを作る場合、オーバーライドが必要です。(オーバーライドの際、apply必須)
+ * 接続先のリストは読み込みますが、このメソッドでは<strong>接続やイベントリスナの設定は行いません</strong>。<br/>
+ * オーディオユニット同士のチェーンの再構築やイベントリスナの登録は別途で実装が必要です。<br/>
+ * JSONの内容に不備があるなど、ロード中にエラーが発生した場合、snd.Exception 例外が throw されます。
  * 
  * @param {String} json 読み込むJSON文字列
- * @returns {snd.AudioUnit} jsonを内容を読み込んだAudioUnit
+ * @throws {snd.Exception} データ読込みでエラーが発生した場合
  */
 snd.AudioUnit.prototype.fromJSON = function(json) {
     var data = JSON.parse(json);
-    this._status.id = data["id"];
-    this._status.connection = data["connection"];
+    
+    try {
+        this.loadData(data);
+        this._status = data;
+    } catch (e) {
+        this._status = createStatus();
+        throw e;
+    }
+};
+
+/**
+ * JSON文字列をパースしたデータオブジェクトを使って、このオブジェクトの各種設定値のロードを行います。<br/>
+ * また、このメソッドはfromJSONメソッド内で呼び出されます。<br/>
+ * このクラスを継承するクラスを作る場合、オーバーライドが必要です。(オーバーライドの際、apply必須)<br/>
+ * オーバーライドする時は、toJSON メソッドで出力した内容を含むデータが渡される前提で作成し、不足などのエラーが発生した場合は snd.Exception クラスのオブジェクトを throw してください。
+ * 
+ * @param {Object} data JSON文字列をパースした結果。
+ * @throws {snd.AudioUnit.Exception} データロード中に不足データなどの例外が発生した場合
+ */
+snd.AudioUnit.prototype.loadData = function(data) {
+    
+    this._status.id = (data["id"] != null) ? data["id"] : "";
+    this._status.connection = (data["connection"] != null) ? data["connection"] : [];
     
     // PLEASE OVERRIDE ME LIKE THIS
     // SubClass.prototype.connect = function(connectTo, bra, bra) {
@@ -416,7 +460,6 @@ snd.AudioUnit.Status = function() {
     this.className = "";
     this.connection = [];
 };
-
 
 
 /**
@@ -506,14 +549,6 @@ snd.Source.prototype.getGain = function(value) {
 };
 
 /**
- * 詳細はAudioUnitクラスの createStatus を参照してください。
- * @return {snd.AudioUnit.Status} このオブジェクトのデフォルト設定値
- */
-snd.Source.prototype.createStatus = function() {
-    return new snd.Source.Status();
-};
-
-/**
  * 詳細はAudioUnitクラスのconnectを参照してください。
  * @param {AudioUnit} connectTo 接続先
  */
@@ -541,6 +576,14 @@ snd.Source.prototype.disconnect = function(disconnectFrom, id) {
     }
 };
 
+/**
+ * 詳細はAudioUnitクラスの createStatus を参照してください。
+ * @return {snd.AudioUnit.Status} このオブジェクトのデフォルト設定値
+ */
+snd.Source.prototype.createStatus = function() {
+    return new snd.Source.Status();
+};
+
 snd.Source.prototype.toJSON = function() {
     var ret = snd.AudioUnit.prototype.toJSON.apply(this, arguments);
     // volume プロパティを経由せずに _gain.gain.value に値が設定された場合
@@ -550,6 +593,20 @@ snd.Source.prototype.toJSON = function() {
     return ret;
 };
 
+snd.Source.prototype.loadData = function(data) {
+    snd.AudioUnit.prototype.loadData.apply(this, data);
+    
+    this.volume = (data.volume != null) ? data.volume : 1.0;
+};
+
+/**
+ * @class snd.Sourceクラスの設定値を保持するステータスクラスです。<br/>
+ * 音源の種類、状態、ボリュームなどの情報を持ちます。
+ * @property {Boolean} isSource このオブジェクトが snd.Source を継承する音源であることを表す値
+ * @property {snd.srctype} type 音源の種類
+ * @property {snd.status} status 状態
+ * @property {Float} volume ボリューム
+ */
 snd.Source.Status = function() {
     snd.AudioUnit.Status.apply(this, arguments);
     
@@ -568,12 +625,50 @@ snd.Source.Status = function() {
  */
 snd.BufferSource = function(id) {
     snd.Source.apply(this, arguments);
+    
     this._status.type = snd.srctype.AUDIO_BUFFER;
-    this.loop = false;
-    this.loopStart = null;
-    this.loopEnd = null;
-
-    this.listeners = {
+    
+    this._source = null;
+    this._audioBuffer = null;
+    
+    Object.defineProperties(this, {
+        loop: {
+            enumerable: true,
+            get: function() {
+                return this._status.loop;
+            },
+            set: function(loop) {
+                this._source.loop = loop;
+                this._status.loop = loop;
+            }
+        },
+        loopStart: {
+            enumerable: true,
+            get: function() {
+                return this._status.loopStart;
+            },
+            set: function(start) {
+                if (this._source != null && start != null) {
+                    this._source.loopStart = start;
+                    this._status.loopStart = start;
+                }
+            }
+        },
+        loopEnd: {
+            enumerable: true,
+            get: function() {
+                return this._status.loopEnd;
+            },
+            set: function(end) {
+                if (this._source != null && end != null) {
+                    this._source.loopEnd = end;
+                    this._status.loopEnd = end;
+                }
+            }
+        }
+    });
+    
+    this._eventListeners = {
         onended: []
     };
 };
@@ -590,15 +685,15 @@ snd.BufferSource.prototype.constructor = snd.BufferSource;
  * @param {Number} duration 音源の再生終了位置（単位:秒）
  */
 snd.BufferSource.prototype.start = function(when, offset, duration) {
-    if (this.source != null && this.status == snd.status.READY) {
+    if (this._source != null && this.status == snd.status.READY) {
         if (when == null) {
-            this.source.start(0);
+            this._source.start(0);
         } else if (offset == null) {
-            this.source.start(when);
+            this._source.start(when);
         } else if (duration == null) {
-            this.source.start(when, offset);
+            this._source.start(when, offset);
         } else {
-            this.source.start(when, offset, duration);
+            this._source.start(when, offset, duration);
         }
         this._status.status = snd.status.STARTED;
     } else {
@@ -620,11 +715,11 @@ snd.BufferSource.prototype.start = function(when, offset, duration) {
  * @param {Number} when 何秒後に再生を停止するか 
  */
 snd.BufferSource.prototype.stop = function(when) {
-    if (this.source != null) {
+    if (this._source != null) {
         if (when == null) {
-            this.source.stop(0);
+            this._source.stop(0);
         } else {
-            this.source.stop(when);
+            this._source.stop(when);
         }
     }
 };
@@ -634,8 +729,8 @@ snd.BufferSource.prototype.stop = function(when) {
  * @param {boolean} status ループするか否か
  */
 snd.BufferSource.prototype.setLoop = function(status) {
-    if (this.source != null) {
-        this.source.loop = status;
+    if (this._source != null) {
+        this._source.loop = status;
     }
     this.loop = status;
 };
@@ -649,38 +744,34 @@ snd.BufferSource.prototype.getLoop = function() {
 };
 
 /**
- * ループの開始位置を設定します。
- * @param {double} when ループの開始位置[秒]
+ * @deprecated loopStart プロパティを使用してください。
  */
 snd.BufferSource.prototype.setLoopStart = function(when) {
-    if (this.source != null && when != null) {
-        this.source.loopStart = when;
+    if (this._source != null && when != null) {
+        this._source.loopStart = when;
     }
     this.loopStart = when;
 };
 
 /**
- * ループの開始位置を取得します。
- * @returns {double} ループの開始位置[秒]
+ * @deprecated loopStart プロパティを使用してください。
  */
 snd.BufferSource.prototype.getLoopStart = function() {
     return this.loopStart;
 };
 
 /**
- * ループの終端を設定します。
- * @param {double} when
+ * @deprecated loopEnd プロパティを使用してください。
  */
 snd.BufferSource.prototype.setLoopEnd = function(when) {
-    if (this.source != null && when != null) {
-        this.source.loopEnd = when;
+    if (this._source != null && when != null) {
+        this._source.loopEnd = when;
     }
     this.loopEnd = when;
 };
 
 /**
- * ループの終端を取得します。
- * @returns {double} ループの終了位置[秒]
+ * @deprecated loopEnd プロパティを使用してください。
  */
 snd.BufferSource.prototype.getLoopEnd = function() {
     return this.loopEnd;
@@ -694,7 +785,7 @@ snd.BufferSource.prototype.getLoopEnd = function() {
  * @param {function} listener 音源の再生終了イベント発生時に呼び出されるコールバックメソッド
  */
 snd.BufferSource.prototype.addOnEndedEventListener = function(listener) {
-    this.listeners['onended'].push(listener);
+    this._eventListeners['onended'].push(listener);
 };
 
 /**
@@ -705,7 +796,7 @@ snd.BufferSource.prototype.addOnEndedEventListener = function(listener) {
  * @return {boolean} listenerが見つかり、実際に削除が行われたらtrue, そうでなければfalse
  */
 snd.BufferSource.prototype.removeOnEndedEventListener = function(listener) {
-    var a = this.listeners['onended'];
+    var a = this._eventListeners['onended'];
     for (var i = 0; i < a.length; i++) {
         if (a[i] === listener) {
             a.splice(i, 1);
@@ -723,37 +814,60 @@ snd.BufferSource.prototype.setAudioBuffer = function(audioBuffer) {
     this.audioBuffer = audioBuffer;
 
     var src = snd.AUDIO_CONTEXT.createBufferSource();
-    if (this.source != null) {
-        this.source.disconnect(this._gain);
+    if (this._source != null) {
+        this._source.disconnect(this._gain);
     }
-    delete this.source;
-    this.source = src;
-    this.source.buffer = this.audioBuffer;
-    this.source.connect(this._gain);
-    this.resetEventMethods(this.source);
+    delete this._source;
+    this._source = src;
+    this._source.buffer = this.audioBuffer;
+    this._source.connect(this._gain);
+    this.resetEventMethods(this._source);
 
-    this.source.loop = this.loop;
+    this._source.loop = this.loop;
     if (this.loopStart != null) {
-        this.source.loopStart = this.loopStart;
+        this._source.loopStart = this.loopStart;
     }
     if (this.loopEnd != null) {
-        this.source.loopEnd = this.loopEnd;
+        this._source.loopEnd = this.loopEnd;
     }
     this._status.status = snd.status.READY;
 };
 
-/**
- * @private
- */
 snd.BufferSource.prototype.resetEventMethods = function() {
     var _this = this;
     
-    this.source.onended = function() {
-        var a = _this.listeners['onended'];
+    this._source.onended = function() {
+        var a = _this._eventListeners['onended'];
         for (var i = 0; i < a.length; i++) {
             a[i](_this);
         }
     };
+};
+
+snd.BufferSource.prototype.createStatus = function() {
+    return new snd.BufferSource.Status();
+};
+
+snd.BufferSource.prototype.toJSON = function() {
+    return this._status;
+};
+
+snd.BufferSource.prototype.loadData = function(data) {
+    snd.Source.prototype.loadData.apply(this, arguments);
+    
+    if (data.loop == true) {
+        this.loop = true;
+    }
+    this.loopStart = data.loopStart;
+    this.loopEnd = data.loopEnd;
+};
+
+snd.BufferSource.Status = function() {
+    snd.Source.Status.apply(this, arguments);
+    
+    this.loop = false;
+    this.loopStart = null;
+    this.loopEnd = null;
 };
 
 
@@ -1022,21 +1136,61 @@ snd.OscillatorSource.prototype.resetEventMethods = function() {
     };
 };
 
+snd.OscillatorSource.prototype.createStatus = function() {
+    return new snd.OscillatorSource.Status();
+};
+
+snd.OscillatorSource.prototype.toJSON = function() {
+    return this._status;
+};
+
+snd.OscillatorSource.prototype.loadData = function() {
+    snd.Source.prototype.loadData.apply(this, arguments);
+    
+    //@TODO
+};
+
+snd.OscillatorSource.Status = function() {
+    snd.Source.Status.apply(this, arguments);
+    //@ TODO
+};
+
 /**
  * 新しくメディアタグを使用する音源を生成します。
+ * @class HTMLのメディア要素（Audioタグなど）を音源として使用する音源クラスです。<br/>
+ * 使用するタグに id が設定されている場合は、JSON.stringify メソッドを使用した際にその id が出力されるようになります。
  * @param {String} id この音源のID
  * @param {HTMLMediaElement} htmlMediaElement HTMLのメディアタグ要素
- * @class HTMLのメディア要素を音源として使用する音源クラスです。<br/>
- * 詳細は<a href="http://g200kg.github.io/web-audio-api-ja/#MediaElementAudioSourceNode">WebAudioAPI仕様を参照してください。
  * @memberof snd
  */
 snd.MediaElementAudioSource = function(id, htmlMediaElement) {
     snd.Source.apply(this, arguments);
-    this.source = snd.AUDIO_CONTEXT.createMediaElementSource(htmlMediaElement);
-    this.source.connect(this._gain);
-    this._status.type = snd.srctype.MEDIA_ELEMENT;
-    this.element = htmlMediaElement;
-    this._status.status = snd.status.NONE;
+    
+    this._source = snd.AUDIO_CONTEXT.createMediaElementSource(htmlMediaElement);
+    this._source.connect(this._gain);
+    this._element = htmlMediaElement;
+    
+    if (this._element.id != null) {
+        this._status.element = this._element.id;
+    }
+
+    Object.defineProperties(this, {
+        element: {
+            get: function() {
+                return this._element;
+            }
+        },
+        type: {
+            get: function() {
+                return this._status.type;
+            }
+        },
+        status: {
+            get: function() {
+                return this._status.status;
+            }
+        }
+    });
     
     this.listeners = {
         onplay: [],
@@ -1065,30 +1219,30 @@ snd.MediaElementAudioSource = function(id, htmlMediaElement) {
     
     var _this = this;
     
-    this.element.onplay = function() {
+    this._element.onplay = function() {
         _this._status.status = snd.status.STARTED;
         for (var i = 0; i < _this.listeners['onplay'].length; i++) {
             _this.listeners['onplay'][i](_this);
         }
     };
-    this.element.onpause = function() {
+    this._element.onpause = function() {
         _this._status.status = snd.status.PAUSED;
         for (var i = 0; i < _this.listeners['onpause'].length; i++) {
             _this.listeners['onpause'][i](_this);
         }
     };
-    this.element.onended = function() {
+    this._element.onended = function() {
         _this._status.status = snd.status.PAUSED;
         for (var i = 0; i < _this.listeners['onended'].length; i++) {
             _this.listeners['onended'][i](_this);
         }
     };
-    this.element.onabort = function() {
+    this._element.onabort = function() {
         for (var i = 0; i < _this.listeners['onabort'].length; i++) {
             _this.listeners['onabort'][i](_this);
         }
     };
-    this.element.oncanplay = function() {
+    this._element.oncanplay = function() {
         if (_this.status == snd.status.NONE) {
             _this._status.status = snd.status.READY;
         }
@@ -1096,87 +1250,87 @@ snd.MediaElementAudioSource = function(id, htmlMediaElement) {
             _this.listeners['oncanplay'][i](_this);
         }
     };
-    this.element.oncanplaythrough = function() {
+    this._element.oncanplaythrough = function() {
         for (var i = 0; i < _this.listeners['oncanplaythrough'].length; i++) {
             _this.listeners['oncanplaythrough'][i](_this);
         }
     };
-    this.element.ondurationchange = function() {
+    this._element.ondurationchange = function() {
         for (var i = 0; i < _this.listeners['ondurationchange'].length; i++) {
             _this.listeners['ondurationchange'][i](_this);
         }
     };
-    this.element.onemptied = function() {
+    this._element.onemptied = function() {
         for (var i = 0; i < _this.listeners['onemptied'].length; i++) {
             _this.listeners['onemptied'][i](_this);
         }
     };
-    this.element.onerror = function() {
+    this._element.onerror = function() {
         for (var i = 0; i < _this.listeners['onerror'].length; i++) {
             _this.listeners['onerror'][i](_this);
         }
     };
-    this.element.onloadeddata = function() {
+    this._element.onloadeddata = function() {
         for (var i = 0; i < _this.listeners['onloadeddata'].length; i++) {
             _this.listeners['onloadeddata'][i](_this);
         }
     };
-    this.element.onloadedmetadata = function() {
+    this._element.onloadedmetadata = function() {
         for (var i = 0; i < _this.listeners['onloadedmetadata'].length; i++) {
             _this.listeners['onloadedmetadata'][i](_this);
         }
     };
-    this.element.onloadedstart = function() {
+    this._element.onloadedstart = function() {
         for (var i = 0; i < _this.listeners['onloadstart'].length; i++) {
             _this.listeners['onloadstart'][i](_this);
         }
     };
-    this.element.onplaying = function() {
+    this._element.onplaying = function() {
         for (var i = 0; i < _this.listeners['onplaying'].length; i++) {
             _this.listeners['onplaying'][i](_this);
         }
     };
-    this.element.onprogress = function() {
+    this._element.onprogress = function() {
         for (var i = 0; i < _this.listeners['onprogress'].length; i++) {
             _this.listeners['onprogress'][i](_this);
         }
     };
-    this.element.onratechange = function() {
+    this._element.onratechange = function() {
         for (var i = 0; i < _this.listeners['onratechange'].length; i++) {
             _this.listeners['onratechange'][i](_this);
         }
     };
-    this.element.onseeked = function() {
+    this._element.onseeked = function() {
         for (var i = 0; i < _this.listeners['onseeked'].length; i++) {
             _this.listeners['onseeked'][i](_this);
         }
     };
-    this.element.onseeking = function() {
+    this._element.onseeking = function() {
         for (var i = 0; i < _this.listeners['onseeking'].length; i++) {
             _this.listeners['onseeking'][i](_this);
         }
     };
-    this.element.onstalled = function() {
+    this._element.onstalled = function() {
         for (var i = 0; i < _this.listeners['onstalled'].length; i++) {
             _this.listeners['onstalled'][i](_this);
         }
     };
-    this.element.onsuspend = function() {
+    this._element.onsuspend = function() {
         for (var i = 0; i < _this.listeners['onsuspend'].length; i++) {
             _this.listeners['onsuspend'][i](_this);
         }
     };
-    this.element.ontimeupdate = function() {
+    this._element.ontimeupdate = function() {
         for (var i = 0; i < _this.listeners['ontimeupdate'].length; i++) {
             _this.listeners['ontimeupdate'][i](_this);
         }
     };
-    this.element.onvolumechange = function() {
+    this._element.onvolumechange = function() {
         for (var i = 0; i < _this.listeners['onvolumechange'].length; i++) {
             _this.listeners['onvolumechange'][i](_this);
         }
     };
-    this.element.onwaiting = function() {
+    this._element.onwaiting = function() {
         for (var i = 0; i < _this.listeners['onwaiting'].length; i++) {
             _this.listeners['onwaiting'][i](_this);
         }
@@ -1201,29 +1355,29 @@ snd.MediaElementAudioSource.prototype.constructor = snd.MediaElementAudioSource;
  * この音源の読み込みを開始します。
  */
 snd.MediaElementAudioSource.prototype.load = function() {
-    this.element.load();
+    this._element.load();
 };
 
 /**
  * この音源の再生を開始します。
  */
 snd.MediaElementAudioSource.prototype.start = function() {
-    this.element.play();
+    this._element.play();
 };
 
 /**
  * この音源を一時停止します。
  */
 snd.MediaElementAudioSource.prototype.pause = function() {
-    this.element.pause();
+    this._element.pause();
 };
 
 /**
  * この音源を停止し、時刻を0へ戻します。
  */
 snd.MediaElementAudioSource.prototype.stop = function() {
-    this.element.pause();
-    this.element.currentTime = 0;
+    this._element.pause();
+    this._element.currentTime = 0;
 };
 
 /**
@@ -1233,7 +1387,7 @@ snd.MediaElementAudioSource.prototype.stop = function() {
  * @param {type} doesLoop ループ再生するか否か
  */
 snd.MediaElementAudioSource.prototype.setLoop = function(doesLoop) {
-    this.element.loop = doesLoop;
+    this._element.loop = doesLoop;
 };
 
 /* Add/Remove Listener Methods */
@@ -1765,12 +1919,43 @@ snd.MediaElementAudioSource.prototype.removeOnWaitingEventListener = function(li
     return false;
 };
 
+snd.MediaElementAudioSource.prototype.createStatus = function() {
+    return new snd.MediaElementAudioNode.Status();
+}
+
+snd.MediaElementAudioSource.prototype.toJSON = function() {
+    return this._status;
+};
+
+snd.MediaElementAudioSource.prototype.loadData = function(data) {
+    snd.Source.prototype.loadData.apply(this, arguments);
+    
+    if (data.element != null) {
+        var elem = document.getElementById(data.element);
+        if (elem != null) {
+            this._element = elem;
+        }
+    }
+};
+
+snd.MediaElementAudioSource.Status = function() {
+    snd.Source.Status.apply(this, arguments);
+    
+    this.type = snd.srctype.MEDIA_ELEMENT;
+    this.status = snd.status.NONE;
+    this.element = "";
+}
+snd.MediaElementAudioSource.Status.prototype = Object.create(snd.Source.Status.prototype);
+snd.MediaElementAudioSource.Status.prototype.constructor = snd.MediaElementAudioSource.Status;
+
+
+
 /**
  * 新しくストリーム音源を作ります。
+ * @class 音声ストリームを音源として使用する音源クラスです。<br/>
+ * WebRTCのGetUserMediaで取得したストリームを使用することができます。
  * @param {String} id この音源のID
  * @param {MediaStream} mediaStream 再生するデータストリーム
- * @class ストリームを音源として使用する音源クラスです。<br/>
- * 詳細は<a href="http://g200kg.github.io/web-audio-api-ja/#MediaStreamAudioSourceNode">WebAudioAPI仕様</a>を参照してください。
  * @memberOf snd
  */
 snd.MediaStreamAudioSource = function(id, mediaStream) {
@@ -1782,7 +1967,24 @@ snd.MediaStreamAudioSource = function(id, mediaStream) {
 snd.MediaStreamAudioSource.prototype = Object.create(snd.Source.prototype);
 snd.MediaStreamAudioSource.prototype.constructor = snd.MediaStreamAudioSource;
 
+snd.MediaStreamAudioSource.prototype.createSource = function() {
+    return new snd.MediaStreamAudioSource.Status();
+};
 
+snd.MediaStreamAudioSource.prototype.toJSON = function() {
+    return this._status;
+};
+
+snd.MediaStreamAudioSource.prototype.loadData = function() {
+    snd.Source.prototype.loadData.apply(this, arguments);
+};
+
+snd.MediaStreamAudioSource.Status = function() {
+    snd.Source.Status.apply(this, arguments);
+    
+};
+snd.MediaStreamAudioSource.prototype = Object.create(snd.Source.prototype);
+snd.MediaStreamAudioSource.prototype.constructor = snd.MediaStreamAudioSource;
 
 /**
  * コンストラクタです。<br/>
