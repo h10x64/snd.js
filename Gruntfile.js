@@ -16,6 +16,7 @@ module.exports = function(grunt) {
           'dist/snd.js': [
               'src/COPYRIGHT',
               'src/snd.base.js',
+              'src/snd.Exception.js',
               'src/snd.vec3.js',
               'src/snd.AudioUnit.js',
               'src/snd.Source.js',
