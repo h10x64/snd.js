@@ -85,14 +85,6 @@ snd.Source.prototype.getGain = function(value) {
 };
 
 /**
- * 詳細はAudioUnitクラスの createStatus を参照してください。
- * @return {snd.AudioUnit.Status} このオブジェクトのデフォルト設定値
- */
-snd.Source.prototype.createStatus = function() {
-    return new snd.Source.Status();
-};
-
-/**
  * 詳細はAudioUnitクラスのconnectを参照してください。
  * @param {AudioUnit} connectTo 接続先
  */
@@ -120,6 +112,14 @@ snd.Source.prototype.disconnect = function(disconnectFrom, id) {
     }
 };
 
+/**
+ * 詳細はAudioUnitクラスの createStatus を参照してください。
+ * @return {snd.AudioUnit.Status} このオブジェクトのデフォルト設定値
+ */
+snd.Source.prototype.createStatus = function() {
+    return new snd.Source.Status();
+};
+
 snd.Source.prototype.toJSON = function() {
     var ret = snd.AudioUnit.prototype.toJSON.apply(this, arguments);
     // volume プロパティを経由せずに _gain.gain.value に値が設定された場合
@@ -129,6 +129,20 @@ snd.Source.prototype.toJSON = function() {
     return ret;
 };
 
+snd.Source.prototype.loadData = function(data) {
+    snd.AudioUnit.prototype.loadData.apply(this, data);
+    
+    this.volume = (data.volume != null) ? data.volume : 1.0;
+};
+
+/**
+ * @class snd.Sourceクラスの設定値を保持するステータスクラスです。<br/>
+ * 音源の種類、状態、ボリュームなどの情報を持ちます。
+ * @property {Boolean} isSource このオブジェクトが snd.Source を継承する音源であることを表す値
+ * @property {snd.srctype} type 音源の種類
+ * @property {snd.status} status 状態
+ * @property {Float} volume ボリューム
+ */
 snd.Source.Status = function() {
     snd.AudioUnit.Status.apply(this, arguments);
     

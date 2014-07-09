@@ -125,17 +125,38 @@ snd.AudioUnit.prototype.toJSON = function() {
 
 /**
  * 引数jsonで渡された値をパースし、各種パラメータを設定します。<br/>
- * 接続先のリストは読み込みますが、このメソッドでは<strong>接続は行いません</strong>。<br/>
- * オーディオユニット同士のチェーンの再構築は別途実装が必要です。<br/>
- * このクラスを継承するクラスを作る場合、オーバーライドが必要です。(オーバーライドの際、apply必須)
+ * 接続先のリストは読み込みますが、このメソッドでは<strong>接続やイベントリスナの設定は行いません</strong>。<br/>
+ * オーディオユニット同士のチェーンの再構築やイベントリスナの登録は別途で実装が必要です。<br/>
+ * JSONの内容に不備があるなど、ロード中にエラーが発生した場合、snd.Exception 例外が throw されます。
  * 
  * @param {String} json 読み込むJSON文字列
- * @returns {snd.AudioUnit} jsonを内容を読み込んだAudioUnit
+ * @throws {snd.Exception} データ読込みでエラーが発生した場合
  */
 snd.AudioUnit.prototype.fromJSON = function(json) {
     var data = JSON.parse(json);
-    this._status.id = data["id"];
-    this._status.connection = data["connection"];
+    
+    try {
+        this.loadData(data);
+        this._status = data;
+    } catch (e) {
+        this._status = createStatus();
+        throw e;
+    }
+};
+
+/**
+ * JSON文字列をパースしたデータオブジェクトを使って、このオブジェクトの各種設定値のロードを行います。<br/>
+ * また、このメソッドはfromJSONメソッド内で呼び出されます。<br/>
+ * このクラスを継承するクラスを作る場合、オーバーライドが必要です。(オーバーライドの際、apply必須)<br/>
+ * オーバーライドする時は、toJSON メソッドで出力した内容を含むデータが渡される前提で作成し、不足などのエラーが発生した場合は snd.Exception クラスのオブジェクトを throw してください。
+ * 
+ * @param {Object} data JSON文字列をパースした結果。
+ * @throws {snd.AudioUnit.Exception} データロード中に不足データなどの例外が発生した場合
+ */
+snd.AudioUnit.prototype.loadData = function(data) {
+    
+    this._status.id = (data["id"] != null) ? data["id"] : "";
+    this._status.connection = (data["connection"] != null) ? data["connection"] : [];
     
     // PLEASE OVERRIDE ME LIKE THIS
     // SubClass.prototype.connect = function(connectTo, bra, bra) {
@@ -152,5 +173,4 @@ snd.AudioUnit.Status = function() {
     this.className = "";
     this.connection = [];
 };
-
 

@@ -1,18 +1,39 @@
 /**
  * 新しくメディアタグを使用する音源を生成します。
+ * @class HTMLのメディア要素（Audioタグなど）を音源として使用する音源クラスです。<br/>
+ * 使用するタグに id が設定されている場合は、JSON.stringify メソッドを使用した際にその id が出力されるようになります。
  * @param {String} id この音源のID
  * @param {HTMLMediaElement} htmlMediaElement HTMLのメディアタグ要素
- * @class HTMLのメディア要素を音源として使用する音源クラスです。<br/>
- * 詳細は<a href="http://g200kg.github.io/web-audio-api-ja/#MediaElementAudioSourceNode">WebAudioAPI仕様を参照してください。
  * @memberof snd
  */
 snd.MediaElementAudioSource = function(id, htmlMediaElement) {
     snd.Source.apply(this, arguments);
-    this.source = snd.AUDIO_CONTEXT.createMediaElementSource(htmlMediaElement);
-    this.source.connect(this._gain);
-    this._status.type = snd.srctype.MEDIA_ELEMENT;
-    this.element = htmlMediaElement;
-    this._status.status = snd.status.NONE;
+    
+    this._source = snd.AUDIO_CONTEXT.createMediaElementSource(htmlMediaElement);
+    this._source.connect(this._gain);
+    this._element = htmlMediaElement;
+    
+    if (this._element.id != null) {
+        this._status.element = this._element.id;
+    }
+
+    Object.defineProperties(this, {
+        element: {
+            get: function() {
+                return this._element;
+            }
+        },
+        type: {
+            get: function() {
+                return this._status.type;
+            }
+        },
+        status: {
+            get: function() {
+                return this._status.status;
+            }
+        }
+    });
     
     this.listeners = {
         onplay: [],
@@ -41,30 +62,30 @@ snd.MediaElementAudioSource = function(id, htmlMediaElement) {
     
     var _this = this;
     
-    this.element.onplay = function() {
+    this._element.onplay = function() {
         _this._status.status = snd.status.STARTED;
         for (var i = 0; i < _this.listeners['onplay'].length; i++) {
             _this.listeners['onplay'][i](_this);
         }
     };
-    this.element.onpause = function() {
+    this._element.onpause = function() {
         _this._status.status = snd.status.PAUSED;
         for (var i = 0; i < _this.listeners['onpause'].length; i++) {
             _this.listeners['onpause'][i](_this);
         }
     };
-    this.element.onended = function() {
+    this._element.onended = function() {
         _this._status.status = snd.status.PAUSED;
         for (var i = 0; i < _this.listeners['onended'].length; i++) {
             _this.listeners['onended'][i](_this);
         }
     };
-    this.element.onabort = function() {
+    this._element.onabort = function() {
         for (var i = 0; i < _this.listeners['onabort'].length; i++) {
             _this.listeners['onabort'][i](_this);
         }
     };
-    this.element.oncanplay = function() {
+    this._element.oncanplay = function() {
         if (_this.status == snd.status.NONE) {
             _this._status.status = snd.status.READY;
         }
@@ -72,87 +93,87 @@ snd.MediaElementAudioSource = function(id, htmlMediaElement) {
             _this.listeners['oncanplay'][i](_this);
         }
     };
-    this.element.oncanplaythrough = function() {
+    this._element.oncanplaythrough = function() {
         for (var i = 0; i < _this.listeners['oncanplaythrough'].length; i++) {
             _this.listeners['oncanplaythrough'][i](_this);
         }
     };
-    this.element.ondurationchange = function() {
+    this._element.ondurationchange = function() {
         for (var i = 0; i < _this.listeners['ondurationchange'].length; i++) {
             _this.listeners['ondurationchange'][i](_this);
         }
     };
-    this.element.onemptied = function() {
+    this._element.onemptied = function() {
         for (var i = 0; i < _this.listeners['onemptied'].length; i++) {
             _this.listeners['onemptied'][i](_this);
         }
     };
-    this.element.onerror = function() {
+    this._element.onerror = function() {
         for (var i = 0; i < _this.listeners['onerror'].length; i++) {
             _this.listeners['onerror'][i](_this);
         }
     };
-    this.element.onloadeddata = function() {
+    this._element.onloadeddata = function() {
         for (var i = 0; i < _this.listeners['onloadeddata'].length; i++) {
             _this.listeners['onloadeddata'][i](_this);
         }
     };
-    this.element.onloadedmetadata = function() {
+    this._element.onloadedmetadata = function() {
         for (var i = 0; i < _this.listeners['onloadedmetadata'].length; i++) {
             _this.listeners['onloadedmetadata'][i](_this);
         }
     };
-    this.element.onloadedstart = function() {
+    this._element.onloadedstart = function() {
         for (var i = 0; i < _this.listeners['onloadstart'].length; i++) {
             _this.listeners['onloadstart'][i](_this);
         }
     };
-    this.element.onplaying = function() {
+    this._element.onplaying = function() {
         for (var i = 0; i < _this.listeners['onplaying'].length; i++) {
             _this.listeners['onplaying'][i](_this);
         }
     };
-    this.element.onprogress = function() {
+    this._element.onprogress = function() {
         for (var i = 0; i < _this.listeners['onprogress'].length; i++) {
             _this.listeners['onprogress'][i](_this);
         }
     };
-    this.element.onratechange = function() {
+    this._element.onratechange = function() {
         for (var i = 0; i < _this.listeners['onratechange'].length; i++) {
             _this.listeners['onratechange'][i](_this);
         }
     };
-    this.element.onseeked = function() {
+    this._element.onseeked = function() {
         for (var i = 0; i < _this.listeners['onseeked'].length; i++) {
             _this.listeners['onseeked'][i](_this);
         }
     };
-    this.element.onseeking = function() {
+    this._element.onseeking = function() {
         for (var i = 0; i < _this.listeners['onseeking'].length; i++) {
             _this.listeners['onseeking'][i](_this);
         }
     };
-    this.element.onstalled = function() {
+    this._element.onstalled = function() {
         for (var i = 0; i < _this.listeners['onstalled'].length; i++) {
             _this.listeners['onstalled'][i](_this);
         }
     };
-    this.element.onsuspend = function() {
+    this._element.onsuspend = function() {
         for (var i = 0; i < _this.listeners['onsuspend'].length; i++) {
             _this.listeners['onsuspend'][i](_this);
         }
     };
-    this.element.ontimeupdate = function() {
+    this._element.ontimeupdate = function() {
         for (var i = 0; i < _this.listeners['ontimeupdate'].length; i++) {
             _this.listeners['ontimeupdate'][i](_this);
         }
     };
-    this.element.onvolumechange = function() {
+    this._element.onvolumechange = function() {
         for (var i = 0; i < _this.listeners['onvolumechange'].length; i++) {
             _this.listeners['onvolumechange'][i](_this);
         }
     };
-    this.element.onwaiting = function() {
+    this._element.onwaiting = function() {
         for (var i = 0; i < _this.listeners['onwaiting'].length; i++) {
             _this.listeners['onwaiting'][i](_this);
         }
@@ -177,29 +198,29 @@ snd.MediaElementAudioSource.prototype.constructor = snd.MediaElementAudioSource;
  * この音源の読み込みを開始します。
  */
 snd.MediaElementAudioSource.prototype.load = function() {
-    this.element.load();
+    this._element.load();
 };
 
 /**
  * この音源の再生を開始します。
  */
 snd.MediaElementAudioSource.prototype.start = function() {
-    this.element.play();
+    this._element.play();
 };
 
 /**
  * この音源を一時停止します。
  */
 snd.MediaElementAudioSource.prototype.pause = function() {
-    this.element.pause();
+    this._element.pause();
 };
 
 /**
  * この音源を停止し、時刻を0へ戻します。
  */
 snd.MediaElementAudioSource.prototype.stop = function() {
-    this.element.pause();
-    this.element.currentTime = 0;
+    this._element.pause();
+    this._element.currentTime = 0;
 };
 
 /**
@@ -209,7 +230,7 @@ snd.MediaElementAudioSource.prototype.stop = function() {
  * @param {type} doesLoop ループ再生するか否か
  */
 snd.MediaElementAudioSource.prototype.setLoop = function(doesLoop) {
-    this.element.loop = doesLoop;
+    this._element.loop = doesLoop;
 };
 
 /* Add/Remove Listener Methods */
@@ -740,3 +761,34 @@ snd.MediaElementAudioSource.prototype.removeOnWaitingEventListener = function(li
     }
     return false;
 };
+
+snd.MediaElementAudioSource.prototype.createStatus = function() {
+    return new snd.MediaElementAudioNode.Status();
+}
+
+snd.MediaElementAudioSource.prototype.toJSON = function() {
+    return this._status;
+};
+
+snd.MediaElementAudioSource.prototype.loadData = function(data) {
+    snd.Source.prototype.loadData.apply(this, arguments);
+    
+    if (data.element != null) {
+        var elem = document.getElementById(data.element);
+        if (elem != null) {
+            this._element = elem;
+        }
+    }
+};
+
+snd.MediaElementAudioSource.Status = function() {
+    snd.Source.Status.apply(this, arguments);
+    
+    this.type = snd.srctype.MEDIA_ELEMENT;
+    this.status = snd.status.NONE;
+    this.element = "";
+}
+snd.MediaElementAudioSource.Status.prototype = Object.create(snd.Source.Status.prototype);
+snd.MediaElementAudioSource.Status.prototype.constructor = snd.MediaElementAudioSource.Status;
+
+

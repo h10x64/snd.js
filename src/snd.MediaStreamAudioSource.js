@@ -1,9 +1,9 @@
 /**
  * 新しくストリーム音源を作ります。
+ * @class 音声ストリームを音源として使用する音源クラスです。<br/>
+ * WebRTCのGetUserMediaで取得したストリームを使用することができます。
  * @param {String} id この音源のID
  * @param {MediaStream} mediaStream 再生するデータストリーム
- * @class ストリームを音源として使用する音源クラスです。<br/>
- * 詳細は<a href="http://g200kg.github.io/web-audio-api-ja/#MediaStreamAudioSourceNode">WebAudioAPI仕様</a>を参照してください。
  * @memberOf snd
  */
 snd.MediaStreamAudioSource = function(id, mediaStream) {
@@ -15,4 +15,21 @@ snd.MediaStreamAudioSource = function(id, mediaStream) {
 snd.MediaStreamAudioSource.prototype = Object.create(snd.Source.prototype);
 snd.MediaStreamAudioSource.prototype.constructor = snd.MediaStreamAudioSource;
 
+snd.MediaStreamAudioSource.prototype.createSource = function() {
+    return new snd.MediaStreamAudioSource.Status();
+};
 
+snd.MediaStreamAudioSource.prototype.toJSON = function() {
+    return this._status;
+};
+
+snd.MediaStreamAudioSource.prototype.loadData = function() {
+    snd.Source.prototype.loadData.apply(this, arguments);
+};
+
+snd.MediaStreamAudioSource.Status = function() {
+    snd.Source.Status.apply(this, arguments);
+    
+};
+snd.MediaStreamAudioSource.prototype = Object.create(snd.Source.prototype);
+snd.MediaStreamAudioSource.prototype.constructor = snd.MediaStreamAudioSource;

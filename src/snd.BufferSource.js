@@ -7,12 +7,50 @@
  */
 snd.BufferSource = function(id) {
     snd.Source.apply(this, arguments);
+    
     this._status.type = snd.srctype.AUDIO_BUFFER;
-    this.loop = false;
-    this.loopStart = null;
-    this.loopEnd = null;
-
-    this.listeners = {
+    
+    this._source = null;
+    this._audioBuffer = null;
+    
+    Object.defineProperties(this, {
+        loop: {
+            enumerable: true,
+            get: function() {
+                return this._status.loop;
+            },
+            set: function(loop) {
+                this._source.loop = loop;
+                this._status.loop = loop;
+            }
+        },
+        loopStart: {
+            enumerable: true,
+            get: function() {
+                return this._status.loopStart;
+            },
+            set: function(start) {
+                if (this._source != null && start != null) {
+                    this._source.loopStart = start;
+                    this._status.loopStart = start;
+                }
+            }
+        },
+        loopEnd: {
+            enumerable: true,
+            get: function() {
+                return this._status.loopEnd;
+            },
+            set: function(end) {
+                if (this._source != null && end != null) {
+                    this._source.loopEnd = end;
+                    this._status.loopEnd = end;
+                }
+            }
+        }
+    });
+    
+    this._eventListeners = {
         onended: []
     };
 };
@@ -29,15 +67,15 @@ snd.BufferSource.prototype.constructor = snd.BufferSource;
  * @param {Number} duration 音源の再生終了位置（単位:秒）
  */
 snd.BufferSource.prototype.start = function(when, offset, duration) {
-    if (this.source != null && this.status == snd.status.READY) {
+    if (this._source != null && this.status == snd.status.READY) {
         if (when == null) {
-            this.source.start(0);
+            this._source.start(0);
         } else if (offset == null) {
-            this.source.start(when);
+            this._source.start(when);
         } else if (duration == null) {
-            this.source.start(when, offset);
+            this._source.start(when, offset);
         } else {
-            this.source.start(when, offset, duration);
+            this._source.start(when, offset, duration);
         }
         this._status.status = snd.status.STARTED;
     } else {
@@ -59,11 +97,11 @@ snd.BufferSource.prototype.start = function(when, offset, duration) {
  * @param {Number} when 何秒後に再生を停止するか 
  */
 snd.BufferSource.prototype.stop = function(when) {
-    if (this.source != null) {
+    if (this._source != null) {
         if (when == null) {
-            this.source.stop(0);
+            this._source.stop(0);
         } else {
-            this.source.stop(when);
+            this._source.stop(when);
         }
     }
 };
@@ -73,8 +111,8 @@ snd.BufferSource.prototype.stop = function(when) {
  * @param {boolean} status ループするか否か
  */
 snd.BufferSource.prototype.setLoop = function(status) {
-    if (this.source != null) {
-        this.source.loop = status;
+    if (this._source != null) {
+        this._source.loop = status;
     }
     this.loop = status;
 };
@@ -88,38 +126,34 @@ snd.BufferSource.prototype.getLoop = function() {
 };
 
 /**
- * ループの開始位置を設定します。
- * @param {double} when ループの開始位置[秒]
+ * @deprecated loopStart プロパティを使用してください。
  */
 snd.BufferSource.prototype.setLoopStart = function(when) {
-    if (this.source != null && when != null) {
-        this.source.loopStart = when;
+    if (this._source != null && when != null) {
+        this._source.loopStart = when;
     }
     this.loopStart = when;
 };
 
 /**
- * ループの開始位置を取得します。
- * @returns {double} ループの開始位置[秒]
+ * @deprecated loopStart プロパティを使用してください。
  */
 snd.BufferSource.prototype.getLoopStart = function() {
     return this.loopStart;
 };
 
 /**
- * ループの終端を設定します。
- * @param {double} when
+ * @deprecated loopEnd プロパティを使用してください。
  */
 snd.BufferSource.prototype.setLoopEnd = function(when) {
-    if (this.source != null && when != null) {
-        this.source.loopEnd = when;
+    if (this._source != null && when != null) {
+        this._source.loopEnd = when;
     }
     this.loopEnd = when;
 };
 
 /**
- * ループの終端を取得します。
- * @returns {double} ループの終了位置[秒]
+ * @deprecated loopEnd プロパティを使用してください。
  */
 snd.BufferSource.prototype.getLoopEnd = function() {
     return this.loopEnd;
@@ -133,7 +167,7 @@ snd.BufferSource.prototype.getLoopEnd = function() {
  * @param {function} listener 音源の再生終了イベント発生時に呼び出されるコールバックメソッド
  */
 snd.BufferSource.prototype.addOnEndedEventListener = function(listener) {
-    this.listeners['onended'].push(listener);
+    this._eventListeners['onended'].push(listener);
 };
 
 /**
@@ -144,7 +178,7 @@ snd.BufferSource.prototype.addOnEndedEventListener = function(listener) {
  * @return {boolean} listenerが見つかり、実際に削除が行われたらtrue, そうでなければfalse
  */
 snd.BufferSource.prototype.removeOnEndedEventListener = function(listener) {
-    var a = this.listeners['onended'];
+    var a = this._eventListeners['onended'];
     for (var i = 0; i < a.length; i++) {
         if (a[i] === listener) {
             a.splice(i, 1);
@@ -162,35 +196,58 @@ snd.BufferSource.prototype.setAudioBuffer = function(audioBuffer) {
     this.audioBuffer = audioBuffer;
 
     var src = snd.AUDIO_CONTEXT.createBufferSource();
-    if (this.source != null) {
-        this.source.disconnect(this._gain);
+    if (this._source != null) {
+        this._source.disconnect(this._gain);
     }
-    delete this.source;
-    this.source = src;
-    this.source.buffer = this.audioBuffer;
-    this.source.connect(this._gain);
-    this.resetEventMethods(this.source);
+    delete this._source;
+    this._source = src;
+    this._source.buffer = this.audioBuffer;
+    this._source.connect(this._gain);
+    this.resetEventMethods(this._source);
 
-    this.source.loop = this.loop;
+    this._source.loop = this.loop;
     if (this.loopStart != null) {
-        this.source.loopStart = this.loopStart;
+        this._source.loopStart = this.loopStart;
     }
     if (this.loopEnd != null) {
-        this.source.loopEnd = this.loopEnd;
+        this._source.loopEnd = this.loopEnd;
     }
     this._status.status = snd.status.READY;
 };
 
-/**
- * @private
- */
 snd.BufferSource.prototype.resetEventMethods = function() {
     var _this = this;
     
-    this.source.onended = function() {
-        var a = _this.listeners['onended'];
+    this._source.onended = function() {
+        var a = _this._eventListeners['onended'];
         for (var i = 0; i < a.length; i++) {
             a[i](_this);
         }
     };
+};
+
+snd.BufferSource.prototype.createStatus = function() {
+    return new snd.BufferSource.Status();
+};
+
+snd.BufferSource.prototype.toJSON = function() {
+    return this._status;
+};
+
+snd.BufferSource.prototype.loadData = function(data) {
+    snd.Source.prototype.loadData.apply(this, arguments);
+    
+    if (data.loop == true) {
+        this.loop = true;
+    }
+    this.loopStart = data.loopStart;
+    this.loopEnd = data.loopEnd;
+};
+
+snd.BufferSource.Status = function() {
+    snd.Source.Status.apply(this, arguments);
+    
+    this.loop = false;
+    this.loopStart = null;
+    this.loopEnd = null;
 };

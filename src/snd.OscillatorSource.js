@@ -263,3 +263,22 @@ snd.OscillatorSource.prototype.resetEventMethods = function() {
         }
     };
 };
+
+snd.OscillatorSource.prototype.createStatus = function() {
+    return new snd.OscillatorSource.Status();
+};
+
+snd.OscillatorSource.prototype.toJSON = function() {
+    return this._status;
+};
+
+snd.OscillatorSource.prototype.loadData = function() {
+    snd.Source.prototype.loadData.apply(this, arguments);
+    
+    //@TODO
+};
+
+snd.OscillatorSource.Status = function() {
+    snd.Source.Status.apply(this, arguments);
+    //@ TODO
+};
