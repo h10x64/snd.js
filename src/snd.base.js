@@ -11,13 +11,40 @@ snd = {VERSION: "62190", IS_BETA:true};
 snd.BLOWSER = window.navigator.userAgent.toLowerCase();
 
 /**
- * 表示に使われているブラウザがmp3形式のAudioBufferに対応しているかどうかを表します
+ * 表示に使われているブラウザがmp3形式に対応しているかどうかを表します
  * @type Boolean
  */
 snd.DOES_MP3_SUPPORTED = false;
-if (snd.BLOWSER.indexOf("chrome") != -1) {
-    snd.DOES_MP3_SUPPORTED = true;
-}
+/**
+ * 表示に使われているブラウザがwav形式に対応しているかどうかを表します
+ * @type Boolean
+ */
+snd.DOES_WAV_SUPPORTED = false;
+/**
+ * 表示に使われているブラウザがogg形式に対応しているかどうかを表します
+ * @type Boolean
+ */
+snd.DOES_OGG_SUPPORTED = false;
+/**
+ * 表示に使われているブラウザがaac形式に対応しているかどうかを表します
+ * @type Boolean
+ */
+snd.DOES_AAC_SUPPORTED = false;
+/**
+ * 表示に使われているブラウザがm4a形式に対応しているかどうかを表します
+ * @type Boolean
+ */
+snd.DOES_M4A_SUPPORTED = false;
+(function() {
+    // 対応フォーマットのチェック
+    var __audio__ = document.createElement("audio");
+    snd.DOES_MP3_SUPPORTED = !(__audio__.canPlayType('audio/mpeg;') === "");
+    snd.DOES_M4A_SUPPORTED = !(__audio__.canPlayType('audio/mp4; codecs="mp4a.40.2"') === "");
+    snd.DOES_AAC_SUPPORTED = snd.DOES_M4A_SUPPORTED;
+    snd.DOES_WAV_SUPPORTED = !(__audio__.canPlayType('audio/wav; codecs="1"') === "");
+    snd.DOES_OGG_SUPPORTED = !(__audio__.canPlayType('audio/ogg; codecs="vorbis"') === "");
+    delete __audio__;
+})();
 
 /**
  * 音源のステータスを表す値を入れるネームスペースです。
