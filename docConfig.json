@@ -3,7 +3,7 @@
         "systemName": "snd.js - The Sound Library for JavaScript with WebAudioAPI -",
         "navType": "vertical",
         "footer": "snd.js - The Sound Library for JavaScript with WebAudioAPI -",
-        "copyright": "Copyright &copy; 2014 n_h &lt;<a href='mailto:h.10x64@gmail.com'>h.10x64@gmail.com</a>&gt;",
+        "copyright": "Copyright &copy; 2014 n_h &lt;<a href='mailto:h.10x64@sndjs.org'>h.10x64@sndjs.org</a>&gt;",
         "theme": "slate",
         "linenums": true,
         "callapseSymbols": false,

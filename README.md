@@ -1,13 +1,24 @@
 #snd.js -The Sound Library for JavaScript with WebAudioAPI -#
 
-WebAudioAPIを使用したJavaScriptのサウンドライブラリです。  
-distフォルダに入っている*.jsファイルを使用してください。  
-(srcフォルダにはビルド前のソースコードが入っています。)  
+### snd.jsについて
 
-### 使い方
+snd.jsはHTML5のWebAudioAPIを使用したJavaScriptを「楽に・簡単に・素早く」実装するためのライブラリです。
+MITライセンスですので、商用・非商用問わず、誰でも自由にご利用いただけます。
 
-ドキュメントが未整備です。
-当面の間はサンプルフォルダ以下にある各種サンプルを参考にしてください。
+↓のような簡易な記述で、あなたのサイト・Webアプリに音を追加することができます。
+
+<script src="https://gist.github.com/h10x64/b85658bb7e773c46a1dd.js"></script>
+
+単純な効果音再生の他、プラグインを利用すればthree.jsと連動したリアルタイムの立体音響化エフェクトなどの付加機能が使用可能です。
+
+distフォルダにビルド済みのjsファイルが入っています。
+*.min.jsはuglifyした軽量版のjsファイルです。
+*.js, *.min.js共に内容は同じものですので、用途により使い分けてください。
+
+### サンプル
+
+Samplesフォルダに各種サンプルが含まれています。
+また、<a href="http://sndjs.org/">サイト（sndjs.org）</a>にもサンプルがありますので、併せてご覧ください。
 
 ### 自分でビルドする時は
 
@@ -40,5 +51,5 @@ distフォルダに入っている*.jsファイルを使用してください。
 ### ライセンス
 
 The MIT License (MIT)
-copyright (c) 2014 N_H <h.10x64@gmail.com>
+copyright (c) 2014 N_H <h.10x64@sndjs.org>
 
