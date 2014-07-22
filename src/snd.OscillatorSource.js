@@ -3,7 +3,7 @@
  * 新しくオシレータ音源を生成します。
  * @class 任意の波形を再生するオシレータ音源を扱うクラスです。<br/>
  * snd.OscillatorSource.SINEなどの定数値でサイン波・矩形波・のこぎり波・三角波を設定できる他、波形はPeriodicWaveクラスでも定義が可能です。
- * @param {type} id この音源をあらわすID
+ * @param {String} id この音源をあらわすID
  */
 snd.OscillatorSource = function(id) {
     snd.Source.apply(this, arguments);

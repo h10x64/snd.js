@@ -40,13 +40,40 @@ snd = {VERSION: "62190", IS_BETA:true};
 snd.BLOWSER = window.navigator.userAgent.toLowerCase();
 
 /**
- * 表示に使われているブラウザがmp3形式のAudioBufferに対応しているかどうかを表します
+ * 表示に使われているブラウザがmp3形式に対応しているかどうかを表します
  * @type Boolean
  */
 snd.DOES_MP3_SUPPORTED = false;
-if (snd.BLOWSER.indexOf("chrome") != -1) {
-    snd.DOES_MP3_SUPPORTED = true;
-}
+/**
+ * 表示に使われているブラウザがwav形式に対応しているかどうかを表します
+ * @type Boolean
+ */
+snd.DOES_WAV_SUPPORTED = false;
+/**
+ * 表示に使われているブラウザがogg形式に対応しているかどうかを表します
+ * @type Boolean
+ */
+snd.DOES_OGG_SUPPORTED = false;
+/**
+ * 表示に使われているブラウザがaac形式に対応しているかどうかを表します
+ * @type Boolean
+ */
+snd.DOES_AAC_SUPPORTED = false;
+/**
+ * 表示に使われているブラウザがm4a形式に対応しているかどうかを表します
+ * @type Boolean
+ */
+snd.DOES_M4A_SUPPORTED = false;
+(function() {
+    // 対応フォーマットのチェック
+    var __audio__ = document.createElement("audio");
+    snd.DOES_MP3_SUPPORTED = !(__audio__.canPlayType('audio/mpeg;') === "");
+    snd.DOES_M4A_SUPPORTED = !(__audio__.canPlayType('audio/mp4; codecs="mp4a.40.2"') === "");
+    snd.DOES_AAC_SUPPORTED = snd.DOES_M4A_SUPPORTED;
+    snd.DOES_WAV_SUPPORTED = !(__audio__.canPlayType('audio/wav; codecs="1"') === "");
+    snd.DOES_OGG_SUPPORTED = !(__audio__.canPlayType('audio/ogg; codecs="vorbis"') === "");
+    delete __audio__;
+})();
 
 /**
  * 音源のステータスを表す値を入れるネームスペースです。
@@ -594,7 +621,7 @@ snd.Source.prototype.toJSON = function() {
 };
 
 snd.Source.prototype.loadData = function(data) {
-    snd.AudioUnit.prototype.loadData.apply(this, data);
+    snd.AudioUnit.prototype.loadData.apply(this, arguments);
     
     this.volume = (data.volume != null) ? data.volume : 1.0;
 };
@@ -630,6 +657,7 @@ snd.BufferSource = function(id) {
     
     this._source = null;
     this._audioBuffer = null;
+    this._key = "";
     
     Object.defineProperties(this, {
         loop: {
@@ -669,11 +697,24 @@ snd.BufferSource = function(id) {
     });
     
     this._eventListeners = {
-        onended: []
+        onended: [],
+        onload: []
     };
 };
 snd.BufferSource.prototype = Object.create(snd.Source.prototype);
 snd.BufferSource.prototype.constructor = snd.BufferSource;
+
+/**
+ * srcプロパティに設定された文字列がDataURISchemeの文字列かどうかを判定する際に使われる正規表現です。
+ * @type RegExp
+ */
+snd.BufferSource.REGEX_DATA_URI_SCHEME = /^data:audio.*;base64,(.*)$/;
+
+/**
+ * srcプロパティに設定された文字列がsnd.AUDIO_DATA_MANAGERのキー値かどうかを判定する際に使われる正規表現です。
+ * @type RegExp
+ */
+snd.BufferSource.REGEX_KEY = /^key:(.*)$/;
 
 /**
  * この音源の再生を開始します。<br/>
@@ -777,38 +818,71 @@ snd.BufferSource.prototype.getLoopEnd = function() {
     return this.loopEnd;
 };
 
-/* Add/Remove Event Listener Methods */
-
 /**
- * 渡されたイベントリスナーをこの音源の再生終了イベントのリスナーリストへ追加します。<br/>
- * 追加されたlistenerは、この音源の再生が終了したとき(onendedイベント発生時)にコールバックメソッドとして呼び出されます<br/>
- * @param {function} listener 音源の再生終了イベント発生時に呼び出されるコールバックメソッド
+ * 与えられたURLのデータを読込みます。<br/>
+ * 
+ * @param {String} url
  */
-snd.BufferSource.prototype.addOnEndedEventListener = function(listener) {
-    this._eventListeners['onended'].push(listener);
+snd.BufferSource.prototype.loadURL = function(url) {
+    var _this = this;
+    
+    this._status.src = url;
+    
+    this._key = snd.BufferSource.getNewKey(this.id);
+    snd.AUDIO_DATA_MANAGER.add(this._key, url);
+    snd.AUDIO_DATA_MANAGER.addOnLoadListener(this._key, function() {
+        var audioBuffer = snd.AUDIO_DATA_MANAGER.getAudioBuffer(_this._key);
+        _this.setAudioBuffer(audioBuffer);
+        _this.fireOnLoadEvent();
+    });
+    snd.AUDIO_DATA_MANAGER.load(this._key);
 };
 
 /**
- * 渡されたイベントリスナーをこの音源の再生終了イベントのリスナーリストから削除します。<br/>
- * 与えられたlistenerが見つかった場合、削除を行いtrueを返します。<br/>
- * 見つからなかった場合は、何もせずにfalseを返します。
- * @param {function} listener イベントのリスナー
- * @return {boolean} listenerが見つかり、実際に削除が行われたらtrue, そうでなければfalse
+ * Base64文字列（DataURISchemeを含みます）を読み込みます。<br/>
+ * 与えられた文字列がDataURISchemeの場合、srcプロパティに その文字列がそのまま設定されます。<br/>
+ * そうでない場合は、与えられた文字列の頭に "data:audio/unknown;base64," を追加した文字列が src プロパティに設定されます。<br/>
+ * DataURISchemeでない場合に文字列が追加されるのは、JSON.stringify でJSON文字列にした BufferSource オブジェクトを JSON.parse したオブジェクトを loadData メソッドで読み込む際に、srcがBase64文字列であることを認識させるためです。
+ * @param {String} base64 Base64文字列（DataURISchemeを含む）
  */
-snd.BufferSource.prototype.removeOnEndedEventListener = function(listener) {
-    var a = this._eventListeners['onended'];
-    for (var i = 0; i < a.length; i++) {
-        if (a[i] === listener) {
-            a.splice(i, 1);
-            return true;
-        }
+snd.BufferSource.prototype.loadBase64 = function(base64) {
+    var _this = this;
+    
+    if (snd.BufferSource.REGEX_DATA_URI_SCHEME.exec(base64) != null) {
+        this._status.src = base64;
+    } else {
+        //@TODO Detect audio encodings automatically.
+        this._status.src = "data:audio/unknown;base64," + base64;
     }
-    return false;
+    
+    this._key = snd.BufferSource.getNewKey(this.id);
+    snd.AUDIO_DATA_MANAGER.addBase64(this._key, base64);
+    snd.AUDIO_DATA_MANAGER.addOnLoadListener(this._key, function() {
+        var audioBuffer = snd.AUDIO_DATA_MANAGER.getAudioBuffer(_this._key);
+        _this.setAudioBuffer(audioBuffer);
+        _this.fireOnLoadEvent();
+    });
+    snd.AUDIO_DATA_MANAGER.load(this._key);
 };
 
 /**
- * オーディオバッファを設定するメソッドです。
- * @param {AudioBuffer} audioBuffer
+ * keyで指定されたキー値を使用して、snd.AUDIO_DATA_MANAGERからAudioBufferを読み込みます。
+ * @param {type} key snd.AUDIO_DATA_MANAGERから読み込むデータのキー値
+ */
+snd.BufferSource.prototype.loadAudioBuffer = function(key) {
+    this._status.src = "key:" + key;
+    
+    var buffer = snd.AUDIO_DATA_MANAGER.getAudioBuffer(key);
+    this.setAudioBuffer(buffer);
+    this.fireOnLoadEvent();
+}
+
+/**
+ * AudioBufferを設定します。<br/>
+ * このメソッドは、クラス内部で使用するためのものです。<br/>
+ * 通常はloadAudioBufferメソッドを使用するようにし、このメソッドは使用しないでください。<br/>
+ * src プロパティへの値の設定が行われないため、JSONを使用してオブジェクトを保存・読込みする際に正しく動作しなくなる可能性があります。
+ * @param {AudioBuffer} audioBuffer 設定するAudioBuffer
  */
 snd.BufferSource.prototype.setAudioBuffer = function(audioBuffer) {
     this.audioBuffer = audioBuffer;
@@ -833,14 +907,81 @@ snd.BufferSource.prototype.setAudioBuffer = function(audioBuffer) {
     this._status.status = snd.status.READY;
 };
 
+/* Add/Remove Event Listener Methods */
+
+/**
+ * 渡されたイベントリスナーをこの音源の再生終了イベントのリスナーリストへ追加します。<br/>
+ * 追加されたlistenerは、この音源の再生が終了したとき(onendedイベント発生時)にコールバックメソッドとして呼び出されます<br/>
+ * @param {function} listener 音源の再生終了イベント発生時に呼び出されるコールバックメソッド
+ */
+snd.BufferSource.prototype.addOnEndedEventListener = function(listener) {
+    this._eventListeners['onended'].push(listener);
+};
+
+/**
+ * 渡されたイベントリスナーをこの音源の再生終了イベントのリスナーリストから削除します。<br/>
+ * 与えられたlistenerが見つかった場合、削除を行いtrueを返します。<br/>
+ * 見つからなかった場合は、何もせずにfalseを返します。
+ * @param {function} listener イベントのリスナー
+ * @return {boolean} listenerが見つかり、実際に削除が行われたらtrue, そうでなければfalse
+ */
+snd.BufferSource.prototype.removeOnEndedEventListener = function(listener) {
+    var res = this._eventListeners['onended'].indexOf(listener);
+    if (res > 0) {
+        this._eventListeners['onended'].splice(res);
+        return true;
+    }
+    return false;
+};
+
+snd.BufferSource.prototype.fireOnEndedEvent = function() {
+    var _this = this;
+    
+    var listeners = this._eventListeners['onended'];
+    for (i = 0; i < listeners.length; i++) {
+        listeners[i].onended(_this);
+    }
+};
+
+/**
+ * 渡されたイベントリスナーをこの音源のロード終了イベントのリスナーリストへ追加します。<br/>
+ * 注意: ロード終了イベントを受け取るには、<b>loadURL メソッドや loadBase64 メソッドを実行する前にこのメソッドでイベントリスナーを設定する必要があります。<b>
+ * @param {type} listener ロード終了イベント発生時に呼び出されるコールバックメソッド
+ */
+snd.BufferSource.prototype.addOnLoadEventListener = function(listener) {
+    this._eventListeners['onload'].push(listener);
+};
+
+/**
+ * 渡されたイベントリスナーをこの音源のロード終了イベントのリスナーリストから削除します。<br/>
+ * 与えられたlistenerが見つかった場合、削除を行いtrueを返します。<br/>
+ * 見つからなかった場合は、何もせずにfalseを返します。
+ * @param {type} listener
+ * @returns {Boolean} 削除が行われた場合True, 行われなかった場合 False
+ */
+snd.BufferSource.prototype.removeOnLoadEventListener = function(listener) {
+    var res = this._eventListeners['onload'].indexOf(listener);
+    if (res > 0) {
+        this._eventListeners['onload'].splice(i, 1);
+        return true;
+    }
+    return false;
+};
+
+snd.BufferSource.prototype.fireOnLoadEvent = function() {
+    var _this = this;
+    
+    var listeners = this._eventListeners['onload'];
+    for (i = 0; i < listeners.length; i++) {
+        listeners[i].onload(_this);
+    }
+};
+
 snd.BufferSource.prototype.resetEventMethods = function() {
     var _this = this;
     
     this._source.onended = function() {
-        var a = _this._eventListeners['onended'];
-        for (var i = 0; i < a.length; i++) {
-            a[i](_this);
-        }
+        _this.fireOnEndedEvent();
     };
 };
 
@@ -855,6 +996,16 @@ snd.BufferSource.prototype.toJSON = function() {
 snd.BufferSource.prototype.loadData = function(data) {
     snd.Source.prototype.loadData.apply(this, arguments);
     
+    var isDataURI = snd.BufferSource.REGEX_DATA_URI_SCHEME.exec(data.src);
+    var isAudioManagerKey = snd.BufferSource.REGEX_KEY.exec(data.src);
+    if (isDataURI != null) {
+        this.loadBase64(data.src);
+    } else if (isAudioManagerKey != null) {
+        this.loadAudioBuffer(isAudioManagerKey[1]);
+    } else if (data.src) {  // data.src == URL
+        this.loadURL(data.src);
+    }
+    
     if (data.loop == true) {
         this.loop = true;
     }
@@ -862,20 +1013,41 @@ snd.BufferSource.prototype.loadData = function(data) {
     this.loopEnd = data.loopEnd;
 };
 
+/**
+ * @class BufferSourceの設定値を保持するクラスです。<br/>
+ * ループ関連の設定値や、音データのパスなどを保持します。
+ * @property {Boolean} loop ループするか否か
+ * @property {Float} loopStart ループ開始地点[秒]
+ * @property {Float} loopEnd ループ終了地点[秒]
+ * @property {String} src 音データのパス<br/>
+ * 下記の表に基づいて、「URL」,「DataURIScheme」,「snd.AUDIO_DATA_MANAGERのキー値」のいずれかが設定されます。<br/>
+ * <table>
+ * <tr><th>種類</th><th>判定</th><th>例</th></tr>
+ * <tr><td>DataURI</td><td>/^data:audio.*base64,.*$/</td><td>data:audio/mpeg:base64,…（BASE64文字列）…</td></tr>
+ * <tr><td>snd.AUDIO_DATA_MANAGERのキー値</td><td>/^key:.*$/</td><td>key:…（snd.AUDIO_DATA_MANAGERのキー値）…</td></tr>
+ * <tr><td>URL</td><td>上記に当てはまらない文字列</td><td>./sound/data.mp3</td></tr>
+ * </table>
+ */
 snd.BufferSource.Status = function() {
     snd.Source.Status.apply(this, arguments);
     
     this.loop = false;
     this.loopStart = null;
     this.loopEnd = null;
+    this.src = "";
 };
+
+snd.BufferSource.getNewKey = function(id) {
+    return id + "_buffer" + new Date().getTime().toString() + Math.floor(Math.random() * 1000);
+};
+
 
 
 /**
  * 新しくオシレータ音源を生成します。
  * @class 任意の波形を再生するオシレータ音源を扱うクラスです。<br/>
  * snd.OscillatorSource.SINEなどの定数値でサイン波・矩形波・のこぎり波・三角波を設定できる他、波形はPeriodicWaveクラスでも定義が可能です。
- * @param {type} id この音源をあらわすID
+ * @param {String} id この音源をあらわすID
  */
 snd.OscillatorSource = function(id) {
     snd.Source.apply(this, arguments);
@@ -1178,16 +1350,6 @@ snd.MediaElementAudioSource = function(id, htmlMediaElement) {
         element: {
             get: function() {
                 return this._element;
-            }
-        },
-        type: {
-            get: function() {
-                return this._status.type;
-            }
-        },
-        status: {
-            get: function() {
-                return this._status.status;
             }
         }
     });
@@ -1920,7 +2082,7 @@ snd.MediaElementAudioSource.prototype.removeOnWaitingEventListener = function(li
 };
 
 snd.MediaElementAudioSource.prototype.createStatus = function() {
-    return new snd.MediaElementAudioNode.Status();
+    return new snd.MediaElementAudioSource.Status();
 }
 
 snd.MediaElementAudioSource.prototype.toJSON = function() {
@@ -2617,11 +2779,13 @@ snd.AudioDataManager.prototype.removeAllDataLoadListener = function(func) {
  * @param {function} func keyで指定されたAudioBufferの読込が終了した時点で呼び出されるコールバック関数
  * @see {snd.AudioDataManager.onload}
  */
-snd.AudioDataManager.prototype.addOnloadListener = function(key, func) {
-    if (this.eventListeners.onload[key] == null) {
-        this.eventListeners[key] = [];
+snd.AudioDataManager.prototype.addOnLoadListener = function(key, func) {
+    if (this.eventListeners[key] == null) {
+        this.eventListeners[key] = {
+            onload:[]
+        };
     }
-    this.eventListeners.onload[key].push(func);
+    this.eventListeners[key].onload.push(func);
 };
 
 /**
@@ -2630,9 +2794,9 @@ snd.AudioDataManager.prototype.addOnloadListener = function(key, func) {
  * @param {type} key
  * @returns {undefined}
  */
-snd.AudioDataManager.prototype.removeOnloadListener = function(key) {
-    if (this.eventListeners.onload[key] != null) {
-        delete this.eventListeners.onload[key];
+snd.AudioDataManager.prototype.removeOnLoadListener = function(key) {
+    if (this.eventListeners[key] != null) {
+        delete this.eventListeners[key];
         return true;
     }
     
@@ -2708,8 +2872,6 @@ snd.AudioDataManager.prototype.addBase64 = function(key, base64String) {
         snd.AUDIO_CONTEXT.decodeAudioData(
             dataArray,
             function(buf) {
-                _this.dataMap[key].data = buf;
-                _this.dataMap[key].doesLoaded = true;
                 _this.loaded(key, buf);
             });
     }
@@ -2813,6 +2975,7 @@ snd.AudioDataManager.prototype.load = function(key) {
  * @param {buffer} buf 読込んだバッファ
  */
 snd.AudioDataManager.prototype.loaded = function(key, buffer) {
+    this.dataMap[key].data = buffer;
     this.dataMap[key].doesLoaded = true;
     if (this.eventListeners[key] != null) {
         for (var i = 0; i < this.eventListeners[key].onload.length; i++) {
@@ -2966,7 +3129,7 @@ snd.util.createBufferSources = function(dataSet, connectToMaster, func) {
         
         for (var url in sourceMap) {
             for (var i = 0; i < sourceMap[url].length; i++) {
-                sourceMap[url][i].setAudioBuffer(snd.AUDIO_DATA_MANAGER.getAudioBuffer(url));
+                sourceMap[url][i].loadAudioBuffer(url);
                 ret[sourceMap[url][i].id] = sourceMap[url][i];
                 
                 if (connectToMaster) {

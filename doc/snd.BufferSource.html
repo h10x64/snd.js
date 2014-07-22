@@ -71,6 +71,10 @@
 						</li>
 						
 						<li>
+							<a href="snd.BufferSource.Status.html">Status</a>
+						</li>
+						
+						<li>
 							<a href="snd.Envelope.html">Envelope</a>
 						</li>
 						
@@ -278,7 +282,7 @@ wav, mp3などが再生可能ですが、ブラウザにより対応状況が異
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 626
+        snd.js, line 653
     </li></ul></dd>
     
 
@@ -313,9 +317,148 @@ wav, mp3などが再生可能ですが、ブラウザにより対応状況が異
     
 
     
+        <h3 class="subsection-title">Classes</h3>
+
+        <dl>
+            <dt><a href="snd.BufferSource.Status.html">Status</a></dt>
+            <dd></dd>
+        </dl>
+    
 
     
 
+    
+        <h3 class="subsection-title">Members</h3>
+
+        <dl>
+            
+<dt>
+    <h4 class="name" id="REGEX_DATA_URI_SCHEME"><span class="type-signature">&lt;static> </span>REGEX_DATA_URI_SCHEME<span class="type-signature"> :RegExp</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        srcプロパティに設定された文字列がDataURISchemeの文字列かどうかを判定する際に使われる正規表現です。
+    </div>
+    
+    
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">RegExp</span>
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 711
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="REGEX_KEY"><span class="type-signature">&lt;static> </span>REGEX_KEY<span class="type-signature"> :RegExp</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        srcプロパティに設定された文字列がsnd.AUDIO_DATA_MANAGERのキー値かどうかを判定する際に使われる正規表現です。
+    </div>
+    
+    
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">RegExp</span>
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 717
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+</dd>
+
+        </dl>
     
 
     
@@ -415,7 +558,126 @@ wav, mp3などが再生可能ですが、ブラウザにより対応状況が異
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 787
+        snd.js, line 917
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="addOnLoadEventListener"><span class="type-signature"></span>addOnLoadEventListener<span class="signature">(listener)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        渡されたイベントリスナーをこの音源のロード終了イベントのリスナーリストへ追加します。<br/>
+注意: ロード終了イベントを受け取るには、<b>loadURL メソッドや loadBase64 メソッドを実行する前にこのメソッドでイベントリスナーを設定する必要があります。<b>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>listener</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#type">type</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">ロード終了イベント発生時に呼び出されるコールバックメソッド</td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 951
     </li></ul></dd>
     
 
@@ -484,7 +746,7 @@ wav, mp3などが再生可能ですが、ブラウザにより対応状況が異
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 742
+        snd.js, line 783
     </li></ul></dd>
     
 
@@ -574,7 +836,7 @@ wav, mp3などが再生可能ですが、ブラウザにより対応状況が異
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 776
+        snd.js, line 817
     </li></ul></dd>
     
 
@@ -641,7 +903,364 @@ wav, mp3などが再生可能ですが、ブラウザにより対応状況が異
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 759
+        snd.js, line 800
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="loadAudioBuffer"><span class="type-signature"></span>loadAudioBuffer<span class="signature">(key)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        keyで指定されたキー値を使用して、snd.AUDIO_DATA_MANAGERからAudioBufferを読み込みます。
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>key</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#type">type</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">snd.AUDIO_DATA_MANAGERから読み込むデータのキー値</td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 872
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="loadBase64"><span class="type-signature"></span>loadBase64<span class="signature">(base64)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Base64文字列（DataURISchemeを含みます）を読み込みます。<br/>
+与えられた文字列がDataURISchemeの場合、srcプロパティに その文字列がそのまま設定されます。<br/>
+そうでない場合は、与えられた文字列の頭に "data:audio/unknown;base64," を追加した文字列が src プロパティに設定されます。<br/>
+DataURISchemeでない場合に文字列が追加されるのは、JSON.stringify でJSON文字列にした BufferSource オブジェクトを JSON.parse したオブジェクトを loadData メソッドで読み込む際に、srcがBase64文字列であることを認識させるためです。
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>base64</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Base64文字列（DataURISchemeを含む）</td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 848
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="loadURL"><span class="type-signature"></span>loadURL<span class="signature">(url)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        与えられたURLのデータを読込みます。<br/>
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>url</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 826
     </li></ul></dd>
     
 
@@ -761,7 +1380,7 @@ wav, mp3などが再生可能ですが、ブラウザにより対応状況が異
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 798
+        snd.js, line 928
     </li></ul></dd>
     
 
@@ -812,6 +1431,149 @@ wav, mp3などが再生可能ですが、ブラウザにより対応状況が異
         
             
 <dt>
+    <h4 class="name" id="removeOnLoadEventListener"><span class="type-signature"></span>removeOnLoadEventListener<span class="signature">(listener)</span><span class="type-signature"> &rarr; {Boolean}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        渡されたイベントリスナーをこの音源のロード終了イベントのリスナーリストから削除します。<br/>
+与えられたlistenerが見つかった場合、削除を行いtrueを返します。<br/>
+見つからなかった場合は、何もせずにfalseを返します。
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>listener</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#type">type</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 962
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    削除が行われた場合True, 行われなかった場合 False
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">Boolean</span>
+
+
+	</dd>
+</dl>
+
+
+        
+    
+    
+</dd>
+
+        
+            
+<dt>
     <h4 class="name" id="setAudioBuffer"><span class="type-signature"></span>setAudioBuffer<span class="signature">(audioBuffer)</span><span class="type-signature"></span></h4>
     
     
@@ -820,7 +1582,10 @@ wav, mp3などが再生可能ですが、ブラウザにより対応状況が異
     
     
     <div class="description">
-        オーディオバッファを設定するメソッドです。
+        AudioBufferを設定します。<br/>
+このメソッドは、クラス内部で使用するためのものです。<br/>
+通常はloadAudioBufferメソッドを使用するようにし、このメソッドは使用しないでください。<br/>
+src プロパティへの値の設定が行われないため、JSONを使用してオブジェクトを保存・読込みする際に正しく動作しなくなる可能性があります。
     </div>
     
 
@@ -870,7 +1635,7 @@ wav, mp3などが再生可能ですが、ブラウザにより対応状況が異
 
             
 
-            <td class="description last"></td>
+            <td class="description last">設定するAudioBuffer</td>
         </tr>
 
 	
@@ -902,7 +1667,7 @@ wav, mp3などが再生可能ですが、ブラウザにより対応状況が異
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 813
+        snd.js, line 887
     </li></ul></dd>
     
 
@@ -1020,7 +1785,7 @@ wav, mp3などが再生可能ですが、ブラウザにより対応状況が異
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 731
+        snd.js, line 772
     </li></ul></dd>
     
 
@@ -1087,7 +1852,7 @@ wav, mp3などが再生可能ですが、ブラウザにより対応状況が異
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 766
+        snd.js, line 807
     </li></ul></dd>
     
 
@@ -1154,7 +1919,7 @@ wav, mp3などが再生可能ですが、ブラウザにより対応状況が異
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 749
+        snd.js, line 790
     </li></ul></dd>
     
 
@@ -1320,7 +2085,7 @@ start()とすると、すぐにデータの頭から終わりまでの再生が�
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 687
+        snd.js, line 728
     </li></ul></dd>
     
 
@@ -1439,7 +2204,7 @@ start()とすると、すぐにデータの頭から終わりまでの再生が�
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 717
+        snd.js, line 758
     </li></ul></dd>
     
 
@@ -1487,13 +2252,13 @@ start()とすると、すぐにデータの頭から終わりまでの再生が�
 					
 					
 		<span class="copyright">
-		Copyright &copy; 2014 n_h &lt;<a href='mailto:h.10x64@gmail.com'>h.10x64@gmail.com</a>&gt;
+		Copyright &copy; 2014 n_h &lt;<a href='mailto:h.10x64@sndjs.org'>h.10x64@sndjs.org</a>&gt;
 		</span>
 					<br />
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a>
-		on Thu Jul 10 2014 03:59:53 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		on Tue Jul 22 2014 22:36:16 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
 			</div>

@@ -130,7 +130,7 @@ snd.Source.prototype.toJSON = function() {
 };
 
 snd.Source.prototype.loadData = function(data) {
-    snd.AudioUnit.prototype.loadData.apply(this, data);
+    snd.AudioUnit.prototype.loadData.apply(this, arguments);
     
     this.volume = (data.volume != null) ? data.volume : 1.0;
 };

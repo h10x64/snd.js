@@ -22,16 +22,6 @@ snd.MediaElementAudioSource = function(id, htmlMediaElement) {
             get: function() {
                 return this._element;
             }
-        },
-        type: {
-            get: function() {
-                return this._status.type;
-            }
-        },
-        status: {
-            get: function() {
-                return this._status.status;
-            }
         }
     });
     
@@ -763,7 +753,7 @@ snd.MediaElementAudioSource.prototype.removeOnWaitingEventListener = function(li
 };
 
 snd.MediaElementAudioSource.prototype.createStatus = function() {
-    return new snd.MediaElementAudioNode.Status();
+    return new snd.MediaElementAudioSource.Status();
 }
 
 snd.MediaElementAudioSource.prototype.toJSON = function() {
