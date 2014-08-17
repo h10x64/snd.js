@@ -14,28 +14,55 @@ snd.vec3 = function(x, y, z) {
     this.x = x;
     this.y = y;
     this.z = z;
+
+    Object.defineProperties(this, {
+        length: {
+            get: function() {
+                return Math.sqrt(this._x * this._x + this._y * this._y + this._z * this._z);
+            }
+        }
+    });
 };
 
+/**
+ * @deprecated getAddVectorにリネームされる予定です。
+ */
 snd.vec3.prototype.add = function(pos) {
     return new snd.vec3(this.x + pos.x, this.y + pos.y, this.z + pos.z);
 };
 
+/**
+ * @deprecated getMultVectorにリネームされる予定です。
+ */
 snd.vec3.prototype.mult = function(a) {
     return new snd.vec3(a * this.x, a * this.y, a * this.z);
 };
 
+/**
+ * @deprecated getSubVectorにリネームされる予定です。
+ */
 snd.vec3.prototype.sub = function(pos) {
     return this.add(pos.mult(-1));
 };
 
+/**
+ * @deprecated lengthプロパティを使用してください。
+ */
 snd.vec3.prototype.length = function() {
-    return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+    return this.length;
 };
 
+/**
+ * @deprecated getNormalizedVectorにリネームされる予定です。
+ */
 snd.vec3.prototype.normalize = function() {
     return this.mult(1.0 / this.length());
 };
 
+/**
+ * @deprecated このメソッドは削除される予定です。
+ * @returns {snd.vec3}
+ */
 snd.vec3.prototype.toSphericalCoordinate = function() {
     var azimuth = Math.atan2(this.z, this.x);
     var elevation = Math.atan2(this.y, Math.sqrt(this.z * this.z + this.x * this.x));
@@ -43,6 +70,10 @@ snd.vec3.prototype.toSphericalCoordinate = function() {
     return new snd.vec3(azimuth, elevation, length);
 };
 
+/**
+ * @deprecated このメソッドは削除される予定です。
+ * @returns {snd.vec3}
+ */
 snd.vec3.prototype.toOrthogonalCoordinate = function() {
     var retY = this.z * Math.sin(this.y);
     var retX = this.z * Math.cos(this.y) * Math.cos(this.x);
@@ -91,40 +122,40 @@ snd.PosDir.prototype.setOrientationBySpherical = function(dir, up) {
     if (up != null) {
         var orthUp = up.toOrthogonalCoordinate();
         this.setTop(orthUp.x, orthUp.y, orthUp.z);
-        
+
         var rotDir = dir.sub(up);
         rotDir.normalize();
-        
+
         orthDir = rotDir.toOrthogonalCoordinate();
     } else {
         orthDir = dir.toOrthogonalCoordinate();
     }
-    
+
     this.setDir(orthDir.x, orthDir.y, orthDir.z);
 };
 
 snd.PosDir.interpolation = function(left, right, ratio) {
     var calc = {};
     var values = {
-        px : {left: left.pos.x, right: right.pos.x},
-        py : {left: left.pos.y, right: right.pos.y},
-        pz : {left: left.pos.z, right: right.pos.z},
-        ux : {left: left.up.x, right: right.up.x},
-        uy : {left: left.up.y, right: right.up.y},
-        uz : {left: left.up.z, right: right.up.z},
-        dx : {left: left.dir.x, right: right.dir.x},
-        dy : {left: left.dir.y, right: right.dir.y},
-        dz : {left: left.dir.z, right: right.dir.z}
+        px: {left: left.pos.x, right: right.pos.x},
+        py: {left: left.pos.y, right: right.pos.y},
+        pz: {left: left.pos.z, right: right.pos.z},
+        ux: {left: left.up.x, right: right.up.x},
+        uy: {left: left.up.y, right: right.up.y},
+        uz: {left: left.up.z, right: right.up.z},
+        dx: {left: left.dir.x, right: right.dir.x},
+        dy: {left: left.dir.y, right: right.dir.y},
+        dz: {left: left.dir.z, right: right.dir.z}
     };
-    
+
     for (var key in values) {
         calc[key] = values[key].left + (values[key].right - values[key].left) * ratio;
     }
-    
+
     var ret = new snd.PosDir();
     ret.setPos(calc.px, calc.py, calc.pz);
     ret.setUp(calc.ux, calc.uy, calc.uz);
     ret.setDir(calc.dx, calc.dy, calc.dz);
-    
+
     return ret;
 };
