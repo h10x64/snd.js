@@ -5,27 +5,35 @@
  * それぞれ設定されます。
  * @class 各種音源クラスの親クラスとなる抽象クラスです。<br/>
  * start, stopなどの抽象メソッドは継承する子クラスで実装してください。
+ * @property {Boolean} isSource このオブジェクトがsnd.Sourceであることを表すプロパティです。
+ * @property {AudioParam} volumeParam この音源の音量を設定するためのAudioParamです。他のAudioUnitの出力をこのOscillatorの周波数の値に渡す場合などに使用するためのもので、このプロパティに直接値を代入することはできません。<br/>
+ * この音源の音量に具体的な数値を設定したい場合は、volumeプロパティを使用してください。
+ * @property {Number} volume この音源の音量を取得・設定するプロパティです。<br/>
+ * 単位は[倍]です。（デシベルではありません）<br/>
+ * @property {String} type この音源のクラス名です。<br/>
+ * 値を設定することはできません。
+ * @property {snd.status} status この音源の状態を表すプロパティです。<br/>
+ * 値を設定することはできません。
  * @param {String} id この音源のID
  */
 snd.Source = function(id) {
     snd.AudioUnit.apply(this, arguments);
     
     this.isSource = true;
-    
+    this._status.className = "snd.Source";
     this._gain = snd.AUDIO_CONTEXT.createGain();
     
     Object.defineProperties(this, {
-        /**
-         * @propertie {Boolean} このオブジェクトがsnd.Sourceクラスであることを表すブール値
-         */
         isSource: {
             get: function() {
                 return this._status.isSource;
             }
         },
-        /**
-         * @property {Float} このオブジェクトのメインボリュームの値
-         */
+        volumeParam: {
+            get: function() {
+                return this._gain.gain;
+            }
+        },
         volume: {
             get: function() {
                 return this._gain.gain.value;
@@ -35,17 +43,11 @@ snd.Source = function(id) {
                 this._status.volume = val;
             }
         },
-        /**
-         * @property {snd.status} このオブジェクトの種類
-         */
         type: {
             get: function() {
                 return this._status.type;
             }
         },
-        /**
-         * @property {snd.status} このオブジェクトの状態
-         */
         status: {
             get: function() {
                 return this._status.status;
@@ -80,7 +82,7 @@ snd.Source.prototype.setGain = function(value) {
 /**
  * @deprecated このメソッドは削除予定です。 volumeプロパティを使用するようにしてください。
  */
-snd.Source.prototype.getGain = function(value) {
+snd.Source.prototype.getGain = function() {
     return this._gain.gain.value;
 };
 

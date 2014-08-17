@@ -8,6 +8,7 @@
 snd.BufferSource = function(id) {
     snd.Source.apply(this, arguments);
     
+    this._status.className = "snd.BufferSource";
     this._status.type = snd.srctype.AUDIO_BUFFER;
     
     this._source = null;

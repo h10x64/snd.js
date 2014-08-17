@@ -8,9 +8,12 @@
  */
 snd.MediaStreamAudioSource = function(id, mediaStream) {
     snd.Source.apply(this, arguments);
+
+    this._status.type = snd.srctype.MEDIA_STREAM;
+    this._status.className = "snd.MediaStreamAudioSource";
+    
     this.source = snd.AUDIO_CONTEXT.createMediaStreamAudioSource(mediaStream);
     this.source.connect(this._gain);
-    this._status.type = snd.srctype.MEDIA_STREAM;
 };
 snd.MediaStreamAudioSource.prototype = Object.create(snd.Source.prototype);
 snd.MediaStreamAudioSource.prototype.constructor = snd.MediaStreamAudioSource;

@@ -9,6 +9,9 @@
 snd.MediaElementAudioSource = function(id, htmlMediaElement) {
     snd.Source.apply(this, arguments);
     
+    this._status.type = snd.srctype.MEDIA_ELEMENT;
+    this._status.className = "snd.MediaElementAudioSource";
+    
     this._source = snd.AUDIO_CONTEXT.createMediaElementSource(htmlMediaElement);
     this._source.connect(this._gain);
     this._element = htmlMediaElement;
@@ -774,7 +777,6 @@ snd.MediaElementAudioSource.prototype.loadData = function(data) {
 snd.MediaElementAudioSource.Status = function() {
     snd.Source.Status.apply(this, arguments);
     
-    this.type = snd.srctype.MEDIA_ELEMENT;
     this.status = snd.status.NONE;
     this.element = "";
 }
