@@ -96,10 +96,10 @@ snd.Synth.Partes = function(id, settings) {
         _this.setWaveType(_this.settings.waveform);
     };
     
-    this.ampEnvelope = new snd.Envelope(this._gain.gain, this.settings.amplitude.envelope);
-    this.ampLFO = new snd.Synth.LFO(this.id + "_AmpLFO", this._gain.gain, this.settings.amplitude.lfo);
-    this.freqEnvelope = new snd.Envelope(this.source.frequency, this.settings.frequency.envelope);
-    this.freqLFO = new snd.Synth.LFO(this.id + "_FreqLFO", this.source.frequency, this.settings.frequency.lfo);
+    this.ampEnvelope = new snd.Envelope(this.volumeParam, this.settings.amplitude.envelope);
+    this.ampLFO = new snd.Synth.LFO(this.id + "_AmpLFO", this.volumeParam, this.settings.amplitude.lfo);
+    this.freqEnvelope = new snd.Envelope(this.frequencyParam, this.settings.frequency.envelope);
+    this.freqLFO = new snd.Synth.LFO(this.id + "_FreqLFO", this.frequencyParam, this.settings.frequency.lfo);
 };
 snd.Synth.Partes.prototype = Object.create(snd.OscillatorSource.prototype);
 snd.Synth.Partes.prototype.constructor = snd.Synth.Note;
@@ -137,8 +137,8 @@ snd.Synth.LFO = function(id, param, lfoSettings) {
     this.param = param;
     this._gain.connect(this.param);
     this._settings = lfoSettings;
-    this.freqEnvelope = new snd.Envelope(this.source.frequency, lfoSettings.frequency);
-    this.ampEnvelope = new snd.Envelope(this._gain.gain, lfoSettings.amplitude);
+    this.freqEnvelope = new snd.Envelope(this.frequencyParam, lfoSettings.frequency);
+    this.ampEnvelope = new snd.Envelope(this.volumeParam, lfoSettings.amplitude);
     this._settings.onchange = function() {
         _this.source.setWaveForm(_this.settings.waveform);
     };
