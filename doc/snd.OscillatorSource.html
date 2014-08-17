@@ -133,23 +133,7 @@
 					<ul class="dropdown-menu ">
 						
 						<li>
-							<a href="global.html#isSource">isSource</a>
-						</li>
-						
-						<li>
 							<a href="global.html#snd">snd</a>
-						</li>
-						
-						<li>
-							<a href="global.html#status">status</a>
-						</li>
-						
-						<li>
-							<a href="global.html#type">type</a>
-						</li>
-						
-						<li>
-							<a href="global.html#volume">volume</a>
 						</li>
 						
 
@@ -262,6 +246,138 @@ snd.OscillatorSource.SINEなどの定数値でサイン波・矩形波・のこ�
 <dl class="details">
     
 
+        <h5 class="subsection-title">Properties:</h5>
+
+        <dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>frequencyParam</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">AudioParam</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">このOscillatorの周波数を変更するためのAudioParamです。他のAudioUnitの出力をこのOscillatorの周波数の値に渡す場合などに使用するためのもので、このプロパティに直接値を代入することはできません。<br/>
+Oscillatorに具体的な周波数を設定したい場合は、frequencyプロパティを使用してください。<br/>
+oscillatorが初期化されていない場合、undefinedが戻ります。</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>frequency</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">このOscillatorの周波数です。<br/>
+frequencyParamとは異なり、数値を直接渡すことが可能です。<br/>
+単位は[hz]です。<br/>
+oscillatorが初期化されていない場合、undefinedが戻ります。</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>detumeParam</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">AudioParam</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">このOscillatorの周波数を変更するためのAudioParamです。他のAudioUnitの出力をこのOscillatorの周波数の値に渡す場合などに使用するためのもので、このプロパティに直接値を代入することはできません。<br/>
+Oscillatorに具体的な値を設定したい場合は、detuneプロパティを使用してください。<br/>
+oscillatorが初期化されていない場合、undefinedが戻ります。</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>detune</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">このOscillatorのdetuneです。<br/>
+frequencyに対して、音程の微妙な調整を行いたい場合に使用する値です。<br/>
+detuneParamとは異なり、数値を直接渡すことが可能です。<br/>
+単位は[cent]です。（cent … 1/1200オクターブ。半音の1/100）<br/>
+oscillatorが初期化されていない場合、undefinedが戻ります。</td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+    
+
     
 
     
@@ -281,7 +397,7 @@ snd.OscillatorSource.SINEなどの定数値でサイン波・矩形波・のこ�
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1052
+        snd.js, line 1101
     </li></ul></dd>
     
 
@@ -323,6 +439,71 @@ snd.OscillatorSource.SINEなどの定数値でサイン波・矩形波・のこ�
         <h3 class="subsection-title">Members</h3>
 
         <dl>
+            
+<dt>
+    <h4 class="name" id="CUSTOM"><span class="type-signature">&lt;static> </span>CUSTOM<span class="type-signature"> :String</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        波形にPeriodicWaveを使用している場合にoscillatorTypeに自動で設定される値です。<br/>
+この定数は判定に使用するために用意したもので、波形の指定には使用しないでください。
+    </div>
+    
+    
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">String</span>
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        snd.js, line 1262
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+</dd>
+
+        
             
 <dt>
     <h4 class="name" id="DEFAULT_FREQUENCY"><span class="type-signature">&lt;static> </span>DEFAULT_FREQUENCY<span class="type-signature"> :Number</span></h4>
@@ -371,7 +552,7 @@ snd.OscillatorSource.SINEなどの定数値でサイン波・矩形波・のこ�
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1073
+        snd.js, line 1230
     </li></ul></dd>
     
 
@@ -435,7 +616,7 @@ snd.OscillatorSource.SINEなどの定数値でサイン波・矩形波・のこ�
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1092
+        snd.js, line 1249
     </li></ul></dd>
     
 
@@ -499,7 +680,7 @@ snd.OscillatorSource.SINEなどの定数値でサイン波・矩形波・のこ�
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1080
+        snd.js, line 1237
     </li></ul></dd>
     
 
@@ -563,7 +744,7 @@ snd.OscillatorSource.SINEなどの定数値でサイン波・矩形波・のこ�
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1086
+        snd.js, line 1243
     </li></ul></dd>
     
 
@@ -627,7 +808,7 @@ snd.OscillatorSource.SINEなどの定数値でサイン波・矩形波・のこ�
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1098
+        snd.js, line 1255
     </li></ul></dd>
     
 
@@ -681,6 +862,8 @@ snd.OscillatorSource.SINEなどの定数値でサイン波・矩形波・のこ�
     
 
     
+        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>detuneプロパティを使用してください。</li><ul></dd>
+    
 
     
 
@@ -693,7 +876,7 @@ snd.OscillatorSource.SINEなどの定数値でサイン波・矩形波・のこ�
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1182
+        snd.js, line 1333
     </li></ul></dd>
     
 
@@ -773,6 +956,8 @@ snd.OscillatorSource.SINEなどの定数値でサイン波・矩形波・のこ�
     
 
     
+        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>frequencyプロパティを使用してください。</li><ul></dd>
+    
 
     
 
@@ -785,7 +970,7 @@ snd.OscillatorSource.SINEなどの定数値でサイン波・矩形波・のこ�
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1158
+        snd.js, line 1313
     </li></ul></dd>
     
 
@@ -836,7 +1021,7 @@ snd.OscillatorSource.SINEなどの定数値でサイン波・矩形波・のこ�
         
             
 <dt>
-    <h4 class="name" id="getOscillatorType"><span class="type-signature"></span>getOscillatorType<span class="signature">()</span><span class="type-signature"> &rarr; {OscillatorType}</span></h4>
+    <h4 class="name" id="getOscillatorType"><span class="type-signature"></span>getOscillatorType<span class="signature">()</span><span class="type-signature"> &rarr; {String}</span></h4>
     
     
 </dt>
@@ -845,8 +1030,6 @@ snd.OscillatorSource.SINEなどの定数値でサイン波・矩形波・のこ�
     
     <div class="description">
         このオシレータの波形の種類を返します。<br/>
-戻り値にはOscillatorTypeが使われます。<br/>
-OscillatorTypeの詳細は、WebAudioAPIの仕様を参照してください。
     </div>
     
 
@@ -867,6 +1050,8 @@ OscillatorTypeの詳細は、WebAudioAPIの仕様を参照してください。
     
 
     
+        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>oscillatorTypeプロパティを使用してください。</li><ul></dd>
+    
 
     
 
@@ -879,7 +1064,7 @@ OscillatorTypeの詳細は、WebAudioAPIの仕様を参照してください。
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1136
+        snd.js, line 1295
     </li></ul></dd>
     
 
@@ -915,7 +1100,7 @@ OscillatorTypeの詳細は、WebAudioAPIの仕様を参照してください。
 	</dt>
 	<dd>
 		
-<span class="param-type">OscillatorType</span>
+<span class="param-type">String</span>
 
 
 	</dd>
@@ -930,7 +1115,7 @@ OscillatorTypeの詳細は、WebAudioAPIの仕様を参照してください。
         
             
 <dt>
-    <h4 class="name" id="getPeriodicWave"><span class="type-signature"></span>getPeriodicWave<span class="signature">()</span><span class="type-signature"> &rarr; {PeriodicWave}</span></h4>
+    <h4 class="name" id="getPeriodicWave"><span class="type-signature"></span>getPeriodicWave<span class="signature">()</span><span class="type-signature"> &rarr; {Object}</span></h4>
     
     
 </dt>
@@ -959,6 +1144,8 @@ OscillatorTypeの詳細は、WebAudioAPIの仕様を参照してください。
     
 
     
+        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>periodicWaveプロパティを使用してください。</li><ul></dd>
+    
 
     
 
@@ -971,7 +1158,7 @@ OscillatorTypeの詳細は、WebAudioAPIの仕様を参照してください。
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1207
+        snd.js, line 1355
     </li></ul></dd>
     
 
@@ -995,6 +1182,10 @@ OscillatorTypeの詳細は、WebAudioAPIの仕様を参照してください。
     <h5>Returns:</h5>
     
             
+<div class="param-desc">
+    実数配列と虚数配列をまとめたオブジェクト（ret = {realArray:Float32Array, imagArray:Float32Array}）
+</div>
+
 
 
 <dl>
@@ -1003,7 +1194,7 @@ OscillatorTypeの詳細は、WebAudioAPIの仕様を参照してください。
 	</dt>
 	<dd>
 		
-<span class="param-type">PeriodicWave</span>
+<span class="param-type">Object</span>
 
 
 	</dd>
@@ -1097,6 +1288,8 @@ OscillatorTypeの詳細は、WebAudioAPIの仕様を参照してください。
     
 
     
+        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>detuneプロパティを使用してください。</li><ul></dd>
+    
 
     
 
@@ -1109,7 +1302,7 @@ OscillatorTypeの詳細は、WebAudioAPIの仕様を参照してください。
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1171
+        snd.js, line 1323
     </li></ul></dd>
     
 
@@ -1185,7 +1378,7 @@ OscillatorTypeの詳細は、WebAudioAPIの仕様を参照してください。
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#type">type</a></span>
+<span class="param-type">type</span>
 
 
             
@@ -1215,6 +1408,8 @@ OscillatorTypeの詳細は、WebAudioAPIの仕様を参照してください。
     
 
     
+        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>frequencyプロパティを使用してください。</li><ul></dd>
+    
 
     
 
@@ -1227,7 +1422,7 @@ OscillatorTypeの詳細は、WebAudioAPIの仕様を参照してください。
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1148
+        snd.js, line 1304
     </li></ul></dd>
     
 
@@ -1334,6 +1529,8 @@ OscillatorTypeの詳細は、WebAudioAPIの仕様を参照してください。
     
 
     
+        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>oscillatorTypeプロパティを使用してください。</li><ul></dd>
+    
 
     
 
@@ -1346,7 +1543,7 @@ OscillatorTypeの詳細は、WebAudioAPIの仕様を参照してください。
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1123
+        snd.js, line 1284
     </li></ul></dd>
     
 
@@ -1374,7 +1571,7 @@ OscillatorTypeの詳細は、WebAudioAPIの仕様を参照してください。
         
             
 <dt>
-    <h4 class="name" id="setPeriodicWave"><span class="type-signature"></span>setPeriodicWave<span class="signature">(periodicWave)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="setPeriodicWave"><span class="type-signature"></span>setPeriodicWave<span class="signature">(realArray, imagArray)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -1383,8 +1580,6 @@ OscillatorTypeの詳細は、WebAudioAPIの仕様を参照してください。
     
     <div class="description">
         フーリエ級数で表された波形を、このオシレータの波形として設定します。<br/>
-引数に使用するPeriodicWaveオブジェクトは、AudioContextのcreatePeriodicWaveメソッドを使って生成してください。<br/>
-PriodicWaveオブジェクトの詳細は<a href="http://g200kg.github.io/web-audio-api-ja/#dfn-createPeriodicWave">WebAudioAPIの仕様</a>を参照してください。<br/>
     </div>
     
 
@@ -1418,13 +1613,13 @@ PriodicWaveオブジェクトの詳細は<a href="http://g200kg.github.io/web-au
 
         <tr>
             
-                <td class="name"><code>periodicWave</code></td>
+                <td class="name"><code>realArray</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">PeriodicWave</span>
+<span class="param-type">Float32Array</span>
 
 
             
@@ -1434,120 +1629,20 @@ PriodicWaveオブジェクトの詳細は<a href="http://g200kg.github.io/web-au
 
             
 
-            <td class="description last">フーリエ級数で表された波形(1周期分)</td>
+            <td class="description last">フーリエ級数の実数部の配列</td>
         </tr>
 
-	
-	</tbody>
-</table>
-
-    
-    
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1196
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-    
-    
-
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="setWaveForm"><span class="type-signature"></span>setWaveForm<span class="signature">(waveform)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        波形を設定します。<br/>
-waveformにはsnd.oscillatortype名前空間に定義されているSINEなどの定数か、またはPeriodicWaveオブジェクトを入れてください。<br/>
-定数が使用された場合はsetWaveTypeメソッドを、そうでない場合はsetPeriodicWaveメソッドを使用して、このオシレータの波形を設定します。
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-	<tr>
-		
-		<th>Name</th>
-		
-
-		<th>Type</th>
-
-		
-
-		
-
-		<th class="last">Description</th>
-	</tr>
-	</thead>
-
-	<tbody>
 	
 
         <tr>
             
-                <td class="name"><code>waveform</code></td>
+                <td class="name"><code>imagArray</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">String</span>
-|
-
-<span class="param-type">PeriodicWave</span>
+<span class="param-type">Float32Array</span>
 
 
             
@@ -1557,7 +1652,7 @@ waveformにはsnd.oscillatortype名前空間に定義されているSINEなど�
 
             
 
-            <td class="description last">波形データ。</td>
+            <td class="description last">フーリエ級数の虚数部の配列</td>
         </tr>
 
 	
@@ -1577,6 +1672,8 @@ waveformにはsnd.oscillatortype名前空間に定義されているSINEなど�
     
 
     
+        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>periodicWaveプロパティを使用してください。</li><ul></dd>
+    
 
     
 
@@ -1589,7 +1686,7 @@ waveformにはsnd.oscillatortype名前空間に定義されているSINEなど�
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1106
+        snd.js, line 1343
     </li></ul></dd>
     
 
@@ -1688,7 +1785,7 @@ waveformにはsnd.oscillatortype名前空間に定義されているSINEなど�
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#type">type</a></span>
+<span class="param-type">type</span>
 
 
             
@@ -1711,7 +1808,7 @@ waveformにはsnd.oscillatortype名前空間に定義されているSINEなど�
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#type">type</a></span>
+<span class="param-type">type</span>
 
 
             
@@ -1753,7 +1850,7 @@ waveformにはsnd.oscillatortype名前空間に定義されているSINEなど�
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1218
+        snd.js, line 1366
     </li></ul></dd>
     
 
@@ -1871,7 +1968,7 @@ waveformにはsnd.oscillatortype名前空間に定義されているSINEなど�
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 1234
+        snd.js, line 1382
     </li></ul></dd>
     
 
@@ -1925,7 +2022,7 @@ waveformにはsnd.oscillatortype名前空間に定義されているSINEなど�
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a>
-		on Tue Jul 22 2014 22:36:18 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		on Mon Aug 18 2014 00:30:10 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
 			</div>
