@@ -9,24 +9,7 @@
 snd.MediaElementAudioSource = function(id, htmlMediaElement) {
     snd.Source.apply(this, arguments);
     
-    this._status.type = snd.srctype.MEDIA_ELEMENT;
-    this._status.className = "snd.MediaElementAudioSource";
-    
-    this._source = snd.AUDIO_CONTEXT.createMediaElementSource(htmlMediaElement);
-    this._source.connect(this._gain);
-    this._element = htmlMediaElement;
-    
-    if (this._element.id != null) {
-        this._status.element = this._element.id;
-    }
-
-    Object.defineProperties(this, {
-        element: {
-            get: function() {
-                return this._element;
-            }
-        }
-    });
+    this.id = id;
     
     this.listeners = {
         onplay: [],
@@ -52,140 +35,159 @@ snd.MediaElementAudioSource = function(id, htmlMediaElement) {
         onvolumechange: [],
         onwaiting: []
     };
-    
-    var _this = this;
-    
-    this._element.onplay = function() {
-        _this._status.status = snd.status.STARTED;
-        for (var i = 0; i < _this.listeners['onplay'].length; i++) {
-            _this.listeners['onplay'][i](_this);
-        }
-    };
-    this._element.onpause = function() {
-        _this._status.status = snd.status.PAUSED;
-        for (var i = 0; i < _this.listeners['onpause'].length; i++) {
-            _this.listeners['onpause'][i](_this);
-        }
-    };
-    this._element.onended = function() {
-        _this._status.status = snd.status.PAUSED;
-        for (var i = 0; i < _this.listeners['onended'].length; i++) {
-            _this.listeners['onended'][i](_this);
-        }
-    };
-    this._element.onabort = function() {
-        for (var i = 0; i < _this.listeners['onabort'].length; i++) {
-            _this.listeners['onabort'][i](_this);
-        }
-    };
-    this._element.oncanplay = function() {
-        if (_this.status == snd.status.NONE) {
-            _this._status.status = snd.status.READY;
-        }
-        for (var i = 0; i < _this.listeners['oncanplay'].length; i++) {
-            _this.listeners['oncanplay'][i](_this);
-        }
-    };
-    this._element.oncanplaythrough = function() {
-        for (var i = 0; i < _this.listeners['oncanplaythrough'].length; i++) {
-            _this.listeners['oncanplaythrough'][i](_this);
-        }
-    };
-    this._element.ondurationchange = function() {
-        for (var i = 0; i < _this.listeners['ondurationchange'].length; i++) {
-            _this.listeners['ondurationchange'][i](_this);
-        }
-    };
-    this._element.onemptied = function() {
-        for (var i = 0; i < _this.listeners['onemptied'].length; i++) {
-            _this.listeners['onemptied'][i](_this);
-        }
-    };
-    this._element.onerror = function() {
-        for (var i = 0; i < _this.listeners['onerror'].length; i++) {
-            _this.listeners['onerror'][i](_this);
-        }
-    };
-    this._element.onloadeddata = function() {
-        for (var i = 0; i < _this.listeners['onloadeddata'].length; i++) {
-            _this.listeners['onloadeddata'][i](_this);
-        }
-    };
-    this._element.onloadedmetadata = function() {
-        for (var i = 0; i < _this.listeners['onloadedmetadata'].length; i++) {
-            _this.listeners['onloadedmetadata'][i](_this);
-        }
-    };
-    this._element.onloadedstart = function() {
-        for (var i = 0; i < _this.listeners['onloadstart'].length; i++) {
-            _this.listeners['onloadstart'][i](_this);
-        }
-    };
-    this._element.onplaying = function() {
-        for (var i = 0; i < _this.listeners['onplaying'].length; i++) {
-            _this.listeners['onplaying'][i](_this);
-        }
-    };
-    this._element.onprogress = function() {
-        for (var i = 0; i < _this.listeners['onprogress'].length; i++) {
-            _this.listeners['onprogress'][i](_this);
-        }
-    };
-    this._element.onratechange = function() {
-        for (var i = 0; i < _this.listeners['onratechange'].length; i++) {
-            _this.listeners['onratechange'][i](_this);
-        }
-    };
-    this._element.onseeked = function() {
-        for (var i = 0; i < _this.listeners['onseeked'].length; i++) {
-            _this.listeners['onseeked'][i](_this);
-        }
-    };
-    this._element.onseeking = function() {
-        for (var i = 0; i < _this.listeners['onseeking'].length; i++) {
-            _this.listeners['onseeking'][i](_this);
-        }
-    };
-    this._element.onstalled = function() {
-        for (var i = 0; i < _this.listeners['onstalled'].length; i++) {
-            _this.listeners['onstalled'][i](_this);
-        }
-    };
-    this._element.onsuspend = function() {
-        for (var i = 0; i < _this.listeners['onsuspend'].length; i++) {
-            _this.listeners['onsuspend'][i](_this);
-        }
-    };
-    this._element.ontimeupdate = function() {
-        for (var i = 0; i < _this.listeners['ontimeupdate'].length; i++) {
-            _this.listeners['ontimeupdate'][i](_this);
-        }
-    };
-    this._element.onvolumechange = function() {
-        for (var i = 0; i < _this.listeners['onvolumechange'].length; i++) {
-            _this.listeners['onvolumechange'][i](_this);
-        }
-    };
-    this._element.onwaiting = function() {
-        for (var i = 0; i < _this.listeners['onwaiting'].length; i++) {
-            _this.listeners['onwaiting'][i](_this);
-        }
-    };
-    
+
     Object.defineProperties(this, {
-        src: {
-            enumerable: true,
+        element: {
             get: function() {
-                return this.element.src;
+                return this._element;
+            },
+            set: function(elem) {
+                var _this = this;
+
+                this._source = snd.AUDIO_CONTEXT.createMediaElementSource(elem);
+                this._source.connect(this._gain);
+                this._element = elem;
+
+                if (this._element.id != null) {
+                    this._status.element = this._element.id;
+                }
+
+                this._element.onplay = function() {
+                    _this._status.status = snd.status.STARTED;
+                    for (var i = 0; i < _this.listeners['onplay'].length; i++) {
+                        _this.listeners['onplay'][i](_this);
+                    }
+                };
+                this._element.onpause = function() {
+                    _this._status.status = snd.status.PAUSED;
+                    for (var i = 0; i < _this.listeners['onpause'].length; i++) {
+                        _this.listeners['onpause'][i](_this);
+                    }
+                };
+                this._element.onended = function() {
+                    _this._status.status = snd.status.PAUSED;
+                    for (var i = 0; i < _this.listeners['onended'].length; i++) {
+                        _this.listeners['onended'][i](_this);
+                    }
+                };
+                this._element.onabort = function() {
+                    for (var i = 0; i < _this.listeners['onabort'].length; i++) {
+                        _this.listeners['onabort'][i](_this);
+                    }
+                };
+                this._element.oncanplay = function() {
+                    if (_this.status == snd.status.NONE) {
+                        _this._status.status = snd.status.READY;
+                    }
+                    for (var i = 0; i < _this.listeners['oncanplay'].length; i++) {
+                        _this.listeners['oncanplay'][i](_this);
+                    }
+                };
+                this._element.oncanplaythrough = function() {
+                    for (var i = 0; i < _this.listeners['oncanplaythrough'].length; i++) {
+                        _this.listeners['oncanplaythrough'][i](_this);
+                    }
+                };
+                this._element.ondurationchange = function() {
+                    for (var i = 0; i < _this.listeners['ondurationchange'].length; i++) {
+                        _this.listeners['ondurationchange'][i](_this);
+                    }
+                };
+                this._element.onemptied = function() {
+                    for (var i = 0; i < _this.listeners['onemptied'].length; i++) {
+                        _this.listeners['onemptied'][i](_this);
+                    }
+                };
+                this._element.onerror = function() {
+                    for (var i = 0; i < _this.listeners['onerror'].length; i++) {
+                        _this.listeners['onerror'][i](_this);
+                    }
+                };
+                this._element.onloadeddata = function() {
+                    for (var i = 0; i < _this.listeners['onloadeddata'].length; i++) {
+                        _this.listeners['onloadeddata'][i](_this);
+                    }
+                };
+                this._element.onloadedmetadata = function() {
+                    for (var i = 0; i < _this.listeners['onloadedmetadata'].length; i++) {
+                        _this.listeners['onloadedmetadata'][i](_this);
+                    }
+                };
+                this._element.onloadedstart = function() {
+                    for (var i = 0; i < _this.listeners['onloadstart'].length; i++) {
+                        _this.listeners['onloadstart'][i](_this);
+                    }
+                };
+                this._element.onplaying = function() {
+                    for (var i = 0; i < _this.listeners['onplaying'].length; i++) {
+                        _this.listeners['onplaying'][i](_this);
+                    }
+                };
+                this._element.onprogress = function() {
+                    for (var i = 0; i < _this.listeners['onprogress'].length; i++) {
+                        _this.listeners['onprogress'][i](_this);
+                    }
+                };
+                this._element.onratechange = function() {
+                    for (var i = 0; i < _this.listeners['onratechange'].length; i++) {
+                        _this.listeners['onratechange'][i](_this);
+                    }
+                };
+                this._element.onseeked = function() {
+                    for (var i = 0; i < _this.listeners['onseeked'].length; i++) {
+                        _this.listeners['onseeked'][i](_this);
+                    }
+                };
+                this._element.onseeking = function() {
+                    for (var i = 0; i < _this.listeners['onseeking'].length; i++) {
+                        _this.listeners['onseeking'][i](_this);
+                    }
+                };
+                this._element.onstalled = function() {
+                    for (var i = 0; i < _this.listeners['onstalled'].length; i++) {
+                        _this.listeners['onstalled'][i](_this);
+                    }
+                };
+                this._element.onsuspend = function() {
+                    for (var i = 0; i < _this.listeners['onsuspend'].length; i++) {
+                        _this.listeners['onsuspend'][i](_this);
+                    }
+                };
+                this._element.ontimeupdate = function() {
+                    for (var i = 0; i < _this.listeners['ontimeupdate'].length; i++) {
+                        _this.listeners['ontimeupdate'][i](_this);
+                    }
+                };
+                this._element.onvolumechange = function() {
+                    for (var i = 0; i < _this.listeners['onvolumechange'].length; i++) {
+                        _this.listeners['onvolumechange'][i](_this);
+                    }
+                };
+                this._element.onwaiting = function() {
+                    for (var i = 0; i < _this.listeners['onwaiting'].length; i++) {
+                        _this.listeners['onwaiting'][i](_this);
+                    }
+                };
+            }
+        },
+        src: {
+            get: function() {
+                return this._element.src;
             },
             set: function(uri) {
-                this.element.src = uri;
+                this._element.src = uri;
             }
         }
     });
+
+    if (htmlMediaElement != null) {
+        this.element = htmlMediaElement;
+    }
 };
 snd.MediaElementAudioSource.prototype = Object.create(snd.Source.prototype);
 snd.MediaElementAudioSource.prototype.constructor = snd.MediaElementAudioSource;
+
+snd.MediaElementAudioSource.CLASS_NAME = "snd.MediaElementAudioSource";
 
 /**
  * この音源の読み込みを開始します。
@@ -765,18 +767,30 @@ snd.MediaElementAudioSource.prototype.toJSON = function() {
 
 snd.MediaElementAudioSource.prototype.loadData = function(data) {
     snd.Source.prototype.loadData.apply(this, arguments);
-    
+
     if (data.element != null) {
         var elem = document.getElementById(data.element);
         if (elem != null) {
-            this._element = elem;
+            this.element = elem;
         }
     }
 };
 
+snd.MediaElementAudioSource.loadJSON = function(json) {
+    var data = JSON.parse(json);
+    if (data.className != snd.MediaElementAudioSource.CLASS_NAME) {
+        throw new snd.Exception(data.id + " is not instance of 'snd.MediaElementAudioSource' class.");
+    }
+    
+    var ret = new snd.MediaElementAudioSource("");
+    ret.loadData(data);
+    
+    return ret;
+};
+
 snd.MediaElementAudioSource.Status = function() {
     snd.Source.Status.apply(this, arguments);
-    
+
     this.status = snd.status.NONE;
     this.element = "";
 }
