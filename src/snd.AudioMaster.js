@@ -7,9 +7,10 @@
 snd.AudioMaster = function() {
     this.unitList = {};
     this.gain = snd.AUDIO_CONTEXT.createGain();
-    
     this.gain.connect(snd.AUDIO_CONTEXT.destination);
 };
+
+snd.AudioMaster.ID = "snd.MASTER";
 
 /**
  * 新しくaudioUnitで指定されたユニットを接続します。
@@ -24,11 +25,11 @@ snd.AudioMaster.prototype.connectAudioUnit = function(key, audioUnit) {
     if (key == null) {
         if (this.unitList[audioUnit.id] == null) {
             this.unitList[audioUnit.id] = audioUnit;
-            audioUnit.connect(this.gain);
+            audioUnit.connect(this.gain, snd.AudioMaster.ID);
         }
     } else {
         this.unitList[key] = audioUnit;
-        audioUnit.connect(this.gain);
+        audioUnit.connect(this.gain, snd.AudioMaster.ID);
     }
 };
 
