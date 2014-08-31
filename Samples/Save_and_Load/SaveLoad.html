@@ -1,0 +1,148 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Save / Load Test</title>
+        <meta charset="UTF-8">
+        <script src="../../dist/snd.js"></script>
+        <script>
+            snd.init();
+
+            var AUDIO_UNIT = new snd.AudioUnit("SaveLoadTest_AudioUnit");
+            var SOURCE = new snd.Source("SaveLoadTest_Source");
+            var BUFFER_SOURCE = new snd.BufferSource("SaveLoadTest_BufferSource");
+            BUFFER_SOURCE.loadURL("../sound/test.wav");
+            var MEDIA_ELEMENT_AUDIO_SOURCE = new snd.MediaElementAudioSource("SaveLoadTest_MediaElementAudioSource");
+            var OSCILLATOR_SOURCE = new snd.OscillatorSource("SaveLoadTest_OscillatorSource");
+
+            snd.MASTER.connectAudioUnit(AUDIO_UNIT.id, AUDIO_UNIT);
+            snd.MASTER.connectAudioUnit(SOURCE.id, SOURCE);
+            snd.MASTER.connectAudioUnit(BUFFER_SOURCE.id, BUFFER_SOURCE);
+            snd.MASTER.connectAudioUnit(MEDIA_ELEMENT_AUDIO_SOURCE.id, MEDIA_ELEMENT_AUDIO_SOURCE);
+            snd.MASTER.connectAudioUnit(OSCILLATOR_SOURCE.id, OSCILLATOR_SOURCE);
+
+        </script>
+    </head>
+    <body>
+        <div>
+            各種sndオブジェクトをテキストエリアに保存・読込します。<br/>
+            <ul>
+                <li>saveボタンでテキストエリアにオブジェクトを保存</li>
+                <li>loadボタンでテキストエリアからオブジェクトを読込み</li>
+            </ul>
+            できます。<br/>
+            start / stopボタンがある項目は、再生・停止ができます。<br/>
+            OscillatorSourceのテキストエリアで『"frequency":440』となっている箇所を『"frequency":880』に書き換えて、
+            loadボタンを押してみてください。<br/>
+            テキストエリアにあるJSON文字列が読み込まれ、440hzではなく880hzのサイン波が再生されるようになります。<br/>
+        </div>
+        <div id="buttonPanel">
+            <div style="margin-top: 1.5em; margin-bottom: 1.5em;">
+                AudioUnit:<br/>
+                <textarea id="audioUnit" rows="10" cols="80"></textArea><br/>
+        <button id="saveAudioUnit" onclick="onSaveAudioUnitButtonClick();">save</button><button id="loadAudioUnit" onclick="onLoadAudioUnitButtonClick();">load</button><br/>
+    </div>
+    <div style="margin-top: 1.5em; margin-bottom: 1.5em;">
+        Source:<br/>
+        <textarea id="source" rows="10" cols="80"></textArea><br/>
+        <button id="saveSource" onclick="onSaveSourceButtonClick();">save</button><button id="loadSource" onclick="onLoadSourceButtonClick();">load</button><br/>
+    </div>
+    <div style="margin-top: 1.5em; margin-bottom: 1.5em;">
+        BufferSource:<br/>
+        <textarea id="bufferSource" rows="10" cols="80"></textArea><br/>
+        <button id="startBufferSource" onclick="BUFFER_SOURCE.start();">start</button><button id="stopBufferSource" onclick="BUFFER_SOURCE.stop();">stop</button>
+        <button id="saveBufferSource" onclick="onSaveBufferSourceButtonClick();">save</button><button id="loadBufferSource" onclick="onLoadBufferSourceButtonClick();">load</button><br/>
+    </div>
+    <div style="margin-top: 1.5em; margin-bottom: 1.5em;">
+        MediaElementAudioSource:<br/>
+        <div style="margin-top: 0.5em; margin-bottom: 0.5em;">
+            AudioTag:<br/>
+            <audio id="mediaElem" controls="true" src="../sound/test.wav"></audio>
+        </div>
+        <textarea id="mediaElementAudioSource" rows="10" cols="80"></textArea><br/>
+        <button id="startMediaElementAudioSource" onclick="MEDIA_ELEMENT_AUDIO_SOURCE.start();">start</button><button id="stopMediaElementAudioSource" onclick="MEDIA_ELEMENT_AUDIO_SOURCE.stop();">stop</button>
+        <button id="saveMediaElementAudioSource" onclick="onSaveMediaElementAudioSourceButtonClick();">save</button><button id="loadMediaElementAudioSource" onclick="onLoadMediaElementAudioSourceButtonClick();">load</button><br/>
+    </div>
+    <div style="margin-top: 1.5em; margin-bottom: 1.5em;">
+        OscillatorSource:<br/>
+        <textarea id="oscillatorSource" rows="10" cols="80"></textArea><br/>
+        <button id="startOscillatorSource" onclick="OSCILLATOR_SOURCE.start();">start</button><button id="stopOscillatorSource" onclick="OSCILLATOR_SOURCE.stop();">stop</button>
+        <button id="saveOscillatorSource" onclick="onSaveOscillatorSourceButtonClick();">save</button><button id="loadOscillatorSource" onclick="onLoadOscillatorSourceButtonClick();">load</button><br/>
+    </div>
+</div>
+
+<script>
+
+    onSaveAudioUnitButtonClick = function() {
+        var json = JSON.stringify(AUDIO_UNIT);
+        document.getElementById("audioUnit").value = json;
+    };
+
+    onLoadAudioUnitButtonClick = function() {
+        var json = document.getElementById("audioUnit").value;
+        AUDIO_UNIT = snd.AudioUnit.loadJSON(json);
+    };
+
+    onSaveSourceButtonClick = function() {
+        var json = JSON.stringify(SOURCE);
+        document.getElementById("source").value = json;
+    };
+
+    onLoadSourceButtonClick = function() {
+        var json = document.getElementById("source").value;
+        SOURCE = snd.Source.loadJSON(json);
+    };
+
+    onSaveBufferSourceButtonClick = function() {
+        var json = JSON.stringify(BUFFER_SOURCE);
+        document.getElementById("bufferSource").value = json;
+    };
+
+    onLoadBufferSourceButtonClick = function() {
+        BUFFER_SOURCE.stop();
+        snd.MASTER.disconnectAudioUnit(BUFFER_SOURCE.id);
+        delete BUFFER_SOURCE;
+
+        var json = document.getElementById("bufferSource").value;
+        BUFFER_SOURCE = snd.BufferSource.loadJSON(json);
+
+        snd.MASTER.connectAudioUnit(BUFFER_SOURCE.id, BUFFER_SOURCE);
+    };
+
+    onSaveMediaElementAudioSourceButtonClick = function() {
+        var json = JSON.stringify(MEDIA_ELEMENT_AUDIO_SOURCE);
+        document.getElementById("mediaElementAudioSource").value = json;
+    };
+
+    onLoadMediaElementAudioSourceButtonClick = function() {
+        var json = document.getElementById("mediaElementAudioSource").value;
+        MEDIA_ELEMENT_AUDIO_SOURCE = snd.MediaElementAudioSource.loadJSON(json);
+    };
+
+    onSaveOscillatorSourceButtonClick = function() {
+        var json = JSON.stringify(OSCILLATOR_SOURCE);
+        document.getElementById("oscillatorSource").value = json;
+    };
+
+    onLoadOscillatorSourceButtonClick = function() {
+        OSCILLATOR_SOURCE.stop();
+        snd.MASTER.disconnectAudioUnit(OSCILLATOR_SOURCE.id);
+        delete OSCILLATOR_SOURCE;
+
+        var json = document.getElementById("oscillatorSource").value;
+        OSCILLATOR_SOURCE = snd.OscillatorSource.loadJSON(json);
+        snd.MASTER.connectAudioUnit(OSCILLATOR_SOURCE.id, OSCILLATOR_SOURCE);
+    };
+
+    window.onload = function() {
+        MEDIA_ELEMENT_AUDIO_SOURCE.element = document.getElementById("mediaElem");
+
+        onSaveAudioUnitButtonClick();
+        onSaveSourceButtonClick();
+        onSaveBufferSourceButtonClick();
+        onSaveMediaElementAudioSourceButtonClick();
+        onSaveOscillatorSourceButtonClick();
+    };
+
+        </script>    
+</body>
+</html>
