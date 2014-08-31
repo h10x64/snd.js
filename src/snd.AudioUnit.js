@@ -10,8 +10,6 @@ snd.AudioUnit = function(id) {
     this._status = this.createStatus();
     
     this._status.id = id;
-    this._status.className = "snd.AudioUnit";
-    this._status.connection = [];
     
     Object.defineProperties(this, {
         isAudioUnit: {
@@ -165,12 +163,30 @@ snd.AudioUnit.prototype.loadData = function(data) {
 };
 
 /**
+ * JSON.stringifyを使って出力した、AudioUnitオブジェクトのJSON文字列を読み込みます。
+ * @param {String} json JSON文字列
+ * @returns {snd.AudioUnit|snd.AudioUnit} jsonの内容を読み込んだsnd.AudioUnitオブジェクト 
+ */
+snd.AudioUnit.loadJSON = function(json) {
+    var ret = new snd.AudioUnit("");
+    var data = JSON.parse(json);
+    
+    ret.loadData(data);
+    
+    return ret;
+};
+
+/**
  * オーディオユニットの各種設定情報を保持するクラスです。
+ * @property {String} className このステータスを持つオブジェクトのクラス名
+ * @property {Boolean} isAudioUnit このステータスを持つオブジェクトがsnd.AudioUnitクラスのメソッドを実装していることを表すブール値
+ * @property {String} id このステータスを持つオブジェクトのID
+ * @property {Array} connection このステータスを持つオブジェクトが接続しているオブジェクトのIDを格納する配列
  */
 snd.AudioUnit.Status = function() {
+    this.className = "snd.AudioUnit";
     this.isAudioUnit = true;
     this.id = "";
-    this.className = "";
     this.connection = [];
 };
 

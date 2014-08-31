@@ -790,7 +790,8 @@ snd.MediaElementAudioSource.loadJSON = function(json) {
 
 snd.MediaElementAudioSource.Status = function() {
     snd.Source.Status.apply(this, arguments);
-
+    
+    this.className = snd.MediaElementAudioSource.CLASS_NAME;
     this.status = snd.status.NONE;
     this.element = "";
 }

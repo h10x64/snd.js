@@ -8,9 +8,6 @@
 snd.BufferSource = function(id) {
     snd.Source.apply(this, arguments);
     
-    this._status.className = "snd.BufferSource";
-    this._status.type = snd.srctype.AUDIO_BUFFER;
-    
     this._source = null;
     this._audioBuffer = null;
     this._key = "";
@@ -59,6 +56,8 @@ snd.BufferSource = function(id) {
 };
 snd.BufferSource.prototype = Object.create(snd.Source.prototype);
 snd.BufferSource.prototype.constructor = snd.BufferSource;
+
+snd.BufferSource.CLASS_NAME = "snd.BufferSource";
 
 /**
  * srcプロパティに設定された文字列がDataURISchemeの文字列かどうかを判定する際に使われる正規表現です。
@@ -112,7 +111,7 @@ snd.BufferSource.prototype.start = function(when, offset, duration) {
  * @param {Number} when 何秒後に再生を停止するか 
  */
 snd.BufferSource.prototype.stop = function(when) {
-    if (this._source != null) {
+    if (this._source != null && this.status == snd.status.STARTED) {
         if (when == null) {
             this._source.stop(0);
         } else {
@@ -337,6 +336,7 @@ snd.BufferSource.prototype.resetEventMethods = function() {
     var _this = this;
     
     this._source.onended = function() {
+        _this.status = snd.status.STOPPED;
         _this.fireOnEndedEvent();
     };
 };
@@ -369,6 +369,18 @@ snd.BufferSource.prototype.loadData = function(data) {
     this.loopEnd = data.loopEnd;
 };
 
+snd.BufferSource.loadJSON = function(json) {
+    var data = JSON.parse(json);
+    if (data.className != snd.BufferSource.CLASS_NAME) {
+        throw new snd.Exception(data.id + " is not instance of 'snd.BufferSource' class.");
+    }
+    
+    var ret = new snd.BufferSource("");
+    ret.loadData(data);
+    
+    return ret;
+};
+
 /**
  * @class BufferSourceの設定値を保持するクラスです。<br/>
  * ループ関連の設定値や、音データのパスなどを保持します。
@@ -387,6 +399,8 @@ snd.BufferSource.prototype.loadData = function(data) {
 snd.BufferSource.Status = function() {
     snd.Source.Status.apply(this, arguments);
     
+    this.className = "snd.BufferSource";
+    this.type = snd.srctype.AUDIO_BUFFER;
     this.loop = false;
     this.loopStart = null;
     this.loopEnd = null;

@@ -23,9 +23,6 @@
 snd.OscillatorSource = function(id) {
     snd.Source.apply(this, arguments);
     
-    this._status.className = "snd.OscillatorSource";
-    this._status.type = snd.srctype.OSCILLATOR;
-    this._status.status = snd.status.NONE;
     this._periodicWave = null;
     this._source = null;
     
@@ -79,8 +76,6 @@ snd.OscillatorSource = function(id) {
                 
                 this._periodicWave = null;
                 this._status.periodicWave = null;
-                
-                resetOscillator();
             }
         },
         frequency: {
@@ -143,6 +138,8 @@ snd.OscillatorSource = function(id) {
 };
 snd.OscillatorSource.prototype = Object.create(snd.Source.prototype);
 snd.OscillatorSource.prototype.constructor = snd.OscillatorSource;
+
+snd.OscillatorSource.CLASS_NAME = "snd.OscillatorSource";
 
 /**
  * 基準となる周波数(440Hz)です。
@@ -286,6 +283,10 @@ snd.OscillatorSource.prototype.getPeriodicWave = function() {
  * @param {type} duration 使用しません
  */
 snd.OscillatorSource.prototype.start = function(when, offset, duration) {
+    if (this.status == snd.status.STOPPED) {
+        this.resetOscillator();
+    }
+    
     if (this._source != null && this.status != snd.status.STARTED && this.status != snd.status.STOPPED) {
         if (when == null) {
             this._source.start(0);
@@ -298,11 +299,13 @@ snd.OscillatorSource.prototype.start = function(when, offset, duration) {
 
 
 /**
- * 波形の再生を終了します。
+ * 波形の出力を停止します。<br/>
+ * !!注意!!<br/>
+ * stopメソッドを使って波形の出力を停止すると、再度startメソッドを使っても
  * @param {float} when 終了するタイミング
  */
 snd.OscillatorSource.prototype.stop = function(when) {
-    if (this.status != snd.status.STOPPED) {
+    if (this.status == snd.status.STARTED) {
         if (when == null) {
             this._source.stop(0);
         } else {
@@ -316,7 +319,7 @@ snd.OscillatorSource.prototype.resetOscillator = function() {
     var _this = this;
     
     if (this._source != null) {
-        if (this.status != snd.status.STOPPED) {
+        if (this.status == snd.status.STARTED) {
             this.stop(0);
         }
     }
@@ -381,10 +384,22 @@ snd.OscillatorSource.prototype.loadData = function(data) {
     this.detune = data.detune;
 };
 
+snd.OscillatorSource.loadJSON = function(json) {
+    var data = JSON.parse(json);
+    if (data.className != snd.OscillatorSource.CLASS_NAME) {
+        throw new snd.Exception(data.id + " is not instance of 'snd.OscillatorSource' class.");
+    }
+    
+    var ret = new snd.OscillatorSource("");
+    ret.loadData(data);
+    return ret;
+};
+
 snd.OscillatorSource.Status = function() {
     snd.Source.Status.apply(this, arguments);
     
-    this.type = snd.srctype.MEDIA_ELEMENT;
+    this.className = snd.OscillatorSource.CLASS_NAME;
+    this.type = snd.srctype.OSCILLATOR;
     this.status = snd.status.NONE;
     
     this.periodicWave = null;

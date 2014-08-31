@@ -19,8 +19,6 @@
 snd.Source = function(id) {
     snd.AudioUnit.apply(this, arguments);
     
-    this.isSource = true;
-    this._status.className = "snd.Source";
     this._gain = snd.AUDIO_CONTEXT.createGain();
     
     Object.defineProperties(this, {
@@ -31,7 +29,11 @@ snd.Source = function(id) {
         },
         volumeParam: {
             get: function() {
-                return this._gain.gain;
+                var ret = this.gain.gain;
+                if (ret.id == null) {
+                    ret.id = this.id + ".gain";
+                }
+                return ret;
             }
         },
         volume: {
@@ -57,6 +59,8 @@ snd.Source = function(id) {
 };
 snd.Source.prototype = Object.create(snd.AudioUnit.prototype);
 snd.Source.prototype.constructor = snd.Source;
+
+snd.Source.CLASS_NAME = "snd.Source";
 
 /**
  * 音源の再生を開始します。
@@ -114,6 +118,10 @@ snd.Source.prototype.disconnect = function(disconnectFrom, id) {
     }
 };
 
+snd.Source.prototype.getConnector = function() {
+    return this._gain;
+};
+
 /**
  * 詳細はAudioUnitクラスの createStatus を参照してください。
  * @return {snd.AudioUnit.Status} このオブジェクトのデフォルト設定値
@@ -137,6 +145,17 @@ snd.Source.prototype.loadData = function(data) {
     this.volume = (data.volume != null) ? data.volume : 1.0;
 };
 
+snd.Source.loadJSON = function(json) {
+    var data = JSON.parse(json);
+    if (!data.isSource) {
+        throw new snd.Exception("This JSON String is not instance of 'snd.Source' class.");
+    }
+    
+    var ret = new snd.Source("");
+    ret.loadData(data);
+    return ret;
+};
+
 /**
  * @class snd.Sourceクラスの設定値を保持するステータスクラスです。<br/>
  * 音源の種類、状態、ボリュームなどの情報を持ちます。
@@ -144,12 +163,15 @@ snd.Source.prototype.loadData = function(data) {
  * @property {snd.srctype} type 音源の種類
  * @property {snd.status} status 状態
  * @property {Float} volume ボリューム
+ * @property {String} className この設定値を使用しているオブジェクトのクラス名
  */
 snd.Source.Status = function() {
     snd.AudioUnit.Status.apply(this, arguments);
     
-    this.isSource = true;
     this.type = snd.srctype.NONE;
     this.status = snd.status.NONE;
     this.volume = 1;
+    this.isSource = true;
+    
+    this.className = snd.Source.CLASS_NAME;
 };
