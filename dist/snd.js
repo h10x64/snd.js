@@ -1,4 +1,4 @@
-/* snd.js - The Sound Library for JavaScript with WebAudioAPI - v.0 */
+/* snd.js - The Sound Library for JavaScript with WebAudioAPI - v.0.85 */
 /**
  * snd.js
  * 
@@ -207,50 +207,59 @@ snd.vec3 = function(x, y, z) {
     });
 };
 
-/**
- * @deprecated getAddVectorにリネームされる予定です。
- */
 snd.vec3.prototype.add = function(pos) {
-    return new snd.vec3(this.x + pos.x, this.y + pos.y, this.z + pos.z);
+    this._x += pos.x;
+    this._y += pos.y;
+    this._z += pos.z;
 };
 
-/**
- * @deprecated getMultVectorにリネームされる予定です。
- */
+snd.vec3.prototype.getAddVector = function(pos) {
+    return new snd.vec3(this.x + pos.x, this.y + pos.y, this.z + this.z);
+};
+
 snd.vec3.prototype.mult = function(a) {
+    this._x *= a;
+    this._y *= a;
+    this._z *= a;
+};
+
+snd.vec3.prototype.getMultVector = function(a) {
     return new snd.vec3(a * this.x, a * this.y, a * this.z);
 };
 
-/**
- * @deprecated getSubVectorにリネームされる予定です。
- */
 snd.vec3.prototype.sub = function(pos) {
-    return this.add(pos.mult(-1));
+    this._x -= pos.x;
+    this._y -= pos.y;
+    this._z -= pos.z;
 };
 
-/**
- * @deprecated lengthプロパティを使用してください。
- */
-snd.vec3.prototype.length = function() {
-    return this.length;
+snd.vec3.prototype.getSubVector = function(pos) {
+    return new snd.vec3(this.x - pos.x, this.y - pos.y, this.z - pos.y);
 };
 
-/**
- * @deprecated getNormalizedVectorにリネームされる予定です。
- */
 snd.vec3.prototype.normalize = function() {
-    return this.mult(1.0 / this.length());
+    var l = this.length;
+    this._x /= l;
+    this._y /= l;
+    this._z /= l;
 };
 
-/**
- * @deprecated このメソッドは削除される予定です。
- * @returns {snd.vec3}
- */
+snd.vec3.prototype.getNormalizedVector = function() {
+    var l = this.length;
+    return new snd.vec3(this.x / l, this.y / l, this.z / l);
+};
+
 snd.vec3.prototype.toSphericalCoordinate = function() {
     var azimuth = Math.atan2(this.z, this.x);
     var elevation = Math.atan2(this.y, Math.sqrt(this.z * this.z + this.x * this.x));
-    var length = this.length();
-    return new snd.vec3(azimuth, elevation, length);
+    var length = this.length;
+    return new snd.Spherical(azimuth, elevation, length);
+};
+
+snd.vec3.prototype.toCyrindricalCoordinate = function() {
+    var r = Math.sqrt(this.x * this.x + this.z * this.z);
+    var theta = Math.atan2(this.z, this.x);
+    var y = this.y;
 };
 
 /**
@@ -262,6 +271,72 @@ snd.vec3.prototype.toOrthogonalCoordinate = function() {
     var retX = this.z * Math.cos(this.y) * Math.cos(this.x);
     var retZ = this.z * Math.cos(this.y) * Math.sin(this.x);
     return new snd.vec3(retX, retY, retZ);
+};
+
+snd.Spherical = function(azim, elev, r) {
+    this._azim = azim;
+    this._elev = elev;
+    this._r = r;
+
+    Object.defineProperties(this, {
+        azim: {
+            get: function() {
+                return this._azim;
+            },
+            set: function(val) {
+                this._azim = val;
+            }
+        },
+        elev: {
+            get: function() {
+                return this._elev;
+            },
+            set: function(val) {
+                this._elev = val;
+            }
+        },
+        r: {
+            get: function() {
+                return this._r;
+            },
+            set: function(val) {
+                this._r = val;
+            }
+        }
+    });
+};
+
+snd.Cylindrical = function(r, theta, y) {
+    this._r = r;
+    this._theta = theta;
+    this._y = y;
+
+    Object.defineProperties(this, {
+        r: {
+            get: function() {
+                return this._r;
+            },
+            set: function(val) {
+                this._r = r;
+            }
+        },
+        theta: {
+            get: function() {
+                return this._theta;
+            },
+            set: function(val) {
+                this._theta = val;
+            }
+        },
+        y: {
+            get: function() {
+                return this._y;
+            },
+            set: function(val) {
+                this._y = val;
+            }
+        }
+    });
 };
 
 /**
@@ -355,8 +430,6 @@ snd.AudioUnit = function(id) {
     this._status = this.createStatus();
     
     this._status.id = id;
-    this._status.className = "snd.AudioUnit";
-    this._status.connection = [];
     
     Object.defineProperties(this, {
         isAudioUnit: {
@@ -510,12 +583,30 @@ snd.AudioUnit.prototype.loadData = function(data) {
 };
 
 /**
+ * JSON.stringifyを使って出力した、AudioUnitオブジェクトのJSON文字列を読み込みます。
+ * @param {String} json JSON文字列
+ * @returns {snd.AudioUnit|snd.AudioUnit} jsonの内容を読み込んだsnd.AudioUnitオブジェクト 
+ */
+snd.AudioUnit.loadJSON = function(json) {
+    var ret = new snd.AudioUnit("");
+    var data = JSON.parse(json);
+    
+    ret.loadData(data);
+    
+    return ret;
+};
+
+/**
  * オーディオユニットの各種設定情報を保持するクラスです。
+ * @property {String} className このステータスを持つオブジェクトのクラス名
+ * @property {Boolean} isAudioUnit このステータスを持つオブジェクトがsnd.AudioUnitクラスのメソッドを実装していることを表すブール値
+ * @property {String} id このステータスを持つオブジェクトのID
+ * @property {Array} connection このステータスを持つオブジェクトが接続しているオブジェクトのIDを格納する配列
  */
 snd.AudioUnit.Status = function() {
+    this.className = "snd.AudioUnit";
     this.isAudioUnit = true;
     this.id = "";
-    this.className = "";
     this.connection = [];
 };
 
@@ -541,8 +632,6 @@ snd.AudioUnit.Status = function() {
 snd.Source = function(id) {
     snd.AudioUnit.apply(this, arguments);
     
-    this.isSource = true;
-    this._status.className = "snd.Source";
     this._gain = snd.AUDIO_CONTEXT.createGain();
     
     Object.defineProperties(this, {
@@ -553,7 +642,11 @@ snd.Source = function(id) {
         },
         volumeParam: {
             get: function() {
-                return this._gain.gain;
+                var ret = this.gain.gain;
+                if (ret.id == null) {
+                    ret.id = this.id + ".gain";
+                }
+                return ret;
             }
         },
         volume: {
@@ -579,6 +672,8 @@ snd.Source = function(id) {
 };
 snd.Source.prototype = Object.create(snd.AudioUnit.prototype);
 snd.Source.prototype.constructor = snd.Source;
+
+snd.Source.CLASS_NAME = "snd.Source";
 
 /**
  * 音源の再生を開始します。
@@ -636,6 +731,10 @@ snd.Source.prototype.disconnect = function(disconnectFrom, id) {
     }
 };
 
+snd.Source.prototype.getConnector = function() {
+    return this._gain;
+};
+
 /**
  * 詳細はAudioUnitクラスの createStatus を参照してください。
  * @return {snd.AudioUnit.Status} このオブジェクトのデフォルト設定値
@@ -659,6 +758,17 @@ snd.Source.prototype.loadData = function(data) {
     this.volume = (data.volume != null) ? data.volume : 1.0;
 };
 
+snd.Source.loadJSON = function(json) {
+    var data = JSON.parse(json);
+    if (!data.isSource) {
+        throw new snd.Exception("This JSON String is not instance of 'snd.Source' class.");
+    }
+    
+    var ret = new snd.Source("");
+    ret.loadData(data);
+    return ret;
+};
+
 /**
  * @class snd.Sourceクラスの設定値を保持するステータスクラスです。<br/>
  * 音源の種類、状態、ボリュームなどの情報を持ちます。
@@ -666,14 +776,17 @@ snd.Source.prototype.loadData = function(data) {
  * @property {snd.srctype} type 音源の種類
  * @property {snd.status} status 状態
  * @property {Float} volume ボリューム
+ * @property {String} className この設定値を使用しているオブジェクトのクラス名
  */
 snd.Source.Status = function() {
     snd.AudioUnit.Status.apply(this, arguments);
     
-    this.isSource = true;
     this.type = snd.srctype.NONE;
     this.status = snd.status.NONE;
     this.volume = 1;
+    this.isSource = true;
+    
+    this.className = snd.Source.CLASS_NAME;
 };
 
 /**
@@ -685,9 +798,6 @@ snd.Source.Status = function() {
  */
 snd.BufferSource = function(id) {
     snd.Source.apply(this, arguments);
-    
-    this._status.className = "snd.BufferSource";
-    this._status.type = snd.srctype.AUDIO_BUFFER;
     
     this._source = null;
     this._audioBuffer = null;
@@ -737,6 +847,8 @@ snd.BufferSource = function(id) {
 };
 snd.BufferSource.prototype = Object.create(snd.Source.prototype);
 snd.BufferSource.prototype.constructor = snd.BufferSource;
+
+snd.BufferSource.CLASS_NAME = "snd.BufferSource";
 
 /**
  * srcプロパティに設定された文字列がDataURISchemeの文字列かどうかを判定する際に使われる正規表現です。
@@ -790,7 +902,7 @@ snd.BufferSource.prototype.start = function(when, offset, duration) {
  * @param {Number} when 何秒後に再生を停止するか 
  */
 snd.BufferSource.prototype.stop = function(when) {
-    if (this._source != null) {
+    if (this._source != null && this.status == snd.status.STARTED) {
         if (when == null) {
             this._source.stop(0);
         } else {
@@ -1015,6 +1127,7 @@ snd.BufferSource.prototype.resetEventMethods = function() {
     var _this = this;
     
     this._source.onended = function() {
+        _this.status = snd.status.STOPPED;
         _this.fireOnEndedEvent();
     };
 };
@@ -1047,6 +1160,18 @@ snd.BufferSource.prototype.loadData = function(data) {
     this.loopEnd = data.loopEnd;
 };
 
+snd.BufferSource.loadJSON = function(json) {
+    var data = JSON.parse(json);
+    if (data.className != snd.BufferSource.CLASS_NAME) {
+        throw new snd.Exception(data.id + " is not instance of 'snd.BufferSource' class.");
+    }
+    
+    var ret = new snd.BufferSource("");
+    ret.loadData(data);
+    
+    return ret;
+};
+
 /**
  * @class BufferSourceの設定値を保持するクラスです。<br/>
  * ループ関連の設定値や、音データのパスなどを保持します。
@@ -1065,6 +1190,8 @@ snd.BufferSource.prototype.loadData = function(data) {
 snd.BufferSource.Status = function() {
     snd.Source.Status.apply(this, arguments);
     
+    this.className = "snd.BufferSource";
+    this.type = snd.srctype.AUDIO_BUFFER;
     this.loop = false;
     this.loopStart = null;
     this.loopEnd = null;
@@ -1101,9 +1228,6 @@ snd.BufferSource.getNewKey = function(id) {
 snd.OscillatorSource = function(id) {
     snd.Source.apply(this, arguments);
     
-    this._status.className = "snd.OscillatorSource";
-    this._status.type = snd.srctype.OSCILLATOR;
-    this._status.status = snd.status.NONE;
     this._periodicWave = null;
     this._source = null;
     
@@ -1157,8 +1281,6 @@ snd.OscillatorSource = function(id) {
                 
                 this._periodicWave = null;
                 this._status.periodicWave = null;
-                
-                resetOscillator();
             }
         },
         frequency: {
@@ -1221,6 +1343,8 @@ snd.OscillatorSource = function(id) {
 };
 snd.OscillatorSource.prototype = Object.create(snd.Source.prototype);
 snd.OscillatorSource.prototype.constructor = snd.OscillatorSource;
+
+snd.OscillatorSource.CLASS_NAME = "snd.OscillatorSource";
 
 /**
  * 基準となる周波数(440Hz)です。
@@ -1364,6 +1488,10 @@ snd.OscillatorSource.prototype.getPeriodicWave = function() {
  * @param {type} duration 使用しません
  */
 snd.OscillatorSource.prototype.start = function(when, offset, duration) {
+    if (this.status == snd.status.STOPPED) {
+        this.resetOscillator();
+    }
+    
     if (this._source != null && this.status != snd.status.STARTED && this.status != snd.status.STOPPED) {
         if (when == null) {
             this._source.start(0);
@@ -1376,11 +1504,13 @@ snd.OscillatorSource.prototype.start = function(when, offset, duration) {
 
 
 /**
- * 波形の再生を終了します。
+ * 波形の出力を停止します。<br/>
+ * !!注意!!<br/>
+ * stopメソッドを使って波形の出力を停止すると、再度startメソッドを使っても
  * @param {float} when 終了するタイミング
  */
 snd.OscillatorSource.prototype.stop = function(when) {
-    if (this.status != snd.status.STOPPED) {
+    if (this.status == snd.status.STARTED) {
         if (when == null) {
             this._source.stop(0);
         } else {
@@ -1394,7 +1524,7 @@ snd.OscillatorSource.prototype.resetOscillator = function() {
     var _this = this;
     
     if (this._source != null) {
-        if (this.status != snd.status.STOPPED) {
+        if (this.status == snd.status.STARTED) {
             this.stop(0);
         }
     }
@@ -1459,10 +1589,22 @@ snd.OscillatorSource.prototype.loadData = function(data) {
     this.detune = data.detune;
 };
 
+snd.OscillatorSource.loadJSON = function(json) {
+    var data = JSON.parse(json);
+    if (data.className != snd.OscillatorSource.CLASS_NAME) {
+        throw new snd.Exception(data.id + " is not instance of 'snd.OscillatorSource' class.");
+    }
+    
+    var ret = new snd.OscillatorSource("");
+    ret.loadData(data);
+    return ret;
+};
+
 snd.OscillatorSource.Status = function() {
     snd.Source.Status.apply(this, arguments);
     
-    this.type = snd.srctype.MEDIA_ELEMENT;
+    this.className = snd.OscillatorSource.CLASS_NAME;
+    this.type = snd.srctype.OSCILLATOR;
     this.status = snd.status.NONE;
     
     this.periodicWave = null;
@@ -1484,24 +1626,7 @@ snd.OscillatorSource.Status = function() {
 snd.MediaElementAudioSource = function(id, htmlMediaElement) {
     snd.Source.apply(this, arguments);
     
-    this._status.type = snd.srctype.MEDIA_ELEMENT;
-    this._status.className = "snd.MediaElementAudioSource";
-    
-    this._source = snd.AUDIO_CONTEXT.createMediaElementSource(htmlMediaElement);
-    this._source.connect(this._gain);
-    this._element = htmlMediaElement;
-    
-    if (this._element.id != null) {
-        this._status.element = this._element.id;
-    }
-
-    Object.defineProperties(this, {
-        element: {
-            get: function() {
-                return this._element;
-            }
-        }
-    });
+    this.id = id;
     
     this.listeners = {
         onplay: [],
@@ -1527,140 +1652,159 @@ snd.MediaElementAudioSource = function(id, htmlMediaElement) {
         onvolumechange: [],
         onwaiting: []
     };
-    
-    var _this = this;
-    
-    this._element.onplay = function() {
-        _this._status.status = snd.status.STARTED;
-        for (var i = 0; i < _this.listeners['onplay'].length; i++) {
-            _this.listeners['onplay'][i](_this);
-        }
-    };
-    this._element.onpause = function() {
-        _this._status.status = snd.status.PAUSED;
-        for (var i = 0; i < _this.listeners['onpause'].length; i++) {
-            _this.listeners['onpause'][i](_this);
-        }
-    };
-    this._element.onended = function() {
-        _this._status.status = snd.status.PAUSED;
-        for (var i = 0; i < _this.listeners['onended'].length; i++) {
-            _this.listeners['onended'][i](_this);
-        }
-    };
-    this._element.onabort = function() {
-        for (var i = 0; i < _this.listeners['onabort'].length; i++) {
-            _this.listeners['onabort'][i](_this);
-        }
-    };
-    this._element.oncanplay = function() {
-        if (_this.status == snd.status.NONE) {
-            _this._status.status = snd.status.READY;
-        }
-        for (var i = 0; i < _this.listeners['oncanplay'].length; i++) {
-            _this.listeners['oncanplay'][i](_this);
-        }
-    };
-    this._element.oncanplaythrough = function() {
-        for (var i = 0; i < _this.listeners['oncanplaythrough'].length; i++) {
-            _this.listeners['oncanplaythrough'][i](_this);
-        }
-    };
-    this._element.ondurationchange = function() {
-        for (var i = 0; i < _this.listeners['ondurationchange'].length; i++) {
-            _this.listeners['ondurationchange'][i](_this);
-        }
-    };
-    this._element.onemptied = function() {
-        for (var i = 0; i < _this.listeners['onemptied'].length; i++) {
-            _this.listeners['onemptied'][i](_this);
-        }
-    };
-    this._element.onerror = function() {
-        for (var i = 0; i < _this.listeners['onerror'].length; i++) {
-            _this.listeners['onerror'][i](_this);
-        }
-    };
-    this._element.onloadeddata = function() {
-        for (var i = 0; i < _this.listeners['onloadeddata'].length; i++) {
-            _this.listeners['onloadeddata'][i](_this);
-        }
-    };
-    this._element.onloadedmetadata = function() {
-        for (var i = 0; i < _this.listeners['onloadedmetadata'].length; i++) {
-            _this.listeners['onloadedmetadata'][i](_this);
-        }
-    };
-    this._element.onloadedstart = function() {
-        for (var i = 0; i < _this.listeners['onloadstart'].length; i++) {
-            _this.listeners['onloadstart'][i](_this);
-        }
-    };
-    this._element.onplaying = function() {
-        for (var i = 0; i < _this.listeners['onplaying'].length; i++) {
-            _this.listeners['onplaying'][i](_this);
-        }
-    };
-    this._element.onprogress = function() {
-        for (var i = 0; i < _this.listeners['onprogress'].length; i++) {
-            _this.listeners['onprogress'][i](_this);
-        }
-    };
-    this._element.onratechange = function() {
-        for (var i = 0; i < _this.listeners['onratechange'].length; i++) {
-            _this.listeners['onratechange'][i](_this);
-        }
-    };
-    this._element.onseeked = function() {
-        for (var i = 0; i < _this.listeners['onseeked'].length; i++) {
-            _this.listeners['onseeked'][i](_this);
-        }
-    };
-    this._element.onseeking = function() {
-        for (var i = 0; i < _this.listeners['onseeking'].length; i++) {
-            _this.listeners['onseeking'][i](_this);
-        }
-    };
-    this._element.onstalled = function() {
-        for (var i = 0; i < _this.listeners['onstalled'].length; i++) {
-            _this.listeners['onstalled'][i](_this);
-        }
-    };
-    this._element.onsuspend = function() {
-        for (var i = 0; i < _this.listeners['onsuspend'].length; i++) {
-            _this.listeners['onsuspend'][i](_this);
-        }
-    };
-    this._element.ontimeupdate = function() {
-        for (var i = 0; i < _this.listeners['ontimeupdate'].length; i++) {
-            _this.listeners['ontimeupdate'][i](_this);
-        }
-    };
-    this._element.onvolumechange = function() {
-        for (var i = 0; i < _this.listeners['onvolumechange'].length; i++) {
-            _this.listeners['onvolumechange'][i](_this);
-        }
-    };
-    this._element.onwaiting = function() {
-        for (var i = 0; i < _this.listeners['onwaiting'].length; i++) {
-            _this.listeners['onwaiting'][i](_this);
-        }
-    };
-    
+
     Object.defineProperties(this, {
-        src: {
-            enumerable: true,
+        element: {
             get: function() {
-                return this.element.src;
+                return this._element;
+            },
+            set: function(elem) {
+                var _this = this;
+
+                this._source = snd.AUDIO_CONTEXT.createMediaElementSource(elem);
+                this._source.connect(this._gain);
+                this._element = elem;
+
+                if (this._element.id != null) {
+                    this._status.element = this._element.id;
+                }
+
+                this._element.onplay = function() {
+                    _this._status.status = snd.status.STARTED;
+                    for (var i = 0; i < _this.listeners['onplay'].length; i++) {
+                        _this.listeners['onplay'][i](_this);
+                    }
+                };
+                this._element.onpause = function() {
+                    _this._status.status = snd.status.PAUSED;
+                    for (var i = 0; i < _this.listeners['onpause'].length; i++) {
+                        _this.listeners['onpause'][i](_this);
+                    }
+                };
+                this._element.onended = function() {
+                    _this._status.status = snd.status.PAUSED;
+                    for (var i = 0; i < _this.listeners['onended'].length; i++) {
+                        _this.listeners['onended'][i](_this);
+                    }
+                };
+                this._element.onabort = function() {
+                    for (var i = 0; i < _this.listeners['onabort'].length; i++) {
+                        _this.listeners['onabort'][i](_this);
+                    }
+                };
+                this._element.oncanplay = function() {
+                    if (_this.status == snd.status.NONE) {
+                        _this._status.status = snd.status.READY;
+                    }
+                    for (var i = 0; i < _this.listeners['oncanplay'].length; i++) {
+                        _this.listeners['oncanplay'][i](_this);
+                    }
+                };
+                this._element.oncanplaythrough = function() {
+                    for (var i = 0; i < _this.listeners['oncanplaythrough'].length; i++) {
+                        _this.listeners['oncanplaythrough'][i](_this);
+                    }
+                };
+                this._element.ondurationchange = function() {
+                    for (var i = 0; i < _this.listeners['ondurationchange'].length; i++) {
+                        _this.listeners['ondurationchange'][i](_this);
+                    }
+                };
+                this._element.onemptied = function() {
+                    for (var i = 0; i < _this.listeners['onemptied'].length; i++) {
+                        _this.listeners['onemptied'][i](_this);
+                    }
+                };
+                this._element.onerror = function() {
+                    for (var i = 0; i < _this.listeners['onerror'].length; i++) {
+                        _this.listeners['onerror'][i](_this);
+                    }
+                };
+                this._element.onloadeddata = function() {
+                    for (var i = 0; i < _this.listeners['onloadeddata'].length; i++) {
+                        _this.listeners['onloadeddata'][i](_this);
+                    }
+                };
+                this._element.onloadedmetadata = function() {
+                    for (var i = 0; i < _this.listeners['onloadedmetadata'].length; i++) {
+                        _this.listeners['onloadedmetadata'][i](_this);
+                    }
+                };
+                this._element.onloadedstart = function() {
+                    for (var i = 0; i < _this.listeners['onloadstart'].length; i++) {
+                        _this.listeners['onloadstart'][i](_this);
+                    }
+                };
+                this._element.onplaying = function() {
+                    for (var i = 0; i < _this.listeners['onplaying'].length; i++) {
+                        _this.listeners['onplaying'][i](_this);
+                    }
+                };
+                this._element.onprogress = function() {
+                    for (var i = 0; i < _this.listeners['onprogress'].length; i++) {
+                        _this.listeners['onprogress'][i](_this);
+                    }
+                };
+                this._element.onratechange = function() {
+                    for (var i = 0; i < _this.listeners['onratechange'].length; i++) {
+                        _this.listeners['onratechange'][i](_this);
+                    }
+                };
+                this._element.onseeked = function() {
+                    for (var i = 0; i < _this.listeners['onseeked'].length; i++) {
+                        _this.listeners['onseeked'][i](_this);
+                    }
+                };
+                this._element.onseeking = function() {
+                    for (var i = 0; i < _this.listeners['onseeking'].length; i++) {
+                        _this.listeners['onseeking'][i](_this);
+                    }
+                };
+                this._element.onstalled = function() {
+                    for (var i = 0; i < _this.listeners['onstalled'].length; i++) {
+                        _this.listeners['onstalled'][i](_this);
+                    }
+                };
+                this._element.onsuspend = function() {
+                    for (var i = 0; i < _this.listeners['onsuspend'].length; i++) {
+                        _this.listeners['onsuspend'][i](_this);
+                    }
+                };
+                this._element.ontimeupdate = function() {
+                    for (var i = 0; i < _this.listeners['ontimeupdate'].length; i++) {
+                        _this.listeners['ontimeupdate'][i](_this);
+                    }
+                };
+                this._element.onvolumechange = function() {
+                    for (var i = 0; i < _this.listeners['onvolumechange'].length; i++) {
+                        _this.listeners['onvolumechange'][i](_this);
+                    }
+                };
+                this._element.onwaiting = function() {
+                    for (var i = 0; i < _this.listeners['onwaiting'].length; i++) {
+                        _this.listeners['onwaiting'][i](_this);
+                    }
+                };
+            }
+        },
+        src: {
+            get: function() {
+                return this._element.src;
             },
             set: function(uri) {
-                this.element.src = uri;
+                this._element.src = uri;
             }
         }
     });
+
+    if (htmlMediaElement != null) {
+        this.element = htmlMediaElement;
+    }
 };
 snd.MediaElementAudioSource.prototype = Object.create(snd.Source.prototype);
 snd.MediaElementAudioSource.prototype.constructor = snd.MediaElementAudioSource;
+
+snd.MediaElementAudioSource.CLASS_NAME = "snd.MediaElementAudioSource";
 
 /**
  * この音源の読み込みを開始します。
@@ -2240,18 +2384,31 @@ snd.MediaElementAudioSource.prototype.toJSON = function() {
 
 snd.MediaElementAudioSource.prototype.loadData = function(data) {
     snd.Source.prototype.loadData.apply(this, arguments);
-    
+
     if (data.element != null) {
         var elem = document.getElementById(data.element);
         if (elem != null) {
-            this._element = elem;
+            this.element = elem;
         }
     }
+};
+
+snd.MediaElementAudioSource.loadJSON = function(json) {
+    var data = JSON.parse(json);
+    if (data.className != snd.MediaElementAudioSource.CLASS_NAME) {
+        throw new snd.Exception(data.id + " is not instance of 'snd.MediaElementAudioSource' class.");
+    }
+    
+    var ret = new snd.MediaElementAudioSource("");
+    ret.loadData(data);
+    
+    return ret;
 };
 
 snd.MediaElementAudioSource.Status = function() {
     snd.Source.Status.apply(this, arguments);
     
+    this.className = snd.MediaElementAudioSource.CLASS_NAME;
     this.status = snd.status.NONE;
     this.element = "";
 }
@@ -3152,9 +3309,10 @@ snd.AudioDataManager.prototype.loaded = function(key, buffer) {
 snd.AudioMaster = function() {
     this.unitList = {};
     this.gain = snd.AUDIO_CONTEXT.createGain();
-    
     this.gain.connect(snd.AUDIO_CONTEXT.destination);
 };
+
+snd.AudioMaster.ID = "snd.MASTER";
 
 /**
  * 新しくaudioUnitで指定されたユニットを接続します。
@@ -3169,11 +3327,11 @@ snd.AudioMaster.prototype.connectAudioUnit = function(key, audioUnit) {
     if (key == null) {
         if (this.unitList[audioUnit.id] == null) {
             this.unitList[audioUnit.id] = audioUnit;
-            audioUnit.connect(this.gain);
+            audioUnit.connect(this.gain, snd.AudioMaster.ID);
         }
     } else {
         this.unitList[key] = audioUnit;
-        audioUnit.connect(this.gain);
+        audioUnit.connect(this.gain, snd.AudioMaster.ID);
     }
 };
 
