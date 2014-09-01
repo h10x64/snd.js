@@ -6,6 +6,8 @@
         <script src="../../dist/snd.js"></script>
         <script>
             snd.init();
+            
+            SCRIPT_PROCESSOR_START_FLAG = false;
 
             var AUDIO_UNIT = new snd.AudioUnit("SaveLoadTest_AudioUnit");
             var SOURCE = new snd.Source("SaveLoadTest_Source");
@@ -13,12 +15,23 @@
             BUFFER_SOURCE.loadURL("../sound/test.wav");
             var MEDIA_ELEMENT_AUDIO_SOURCE = new snd.MediaElementAudioSource("SaveLoadTest_MediaElementAudioSource");
             var OSCILLATOR_SOURCE = new snd.OscillatorSource("SaveLoadTest_OscillatorSource");
+            var SCRIPT_PROCESSOR_UNIT = new snd.ScriptProcessorUnit("SaveLoadTest_ScriptProcessorUnit");
+            SCRIPT_PROCESSOR_UNIT.script = 
+                    "if (SCRIPT_PROCESSOR_START_FLAG) {"
+                    +     "for(var ch = 0; ch < evt.outputBuffer.numberOfChannels; ch++) {"
+                    +         "var channelData = evt.outputBuffer.getChannelData(ch);"
+                    +         "for (var i = 0; i < evt.outputBuffer.length; i++) {"
+                    +             "channelData[i] = Math.random();"
+                    +         "}"
+                    +     "}"
+                    + "}";
 
             snd.MASTER.connectAudioUnit(AUDIO_UNIT.id, AUDIO_UNIT);
             snd.MASTER.connectAudioUnit(SOURCE.id, SOURCE);
             snd.MASTER.connectAudioUnit(BUFFER_SOURCE.id, BUFFER_SOURCE);
             snd.MASTER.connectAudioUnit(MEDIA_ELEMENT_AUDIO_SOURCE.id, MEDIA_ELEMENT_AUDIO_SOURCE);
             snd.MASTER.connectAudioUnit(OSCILLATOR_SOURCE.id, OSCILLATOR_SOURCE);
+            snd.MASTER.connectAudioUnit(SCRIPT_PROCESSOR_UNIT.id, SCRIPT_PROCESSOR_UNIT);
 
         </script>
     </head>
@@ -67,6 +80,16 @@
         <textarea id="oscillatorSource" rows="10" cols="80"></textArea><br/>
         <button id="startOscillatorSource" onclick="OSCILLATOR_SOURCE.start();">start</button><button id="stopOscillatorSource" onclick="OSCILLATOR_SOURCE.stop();">stop</button>
         <button id="saveOscillatorSource" onclick="onSaveOscillatorSourceButtonClick();">save</button><button id="loadOscillatorSource" onclick="onLoadOscillatorSourceButtonClick();">load</button><br/>
+    </div>
+    <div style="margin-top: 1.5em; margin-bottom: 1.5em;">
+        ScriptProcessorUnit (deprecated):<br/>
+        <textarea id="scriptProcessorUnit" rows="10" cols="80"></textArea><br/>
+        <button id="startScriptProcessorUnit" onclick="SCRIPT_PROCESSOR_START_FLAG = true; console.log('start');">start</button><button id="stopScriptProcessorUnit" onclick="SCRIPT_PROCESSOR_START_FLAG = false;console.log('stop');">stop</button>
+        <button id="saveScriptProcessorUnit" onclick="onSaveScriptProcessorUnitButtonClick();">save</button><button id="loadOscillatorSource" onclick="onLoadScriptProcessorUnitButtonClick();">load</button><br/>
+        ※<strong>ホワイトノイズを出力します。耳障りな音ですので、音量に注意してください。</strong><br/>
+        ※<strong>環境によってstopボタンを連打しないと音が止まらない場合があります。</strong>(Linux/Chrome37.0で確認)<br/>
+        ※あらかじめグローバルスコープにSCRIPT_PROCESSOR_START_FLAGを定義してあります。（startクリックでtrue, stopクリックでfalse）<br/>
+        ※evtが<a href="http://webaudio.github.io/web-audio-api/#the-audioprocessingevent-interface---deprecated">AudioProcessingEvent</a>です。具体的な処理の内容は<a href="https://developer.mozilla.org/ja/docs/Web/API/ScriptProcessorNode">MDN</a>などを参照してください。<br/>
     </div>
 </div>
 
@@ -132,6 +155,21 @@
         OSCILLATOR_SOURCE = snd.OscillatorSource.loadJSON(json);
         snd.MASTER.connectAudioUnit(OSCILLATOR_SOURCE.id, OSCILLATOR_SOURCE);
     };
+    
+    onSaveScriptProcessorUnitButtonClick = function() {
+        var json = JSON.stringify(SCRIPT_PROCESSOR_UNIT);
+        document.getElementById("scriptProcessorUnit").value = json;
+    };
+
+    onLoadScriptProcessorUnitButtonClick = function() {
+        SCRIPT_PROCESSOR_START_FLAG = false;
+        snd.MASTER.disconnectAudioUnit(SCRIPT_PROCESSOR_UNIT.id);
+        delete SCRIPT_PROCESSOR_UNIT;
+
+        var json = document.getElementById("scriptProcessorUnit").value;
+        SCRIPT_PROCESSOR_UNIT = snd.ScriptProcessorUnit.loadJSON(json);
+        snd.MASTER.connectAudioUnit(SCRIPT_PROCESSOR_UNIT.id, SCRIPT_PROCESSOR_UNIT);
+    };
 
     window.onload = function() {
         MEDIA_ELEMENT_AUDIO_SOURCE.element = document.getElementById("mediaElem");
@@ -141,6 +179,7 @@
         onSaveBufferSourceButtonClick();
         onSaveMediaElementAudioSourceButtonClick();
         onSaveOscillatorSourceButtonClick();
+        onSaveScriptProcessorUnitButtonClick();
     };
 
         </script>    
