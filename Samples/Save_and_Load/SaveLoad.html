@@ -24,6 +24,13 @@
                     +             "channelData[i] = Math.random();"
                     +         "}"
                     +     "}"
+                    + "} else {"
+                    +     "for(var ch = 0; ch < evt.outputBuffer.numberOfChannels; ch++) {"
+                    +         "var channelData = evt.outputBuffer.getChannelData(ch);"
+                    +         "for (var i = 0; i < evt.outputBuffer.length; i++) {"
+                    +             "channelData[i] = 0;"
+                    +         "}"
+                    +     "}"
                     + "}";
 
             snd.MASTER.connectAudioUnit(AUDIO_UNIT.id, AUDIO_UNIT);
@@ -87,7 +94,6 @@
         <button id="startScriptProcessor" onclick="SCRIPT_PROCESSOR_START_FLAG = true; console.log('start');">start</button><button id="stopScriptProcessor" onclick="SCRIPT_PROCESSOR_START_FLAG = false;console.log('stop');">stop</button>
         <button id="saveScriptProcessor" onclick="onSaveScriptProcessorButtonClick();">save</button><button id="loadOscillatorSource" onclick="onLoadScriptProcessorButtonClick();">load</button><br/>
         ※<strong>ホワイトノイズを出力します。耳障りな音ですので、音量に注意してください。</strong><br/>
-        ※<strong>環境によってstopボタンを連打しないと音が止まらない場合があります。</strong>(Linux/Chrome37.0で確認)<br/>
         ※あらかじめグローバルスコープにSCRIPT_PROCESSOR_START_FLAGを定義してあります。（startクリックでtrue, stopクリックでfalse）<br/>
         ※evtが<a href="http://webaudio.github.io/web-audio-api/#the-audioprocessingevent-interface---deprecated">AudioProcessingEvent</a>です。具体的な処理の内容は<a href="https://developer.mozilla.org/ja/docs/Web/API/ScriptProcessorNode">MDN</a>などを参照してください。<br/>
     </div>
