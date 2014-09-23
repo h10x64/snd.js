@@ -1,5 +1,5 @@
 
-snd.ScriptProcessorUnit = function(id) {
+snd.ScriptProcessor = function(id) {
     snd.Source.apply(this, arguments);
     
     Object.defineProperties(this, {
@@ -48,12 +48,12 @@ snd.ScriptProcessorUnit = function(id) {
     
     this.resetScriptProcessor();
 };
-snd.ScriptProcessorUnit.prototype = Object.create(snd.Source.prototype);
-snd.ScriptProcessorUnit.prototype.constructor = snd.ScriptProcessorUnit;
+snd.ScriptProcessor.prototype = Object.create(snd.Source.prototype);
+snd.ScriptProcessor.prototype.constructor = snd.ScriptProcessor;
 
-snd.ScriptProcessorUnit.CLASS_NAME = "snd.SciptProcessorUnit";
+snd.ScriptProcessor.CLASS_NAME = "snd.SciptProcessorUnit";
 
-snd.ScriptProcessorUnit.prototype.resetScriptProcessor = function() {
+snd.ScriptProcessor.prototype.resetScriptProcessor = function() {
     var _this = this;
     
     if (this._unit != null) {
@@ -70,15 +70,15 @@ snd.ScriptProcessorUnit.prototype.resetScriptProcessor = function() {
     this._unit.connect(this._gain);
 };
 
-snd.ScriptProcessorUnit.prototype.createStatus = function() {
-    return new snd.ScriptProcessorUnit.Status();
+snd.ScriptProcessor.prototype.createStatus = function() {
+    return new snd.ScriptProcessor.Status();
 };
 
-snd.ScriptProcessorUnit.prototype.toJSON = function() {
+snd.ScriptProcessor.prototype.toJSON = function() {
     return this._status;
 }
 
-snd.ScriptProcessorUnit.prototype.loadData = function(data) {
+snd.ScriptProcessor.prototype.loadData = function(data) {
     snd.Source.prototype.loadData.apply(this, arguments);
     
     this._status.inputChannels = (data.inputChannels > 0) ? data.inputChannels : 0;
@@ -89,22 +89,22 @@ snd.ScriptProcessorUnit.prototype.loadData = function(data) {
     this.resetScriptProcessor();
 };
 
-snd.ScriptProcessorUnit.loadJSON = function(json) {
+snd.ScriptProcessor.loadJSON = function(json) {
     var data = JSON.parse(json);
-    if (data.className != snd.ScriptProcessorUnit.CLASS_NAME) {
+    if (data.className != snd.ScriptProcessor.CLASS_NAME) {
         throw new snd.Exception(data.id + " is not instanceof 'snd.ScriptProcessorUnit'.");
     }
     
-    var ret = new snd.ScriptProcessorUnit(data.id);
+    var ret = new snd.ScriptProcessor(data.id);
     ret.loadData(data);
     
     return ret;
 };
 
-snd.ScriptProcessorUnit.Status = function() {
+snd.ScriptProcessor.Status = function() {
     snd.Source.Status.apply(this, arguments);
     
-    this.className = snd.ScriptProcessorUnit.CLASS_NAME;
+    this.className = snd.ScriptProcessor.CLASS_NAME;
     this.isSource = true;
     
     this.inputChannels = 0;
@@ -112,5 +112,5 @@ snd.ScriptProcessorUnit.Status = function() {
     this.bufferLength = 4096;
     this.script = "";
 };
-snd.ScriptProcessorUnit.Status.prototype = Object.create(snd.Source.prototype);
-snd.ScriptProcessorUnit.Status.prototype.constructor = snd.ScriptProcessorUnit.Status;
+snd.ScriptProcessor.Status.prototype = Object.create(snd.Source.prototype);
+snd.ScriptProcessor.Status.prototype.constructor = snd.ScriptProcessor.Status;
