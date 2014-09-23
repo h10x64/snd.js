@@ -8,6 +8,7 @@ snd.AudioMaster = function() {
     this.unitList = {};
     this.gain = snd.AUDIO_CONTEXT.createGain();
     this.gain.connect(snd.AUDIO_CONTEXT.destination);
+    this.id = snd.AudioMaster.ID;
 };
 
 snd.AudioMaster.ID = "snd.MASTER";
@@ -49,4 +50,8 @@ snd.AudioMaster.prototype.disconnectAudioUnit = function(key) {
     var audioUnit = this.unitList[key];
     audioUnit.getConnector().disconnect(this.gain);
     delete this.unitList[key];
+};
+
+snd.AudioMaster.prototype.getConnector = function() {
+    return this.gain;
 };
