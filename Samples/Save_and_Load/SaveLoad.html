@@ -15,7 +15,7 @@
             BUFFER_SOURCE.loadURL("../sound/test.wav");
             var MEDIA_ELEMENT_AUDIO_SOURCE = new snd.MediaElementAudioSource("SaveLoadTest_MediaElementAudioSource");
             var OSCILLATOR_SOURCE = new snd.OscillatorSource("SaveLoadTest_OscillatorSource");
-            var SCRIPT_PROCESSOR_UNIT = new snd.ScriptProcessorUnit("SaveLoadTest_ScriptProcessorUnit");
+            var SCRIPT_PROCESSOR_UNIT = new snd.ScriptProcessor("SaveLoadTest_ScriptProcessor");
             SCRIPT_PROCESSOR_UNIT.script = 
                     "if (SCRIPT_PROCESSOR_START_FLAG) {"
                     +     "for(var ch = 0; ch < evt.outputBuffer.numberOfChannels; ch++) {"
@@ -82,10 +82,10 @@
         <button id="saveOscillatorSource" onclick="onSaveOscillatorSourceButtonClick();">save</button><button id="loadOscillatorSource" onclick="onLoadOscillatorSourceButtonClick();">load</button><br/>
     </div>
     <div style="margin-top: 1.5em; margin-bottom: 1.5em;">
-        ScriptProcessorUnit (deprecated):<br/>
-        <textarea id="scriptProcessorUnit" rows="10" cols="80"></textArea><br/>
-        <button id="startScriptProcessorUnit" onclick="SCRIPT_PROCESSOR_START_FLAG = true; console.log('start');">start</button><button id="stopScriptProcessorUnit" onclick="SCRIPT_PROCESSOR_START_FLAG = false;console.log('stop');">stop</button>
-        <button id="saveScriptProcessorUnit" onclick="onSaveScriptProcessorUnitButtonClick();">save</button><button id="loadOscillatorSource" onclick="onLoadScriptProcessorUnitButtonClick();">load</button><br/>
+        ScriptProcessor (deprecated):<br/>
+        <textarea id="scriptProcessor" rows="10" cols="80"></textArea><br/>
+        <button id="startScriptProcessor" onclick="SCRIPT_PROCESSOR_START_FLAG = true; console.log('start');">start</button><button id="stopScriptProcessor" onclick="SCRIPT_PROCESSOR_START_FLAG = false;console.log('stop');">stop</button>
+        <button id="saveScriptProcessor" onclick="onSaveScriptProcessorButtonClick();">save</button><button id="loadOscillatorSource" onclick="onLoadScriptProcessorButtonClick();">load</button><br/>
         ※<strong>ホワイトノイズを出力します。耳障りな音ですので、音量に注意してください。</strong><br/>
         ※<strong>環境によってstopボタンを連打しないと音が止まらない場合があります。</strong>(Linux/Chrome37.0で確認)<br/>
         ※あらかじめグローバルスコープにSCRIPT_PROCESSOR_START_FLAGを定義してあります。（startクリックでtrue, stopクリックでfalse）<br/>
@@ -156,18 +156,18 @@
         snd.MASTER.connectAudioUnit(OSCILLATOR_SOURCE.id, OSCILLATOR_SOURCE);
     };
     
-    onSaveScriptProcessorUnitButtonClick = function() {
+    onSaveScriptProcessorButtonClick = function() {
         var json = JSON.stringify(SCRIPT_PROCESSOR_UNIT);
         document.getElementById("scriptProcessorUnit").value = json;
     };
 
-    onLoadScriptProcessorUnitButtonClick = function() {
+    onLoadScriptProcessorButtonClick = function() {
         SCRIPT_PROCESSOR_START_FLAG = false;
         snd.MASTER.disconnectAudioUnit(SCRIPT_PROCESSOR_UNIT.id);
         delete SCRIPT_PROCESSOR_UNIT;
 
         var json = document.getElementById("scriptProcessorUnit").value;
-        SCRIPT_PROCESSOR_UNIT = snd.ScriptProcessorUnit.loadJSON(json);
+        SCRIPT_PROCESSOR_UNIT = snd.ScriptProcessor.loadJSON(json);
         snd.MASTER.connectAudioUnit(SCRIPT_PROCESSOR_UNIT.id, SCRIPT_PROCESSOR_UNIT);
     };
 
@@ -179,7 +179,7 @@
         onSaveBufferSourceButtonClick();
         onSaveMediaElementAudioSourceButtonClick();
         onSaveOscillatorSourceButtonClick();
-        onSaveScriptProcessorUnitButtonClick();
+        onSaveScriptProcessorButtonClick();
     };
 
         </script>    
