@@ -51,18 +51,39 @@ snd.AudioUnit.prototype.connect = function(connectTo) {
 
 /**
  * このオーディオユニットをconnectToで指定されたオーディオユニットまたはノードに接続します。<br/>
+ * <div>
+ * このオーディオユニットが出力側となり、connectToで渡される接続先は入力側になります。<br/>
+ * 出入力が複数ある場合、任意の出力を任意の入力に接続したい場合は、indexOut, indexIn で出入力の番号を指定します。<br/>
+ * indexOut, indexInが両方とも指定されなかった場合は、メソッドを呼び出したオブジェクトの0番の出力を connectTo で渡されたオブジェクトの0番の入力に接続します。<br/>
+ * ※indexOut, indexIn の番号の意味はオーディオユニットにより異なります。<br/>
+ * </div>
+ * <div>
  * このメソッドを使って connectTo に接続した時に connection プロパティに connectTo.id が追加されます。<br/>
  * 引数 connectTo が id を持たない場合（connectTo.id == nullの場合）、connection プロパティには引数 id の値が追加されますので、 gain や frequency など、id を持たないパラメータへ接続する時は、引数 id に値を設定するようにしてください。<br/>
  * connectTo.id, id が両方とも null の場合は connection プロパティには何も追加されません。<br/>
+ * connection プロパティに追加される文字列は以下の書式にしたがいます。<br/>
+ * <strong>"ID_String[INDEX_OUT:INDEX_IN]"</strong>
+ * </div>
+ * <div>
  * このクラスを継承するクラスを作る場合、オーバーライドが必要です。(オーバーライドの際、apply必須)
+ * </div>
  * @param {snd.AudioUnit} connectTo 接続するAudioUnit
+ * @param {Number} indexOut 接続する出力側のアウトプットのインデックス
+ * @param {Number} indexIn 接続する入力側のインプットのインデックス
  * @param {String} id connectTo.idがnullの場合に使用されるID
  */
-snd.AudioUnit.prototype.connect = function(connectTo, id) {
-    if (connectTo.id != null) {
-        this._status.connection.push(connectTo.id);
-    } else if (id != null) {
-        this._status.connection.push(id);
+snd.AudioUnit.prototype.connect = function(connectTo, indexOut, indexIn, id) {
+    if (connectTo.id != null || id != null) {
+        var str = null;
+        if (connectTo.id != null) {
+            str = connectTo.id;
+        } else if (id != null) {
+            str = id;
+        }
+        
+        str += "[" + ((indexOut != null) ? indexOut : "0") + ":" + ((indexIn != null) ? indexIn : "0") + "]";
+        
+        this._status.connection.push(str);
     }
     
     // PLEASE OVERRIDE ME LIKE THIS
@@ -72,7 +93,7 @@ snd.AudioUnit.prototype.connect = function(connectTo, id) {
 };
 
 snd.AudioUnit.prototype.disconnect = function(disconnectFrom) {
-    this.disconnect(disconnectFrom, disconnectForm.id);
+    this.disconnect(disconnectFrom, disconnectFrom.id);
 };
 
 /**
@@ -82,18 +103,31 @@ snd.AudioUnit.prototype.disconnect = function(disconnectFrom) {
  * connectTo.id, id が両方とも null の場合は connection プロパティからは何も削除されません。<br/>
  * このクラスを継承するクラスを作る場合、オーバーライドが必要です。(オーバーライドの際、apply必須)
  * @param {snd.AudioUnit} disconnectFrom 切断するAudioUnit
+ * @param {Number} indexOut 切断するAudioUnitの出力
  * @param {String} id disconnectFrom.id が null の場合に使用されるID
  */
-snd.AudioUnit.prototype.disconnect = function(disconnectFrom, id) {
-    var i = -1;
-    if (disconnectFrom.id != null) {
-        i = this._status.connection.indexOf(disconnectFrom.id);
-    } else if (id != null) {
-        i = this._status.connection.indexOf(id);
-    }
-    
-    if (i >= 0) {
-        this._connection.splice(i, 1);
+snd.AudioUnit.prototype.disconnect = function(disconnectFrom, indexOut, id) {
+    if (disconnectFrom.id != null || id != null) {
+        var idx = -1;
+        var str = "";
+        
+        if (disconnectFrom.id != null) {
+            str = disconnectFrom.id;
+        } else if (id != null) {
+            str = id;
+        }
+        
+        str += "[" + ((indexOut != null) ? indexOut : "0");
+        for (var i = 0; i < this._status.connection.length; i++) {
+            if (this._status.connection[i].substring(0, str.length) === str) {
+                idx = i;
+                break;
+            }
+        }
+        
+        if (idx >= 0) {
+            this._status.connection.splice(idx, 1);
+        }
     }
     
     // PLEASE OVERRIDE ME LIKE THIS

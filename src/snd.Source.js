@@ -94,13 +94,13 @@ snd.Source.prototype.getGain = function() {
  * 詳細はAudioUnitクラスのconnectを参照してください。
  * @param {AudioUnit} connectTo 接続先
  */
-snd.Source.prototype.connect = function(connectTo, id) {
+snd.Source.prototype.connect = function(connectTo, indexIn, indexOut, id) {
     snd.AudioUnit.prototype.connect.apply(this, arguments);
     
-    if (connectTo.isAudioUnit) {
-        this._gain.connect(connectTo.getConnector());
+    if (connectTo.isAudioUnit || connectTo.getConnector != null) {
+        this._gain.connect(connectTo.getConnector(), indexIn, indexOut);
     } else {
-        this._gain.connect(connectTo);
+        this._gain.connect(connectTo, indexIn, indexOut);
     }
 };
 
@@ -111,7 +111,7 @@ snd.Source.prototype.connect = function(connectTo, id) {
 snd.Source.prototype.disconnect = function(disconnectFrom, id) {
     snd.AudioUnit.prototype.disconnect.apply(this, arguments);
     
-    if (disconnectFrom.isAudioUnit) {
+    if (disconnectFrom.isAudioUnit || disconnectFrom.getConnector != null) {
         this._gain.disconnect(disconnectFrom.getConnector());
     } else {
         this._gain.disconnect(disconnectFrom);
