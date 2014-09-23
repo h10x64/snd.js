@@ -29,18 +29,6 @@
 					<ul class="dropdown-menu ">
 						
 						<li>
-							<a href="snd.audioparam.type.html">type</a>
-						</li>
-						
-						<li>
-							<a href="snd.srctype.html">srctype</a>
-						</li>
-						
-						<li>
-							<a href="snd.status.html">status</a>
-						</li>
-						
-						<li>
 							<a href="snd.util.html">util</a>
 						</li>
 						
@@ -237,6 +225,518 @@
 <dl class="details">
     
 
+        <h5 class="subsection-title">Properties:</h5>
+
+        <dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>VERSION</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">バージョン番号です。</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>IS_BETA</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">ベータ版かどうかを表すブール値です。</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>BLOWSER</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">ブラウザ文字列です。</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>DOES_MP3_SUPPORTED</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">ブラウザがmp3形式に対応しているかどうかを示すブール値です。</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>DOES_WAV_SUPPORTED</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">ブラウザがpcm形式に対応しているかどうかを示すブール値です。</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>DOES_OGG_SUPPORTED</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">ブラウザがogg形式に対応しているかどうかを示すブール値です。</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>DOES_AAC_SUPPORTED</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">ブラウザがaac形式に対応しているかどうかを示すブール値です。</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>DOES_M4A_SUPPORTED</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">ブラウザがm4a形式に対応しているかどうかを示すブール値です。</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>srctype.NONE</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">使用される音源の種類が未定であることを表す値です。</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>srctype.AUDIO_BUFFER</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">使用される音源の種類がAudioBufferNodeであることを表す値です。</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>srctype.MEDIA_STREAM</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">使用される音源の種類がMediaStreamAudioSourceNodeであることを表す値です。</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>srctype.MEDIA_ELEMENT</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">使用される音源の種類がMediaElementAudioSourceNodeであることを表す値です。</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>srctype.OSCILLATOR</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">使用される音源の種類がOscillatorであることを表す値です。</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>status.NONE</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">音源が未設定などの理由で、ステータスがまだ定まっていないことを表す値です。</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>status.READY</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">音源の読込が終了するなどして、音源の再生が可能な状態になっていることを表す値です。</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>status.STARTED</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">音源の再生が開始され、再生中であることを表す値です。</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>status.PAUSED</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">音源の再生が中断し、停止中であることを表す値です。</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>status.STOPPED</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">音源の再生が終了し、停止したことを表す値です。</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>AUDIO_CONTEXT</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">AudioContext</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">ブラウザから取得したオーディオコンテキストが入ります。<br/>※snd.initメソッドが呼ばれるまで初期化されず、nullとなっている点に注意してください。</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>AUDIO_MASTER</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="snd.AudioMaster.html">snd.AudioMaster</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">snd.jsのPAミキサーです。<br/>※snd.initメソッドが呼ばれるまで初期化されず、nullとなっている点に注意してください。</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>AUDIO_DATA_MANAGER</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="snd.AudioDataManager.html">snd.AudioDataManager</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">音データの読み込みなどの管理を行うクラスです。<br/>※snd.initメソッドが呼ばれるまで初期化されず、nullとなっている点に注意してください。</td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
+    
+
     
 
     
@@ -256,7 +756,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 34
+        snd.js, line 57
     </li></ul></dd>
     
 
@@ -302,7 +802,7 @@
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a>
-		on Tue Sep 02 2014 00:33:53 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		on Wed Sep 24 2014 03:13:54 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
 			</div>

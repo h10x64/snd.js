@@ -29,18 +29,6 @@
 					<ul class="dropdown-menu ">
 						
 						<li>
-							<a href="snd.audioparam.type.html">type</a>
-						</li>
-						
-						<li>
-							<a href="snd.srctype.html">srctype</a>
-						</li>
-						
-						<li>
-							<a href="snd.status.html">status</a>
-						</li>
-						
-						<li>
 							<a href="snd.util.html">util</a>
 						</li>
 						
@@ -259,7 +247,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 429
+        snd.js, line 327
     </li></ul></dd>
     
 
@@ -395,7 +383,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 590
+        snd.js, line 522
     </li></ul></dd>
     
 
@@ -611,7 +599,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 606
+        snd.js, line 538
     </li></ul></dd>
     
 
@@ -639,7 +627,7 @@
         
             
 <dt>
-    <h4 class="name" id="connect"><span class="type-signature"></span>connect<span class="signature">(connectTo, id)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="connect"><span class="type-signature"></span>connect<span class="signature">(connectTo, indexOut, indexIn, id)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -647,7 +635,7 @@
     
     
     <div class="description">
-        このオーディオユニットをconnectToで指定されたオーディオユニットまたはノードに接続します。<br/>このメソッドを使って connectTo に接続した時に connection プロパティに connectTo.id が追加されます。<br/>引数 connectTo が id を持たない場合（connectTo.id == nullの場合）、connection プロパティには引数 id の値が追加されますので、 gain や frequency など、id を持たないパラメータへ接続する時は、引数 id に値を設定するようにしてください。<br/>connectTo.id, id が両方とも null の場合は connection プロパティには何も追加されません。<br/>このクラスを継承するクラスを作る場合、オーバーライドが必要です。(オーバーライドの際、apply必須)
+        このオーディオユニットをconnectToで指定されたオーディオユニットまたはノードに接続します。<br/><div>このオーディオユニットが出力側となり、connectToで渡される接続先は入力側になります。<br/>出入力が複数ある場合、任意の出力を任意の入力に接続したい場合は、indexOut, indexIn で出入力の番号を指定します。<br/>indexOut, indexInが両方とも指定されなかった場合は、メソッドを呼び出したオブジェクトの0番の出力を connectTo で渡されたオブジェクトの0番の入力に接続します。<br/>※indexOut, indexIn の番号の意味はオーディオユニットにより異なります。<br/></div><div>このメソッドを使って connectTo に接続した時に connection プロパティに connectTo.id が追加されます。<br/>引数 connectTo が id を持たない場合（connectTo.id == nullの場合）、connection プロパティには引数 id の値が追加されますので、 gain や frequency など、id を持たないパラメータへ接続する時は、引数 id に値を設定するようにしてください。<br/>connectTo.id, id が両方とも null の場合は connection プロパティには何も追加されません。<br/>connection プロパティに追加される文字列は以下の書式にしたがいます。<br/><strong>"ID_String[INDEX_OUT:INDEX_IN]"</strong></div><div>このクラスを継承するクラスを作る場合、オーバーライドが必要です。(オーバーライドの際、apply必須)</div>
     </div>
     
 
@@ -704,6 +692,52 @@
 
         <tr>
             
+                <td class="name"><code>indexOut</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">接続する出力側のアウトプットのインデックス</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>indexIn</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">接続する入力側のインプットのインデックス</td>
+        </tr>
+
+	
+
+        <tr>
+            
                 <td class="name"><code>id</code></td>
             
 
@@ -752,7 +786,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 481
+        snd.js, line 393
     </li></ul></dd>
     
 
@@ -821,7 +855,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 463
+        snd.js, line 361
     </li></ul></dd>
     
 
@@ -872,7 +906,7 @@
         
             
 <dt>
-    <h4 class="name" id="disconnect"><span class="type-signature"></span>disconnect<span class="signature">(disconnectFrom, id)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="disconnect"><span class="type-signature"></span>disconnect<span class="signature">(disconnectFrom, indexOut, id)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -937,6 +971,29 @@
 
         <tr>
             
+                <td class="name"><code>indexOut</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">切断するAudioUnitの出力</td>
+        </tr>
+
+	
+
+        <tr>
+            
                 <td class="name"><code>id</code></td>
             
 
@@ -985,7 +1042,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 507
+        snd.js, line 427
     </li></ul></dd>
     
 
@@ -1103,7 +1160,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 553
+        snd.js, line 485
     </li></ul></dd>
     
 
@@ -1199,7 +1256,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 531
+        snd.js, line 463
     </li></ul></dd>
     
 
@@ -1317,7 +1374,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 574
+        snd.js, line 506
     </li></ul></dd>
     
 
@@ -1413,7 +1470,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 540
+        snd.js, line 472
     </li></ul></dd>
     
 
@@ -1486,7 +1543,7 @@
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a>
-		on Tue Sep 02 2014 00:33:54 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		on Wed Sep 24 2014 03:13:55 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
 			</div>

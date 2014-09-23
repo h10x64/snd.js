@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>snd.js - The Sound Library for JavaScript with WebAudioAPI - Class: MediaStreamAudioSource</title>
+	<title>snd.js - The Sound Library for JavaScript with WebAudioAPI - Namespace: _srctype</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -27,6 +27,18 @@
 						class="caret"></b></a>
 
 					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="snd._srctype.html">_srctype</a>
+						</li>
+						
+						<li>
+							<a href="snd._status.html">_status</a>
+						</li>
+						
+						<li>
+							<a href="snd.audioparam.type.html">type</a>
+						</li>
 						
 						<li>
 							<a href="snd.util.html">util</a>
@@ -141,18 +153,15 @@
 					
 
 
-	<h1 class="page-title">Class: MediaStreamAudioSource</h1>
+	<h1 class="page-title">Namespace: _srctype</h1>
 <section>
 
 <header>
     <h2>
         <span class="ancestors"><a href="global.html#snd">snd</a>.</span>
     
-    MediaStreamAudioSource
+    _srctype
     </h2>
-    
-        <div class="class-description">音声ストリームを音源として使用する音源クラスです。<br/>
-WebRTCのGetUserMediaで取得したストリームを使用することができます。</div>
     
 </header>
 
@@ -162,28 +171,18 @@ WebRTCのGetUserMediaで取得したストリームを使用することがで�
 
     
         
-<dt>
-    <h4 class="name" id="MediaStreamAudioSource"><span class="type-signature"></span>new MediaStreamAudioSource<span class="signature">(id, mediaStream)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        新しくストリーム音源を作ります。
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
+            <div class="description">音源の種類をあらわす値を入れるネームスペースです。</div>
         
 
-<table class="params table table-striped">
+        
+<dl class="details">
+    
+
+        <h5 class="subsection-title">Properties:</h5>
+
+        <dl>
+
+<table class="props table table-striped">
     <thead>
 	<tr>
 		
@@ -205,7 +204,7 @@ WebRTCのGetUserMediaで取得したストリームを使用することがで�
 
         <tr>
             
-                <td class="name"><code>id</code></td>
+                <td class="name"><code>NONE</code></td>
             
 
             <td class="type">
@@ -221,20 +220,20 @@ WebRTCのGetUserMediaで取得したストリームを使用することがで�
 
             
 
-            <td class="description last">この音源のID</td>
+            <td class="description last">使用される音源の種類が未定であることを表す値です。</td>
         </tr>
 
 	
 
         <tr>
             
-                <td class="name"><code>mediaStream</code></td>
+                <td class="name"><code>AUDIO_BUFFER</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">MediaStream</span>
+<span class="param-type">String</span>
 
 
             
@@ -244,17 +243,83 @@ WebRTCのGetUserMediaで取得したストリームを使用することがで�
 
             
 
-            <td class="description last">再生するデータストリーム</td>
+            <td class="description last">使用される音源の種類がAudioBufferNodeであることを表す値です。</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>MEDIA_STREAM</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">使用される音源の種類がMediaStreamAudioSourceNodeであることを表す値です。</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>MEDIA_ELEMENT</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">使用される音源の種類がMediaElementAudioSourceNodeであることを表す値です。</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>OSCILLATOR</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">使用される音源の種類がOscillatorであることを表す値です。</td>
         </tr>
 
 	
 	</tbody>
 </table>
+</dl>
 
-    
-    
-    
-<dl class="details">
     
 
     
@@ -276,7 +341,7 @@ WebRTCのGetUserMediaで取得したストリームを使用することがで�
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.js, line 2360
+        snd.js, line 3752
     </li></ul></dd>
     
 
@@ -287,20 +352,8 @@ WebRTCのGetUserMediaで取得したストリームを使用することがで�
     
 </dl>
 
-    
-    
 
-    
-
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
+        
     
     </div>
 
@@ -344,7 +397,7 @@ WebRTCのGetUserMediaで取得したストリームを使用することがで�
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a>
-		on Wed Sep 24 2014 03:13:56 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		on Wed Sep 24 2014 00:08:42 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
 			</div>

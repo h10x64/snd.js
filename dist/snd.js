@@ -29,134 +29,32 @@
 
 /**
  * snd.jsの基幹ネームスペースです。
- * @namespase
+ * @property {String} VERSION バージョン番号です。
+ * @property {Boolean} IS_BETA ベータ版かどうかを表すブール値です。
+ * @property {String} BLOWSER ブラウザ文字列です。
+ * @property {Boolean} DOES_MP3_SUPPORTED ブラウザがmp3形式に対応しているかどうかを示すブール値です。
+ * @property {Boolean} DOES_WAV_SUPPORTED ブラウザがpcm形式に対応しているかどうかを示すブール値です。
+ * @property {Boolean} DOES_OGG_SUPPORTED ブラウザがogg形式に対応しているかどうかを示すブール値です。
+ * @property {Boolean} DOES_AAC_SUPPORTED ブラウザがaac形式に対応しているかどうかを示すブール値です。
+ * @property {Boolean} DOES_M4A_SUPPORTED ブラウザがm4a形式に対応しているかどうかを示すブール値です。
+ * @property {String} srctype.NONE 使用される音源の種類が未定であることを表す値です。
+ * @property {String} srctype.AUDIO_BUFFER 使用される音源の種類がAudioBufferNodeであることを表す値です。
+ * @property {String} srctype.MEDIA_STREAM 使用される音源の種類がMediaStreamAudioSourceNodeであることを表す値です。
+ * @property {String} srctype.MEDIA_ELEMENT 使用される音源の種類がMediaElementAudioSourceNodeであることを表す値です。
+ * @property {String} srctype.OSCILLATOR 使用される音源の種類がOscillatorであることを表す値です。
+ * @property {String} status.NONE 音源が未設定などの理由で、ステータスがまだ定まっていないことを表す値です。
+ * @property {String} status.READY 音源の読込が終了するなどして、音源の再生が可能な状態になっていることを表す値です。
+ * @property {String} status.STARTED 音源の再生が開始され、再生中であることを表す値です。
+ * @property {String} status.PAUSED 音源の再生が中断し、停止中であることを表す値です。
+ * @property {String} status.STOPPED 音源の再生が終了し、停止したことを表す値です。
+ * @property {AudioContext} AUDIO_CONTEXT ブラウザから取得したオーディオコンテキストが入ります。<br/>
+ * ※snd.initメソッドが呼ばれるまで初期化されず、nullとなっている点に注意してください。
+ * @property {snd.AudioMaster} AUDIO_MASTER  snd.jsのPAミキサーです。<br/>
+ * ※snd.initメソッドが呼ばれるまで初期化されず、nullとなっている点に注意してください。
+ * @property {snd.AudioDataManager} AUDIO_DATA_MANAGER 音データの読み込みなどの管理を行うクラスです。<br/>
+ * ※snd.initメソッドが呼ばれるまで初期化されず、nullとなっている点に注意してください。
  */
-snd = {VERSION: "62190", IS_BETA:true};
-
-/**
- * ブラウザ名です
- * @type String
- */
-snd.BLOWSER = window.navigator.userAgent.toLowerCase();
-
-/**
- * 表示に使われているブラウザがmp3形式に対応しているかどうかを表します
- * @type Boolean
- */
-snd.DOES_MP3_SUPPORTED = false;
-/**
- * 表示に使われているブラウザがwav形式に対応しているかどうかを表します
- * @type Boolean
- */
-snd.DOES_WAV_SUPPORTED = false;
-/**
- * 表示に使われているブラウザがogg形式に対応しているかどうかを表します
- * @type Boolean
- */
-snd.DOES_OGG_SUPPORTED = false;
-/**
- * 表示に使われているブラウザがaac形式に対応しているかどうかを表します
- * @type Boolean
- */
-snd.DOES_AAC_SUPPORTED = false;
-/**
- * 表示に使われているブラウザがm4a形式に対応しているかどうかを表します
- * @type Boolean
- */
-snd.DOES_M4A_SUPPORTED = false;
-(function() {
-    // 対応フォーマットのチェック
-    var __audio__ = document.createElement("audio");
-    snd.DOES_MP3_SUPPORTED = !(__audio__.canPlayType('audio/mpeg;') === "");
-    snd.DOES_M4A_SUPPORTED = !(__audio__.canPlayType('audio/mp4; codecs="mp4a.40.2"') === "");
-    snd.DOES_AAC_SUPPORTED = snd.DOES_M4A_SUPPORTED;
-    snd.DOES_WAV_SUPPORTED = !(__audio__.canPlayType('audio/wav; codecs="1"') === "");
-    snd.DOES_OGG_SUPPORTED = !(__audio__.canPlayType('audio/ogg; codecs="vorbis"') === "");
-    delete __audio__;
-})();
-
-/**
- * 音源のステータスを表す値を入れるネームスペースです。
- * @memberOf snd
- * @namespace
- */
-snd.status = {};
-/**
- * 音源が未設定などの理由で、ステータスがまだ定まっていないことを表す値です。
- * @type String
- */
-snd.status.NONE = "none";
-/**
- * 音源の読込が終了するなどして、音源の再生が可能な状態になっていることを表す値です。
- * @type String
- */
-snd.status.READY = "ready";
-/**
- * 音源の再生が開始され、再生中であることを表す値です。
- * @type String
- */
-snd.status.STARTED = "started";
-/**
- * 音源の再生が中断し、停止中であることを表す値です。
- * @type String
- */
-snd.status.PAUSED = "paused";
-/**
- * 音源の再生が終了し、停止したことを表す値です。
- * @type String
- */
-snd.status.STOPPED= "ended";
-
-/**
- * 音源の種類をあらわす値を入れるネームスペースです。
- * @memberOf snd
- * @namespace
- */
-snd.srctype = {};
-/**
- * 使用される音源の種類が未定であることを表す値です。
- * @type String
- */
-snd.srctype.NONE = "none";
-/**
- * 使用される音源の種類がAudioBufferNodeであることを表す値です。
- * @type String
- */
-snd.srctype.AUDIO_BUFFER = "AudioBuffer";
-/**
- * 使用される音源の種類がMediaStreamAudioSourceNodeであることを表す値です。
- * @type String
- */
-snd.srctype.MEDIA_STREAM = "MediaStream";
-/**
- * 使用される音源の種類がMediaElementAudioSourceNodeであることを表す値です。
- * @type String
- */
-snd.srctype.MEDIA_ELEMENT = "MediaElement";
-/**
- * 使用される音源の種類がOscillatorであることを表す値です。
- * @type String
- */
-snd.srctype.OSCILLATOR = "Oscillator";
-
-snd.oscillatortype = {};
-snd.oscillatortype.SINE = "sine";
-snd.oscillatortype.SQUARE = "SQUARE";
-snd.oscillatortype.SAWTOOTH = "SAWTOOTH";
-snd.oscillatortype.TRIANGLE = "TRIANGLE";
-
-snd.audioparam = {};
-/**
- * オーディオパラメータの補間方法を指定する際に使用する定数をまとめた名前空間です。
- * @memberof snd
- * @namespace
- */
-snd.audioparam.type = {};
-
-snd.audioparam.type.SET = "Set";
-snd.audioparam.type.LINER = "Liner";
-snd.audioparam.type.EXPONENTIALLY = "Exponentially";
-
+snd = {VERSION: "0.85_20140923", IS_BETA:true, ALIAS: "WIP_AutumnalEquinox"};
 
 
 /**
@@ -471,18 +369,39 @@ snd.AudioUnit.prototype.connect = function(connectTo) {
 
 /**
  * このオーディオユニットをconnectToで指定されたオーディオユニットまたはノードに接続します。<br/>
+ * <div>
+ * このオーディオユニットが出力側となり、connectToで渡される接続先は入力側になります。<br/>
+ * 出入力が複数ある場合、任意の出力を任意の入力に接続したい場合は、indexOut, indexIn で出入力の番号を指定します。<br/>
+ * indexOut, indexInが両方とも指定されなかった場合は、メソッドを呼び出したオブジェクトの0番の出力を connectTo で渡されたオブジェクトの0番の入力に接続します。<br/>
+ * ※indexOut, indexIn の番号の意味はオーディオユニットにより異なります。<br/>
+ * </div>
+ * <div>
  * このメソッドを使って connectTo に接続した時に connection プロパティに connectTo.id が追加されます。<br/>
  * 引数 connectTo が id を持たない場合（connectTo.id == nullの場合）、connection プロパティには引数 id の値が追加されますので、 gain や frequency など、id を持たないパラメータへ接続する時は、引数 id に値を設定するようにしてください。<br/>
  * connectTo.id, id が両方とも null の場合は connection プロパティには何も追加されません。<br/>
+ * connection プロパティに追加される文字列は以下の書式にしたがいます。<br/>
+ * <strong>"ID_String[INDEX_OUT:INDEX_IN]"</strong>
+ * </div>
+ * <div>
  * このクラスを継承するクラスを作る場合、オーバーライドが必要です。(オーバーライドの際、apply必須)
+ * </div>
  * @param {snd.AudioUnit} connectTo 接続するAudioUnit
+ * @param {Number} indexOut 接続する出力側のアウトプットのインデックス
+ * @param {Number} indexIn 接続する入力側のインプットのインデックス
  * @param {String} id connectTo.idがnullの場合に使用されるID
  */
-snd.AudioUnit.prototype.connect = function(connectTo, id) {
-    if (connectTo.id != null) {
-        this._status.connection.push(connectTo.id);
-    } else if (id != null) {
-        this._status.connection.push(id);
+snd.AudioUnit.prototype.connect = function(connectTo, indexOut, indexIn, id) {
+    if (connectTo.id != null || id != null) {
+        var str = null;
+        if (connectTo.id != null) {
+            str = connectTo.id;
+        } else if (id != null) {
+            str = id;
+        }
+        
+        str += "[" + ((indexOut != null) ? indexOut : "0") + ":" + ((indexIn != null) ? indexIn : "0") + "]";
+        
+        this._status.connection.push(str);
     }
     
     // PLEASE OVERRIDE ME LIKE THIS
@@ -492,7 +411,7 @@ snd.AudioUnit.prototype.connect = function(connectTo, id) {
 };
 
 snd.AudioUnit.prototype.disconnect = function(disconnectFrom) {
-    this.disconnect(disconnectFrom, disconnectForm.id);
+    this.disconnect(disconnectFrom, disconnectFrom.id);
 };
 
 /**
@@ -502,18 +421,31 @@ snd.AudioUnit.prototype.disconnect = function(disconnectFrom) {
  * connectTo.id, id が両方とも null の場合は connection プロパティからは何も削除されません。<br/>
  * このクラスを継承するクラスを作る場合、オーバーライドが必要です。(オーバーライドの際、apply必須)
  * @param {snd.AudioUnit} disconnectFrom 切断するAudioUnit
+ * @param {Number} indexOut 切断するAudioUnitの出力
  * @param {String} id disconnectFrom.id が null の場合に使用されるID
  */
-snd.AudioUnit.prototype.disconnect = function(disconnectFrom, id) {
-    var i = -1;
-    if (disconnectFrom.id != null) {
-        i = this._status.connection.indexOf(disconnectFrom.id);
-    } else if (id != null) {
-        i = this._status.connection.indexOf(id);
-    }
-    
-    if (i >= 0) {
-        this._connection.splice(i, 1);
+snd.AudioUnit.prototype.disconnect = function(disconnectFrom, indexOut, id) {
+    if (disconnectFrom.id != null || id != null) {
+        var idx = -1;
+        var str = "";
+        
+        if (disconnectFrom.id != null) {
+            str = disconnectFrom.id;
+        } else if (id != null) {
+            str = id;
+        }
+        
+        str += "[" + ((indexOut != null) ? indexOut : "0");
+        for (var i = 0; i < this._status.connection.length; i++) {
+            if (this._status.connection[i].substring(0, str.length) === str) {
+                idx = i;
+                break;
+            }
+        }
+        
+        if (idx >= 0) {
+            this._status.connection.splice(idx, 1);
+        }
     }
     
     // PLEASE OVERRIDE ME LIKE THIS
@@ -707,13 +639,13 @@ snd.Source.prototype.getGain = function() {
  * 詳細はAudioUnitクラスのconnectを参照してください。
  * @param {AudioUnit} connectTo 接続先
  */
-snd.Source.prototype.connect = function(connectTo, id) {
+snd.Source.prototype.connect = function(connectTo, indexIn, indexOut, id) {
     snd.AudioUnit.prototype.connect.apply(this, arguments);
     
-    if (connectTo.isAudioUnit) {
-        this._gain.connect(connectTo.getConnector());
+    if (connectTo.isAudioUnit || connectTo.getConnector != null) {
+        this._gain.connect(connectTo.getConnector(), indexIn, indexOut);
     } else {
-        this._gain.connect(connectTo);
+        this._gain.connect(connectTo, indexIn, indexOut);
     }
 };
 
@@ -724,7 +656,7 @@ snd.Source.prototype.connect = function(connectTo, id) {
 snd.Source.prototype.disconnect = function(disconnectFrom, id) {
     snd.AudioUnit.prototype.disconnect.apply(this, arguments);
     
-    if (disconnectFrom.isAudioUnit) {
+    if (disconnectFrom.isAudioUnit || disconnectFrom.getConnector != null) {
         this._gain.disconnect(disconnectFrom.getConnector());
     } else {
         this._gain.disconnect(disconnectFrom);
@@ -2457,7 +2389,7 @@ snd.MediaStreamAudioSource.prototype = Object.create(snd.Source.prototype);
 snd.MediaStreamAudioSource.prototype.constructor = snd.MediaStreamAudioSource;
 
 
-snd.ScriptProcessorUnit = function(id) {
+snd.ScriptProcessor = function(id) {
     snd.Source.apply(this, arguments);
     
     Object.defineProperties(this, {
@@ -2506,12 +2438,12 @@ snd.ScriptProcessorUnit = function(id) {
     
     this.resetScriptProcessor();
 };
-snd.ScriptProcessorUnit.prototype = Object.create(snd.Source.prototype);
-snd.ScriptProcessorUnit.prototype.constructor = snd.ScriptProcessorUnit;
+snd.ScriptProcessor.prototype = Object.create(snd.Source.prototype);
+snd.ScriptProcessor.prototype.constructor = snd.ScriptProcessor;
 
-snd.ScriptProcessorUnit.CLASS_NAME = "snd.SciptProcessorUnit";
+snd.ScriptProcessor.CLASS_NAME = "snd.SciptProcessorUnit";
 
-snd.ScriptProcessorUnit.prototype.resetScriptProcessor = function() {
+snd.ScriptProcessor.prototype.resetScriptProcessor = function() {
     var _this = this;
     
     if (this._unit != null) {
@@ -2528,15 +2460,15 @@ snd.ScriptProcessorUnit.prototype.resetScriptProcessor = function() {
     this._unit.connect(this._gain);
 };
 
-snd.ScriptProcessorUnit.prototype.createStatus = function() {
-    return new snd.ScriptProcessorUnit.Status();
+snd.ScriptProcessor.prototype.createStatus = function() {
+    return new snd.ScriptProcessor.Status();
 };
 
-snd.ScriptProcessorUnit.prototype.toJSON = function() {
+snd.ScriptProcessor.prototype.toJSON = function() {
     return this._status;
 }
 
-snd.ScriptProcessorUnit.prototype.loadData = function(data) {
+snd.ScriptProcessor.prototype.loadData = function(data) {
     snd.Source.prototype.loadData.apply(this, arguments);
     
     this._status.inputChannels = (data.inputChannels > 0) ? data.inputChannels : 0;
@@ -2547,22 +2479,22 @@ snd.ScriptProcessorUnit.prototype.loadData = function(data) {
     this.resetScriptProcessor();
 };
 
-snd.ScriptProcessorUnit.loadJSON = function(json) {
+snd.ScriptProcessor.loadJSON = function(json) {
     var data = JSON.parse(json);
-    if (data.className != snd.ScriptProcessorUnit.CLASS_NAME) {
+    if (data.className != snd.ScriptProcessor.CLASS_NAME) {
         throw new snd.Exception(data.id + " is not instanceof 'snd.ScriptProcessorUnit'.");
     }
     
-    var ret = new snd.ScriptProcessorUnit(data.id);
+    var ret = new snd.ScriptProcessor(data.id);
     ret.loadData(data);
     
     return ret;
 };
 
-snd.ScriptProcessorUnit.Status = function() {
+snd.ScriptProcessor.Status = function() {
     snd.Source.Status.apply(this, arguments);
     
-    this.className = snd.ScriptProcessorUnit.CLASS_NAME;
+    this.className = snd.ScriptProcessor.CLASS_NAME;
     this.isSource = true;
     
     this.inputChannels = 0;
@@ -2570,8 +2502,8 @@ snd.ScriptProcessorUnit.Status = function() {
     this.bufferLength = 4096;
     this.script = "";
 };
-snd.ScriptProcessorUnit.Status.prototype = Object.create(snd.Source.prototype);
-snd.ScriptProcessorUnit.Status.prototype.constructor = snd.ScriptProcessorUnit.Status;
+snd.ScriptProcessor.Status.prototype = Object.create(snd.Source.prototype);
+snd.ScriptProcessor.Status.prototype.constructor = snd.ScriptProcessor.Status;
 
 /**
  * コンストラクタです。<br/>
@@ -3427,6 +3359,7 @@ snd.AudioMaster = function() {
     this.unitList = {};
     this.gain = snd.AUDIO_CONTEXT.createGain();
     this.gain.connect(snd.AUDIO_CONTEXT.destination);
+    this.id = snd.AudioMaster.ID;
 };
 
 snd.AudioMaster.ID = "snd.MASTER";
@@ -3468,6 +3401,10 @@ snd.AudioMaster.prototype.disconnectAudioUnit = function(key) {
     var audioUnit = this.unitList[key];
     audioUnit.getConnector().disconnect(this.gain);
     delete this.unitList[key];
+};
+
+snd.AudioMaster.prototype.getConnector = function() {
+    return this.gain;
 };
 
 /**
@@ -3640,28 +3577,25 @@ snd.util.noteToSec = function(tempo, noteValue) {
 };
 
 
-/**
- * ブラウザから取得したオーディオコンテキストが入ります。<br/>
- * snd#initメソッドが呼ばれるまで初期化されず、nullとなっている点に注意してください。
- * @type AudioContext
- * @memberOf snd
- */
-snd.AUDIO_CONTEXT = null;
+snd._AUDIO_CONTEXT = null;
+snd._MASTER = null;
+snd._AUDIO_DATA_MANAGER = null;
+snd._DOES_MP3_SUPPORTED = false;
+snd._DOES_WAV_SUPPORTED = false;
+snd._DOES_OGG_SUPPORTED = false;
+snd._DOES_AAC_SUPPORTED = false;
+snd._DOES_M4A_SUPPORTED = false;
 
-/**
- * snd.jsのPAミキサーです。<br/>
- * 各種エフェクトや音源は、snd.Master.connectAudioUnitメソッドを使ってここに接続することで音が出力されるようになります。
- * @type snd.AudioMaster
- * @memberOf snd
- */
-snd.MASTER = null;
-
-/**
- * 音データの読み込みなどの管理を行うクラスです。
- * @type type
- * @memberOf snd
- */
-snd.AUDIO_DATA_MANAGER = null;
+(function() {
+    // 対応フォーマットのチェック
+    var __audio__ = document.createElement("audio");
+    snd._DOES_MP3_SUPPORTED = !(__audio__.canPlayType('audio/mpeg;') === "");
+    snd._DOES_M4A_SUPPORTED = !(__audio__.canPlayType('audio/mp4; codecs="mp4a.40.2"') === "");
+    snd._DOES_AAC_SUPPORTED = snd._DOES_M4A_SUPPORTED;
+    snd._DOES_WAV_SUPPORTED = !(__audio__.canPlayType('audio/wav; codecs="1"') === "");
+    snd._DOES_OGG_SUPPORTED = !(__audio__.canPlayType('audio/ogg; codecs="vorbis"') === "");
+    delete __audio__;
+})();
 
 /**
  * snd.jsを初期化します。
@@ -3672,8 +3606,220 @@ snd.init = function() {
     if (snd.SoundEnvironment != null) {
         snd.SOUND_ENVIRONMENT = new snd.SoundEnvironment();
     }
-    snd.MASTER = new snd.AudioMaster();
-    snd.AUDIO_DATA_MANAGER = new snd.AudioDataManager();
+
+    Object.defineProperties(snd, {
+        /* StaticValues */
+        DOES_MP3_SUPPORTED: {
+            get: function() {
+                return snd._DOES_MP3_SUPPORTED;
+            }
+        },
+        DOES_WAV_SUPPORTED: {
+            get: function() {
+                return snd._DOES_WAV_SUPPORTED;
+            }
+        },
+        DOES_OGG_SUPPORTED: {
+            get: function() {
+                return snd._DOES_OGG_SUPPORTED;
+            }
+        },
+        DOES_AAC_SUPPORTED: {
+            get: function() {
+                return snd._DOES_AAC_SUPPORTED;
+            }
+        },
+        DOES_M4A_SUPPORTED: {
+            get: function() {
+                return snd._DOES_M4A_SUPPORTED;
+            }
+        },
+        IDX_2CH_L: {
+            writable: false,
+            value: 0,
+        },
+        IDX_2CH_R: {
+            writable: false,
+            value: 1
+        },
+        IDX_4CH_FL: {
+            writable: false,
+            value: 0
+        },
+        IDX_4CH_FR: {
+            writable: false,
+            value: 1
+        },
+        IDX_4CH_RL: {
+            writable: false,
+            value: 2
+        },
+        IDX_4CH_RR: {
+            writable: false,
+            value: 3
+        },
+        IDX_6CH_FL: {
+            writable: false,
+            value: 0
+        },
+        IDX_6CH_FR: {
+            writable: false,
+            value: 1
+        },
+        IDX_6CH_C: {
+            writable: false,
+            value: 2
+        },
+        IDX_6CH_SW: {
+            writable: false,
+            value: 3
+        },
+        IDX_6CH_RL: {
+            writable: false,
+            value: 4
+        },
+        IDX_6CH_RR: {
+            writable: false,
+            value: 5
+        },
+        status: {
+            value: (function() {
+                var ret = {};
+                Object.defineProperties(ret, {
+                    NONE: {
+                        value: "none",
+                        writable: false
+                    },
+                    READY: {
+                        value: "ready",
+                        writable: false
+                    },
+                    STARTED: {
+                        value: "started",
+                        writable: false
+                    },
+                    PAUSED: {
+                        value: "paused",
+                        writable: false
+                    },
+                    STOPPED: {
+                        value: "ended",
+                        writable: false
+                    }
+                });
+                return ret;
+            })(),
+            writable: false
+        },
+        srctype: {
+            value: (function() {
+                var ret = {};
+                Object.defineProperties(ret, {
+                    NONE: {
+                        value: "none",
+                        writable: false
+                    },
+                    AUDIO_BUFFER: {
+                        value: "audiobuffer",
+                        writable: false
+                    },
+                    MEDIA_STREAM: {
+                        value: "mediastream",
+                        writable: false
+                    },
+                    MEDIA_ELEMENT: {
+                        value: "mediaelement",
+                        writable: false
+                    },
+                    OSCILLATOR: {
+                        value: "oscillator",
+                        writable: false
+                    },
+                });
+                return ret;
+            })(),
+            writable: false
+        },
+        oscillatortype: {
+            value: (function() {
+                var ret = {};
+                Object.defineProperties(ret, {
+                    SINE: {
+                        value: "sine",
+                        writable: false
+                    },
+                    SQUARE: {
+                        value: "square",
+                        writable: false
+                    },
+                    SAWTOOTH: {
+                        value: "sawtooth",
+                        writable: false
+                    },
+                    TRIANGLE: {
+                        value: "triangle",
+                        writable: false
+                    }
+                });
+                return ret;
+            })(),
+            writable: false
+        },
+        audioparam: {
+            value: (function() {
+                var ret = {};
+                Object.defineProperties(this, {
+                    type: {
+                        value: (function() {
+                            var retret = {};
+                            Object.defineProperties(this, {
+                                SET: {
+                                    value: "set",
+                                    writable: false
+                                },
+                                LINER: {
+                                    value: "liner",
+                                    writable: false,
+                                },
+                                EXPONENTIALLY: {
+                                    value: "exponentially",
+                                    writable: false
+                                }
+                            });
+                            return retret;
+                        })(),
+                        writable: false
+                    }
+                });
+                return ret;
+            })(),
+            writable: false
+        },
+        BLOWSER: {
+            get: function() {
+                window.navigator.userAgent.toLowerCase();
+            }
+        },
+        /* Objects */
+        AUDIO_CONTEXT: {
+            get: function() {
+                return snd._AUDIO_CONTEXT;
+            }
+        },
+        MASTER: {
+            get: function() {
+                return snd._MASTER;
+            }
+        },
+        AUDIO_DATA_MANAGER: {
+            get: function() {
+                return snd._AUDIO_DATA_MANAGER;
+            }
+        }
+    });
+
+    snd._MASTER = new snd.AudioMaster();
+    snd._AUDIO_DATA_MANAGER = new snd.AudioDataManager();
 };
 
 /**
@@ -3682,14 +3828,14 @@ snd.init = function() {
  * @private
  */
 snd.resetAudioContext = function() {
-    if (snd.AUDIO_CONTEXT == null) {
+    if (snd._AUDIO_CONTEXT == null) {
         // Create AudioContext
         if ('AudioContext' in window) {
             // firefox
-            snd.AUDIO_CONTEXT = new AudioContext();
+            snd._AUDIO_CONTEXT = new AudioContext();
         } else if ('webkitAudioContext' in window) {
             // crome etc
-            snd.AUDIO_CONTEXT = new webkitAudioContext();
+            snd._AUDIO_CONTEXT = new webkitAudioContext();
         }
     }
 };
