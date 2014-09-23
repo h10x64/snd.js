@@ -1,26 +1,23 @@
 
-/**
- * ブラウザから取得したオーディオコンテキストが入ります。<br/>
- * snd#initメソッドが呼ばれるまで初期化されず、nullとなっている点に注意してください。
- * @type AudioContext
- * @memberOf snd
- */
-snd.AUDIO_CONTEXT = null;
+snd._AUDIO_CONTEXT = null;
+snd._MASTER = null;
+snd._AUDIO_DATA_MANAGER = null;
+snd._DOES_MP3_SUPPORTED = false;
+snd._DOES_WAV_SUPPORTED = false;
+snd._DOES_OGG_SUPPORTED = false;
+snd._DOES_AAC_SUPPORTED = false;
+snd._DOES_M4A_SUPPORTED = false;
 
-/**
- * snd.jsのPAミキサーです。<br/>
- * 各種エフェクトや音源は、snd.Master.connectAudioUnitメソッドを使ってここに接続することで音が出力されるようになります。
- * @type snd.AudioMaster
- * @memberOf snd
- */
-snd.MASTER = null;
-
-/**
- * 音データの読み込みなどの管理を行うクラスです。
- * @type type
- * @memberOf snd
- */
-snd.AUDIO_DATA_MANAGER = null;
+(function() {
+    // 対応フォーマットのチェック
+    var __audio__ = document.createElement("audio");
+    snd._DOES_MP3_SUPPORTED = !(__audio__.canPlayType('audio/mpeg;') === "");
+    snd._DOES_M4A_SUPPORTED = !(__audio__.canPlayType('audio/mp4; codecs="mp4a.40.2"') === "");
+    snd._DOES_AAC_SUPPORTED = snd._DOES_M4A_SUPPORTED;
+    snd._DOES_WAV_SUPPORTED = !(__audio__.canPlayType('audio/wav; codecs="1"') === "");
+    snd._DOES_OGG_SUPPORTED = !(__audio__.canPlayType('audio/ogg; codecs="vorbis"') === "");
+    delete __audio__;
+})();
 
 /**
  * snd.jsを初期化します。
@@ -31,8 +28,220 @@ snd.init = function() {
     if (snd.SoundEnvironment != null) {
         snd.SOUND_ENVIRONMENT = new snd.SoundEnvironment();
     }
-    snd.MASTER = new snd.AudioMaster();
-    snd.AUDIO_DATA_MANAGER = new snd.AudioDataManager();
+
+    Object.defineProperties(snd, {
+        /* StaticValues */
+        DOES_MP3_SUPPORTED: {
+            get: function() {
+                return snd._DOES_MP3_SUPPORTED;
+            }
+        },
+        DOES_WAV_SUPPORTED: {
+            get: function() {
+                return snd._DOES_WAV_SUPPORTED;
+            }
+        },
+        DOES_OGG_SUPPORTED: {
+            get: function() {
+                return snd._DOES_OGG_SUPPORTED;
+            }
+        },
+        DOES_AAC_SUPPORTED: {
+            get: function() {
+                return snd._DOES_AAC_SUPPORTED;
+            }
+        },
+        DOES_M4A_SUPPORTED: {
+            get: function() {
+                return snd._DOES_M4A_SUPPORTED;
+            }
+        },
+        IDX_2CH_L: {
+            writable: false,
+            value: 0,
+        },
+        IDX_2CH_R: {
+            writable: false,
+            value: 1
+        },
+        IDX_4CH_FL: {
+            writable: false,
+            value: 0
+        },
+        IDX_4CH_FR: {
+            writable: false,
+            value: 1
+        },
+        IDX_4CH_RL: {
+            writable: false,
+            value: 2
+        },
+        IDX_4CH_RR: {
+            writable: false,
+            value: 3
+        },
+        IDX_6CH_FL: {
+            writable: false,
+            value: 0
+        },
+        IDX_6CH_FR: {
+            writable: false,
+            value: 1
+        },
+        IDX_6CH_C: {
+            writable: false,
+            value: 2
+        },
+        IDX_6CH_SW: {
+            writable: false,
+            value: 3
+        },
+        IDX_6CH_RL: {
+            writable: false,
+            value: 4
+        },
+        IDX_6CH_RR: {
+            writable: false,
+            value: 5
+        },
+        status: {
+            value: (function() {
+                var ret = {};
+                Object.defineProperties(ret, {
+                    NONE: {
+                        value: "none",
+                        writable: false
+                    },
+                    READY: {
+                        value: "ready",
+                        writable: false
+                    },
+                    STARTED: {
+                        value: "started",
+                        writable: false
+                    },
+                    PAUSED: {
+                        value: "paused",
+                        writable: false
+                    },
+                    STOPPED: {
+                        value: "ended",
+                        writable: false
+                    }
+                });
+                return ret;
+            })(),
+            writable: false
+        },
+        srctype: {
+            value: (function() {
+                var ret = {};
+                Object.defineProperties(ret, {
+                    NONE: {
+                        value: "none",
+                        writable: false
+                    },
+                    AUDIO_BUFFER: {
+                        value: "audiobuffer",
+                        writable: false
+                    },
+                    MEDIA_STREAM: {
+                        value: "mediastream",
+                        writable: false
+                    },
+                    MEDIA_ELEMENT: {
+                        value: "mediaelement",
+                        writable: false
+                    },
+                    OSCILLATOR: {
+                        value: "oscillator",
+                        writable: false
+                    },
+                });
+                return ret;
+            })(),
+            writable: false
+        },
+        oscillatortype: {
+            value: (function() {
+                var ret = {};
+                Object.defineProperties(ret, {
+                    SINE: {
+                        value: "sine",
+                        writable: false
+                    },
+                    SQUARE: {
+                        value: "square",
+                        writable: false
+                    },
+                    SAWTOOTH: {
+                        value: "sawtooth",
+                        writable: false
+                    },
+                    TRIANGLE: {
+                        value: "triangle",
+                        writable: false
+                    }
+                });
+                return ret;
+            })(),
+            writable: false
+        },
+        audioparam: {
+            value: (function() {
+                var ret = {};
+                Object.defineProperties(this, {
+                    type: {
+                        value: (function() {
+                            var retret = {};
+                            Object.defineProperties(this, {
+                                SET: {
+                                    value: "set",
+                                    writable: false
+                                },
+                                LINER: {
+                                    value: "liner",
+                                    writable: false,
+                                },
+                                EXPONENTIALLY: {
+                                    value: "exponentially",
+                                    writable: false
+                                }
+                            });
+                            return retret;
+                        })(),
+                        writable: false
+                    }
+                });
+                return ret;
+            })(),
+            writable: false
+        },
+        BLOWSER: {
+            get: function() {
+                window.navigator.userAgent.toLowerCase();
+            }
+        },
+        /* Objects */
+        AUDIO_CONTEXT: {
+            get: function() {
+                return snd._AUDIO_CONTEXT;
+            }
+        },
+        MASTER: {
+            get: function() {
+                return snd._MASTER;
+            }
+        },
+        AUDIO_DATA_MANAGER: {
+            get: function() {
+                return snd._AUDIO_DATA_MANAGER;
+            }
+        }
+    });
+
+    snd._MASTER = new snd.AudioMaster();
+    snd._AUDIO_DATA_MANAGER = new snd.AudioDataManager();
 };
 
 /**
@@ -41,14 +250,14 @@ snd.init = function() {
  * @private
  */
 snd.resetAudioContext = function() {
-    if (snd.AUDIO_CONTEXT == null) {
+    if (snd._AUDIO_CONTEXT == null) {
         // Create AudioContext
         if ('AudioContext' in window) {
             // firefox
-            snd.AUDIO_CONTEXT = new AudioContext();
+            snd._AUDIO_CONTEXT = new AudioContext();
         } else if ('webkitAudioContext' in window) {
             // crome etc
-            snd.AUDIO_CONTEXT = new webkitAudioContext();
+            snd._AUDIO_CONTEXT = new webkitAudioContext();
         }
     }
 };
