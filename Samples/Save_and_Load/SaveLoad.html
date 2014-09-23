@@ -158,7 +158,7 @@
     
     onSaveScriptProcessorButtonClick = function() {
         var json = JSON.stringify(SCRIPT_PROCESSOR_UNIT);
-        document.getElementById("scriptProcessorUnit").value = json;
+        document.getElementById("scriptProcessor").value = json;
     };
 
     onLoadScriptProcessorButtonClick = function() {
@@ -166,7 +166,7 @@
         snd.MASTER.disconnectAudioUnit(SCRIPT_PROCESSOR_UNIT.id);
         delete SCRIPT_PROCESSOR_UNIT;
 
-        var json = document.getElementById("scriptProcessorUnit").value;
+        var json = document.getElementById("scriptProcessor").value;
         SCRIPT_PROCESSOR_UNIT = snd.ScriptProcessor.loadJSON(json);
         snd.MASTER.connectAudioUnit(SCRIPT_PROCESSOR_UNIT.id, SCRIPT_PROCESSOR_UNIT);
     };
