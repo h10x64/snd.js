@@ -9,12 +9,11 @@ snd.BufferSource = function(id) {
     snd.Source.apply(this, arguments);
     
     this._source = null;
-    this._audioBuffer = null;
+    this.audioBuffer = null;
     this._key = "";
     
     Object.defineProperties(this, {
         loop: {
-            enumerable: true,
             get: function() {
                 return this._status.loop;
             },
@@ -24,7 +23,6 @@ snd.BufferSource = function(id) {
             }
         },
         loopStart: {
-            enumerable: true,
             get: function() {
                 return this._status.loopStart;
             },
@@ -36,7 +34,6 @@ snd.BufferSource = function(id) {
             }
         },
         loopEnd: {
-            enumerable: true,
             get: function() {
                 return this._status.loopEnd;
             },
@@ -336,7 +333,7 @@ snd.BufferSource.prototype.resetEventMethods = function() {
     var _this = this;
     
     this._source.onended = function() {
-        _this.status = snd.status.STOPPED;
+        _this._status.status = snd.status.STOPPED;
         _this.fireOnEndedEvent();
     };
 };
