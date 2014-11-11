@@ -51,7 +51,7 @@ snd.AudioDataManager.prototype.removeAllDataLoadListener = function(func) {
     for (var i = 0; i < this.allLoadEventListeners.length; i++) {
         var f = this.allLoadEventListeners[i];
         if (f === func) {
-            delete this.allLoadEventListeners[i];
+            this.allLoadEventListeners.splice(i, 1);
             return true;
         }
     }
