@@ -33,7 +33,7 @@ snd.util.createSources = function(dataSet, connectToMaster, element, func) {
     }
     
     if (dataSet['AudioBuffer'] != null) {
-        createBufferSources(dataSet['AudioBuffer'], connectToMaster, function(res) {
+        snd.util.createBufferSources(dataSet['AudioBuffer'], connectToMaster, function(res) {
             ret['AudioBuffer'] = res;
             func(ret);
         });
@@ -78,7 +78,7 @@ snd.util.createBufferSources = function(dataSet, connectToMaster, func) {
     }
     snd.AUDIO_DATA_MANAGER.addAll(urlMap);
 
-    snd.AUDIO_DATA_MANAGER.addAllDataLoadListener(function() {
+    var callback = function() {
         var ret = {};
         
         for (var url in sourceMap) {
@@ -92,8 +92,11 @@ snd.util.createBufferSources = function(dataSet, connectToMaster, func) {
             }
         }
         
+        snd.AUDIO_DATA_MANAGER.removeAllDataLoadListener(callback);
         func(ret);
-    });
+    };
+    
+    snd.AUDIO_DATA_MANAGER.addAllDataLoadListener(callback);
     
     snd.AUDIO_DATA_MANAGER.load();
 };

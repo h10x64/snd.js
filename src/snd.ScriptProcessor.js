@@ -56,6 +56,8 @@ snd.ScriptProcessor.CLASS_NAME = "snd.SciptProcessorUnit";
 snd.ScriptProcessor.prototype.resetScriptProcessor = function() {
     var _this = this;
     
+    this._gain.channelCount = this._status.outputChannels;
+    
     if (this._unit != null) {
         this._unit.disconnect(this._gain);
         delete this._unit;
@@ -63,7 +65,11 @@ snd.ScriptProcessor.prototype.resetScriptProcessor = function() {
     this._unit = snd.AUDIO_CONTEXT.createScriptProcessor(this._status.bufferLength, this._status.inputChannels, this._status.outputChannels);
     this._unit.onaudioprocess = function(evt) {
         if (_this.script != null) {
-            eval(_this._status.script);
+            if (typeof(_this.script) == "function") {
+                _this._status.script(evt);
+            } else {
+                eval(_this._status.script);
+            }
         }
     };
     

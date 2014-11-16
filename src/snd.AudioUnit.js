@@ -45,10 +45,6 @@ snd.AudioUnit.prototype.createStatus = function() {
     return new snd.AudioUnit.Status();
 };
 
-snd.AudioUnit.prototype.connect = function(connectTo) {
-    this.connect(connectTo, connectTo.id);
-};
-
 /**
  * このオーディオユニットをconnectToで指定されたオーディオユニットまたはノードに接続します。<br/>
  * <div>
@@ -90,10 +86,6 @@ snd.AudioUnit.prototype.connect = function(connectTo, indexOut, indexIn, id) {
     // SubClass.prototype.connect = function(connectTo, bra, bra) {
     //     AudioUnit.prototype.connect.apply(this, arguments);
     // };
-};
-
-snd.AudioUnit.prototype.disconnect = function(disconnectFrom) {
-    this.disconnect(disconnectFrom, disconnectFrom.id);
 };
 
 /**
@@ -189,10 +181,14 @@ snd.AudioUnit.prototype.loadData = function(data) {
     
     this._status.id = (data["id"] != null) ? data["id"] : "";
     this._status.connection = (data["connection"] != null) ? data["connection"] : [];
+    this._status.channelCount = (data["channelCount"] != null) ? data["channelCount"] : 2;
+    this._status.channelCountMode = (data["channelCountMode"] != null) ? data["channelCountMode"] : "max";
+    this._status.channelInterpretation = (data["channelInterpretation"] != null) ? data["channelInterpretation"] : "discrete";
+    
     
     // PLEASE OVERRIDE ME LIKE THIS
     // SubClass.prototype.connect = function(connectTo, bra, bra) {
-    //     AudioUnit.prototype.disconnect.apply(this, arguments);
+    //     AudioUnit.prototype.loadData.apply(this, arguments);
     // };
 };
 
@@ -222,5 +218,9 @@ snd.AudioUnit.Status = function() {
     this.isAudioUnit = true;
     this.id = "";
     this.connection = [];
+    
+    this.channelCount = 2;
+    this.channelCountMode = "max";
+    this.channelInterpretation = "discrete";
 };
 

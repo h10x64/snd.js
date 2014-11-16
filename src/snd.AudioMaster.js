@@ -6,8 +6,9 @@
  */
 snd.AudioMaster = function() {
     this.unitList = {};
-    this.gain = snd.AUDIO_CONTEXT.createGain();
-    this.gain.connect(snd.AUDIO_CONTEXT.destination);
+    this._gain = snd.AUDIO_CONTEXT.createGain();
+    this._gain.channelCount = snd.MAX_CHANNEL_COUNT;
+    this._gain.connect(snd.AUDIO_CONTEXT.destination);
     this.id = snd.AudioMaster.ID;
 };
 
@@ -26,11 +27,11 @@ snd.AudioMaster.prototype.connectAudioUnit = function(key, audioUnit) {
     if (key == null) {
         if (this.unitList[audioUnit.id] == null) {
             this.unitList[audioUnit.id] = audioUnit;
-            audioUnit.connect(this.gain, snd.AudioMaster.ID);
+            audioUnit.connect(this._gain, snd.AudioMaster.ID);
         }
     } else {
         this.unitList[key] = audioUnit;
-        audioUnit.connect(this.gain, snd.AudioMaster.ID);
+        audioUnit.connect(this._gain, snd.AudioMaster.ID);
     }
 };
 
@@ -48,10 +49,10 @@ snd.AudioMaster.prototype.getAudioUnit = function(key) {
  */
 snd.AudioMaster.prototype.disconnectAudioUnit = function(key) {
     var audioUnit = this.unitList[key];
-    audioUnit.getConnector().disconnect(this.gain);
+    audioUnit.getConnector().disconnect(this._gain);
     delete this.unitList[key];
 };
 
 snd.AudioMaster.prototype.getConnector = function() {
-    return this.gain;
+    return this._gain;
 };

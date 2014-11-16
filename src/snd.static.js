@@ -8,7 +8,7 @@ snd._DOES_OGG_SUPPORTED = false;
 snd._DOES_AAC_SUPPORTED = false;
 snd._DOES_M4A_SUPPORTED = false;
 
-(function() {
+(function () {
     // 対応フォーマットのチェック
     var __audio__ = document.createElement("audio");
     snd._DOES_MP3_SUPPORTED = !(__audio__.canPlayType('audio/mpeg;') === "");
@@ -20,41 +20,53 @@ snd._DOES_M4A_SUPPORTED = false;
 })();
 
 /**
+ * snd.initメソッドが終了した際に呼び出されるメソッドのリストです。<br/>
+ * プラグインの初期化など、sndの初期化完了と同時に走らせたいメソッドをここに入れてください。<br/>
+ * <br/>
+ * ここへ追加したメソッドは snd.init メソッドの完了時に呼び出されます。<br/>
+ * (引数なしの、snd.INIT_EVENT_LISTENERS[index]() の形で、添字の昇順で呼び出されます。)
+ * 
+ * @type Array 初期化完了時に呼び出される関数のリスト
+ */
+snd.INIT_EVENT_LISTENERS = [];
+
+/**
  * snd.jsを初期化します。
  * @memberOf snd
  */
-snd.init = function() {
+snd.init = function () {
     snd.resetAudioContext();
-    if (snd.SoundEnvironment != null) {
-        snd.SOUND_ENVIRONMENT = new snd.SoundEnvironment();
-    }
 
     Object.defineProperties(snd, {
         /* StaticValues */
         DOES_MP3_SUPPORTED: {
-            get: function() {
+            get: function () {
                 return snd._DOES_MP3_SUPPORTED;
             }
         },
         DOES_WAV_SUPPORTED: {
-            get: function() {
+            get: function () {
                 return snd._DOES_WAV_SUPPORTED;
             }
         },
         DOES_OGG_SUPPORTED: {
-            get: function() {
+            get: function () {
                 return snd._DOES_OGG_SUPPORTED;
             }
         },
         DOES_AAC_SUPPORTED: {
-            get: function() {
+            get: function () {
                 return snd._DOES_AAC_SUPPORTED;
             }
         },
         DOES_M4A_SUPPORTED: {
-            get: function() {
+            get: function () {
                 return snd._DOES_M4A_SUPPORTED;
             }
+        },
+        MAX_CHANNEL_COUNT: {
+            writable: false,
+            value: snd._AUDIO_CONTEXT.destination.maxChannelCount
         },
         IDX_2CH_L: {
             writable: false,
@@ -104,8 +116,47 @@ snd.init = function() {
             writable: false,
             value: 5
         },
+        LOWPASS: {
+            writable: false,
+            value: "lowpass"
+        },
+        HIGHPASS: {
+            writable: false,
+            value: "highpass"
+        },
+        BANDPASS: {
+            writable: false,
+            value: "bandpass"
+        },
+        LOWSHELF: {
+            writable: false,
+            value: "lowshelf"},
+        HIGHSHELF: {
+            writable: false,
+            value: "highshelf"},
+        PEAKING: {
+            writable: false,
+            value: "peaking"},
+        NOTCH: {
+            writable: false,
+            value: "notch"},
+        ALLPASS: {
+            writable: false,
+            value: "allpass"},
+        OVERSAMPLE_NONE: {
+            writable: false,
+            value: "none"
+        },
+        OVERSAMPLE_DOUBLE: {
+            writable: false,
+            value: "2x"
+        },
+        OVERSAMPLE_QUAD: {
+            writable: false,
+            value: "4x"
+        },
         status: {
-            value: (function() {
+            value: (function () {
                 var ret = {};
                 Object.defineProperties(ret, {
                     NONE: {
@@ -134,7 +185,7 @@ snd.init = function() {
             writable: false
         },
         srctype: {
-            value: (function() {
+            value: (function () {
                 var ret = {};
                 Object.defineProperties(ret, {
                     NONE: {
@@ -163,7 +214,7 @@ snd.init = function() {
             writable: false
         },
         oscillatortype: {
-            value: (function() {
+            value: (function () {
                 var ret = {};
                 Object.defineProperties(ret, {
                     SINE: {
@@ -188,11 +239,11 @@ snd.init = function() {
             writable: false
         },
         audioparam: {
-            value: (function() {
+            value: (function () {
                 var ret = {};
                 Object.defineProperties(this, {
                     type: {
-                        value: (function() {
+                        value: (function () {
                             var retret = {};
                             Object.defineProperties(this, {
                                 SET: {
@@ -218,23 +269,23 @@ snd.init = function() {
             writable: false
         },
         BLOWSER: {
-            get: function() {
+            get: function () {
                 window.navigator.userAgent.toLowerCase();
             }
         },
         /* Objects */
         AUDIO_CONTEXT: {
-            get: function() {
+            get: function () {
                 return snd._AUDIO_CONTEXT;
             }
         },
         MASTER: {
-            get: function() {
+            get: function () {
                 return snd._MASTER;
             }
         },
         AUDIO_DATA_MANAGER: {
-            get: function() {
+            get: function () {
                 return snd._AUDIO_DATA_MANAGER;
             }
         }
@@ -242,6 +293,10 @@ snd.init = function() {
 
     snd._MASTER = new snd.AudioMaster();
     snd._AUDIO_DATA_MANAGER = new snd.AudioDataManager();
+    
+    for (var i = 0; i < snd.INIT_EVENT_LISTENERS.length; i++) {
+        snd.INIT_EVENT_LISTENERS[i]();
+    }
 };
 
 /**
@@ -249,7 +304,7 @@ snd.init = function() {
  * snd#initメソッドから呼び出すためのメソッドですので、特別な理由が無い限り使用しないでください。
  * @private
  */
-snd.resetAudioContext = function() {
+snd.resetAudioContext = function () {
     if (snd._AUDIO_CONTEXT == null) {
         // Create AudioContext
         if ('AudioContext' in window) {
@@ -259,5 +314,6 @@ snd.resetAudioContext = function() {
             // crome etc
             snd._AUDIO_CONTEXT = new webkitAudioContext();
         }
+        snd._AUDIO_CONTEXT.destination.channelCount = snd._AUDIO_CONTEXT.destination.maxChannelCount;
     }
 };
