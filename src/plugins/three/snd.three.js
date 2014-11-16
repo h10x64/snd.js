@@ -1,4 +1,9 @@
 
+snd.three.init = function() {
+    snd.SOUND_ENVIRONMENT = new snd.SoundEnvironment();
+};
+snd.INIT_EVENT_LISTENERS.push(snd.three.init);
+
 snd.three.update = function(mainCamera, time) {
     if (snd.SOUND_ENVIRONMENT.cameras[mainCamera.id] == null) {
         console.log("mainCamera(" + mainCamera.toString() + ") is not added.");

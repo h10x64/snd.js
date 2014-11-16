@@ -50,6 +50,7 @@ module.exports = function(grunt) {
           'dist/plugins/snd.three.js': [
               'src/plugins/three/COPYRIGHT',
               'src/plugins/three/snd.three.static.js',
+              'src/plugins/three/snd.PosDir.js',
               'src/plugins/three/snd.Listener.js',
               'src/plugins/three/snd.SoundEnvironment.js',
               'src/plugins/three/snd.SoundNode.js',

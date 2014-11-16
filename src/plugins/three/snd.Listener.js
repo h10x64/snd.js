@@ -68,18 +68,6 @@ snd.Listener.prototype.setOrientation = function(x, y, z, ux, uy, uz) {
 };
 
 /**
- * 球座標でリスナーの向きを設定します。
- * @param {snd.vec3} dir dir.x:方位角 dir.y:仰角 dir.z:距離
- * @param {snd.vec3} up up.x:方位角 up.y:仰角 up.z:距離
- */
-snd.Listener.prototype.setOrientationBySpherical = function(dir, up) {
-    snd.PosDir.prototype.setOrientationBySpherical.call(this, dir, up);
-    if (this.listener != null) {
-        this.listener.setOrientation(this.dir.x, this.dir.y, this.dir.z, this.up.x, this.up.y, this.up.z);
-    }
-};
-
-/**
  * 速度を設定します。
  * @param {type} x X軸方向の速度
  * @param {type} y Y軸方向の速度

@@ -17,7 +17,7 @@ snd.SoundNode.prototype.constructor = snd.SoundNode;
 /**
  * @see snd.AudioUnit#connect
  */
-snd.SoundNode.prototype.connect = function(connectTo) {
+snd.SoundNode.prototype.connect = function(connectTo, chOut, chIn, id) {
     snd.AudioUnit.prototype.connect.apply(this, arguments);
     
     if (connectTo.isAudioUnit) {
