@@ -20,13 +20,24 @@ module.exports = function(grunt) {
               'src/snd.vec3.js',
               'src/snd.AudioUnit.js',
               'src/snd.Source.js',
+              // Sources
               'src/snd.BufferSource.js',
               'src/snd.OscillatorSource.js',
               'src/snd.MediaElementAudioSource.js',
               'src/snd.MediaStreamAudioSource.js',
+              // Effects
+              'src/snd.Analyser.js',
+              'src/snd.BiquadFilter.js',
+              'src/snd.Convolver.js',
+              'src/snd.Delay.js',
+              'src/snd.DynamicsCompressor.js',
+              'src/snd.Gain.js',
+              'src/snd.WaveShaper.js',
+              // Misc.
               'src/snd.ScriptProcessor.js',
               'src/snd.Synth.js',
               'src/snd.Listener.js',
+              // Util, Environment, etc..
               'src/snd.AudioDataManager.js',
               'src/snd.AudioMaster.js',
               'src/snd.util.js',
@@ -83,7 +94,8 @@ module.exports = function(grunt) {
         files: {
           'dist/snd.min.js' : ['dist/snd.js'],
           'dist/plugins/snd.mml.min.js' : ['dist/plugins/snd.mml.js'],
-          'dist/plugins/snd.three.min.js' : ['dist/plugins/snd.three.js']
+          'dist/plugins/snd.three.min.js' : ['dist/plugins/snd.three.js'],
+          'dist/plugins/snd.stereo.min.js' : ['dist/plugins/snd.three.js']
         }
       }
     },
