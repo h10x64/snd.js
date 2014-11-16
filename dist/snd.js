@@ -80,243 +80,6 @@ snd.Exception = function(message) {
 
 
 /**
- * x, y, zで指定した値を持つ新しいインスタンスを生成します。
- * @param {Number} x ベクトルのX値
- * @param {Number} y ベクトルのY値
- * @param {Number} z ベクトルのZ値
- * @class 3次元ベクトルクラスです。<br/>
- * 球座標としても使われ、その場合、x, y, zの値はそれぞれ<br/>
- * x: 方位角<br/>
- * y: 仰角<br/>
- * z: 距離<br/>
- * として扱われます。
- */
-snd.vec3 = function(x, y, z) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
-
-    Object.defineProperties(this, {
-        length: {
-            get: function() {
-                return Math.sqrt(this._x * this._x + this._y * this._y + this._z * this._z);
-            }
-        }
-    });
-};
-
-snd.vec3.prototype.add = function(pos) {
-    this._x += pos.x;
-    this._y += pos.y;
-    this._z += pos.z;
-};
-
-snd.vec3.prototype.getAddVector = function(pos) {
-    return new snd.vec3(this.x + pos.x, this.y + pos.y, this.z + this.z);
-};
-
-snd.vec3.prototype.mult = function(a) {
-    this._x *= a;
-    this._y *= a;
-    this._z *= a;
-};
-
-snd.vec3.prototype.getMultVector = function(a) {
-    return new snd.vec3(a * this.x, a * this.y, a * this.z);
-};
-
-snd.vec3.prototype.sub = function(pos) {
-    this._x -= pos.x;
-    this._y -= pos.y;
-    this._z -= pos.z;
-};
-
-snd.vec3.prototype.getSubVector = function(pos) {
-    return new snd.vec3(this.x - pos.x, this.y - pos.y, this.z - pos.y);
-};
-
-snd.vec3.prototype.normalize = function() {
-    var l = this.length;
-    this._x /= l;
-    this._y /= l;
-    this._z /= l;
-};
-
-snd.vec3.prototype.getNormalizedVector = function() {
-    var l = this.length;
-    return new snd.vec3(this.x / l, this.y / l, this.z / l);
-};
-
-snd.vec3.prototype.toSphericalCoordinate = function() {
-    var azimuth = Math.atan2(this.z, this.x);
-    var elevation = Math.atan2(this.y, Math.sqrt(this.z * this.z + this.x * this.x));
-    var length = this.length;
-    return new snd.Spherical(azimuth, elevation, length);
-};
-
-snd.vec3.prototype.toCyrindricalCoordinate = function() {
-    var r = Math.sqrt(this.x * this.x + this.z * this.z);
-    var theta = Math.atan2(this.z, this.x);
-    var y = this.y;
-};
-
-/**
- * @deprecated このメソッドは削除される予定です。
- * @returns {snd.vec3}
- */
-snd.vec3.prototype.toOrthogonalCoordinate = function() {
-    var retY = this.z * Math.sin(this.y);
-    var retX = this.z * Math.cos(this.y) * Math.cos(this.x);
-    var retZ = this.z * Math.cos(this.y) * Math.sin(this.x);
-    return new snd.vec3(retX, retY, retZ);
-};
-
-snd.Spherical = function(azim, elev, r) {
-    this._azim = azim;
-    this._elev = elev;
-    this._r = r;
-
-    Object.defineProperties(this, {
-        azim: {
-            get: function() {
-                return this._azim;
-            },
-            set: function(val) {
-                this._azim = val;
-            }
-        },
-        elev: {
-            get: function() {
-                return this._elev;
-            },
-            set: function(val) {
-                this._elev = val;
-            }
-        },
-        r: {
-            get: function() {
-                return this._r;
-            },
-            set: function(val) {
-                this._r = val;
-            }
-        }
-    });
-};
-
-snd.Cylindrical = function(r, theta, y) {
-    this._r = r;
-    this._theta = theta;
-    this._y = y;
-
-    Object.defineProperties(this, {
-        r: {
-            get: function() {
-                return this._r;
-            },
-            set: function(val) {
-                this._r = r;
-            }
-        },
-        theta: {
-            get: function() {
-                return this._theta;
-            },
-            set: function(val) {
-                this._theta = val;
-            }
-        },
-        y: {
-            get: function() {
-                return this._y;
-            },
-            set: function(val) {
-                this._y = val;
-            }
-        }
-    });
-};
-
-/**
- * 位置(0, 0, 0), 向き(0, 0, -1), 上方向(0, 1, 0)となる新しいインスタンスを作ります。
- * @class 位置と向きをあらわすクラスです。<br/>
- * 位置を表すposベクトル、正面向きを表すdirベクトル、上方向を表すupベクトルの3つのベクトルで位置と向きを管理します。
- */
-snd.PosDir = function() {
-    this.pos = new snd.vec3(0, 0, 0);
-    this.dir = new snd.vec3(0, 0, -1);
-    this.up = new snd.vec3(0, 1, 0);
-};
-
-snd.PosDir.prototype.setPosition = function(x, y, z) {
-    this.pos.x = x;
-    this.pos.y = y;
-    this.pos.z = z;
-};
-
-snd.PosDir.prototype.setDir = function(x, y, z) {
-    this.dir.x = x;
-    this.dir.y = y;
-    this.dir.z = z;
-    this.dir.normalize();
-};
-
-snd.PosDir.prototype.setUp = function(x, y, z) {
-    this.up.x = x;
-    this.up.y = y;
-    this.up.z = z;
-    this.up.normalize();
-};
-
-snd.PosDir.prototype.setOrientation = function(x, y, z, ux, uy, uz) {
-    this.setDir(x, y, z);
-    this.setUp(ux, uy, uz);
-};
-
-snd.PosDir.prototype.setOrientationBySpherical = function(dir, up) {
-    var orthDir;
-    if (up != null) {
-        var orthUp = up.toOrthogonalCoordinate();
-        this.setTop(orthUp.x, orthUp.y, orthUp.z);
-
-        var rotDir = dir.sub(up);
-        rotDir.normalize();
-
-        orthDir = rotDir.toOrthogonalCoordinate();
-    } else {
-        orthDir = dir.toOrthogonalCoordinate();
-    }
-
-    this.setDir(orthDir.x, orthDir.y, orthDir.z);
-};
-
-snd.PosDir.interpolation = function(left, right, ratio) {
-    var calc = {};
-    var values = {
-        px: {left: left.pos.x, right: right.pos.x},
-        py: {left: left.pos.y, right: right.pos.y},
-        pz: {left: left.pos.z, right: right.pos.z},
-        ux: {left: left.up.x, right: right.up.x},
-        uy: {left: left.up.y, right: right.up.y},
-        uz: {left: left.up.z, right: right.up.z},
-        dx: {left: left.dir.x, right: right.dir.x},
-        dy: {left: left.dir.y, right: right.dir.y},
-        dz: {left: left.dir.z, right: right.dir.z}
-    };
-
-    for (var key in values) {
-        calc[key] = values[key].left + (values[key].right - values[key].left) * ratio;
-    }
-
-    var ret = new snd.PosDir();
-    ret.setPos(calc.px, calc.py, calc.pz);
-    ret.setUp(calc.ux, calc.uy, calc.uz);
-    ret.setDir(calc.dx, calc.dy, calc.dz);
-
-    return ret;
-};
-
-/**
  * 新しいオーディオユニットを生成します。
  * @class 1つのオーディオユニットを定義する抽象クラスです。<br/>
  * 引数にAudioUnitを要求するメソッドに渡すオブジェクトは、ここで定義されている各メソッドを実装している必要があります。<br/>
@@ -363,10 +126,6 @@ snd.AudioUnit.prototype.createStatus = function() {
     return new snd.AudioUnit.Status();
 };
 
-snd.AudioUnit.prototype.connect = function(connectTo) {
-    this.connect(connectTo, connectTo.id);
-};
-
 /**
  * このオーディオユニットをconnectToで指定されたオーディオユニットまたはノードに接続します。<br/>
  * <div>
@@ -408,10 +167,6 @@ snd.AudioUnit.prototype.connect = function(connectTo, indexOut, indexIn, id) {
     // SubClass.prototype.connect = function(connectTo, bra, bra) {
     //     AudioUnit.prototype.connect.apply(this, arguments);
     // };
-};
-
-snd.AudioUnit.prototype.disconnect = function(disconnectFrom) {
-    this.disconnect(disconnectFrom, disconnectFrom.id);
 };
 
 /**
@@ -507,10 +262,14 @@ snd.AudioUnit.prototype.loadData = function(data) {
     
     this._status.id = (data["id"] != null) ? data["id"] : "";
     this._status.connection = (data["connection"] != null) ? data["connection"] : [];
+    this._status.channelCount = (data["channelCount"] != null) ? data["channelCount"] : 2;
+    this._status.channelCountMode = (data["channelCountMode"] != null) ? data["channelCountMode"] : "max";
+    this._status.channelInterpretation = (data["channelInterpretation"] != null) ? data["channelInterpretation"] : "discrete";
+    
     
     // PLEASE OVERRIDE ME LIKE THIS
     // SubClass.prototype.connect = function(connectTo, bra, bra) {
-    //     AudioUnit.prototype.disconnect.apply(this, arguments);
+    //     AudioUnit.prototype.loadData.apply(this, arguments);
     // };
 };
 
@@ -540,6 +299,10 @@ snd.AudioUnit.Status = function() {
     this.isAudioUnit = true;
     this.id = "";
     this.connection = [];
+    
+    this.channelCount = 2;
+    this.channelCountMode = "max";
+    this.channelInterpretation = "discrete";
 };
 
 
@@ -732,12 +495,11 @@ snd.BufferSource = function(id) {
     snd.Source.apply(this, arguments);
     
     this._source = null;
-    this._audioBuffer = null;
+    this.audioBuffer = null;
     this._key = "";
     
     Object.defineProperties(this, {
         loop: {
-            enumerable: true,
             get: function() {
                 return this._status.loop;
             },
@@ -747,7 +509,6 @@ snd.BufferSource = function(id) {
             }
         },
         loopStart: {
-            enumerable: true,
             get: function() {
                 return this._status.loopStart;
             },
@@ -759,7 +520,6 @@ snd.BufferSource = function(id) {
             }
         },
         loopEnd: {
-            enumerable: true,
             get: function() {
                 return this._status.loopEnd;
             },
@@ -1059,7 +819,7 @@ snd.BufferSource.prototype.resetEventMethods = function() {
     var _this = this;
     
     this._source.onended = function() {
-        _this.status = snd.status.STOPPED;
+        _this._status.status = snd.status.STOPPED;
         _this.fireOnEndedEvent();
     };
 };
@@ -2388,6 +2148,929 @@ snd.MediaStreamAudioSource.Status = function() {
 snd.MediaStreamAudioSource.prototype = Object.create(snd.Source.prototype);
 snd.MediaStreamAudioSource.prototype.constructor = snd.MediaStreamAudioSource;
 
+snd.Analyser = function (id) {
+    snd.AudioUnit.apply(this, arguments);
+
+    this._analyser = snd.AUDIO_CONTEXT.createAnalyser();
+    this.resetBufferSize();
+
+    /* DEFINE PROPERTIES */
+    Object.defineProperties(this, {
+        channelCount: {
+            get: function () {
+                return this._status.channelCount;
+            },
+            set: function (val) {
+                this._output.channelCount = val;
+                this._connector.channelCount = val;
+                this._analyser.channelCount = val;
+                this._status.channelCount = val;
+            }
+        },
+        channelCountMode: {
+            get: function () {
+                return this._status.channelCountMode;
+
+            },
+            set: function (val) {
+                this._output.channelCountMode = val;
+                this._connector.channelCountMode = val;
+                this._analyser.channelCountMode = val;
+                this._status.channelCountMode = val;
+            }
+        },
+        channelInterpretation: {
+            get: function () {
+                return this._status.channelInterpretation;
+            },
+            set: function (val) {
+                this._output.channelInterpretation = val;
+                this._connector.channelInterpretation = val;
+                this._analyser.channelInterpretation = val;
+                this._status.channelInterpretation = val;
+            }
+        },
+        floatFrequencyData: {
+            get: function () {
+                this._analyser.getFloatFrequencyData(this._floatFrequencyDataBuffer);
+                return this._floatFrequencyDataBuffer;
+            }
+        },
+        byteFrequencyData: {
+            get: function () {
+                this._analyser.getByteFrequencyData(this._byteFrequencyDataBuffer);
+                return this._byteFrequencyDataBuffer;
+            }
+        },
+        floatTimeDomainData: {
+            get: function () {
+                this._analyser.getFloatTimeDomainData(this._floatTimeDomainDataBuffer);
+                return this._floatTimeDomainDataBuffer;
+            }
+        },
+        byteTimeDomainData: {
+            get: function () {
+                this._analyser.getByteTimeDomainData(this._byteTimeDomainDataBuffer);
+                return this._byteTimeDomainDataBuffer;
+            }
+        },
+        fftSize: {
+            get: function () {
+                return this._analyser.fftSize;
+            },
+            set: function (val) {
+                this._analyser.fftSize = val;
+                this.resetBufferSize();
+            }
+        },
+        frequencyBinCount: {
+            get: function () {
+                return this._analyser.frequencyBinCount;
+            }
+        },
+        minDecibels: {
+            get: function () {
+                return this._analyser.minDecibels;
+            },
+            set: function (val) {
+                this._analyser.minDecibels = val;
+            }
+        },
+        maxDecibels: {
+            get: function () {
+                return this._analyser.maxDecibels;
+            },
+            set: function (val) {
+                this._analyser.maxDecibels = val;
+            }
+        },
+        smoothingTimeConstant: {
+            get: function () {
+                return this._analyser.smoothingTimeConstant;
+            },
+            set: function (val) {
+                this._analyser.smoothingTimeConstant = val;
+            }
+        }
+    });
+    
+    this._status.smoothingTimeConstant = this._analyser.smoothingTimeConstant;
+    this._status.fftSize = this._analyser.fftSize;
+    this._status.maxDecibels = this._analyser.maxDecibels;
+    this._status.minDecibels = this._analyser.minDecibels;
+};
+snd.Analyser.prototype = Object.create(snd.AudioUnit.prototype);
+snd.Analyser.prototype.constructor = snd.Gain;
+snd.Analyser.prototype.connect = function (connectTo, indexIn, indexOut, id) {
+    snd.AudioUnit.prototype.connect.apply(this, arguments);
+    if (connectTo.getConnector != null) {
+        this._analyser.connect(connectTo.getConnector(), indexIn, indexOut);
+    } else {
+        this._analyser.connect(connectTo, indexIn, indexOut);
+    }
+};
+snd.Analyser.prototype.disconnect = function (disconnectFrom, indexIn, id) {
+    snd.AudioUnit.prototype.disconnect.apply(this, arguments);
+    if (disconnectFrom.getConnector != null) {
+        this._analyser.disconnect(disconnectFrom.getConnector(), indexIn);
+    } else {
+        this._analyser.disconnect(disconnectFrom, indexIn);
+    }
+};
+snd.Analyser.prototype.createStatus = function () {
+    return new snd.Analyser.Status();
+};
+snd.Analyser.prototype.getConnector = function () {
+    return this._analyser;
+};
+snd.Analyser.prototype.loadData = function (data) {
+    snd.AudioUnit.prototype.loadData.apply(this, arguments);
+
+    this.fftSize = data.fftSize;
+    this.maxDecibels = data.maxDecibels;
+    this.smoothingTimeConstant = data.smoothingTimeConstant;
+};
+
+snd.Analyser.prototype.resetBufferSize = function() {
+    this._byteFrequencyDataBuffer = new Uint8Array(this._analyser.frequencyBinCount);
+    this._floatFrequencyDataBuffer = new Float32Array(this._analyser.frequencyBinCount);
+    this._byteTimeDomainDataBuffer = new Uint8Array(this._analyser.fftSize);
+    this._floatTimeDomainDataBuffer = new Float32Array(this._analyser.fftSize);
+};
+
+snd.Analyser.Status = function () {
+    snd.AudioUnit.Status.apply(this, arguments);
+    
+    this.fftSize = 2048;
+    this.maxDecibels = -30;
+    this.minDecibels = -100;
+    this.smoothingTimeConstant = 0.1;
+};
+snd.Analyser.Status.prototype = Object.create(snd.AudioUnit.Status.prototype);
+snd.Analyser.Status.prototype.constructor = snd.Analyser.Status;
+snd.BiquadFilter = function(id) {
+    snd.AudioUnit.apply(this, arguments);
+
+    this._connector = snd.AUDIO_CONTEXT.createGain();
+    this._output = snd.AUDIO_CONTEXT.createGain();
+    this._filter = snd.AUDIO_CONTEXT.createBiquadFilter();
+    
+    this._connector.connect(this._filter);
+    this._filter.connect(this._output);
+
+    /* DEFINE PROPERTIES */
+    Object.defineProperties(this, {
+        channelCount: {
+            get: function() {
+                return this._status.channelCount;
+            },
+            set: function(val) {
+                this._connector.channelCount = val;
+                this._output.channelCount = val;
+                this._filter.channelCount = val;
+                this._status.channelCount = val;
+            }
+        },
+        channelCountMode: {
+            get: function() {
+                return this._status.channelCountMode;
+
+            },
+            set: function(val) {
+                this._connector.channelCountMode = val;
+                this._output.channelCountMode = val;
+                this._filter.channelCountMode = val;
+                this._status.channelCountMode = val;
+            }
+        },
+        channelInterpretation: {
+            get: function() {
+                return this._status.channelInterpretation;
+            },
+            set: function(val) {
+                this._connector.channelInterpretation = val;
+                this._output.channelInterpretation = val;
+                this._filter.channelInterpretation = val;
+                this._status.channelInterpretation = val;
+            }
+        },
+        type: {
+            get: function() {
+                return this._filter.type;
+            },
+            set: function(val) {
+                this._filter.type = val;
+                this._status.type = val;
+            }
+        },
+        frequency: {
+            get: function() {
+                return this._filter.frequency.value;
+            },
+            set: function(val) {
+                this._filter.frequency.value = val;
+                this._status.frequency = val;
+            }
+        },
+        frequencyParam: {
+            get: function() {
+                var ret = this._filter.frequency;
+                ret.id = this.id + ".frequency";
+                return ret;
+            }
+        },
+        detune: {
+            get: function() {
+                return this._filter.detune.value;
+            },
+            set: function(val) {
+                this._filter.detune.value = val;
+                this._status.detune = val;
+            }
+        },
+        detuneParam: {
+            get: function() {
+                var ret = this._filter.detune;
+                ret.id = this.id + ".detune";
+                return ret;
+            }
+        },
+        Q: {
+            get: function() {
+                return this._filter.Q.value;
+            },
+            set: function(val) {
+                this._filter.Q.value = val;
+                this._status.Q = val;
+            }
+        },
+        QParam: {
+            get: function() {
+                var ret = this._filter.Q;
+                ret.id = this.id + ".Q";
+                return ret;
+            }
+        },
+        gain: {
+            get: function() {
+                return this._filter.gain.value;
+            },
+            set: function(val) {
+                this._filter.gain.value = val;
+                this._status.gain = val;
+            }
+        },
+        gainParam: {
+            get: function() {
+                var ret = this._filter.gain;
+                ret.id = this.id + ".gain";
+                return ret;
+            }
+        }
+    });
+};
+snd.BiquadFilter.prototype = Object.create(snd.AudioUnit.prototype);
+snd.BiquadFilter.prototype.constructor = snd.Gain;
+
+snd.BiquadFilter.prototype.connect = function(connectTo, indexIn, indexOut, id) {
+    snd.AudioUnit.prototype.connect.apply(this, arguments);
+    if (connectTo.getConnector != null) {
+        this._output.connect(connectTo.getConnector(), indexIn, indexOut);
+    } else {
+        this._output.connect(connectTo, indexIn, indexOut);
+    }
+};
+snd.BiquadFilter.prototype.disconnect = function(disconnectFrom, indexIn, id) {
+    snd.AudioUnit.prototype.disconnect.apply(this, arguments);
+    if (disconnectFrom.getConnector != null) {
+        this._output.disconnect(disconnectFrom.getConnector(), indexIn);
+    } else {
+        this._output.disconnect(disconnectFrom, indexIn);
+    }
+};
+snd.BiquadFilter.prototype.createStatus = function() {
+    return new snd.BiquadFilter.Status();
+};
+snd.BiquadFilter.prototype.getConnector = function() {
+    return this._connector;
+};
+snd.BiquadFilter.prototype.loadData = function(data) {
+    snd.AudioUnit.prototype.loadData.apply(this, arguments);
+
+    // PLEASE WRITE LOADING METHODS HERE
+};
+
+snd.BiquadFilter.Status = function() {
+    snd.AudioUnit.Status.apply(this, arguments);
+
+    this.type = snd.LOWPASS;
+    this.frequency = 350;
+    this.detune = 0;
+    this.Q = 1.0;
+    this.gain = 0;
+};
+snd.BiquadFilter.Status.prototype = Object.create(snd.AudioUnit.Status.prototype);
+snd.BiquadFilter.Status.prototype.constructor = snd.BiquadFilter.Status;
+snd.Convolver = function (id) {
+    snd.AudioUnit.apply(this, arguments);
+
+    this._connector = snd.AUDIO_CONTEXT.createGain();
+    this._output = snd.AUDIO_CONTEXT.createGain();
+    this._convolver = snd.AUDIO_CONTEXT.createConvolver();
+    this._status.audioBuffer = this._convolver.audioBuffer;
+
+    this._connector.connect(this._convolver);
+    this._convolver.connect(this._output);
+
+    /* DEFINE PROPERTIES */
+    Object.defineProperties(this, {
+        channelCount: {
+            get: function () {
+                return this._status.channelCount;
+            },
+            set: function (val) {
+                this._output.channelCount = val;
+                this._connector.channelCount = val;
+                this._convolver.channelCount = val;
+                this._status.channelCount = val;
+            }
+        },
+        channelCountMode: {
+            get: function () {
+                return this._status.channelCountMode;
+
+            },
+            set: function (val) {
+                this._output.channelCountMode = val;
+                this._conector.channelCountMode = val;
+                this._convolver.channelCountMode = val;
+                this._status.channelCountMode = val;
+            }
+        },
+        channelInterpretation: {
+            get: function () {
+                return this._status.channelInterpretation;
+            },
+            set: function (val) {
+                this._output.channelInterpretation = val;
+                this._connector.channelInterpretation = val;
+                this._convolver.channelInterpretation = val;
+                this._status.channelInterpretation = val;
+            }
+        },
+        buffer: {
+            get: function () {
+                return this._convolver.buffer;
+            },
+            set: function (val) {
+                this._convolver.buffer = val;
+            }
+        },
+        normalize: {
+            get: function () {
+                return this._convolver.normalize;
+            },
+            set: function (val) {
+                this.convolver.normalize = val;
+            }
+        }
+    });
+
+    this.channelCount = this._status.channelCount;
+};
+snd.Convolver.prototype = Object.create(snd.AudioUnit.prototype);
+snd.Convolver.prototype.constructor = snd.Gain;
+snd.Convolver.prototype.connect = function (connectTo, indexIn, indexOut, id) {
+    snd.AudioUnit.prototype.connect.apply(this, arguments);
+    if (connectTo.getConnector != null) {
+        this._output.connect(connectTo.getConnector(), indexIn, indexOut);
+    } else {
+        this._output.connect(connectTo, indexIn, indexOut);
+    }
+};
+snd.Convolver.prototype.disconnect = function (disconnectFrom, indexIn, id) {
+    snd.AudioUnit.prototype.disconnect.apply(this, arguments);
+    if (disconnectFrom.getConnector != null) {
+        this._output.disconnect(disconnectFrom.getConnector(), indexIn);
+    } else {
+        this._output.disconnect(disconnectFrom, indexIn);
+    }
+};
+snd.Convolver.prototype.createStatus = function () {
+    return new snd.Convolver.Status();
+};
+snd.Convolver.prototype.getConnector = function () {
+    return this._connector;
+};
+
+// @TODO Load/Save AudioBuffer
+
+snd.Convolver.prototype.loadData = function (data) {
+    snd.AudioUnit.prototype.loadData.apply(this, arguments);
+
+    this.normalize = data.normalize;
+};
+
+snd.Convolver.Status = function () {
+    snd.AudioUnit.Status.apply(this, arguments);
+    this.audioBuffer = null;
+    this.normalize = true;
+};
+snd.Convolver.Status.prototype = Object.create(snd.AudioUnit.Status.prototype);
+snd.Convolver.Status.prototype.constructor = snd.Convolver.Status;
+snd.Delay = function (id) {
+    snd.AudioUnit.apply(this, arguments);
+    
+    this._output = snd.AUDIO_CONTEXT.createGain();
+    this._connector = snd.AUDIO_CONTEXT.createGain();
+    
+    this._delay = snd.AUDIO_CONTEXT.createDelay(this._status.maxDelayTime);
+    this._delay.delayTime.value = 0;
+    
+    this._connector.connect(this._delay);
+    this._delay.connect(this._output);
+
+    /* DEFINE PROPERTIES */
+    Object.defineProperties(this, {
+        channelCount: {
+            get: function () {
+                return this._status.channelCount;
+            },
+            set: function (val) {
+                this._delay.channelCount = val;
+                this._output.channelCount = val;
+                this._connector.channelCount = val;
+                this._status.channelCount = val;
+            }
+        },
+        channelCountMode: {
+            get: function () {
+                return this._status.channelCountMode;
+            },
+            set: function (val) {
+                this._delay.channelCountMode = val;
+                this._status.channelCountMode = val;
+            }
+        },
+        channelInterpretation: {
+            get: function () {
+                return this._status.channelInterpretation;
+            },
+            set: function (val) {
+                this._delay.channelCountInterpretation = val;
+                this._status.channelInterpretation = val;
+            }
+        },
+        maxDelay: {
+            get: function () {
+                return this._status.maxDelay;
+            },
+            set: function (val) {
+                if (val > 0 && val < 180) {
+                    delete this._delay;
+                    
+                    this._delay = snd.AUDIO_CONTEXT.createDelay(val);
+                    this._delay.delayTime.value = this._status.delayTime;
+                    
+                    this._connector.connect(this._delay);
+                    this._delay.connect(this._output);
+                    
+                    this._status.maxDelay = val;
+                }
+            }
+        },
+        delayTime: {
+            get: function () {
+                return this._status.delayTime;
+            },
+            set: function (val) {
+                if (val >= 0 && val < 180) {
+                    this._delay.delayTime.value = val;
+                    this._status.delayTime = val;
+                }
+            }
+        },
+        delayTimeParam: {
+            get: function () {
+                return this._delay.delayTime;
+            }
+        }
+    });
+};
+snd.Delay.prototype = Object.create(snd.AudioUnit.prototype);
+snd.Delay.prototype.constructor = snd.Gain;
+snd.Delay.prototype.connect = function (connectTo, indexIn, indexOut, id) {
+    snd.AudioUnit.prototype.connect.apply(this, arguments);
+    if (connectTo.getConnector != null) {
+        this._output.connect(connectTo.getConnector(), indexIn, indexOut);
+    } else {
+        this._output.connect(connectTo, indexIn, indexOut);
+    }
+};
+snd.Delay.prototype.disconnect = function (disconnectFrom, indexIn, id) {
+    snd.AudioUnit.prototype.disconnect.apply(this, arguments);
+    if (disconnectFrom.getConnector != null) {
+        this._output.disconnect(disconnectFrom.getConnector(), indexIn);
+    } else {
+        this._output.disconnect(disconnectFrom, indexIn);
+    }
+};
+snd.Delay.prototype.createStatus = function () {
+    return new snd.Delay.Status();
+};
+snd.Delay.prototype.getConnector = function () {
+    return this._connector;
+};
+snd.Delay.prototype.loadData = function (data) {
+    snd.AudioUnit.prototype.loadData.apply(this, arguments);
+
+    this.maxDelayTime = data.maxDelayTime;
+    this.delayTime = data.delayTime;
+};
+
+snd.Delay.Status = function () {
+    snd.AudioUnit.Status.apply(this, arguments);
+    this.delayTime = 0;
+    this.maxDelayTime = 60;
+};
+snd.Delay.Status.prototype = Object.create(snd.AudioUnit.Status.prototype);
+snd.Delay.Status.prototype.constructor = snd.Delay.Status;
+snd.DynamicsCompressor = function (id) {
+    snd.AudioUnit.apply(this, arguments);
+
+    this._output = snd.AUDIO_CONTEXT.createGain();
+    this._connector = snd.AUDIO_CONTEXT.createGain();
+    this._compressor = snd.AUDIO_CONTEXT.createDynamicsCompressor();
+    
+    this._connector.connect(this._compressor);
+    this._compressor.connect(this._output);
+
+    /* DEFINE PROPERTIES */
+    Object.defineProperties(this, {
+        channelCount: {
+            get: function () {
+                return this._status.channelCount;
+            },
+            set: function (val) {
+                this._connector.channelCount = val;
+                this._output.channelCount = val;
+                this._compressor.channelCount = val;
+                this._status.channelCount = val;
+            }
+        },
+        channelCountMode: {
+            get: function () {
+                return this._status.channelCountMode;
+
+            },
+            set: function (val) {
+                this._connector.channelCountMode = val;
+                this._output.channelCountMode = val;
+                this._compressor.channelCountMode = val;
+                this._status.channelCountMode = val;
+            }
+        },
+        channelInterpretation: {
+            get: function () {
+                return this._status.channelInterpretation;
+            },
+            set: function (val) {
+                this._connector.channelInterpretation = val;
+                this._output.channelInterpretation = val;
+                this._compressor.channelInterpretation = val;
+                this._status.channelInterpretation = val;
+            }
+        },
+        attack: {
+            get: function () {
+                return this._compressor.attack.value;
+            },
+            set: function(val) {
+                this._compressor.attack.value = val;
+                this._status.attack = val;
+            }
+        },
+        attackParam: {
+            get: function () {
+                var ret = this._compressor.attack;
+                ret.id = this.id + ".attack";
+                return ret;
+            }
+        },
+        knee: {
+            get: function () {
+                return this._compressor.knee.value;
+            },
+            set: function(val) {
+                this._compressor.knee.value = val;
+                this._status.knee = val;
+            }
+        },
+        kneeParam: {
+            get: function () {
+                var ret = this._compressor.knee;
+                ret.id = this.id + ".knee";
+                return ret;
+            }
+        },
+        ratio: {
+            get: function () {
+                return this._compressor.ratio.value;
+            },
+            set: function(val) {
+                this._compressor.ratio.value = val;
+                this._status.ratio = val;
+            }
+        },
+        ratioParam: {
+            get: function () {
+                var ret = this._compressor.ratio;
+                ret.id = this.id + ".ratio";
+                return ret;
+            }
+        },
+        reduction: {
+            get: function () {
+                return this._compressor.reduction.value;
+            }
+        },
+        release: {
+            get: function () {
+                return this._compressor.release.value;
+            },
+            set: function(val) {
+                this._compressor.release.value = val;
+                this._status.release = val;
+            }
+        },
+        releaseParam: {
+            get: function () {
+                var ret = this._compressor.release;
+                ret.id = this.id + ".release";
+                return ret;
+            }
+        },
+        threshold: {
+            get: function () {
+                return this._compressor.threshold.value;
+            },
+            set: function(val) {
+                this._compressor.threshold.value = val;
+                this._status.threshold = val;
+            }
+        },
+        thresholdParam: {
+            get: function () {
+                var ret = this._compressor.threshold;
+                ret.id = this.id + ".threshold";
+                return ret;
+            }
+        },
+    });
+};
+snd.DynamicsCompressor.prototype = Object.create(snd.AudioUnit.prototype);
+snd.DynamicsCompressor.prototype.constructor = snd.Gain;
+snd.DynamicsCompressor.prototype.connect = function (connectTo, indexIn, indexOut, id) {
+    snd.AudioUnit.prototype.connect.apply(this, arguments);
+    if (connectTo.getConnector != null) {
+        this._output.connect(connectTo.getConnector(), indexIn, indexOut);
+    } else {
+        this._output.connect(connectTo, indexIn, indexOut);
+    }
+};
+snd.DynamicsCompressor.prototype.disconnect = function (disconnectFrom, indexIn, id) {
+    snd.AudioUnit.prototype.disconnect.apply(this, arguments);
+    if (disconnectFrom.getConnector != null) {
+        this._output.disconnect(disconnectFrom.getConnector(), indexIn);
+    } else {
+        this._output.disconnect(disconnectFrom, indexIn);
+    }
+};
+snd.DynamicsCompressor.prototype.createStatus = function () {
+    return new snd.DynamicsCompressor.Status();
+};
+snd.DynamicsCompressor.prototype.getConnector = function () {
+    return this._connector;
+};
+snd.DynamicsCompressor.prototype.loadData = function (data) {
+    snd.AudioUnit.prototype.loadData.apply(this, arguments);
+    
+    this.attack = data.attack;
+    this.knee = data.knee;
+    this.ratio = data.ratio;
+    this.threshold = data.threshold;
+    this.release = data.release;
+};
+
+snd.DynamicsCompressor.Status = function () {
+    snd.AudioUnit.Status.apply(this, arguments);
+    
+    this.attack = 0.003;
+    this.knee = 30;
+    this.ratio = 12;
+    this.threshold = -24;
+    this.release = 0.250;
+};
+snd.DynamicsCompressor.Status.prototype = Object.create(snd.AudioUnit.Status.prototype);
+snd.DynamicsCompressor.Status.prototype.constructor = snd.DynamicsCompressor.Status;
+snd.Gain = function (id) {
+    snd.AudioUnit.apply(this, arguments);
+
+    this._gain = snd.AUDIO_CONTEXT.createGain();
+    this._gain.channelCount = this._status.channelCount;
+    
+    /* DEFINE PROPERTIES */
+    Object.defineProperties(this, {
+        channelCount: {
+            get: function () {
+                return this._status.channelCount;
+            },
+            set: function (val) {
+                this._gain.channelCount = val;
+                this._status.channelCount = val;
+            }
+        },
+        channelCountMode: {
+            get: function () {
+                return this._status.channelCountMode;
+
+            },
+            set: function (val) {
+                this._gain.channelCountMode = val;
+                this._status.channelCountMode = val;
+            }
+        },
+        channelInterpretation: {
+            get: function () {
+                return this._status.channelInterpretation;
+            },
+            set: function (val) {
+                this._gain.channelInterpretation = val;
+                this._status.channelInterpretation = val;
+            }
+        },
+        gain: {
+            get: function () {
+                return this._gain.gain.value;
+            },
+            set: function (val) {
+                this._gain.gain.value = val;
+                this._status.gain = val;
+            }
+        },
+        gainParam: {
+            get: function () {
+                var ret = this._gain.gain;
+                ret.id = this.id + ".gain";
+                return ret;
+            }
+        }
+    });
+};
+snd.Gain.prototype = Object.create(snd.AudioUnit.prototype);
+snd.Gain.prototype.constructor = snd.Gain;
+
+snd.Gain.prototype.connect = function (connectTo, indexIn, indexOut, id) {
+    snd.AudioUnit.prototype.connect.apply(this, arguments);
+    if (connectTo.getConnector != null) {
+        this._gain.connect(connectTo.getConnector(), indexIn, indexOut);
+    } else {
+        this._gain.connect(connectTo, indexIn, indexOut);
+    }
+};
+snd.Gain.prototype.disconnect = function (disconnectFrom, indexIn, id) {
+    snd.AudioUnit.prototype.disconnect.apply(this, arguments);
+    if (disconnectFrom.getConnector != null) {
+        this._gain.disconnect(disconnectFrom.getConnector(), indexIn);
+    } else {
+        this._gain.disconnect(disconnectFrom, indexIn);
+    }
+};
+snd.Gain.prototype.createStatus = function () {
+    return new snd.Gain.Status();
+};
+snd.Gain.prototype.getConnector = function () {
+    return this._gain;
+};
+snd.Gain.prototype.loadData = function (data) {
+    snd.AudioUnit.prototype.loadData.apply(this, arguments);
+
+    this.gain = data.gain;
+};
+
+snd.Gain.Status = function () {
+    snd.AudioUnit.Status.apply(this, arguments);
+    this.gain = 1.0;
+};
+snd.Gain.Status.prototype = Object.create(snd.AudioUnit.Status.prototype);
+snd.Gain.Status.prototype.constructor = snd.Gain.Status;
+snd.WaveShaper = function (id) {
+    snd.AudioUnit.apply(this, arguments);
+    
+    this._output = snd.AUDIO_CONTEXT.createGain();
+    this._connector = snd.AUDIO_CONTEXT.createGain();
+    this._shaper = snd.AUDIO_CONTEXT.createWaveShaper();
+    
+    this._connector.connect(this._shaper);
+    this._shaper.connect(this._output);
+    
+    /* DEFINE PROPERTIES */
+Object.defineProperties(this, {
+    channelCount: {
+          get: function () {
+                return this._status.channelCount;
+          },
+          set: function (val) {
+                this._output.channelCount = val;
+                this._connector.channelCount = val;
+                this._shaper.channelCount = val;
+                this._status.channelCount = val;
+          }
+    },
+    channelCountMode: {
+          get: function () {
+                return this._status.channelCountMode;
+                
+          },
+          set: function (val) {
+                this._output.channelCountMode = val;
+                this._connector.channelCountMode = val;
+                this._shaper.channelCountMode = val;
+                this._status.channelCountMode = val;
+          }
+    },
+    channelInterpretation: {
+          get: function () {
+                return this._status.channelInterpretation;
+          },
+          set: function (val) {
+                this._output.channelInterpretation = val;
+                this._connector.channelInterpretation = val;
+                this._shaper.channelInterpretation = val;
+                this._status.channelInterpretation = val;
+          }
+    },
+    curve: {
+          get: function () {
+                return this._shaper.curve;
+          },
+          set: function (val) {
+                this._shaper.curve = val;
+                this._status.curve = val;
+          }
+    },
+    oversample: {
+          get: function () {
+                return this._shaper.oversample;
+          },
+          set: function (val) {
+                this._shaper.oversample = val;
+                this._status.oversample = val;
+          }
+    }
+});
+};
+snd.WaveShaper.prototype = Object.create(snd.AudioUnit.prototype);
+snd.WaveShaper.prototype.constructor = snd.Gain;
+
+snd.WaveShaper.prototype.connect = function (connectTo, indexIn, indexOut, id) {
+    snd.AudioUnit.prototype.connect.apply(this, arguments);
+    if (connectTo.getConnector != null) {
+        this._output.connect(connectTo.getConnector(), indexIn, indexOut);
+    } else {
+        this._output.connect(connectTo, indexIn, indexOut);
+    }
+};
+snd.WaveShaper.prototype.disconnect = function (disconnectFrom, indexIn, id) {
+    snd.AudioUnit.prototype.disconnect.apply(this, arguments);
+    if (disconnectFrom.getConnector != null) {
+        this._output.disconnect(disconnectFrom.getConnector(), indexIn);
+    } else {
+        this._output.disconnect(disconnectFrom, indexIn);
+    }
+};
+snd.WaveShaper.prototype.createStatus = function () {
+    return new snd.WaveShaper.Status();
+};
+snd.WaveShaper.prototype.getConnector = function () {
+    return this._connector;
+};
+snd.WaveShaper.prototype.loadData = function (data) {
+    snd.AudioUnit.prototype.loadData.apply(this, arguments);
+    
+    this.curve = data.curve;
+    this.oversample = data.oversample;
+};
+
+snd.WaveShaper.Status = function () {
+    snd.AudioUnit.Status.apply(this, arguments);
+    
+    this.curve = null;
+    this.oversample = snd.WaveShaper.OVERSAMPLE_NONE;
+};
+snd.WaveShaper.Status.prototype = Object.create(snd.AudioUnit.Status.prototype);
+snd.WaveShaper.Status.prototype.constructor = snd.WaveShaper.Status;
+
 
 snd.ScriptProcessor = function(id) {
     snd.Source.apply(this, arguments);
@@ -2446,6 +3129,8 @@ snd.ScriptProcessor.CLASS_NAME = "snd.SciptProcessorUnit";
 snd.ScriptProcessor.prototype.resetScriptProcessor = function() {
     var _this = this;
     
+    this._gain.channelCount = this._status.outputChannels;
+    
     if (this._unit != null) {
         this._unit.disconnect(this._gain);
         delete this._unit;
@@ -2453,7 +3138,11 @@ snd.ScriptProcessor.prototype.resetScriptProcessor = function() {
     this._unit = snd.AUDIO_CONTEXT.createScriptProcessor(this._status.bufferLength, this._status.inputChannels, this._status.outputChannels);
     this._unit.onaudioprocess = function(evt) {
         if (_this.script != null) {
-            eval(_this._status.script);
+            if (typeof(_this.script) == "function") {
+                _this._status.script(evt);
+            } else {
+                eval(_this._status.script);
+            }
         }
     };
     
@@ -3122,7 +3811,7 @@ snd.AudioDataManager.prototype.removeAllDataLoadListener = function(func) {
     for (var i = 0; i < this.allLoadEventListeners.length; i++) {
         var f = this.allLoadEventListeners[i];
         if (f === func) {
-            delete this.allLoadEventListeners[i];
+            this.allLoadEventListeners.splice(i, 1);
             return true;
         }
     }
@@ -3357,8 +4046,9 @@ snd.AudioDataManager.prototype.loaded = function(key, buffer) {
  */
 snd.AudioMaster = function() {
     this.unitList = {};
-    this.gain = snd.AUDIO_CONTEXT.createGain();
-    this.gain.connect(snd.AUDIO_CONTEXT.destination);
+    this._gain = snd.AUDIO_CONTEXT.createGain();
+    this._gain.channelCount = snd.MAX_CHANNEL_COUNT;
+    this._gain.connect(snd.AUDIO_CONTEXT.destination);
     this.id = snd.AudioMaster.ID;
 };
 
@@ -3377,11 +4067,11 @@ snd.AudioMaster.prototype.connectAudioUnit = function(key, audioUnit) {
     if (key == null) {
         if (this.unitList[audioUnit.id] == null) {
             this.unitList[audioUnit.id] = audioUnit;
-            audioUnit.connect(this.gain, snd.AudioMaster.ID);
+            audioUnit.connect(this._gain, snd.AudioMaster.ID);
         }
     } else {
         this.unitList[key] = audioUnit;
-        audioUnit.connect(this.gain, snd.AudioMaster.ID);
+        audioUnit.connect(this._gain, snd.AudioMaster.ID);
     }
 };
 
@@ -3399,12 +4089,12 @@ snd.AudioMaster.prototype.getAudioUnit = function(key) {
  */
 snd.AudioMaster.prototype.disconnectAudioUnit = function(key) {
     var audioUnit = this.unitList[key];
-    audioUnit.getConnector().disconnect(this.gain);
+    audioUnit.getConnector().disconnect(this._gain);
     delete this.unitList[key];
 };
 
 snd.AudioMaster.prototype.getConnector = function() {
-    return this.gain;
+    return this._gain;
 };
 
 /**
@@ -3442,7 +4132,7 @@ snd.util.createSources = function(dataSet, connectToMaster, element, func) {
     }
     
     if (dataSet['AudioBuffer'] != null) {
-        createBufferSources(dataSet['AudioBuffer'], connectToMaster, function(res) {
+        snd.util.createBufferSources(dataSet['AudioBuffer'], connectToMaster, function(res) {
             ret['AudioBuffer'] = res;
             func(ret);
         });
@@ -3487,7 +4177,7 @@ snd.util.createBufferSources = function(dataSet, connectToMaster, func) {
     }
     snd.AUDIO_DATA_MANAGER.addAll(urlMap);
 
-    snd.AUDIO_DATA_MANAGER.addAllDataLoadListener(function() {
+    var callback = function() {
         var ret = {};
         
         for (var url in sourceMap) {
@@ -3501,8 +4191,11 @@ snd.util.createBufferSources = function(dataSet, connectToMaster, func) {
             }
         }
         
+        snd.AUDIO_DATA_MANAGER.removeAllDataLoadListener(callback);
         func(ret);
-    });
+    };
+    
+    snd.AUDIO_DATA_MANAGER.addAllDataLoadListener(callback);
     
     snd.AUDIO_DATA_MANAGER.load();
 };
@@ -3586,7 +4279,7 @@ snd._DOES_OGG_SUPPORTED = false;
 snd._DOES_AAC_SUPPORTED = false;
 snd._DOES_M4A_SUPPORTED = false;
 
-(function() {
+(function () {
     // 対応フォーマットのチェック
     var __audio__ = document.createElement("audio");
     snd._DOES_MP3_SUPPORTED = !(__audio__.canPlayType('audio/mpeg;') === "");
@@ -3598,41 +4291,53 @@ snd._DOES_M4A_SUPPORTED = false;
 })();
 
 /**
+ * snd.initメソッドが終了した際に呼び出されるメソッドのリストです。<br/>
+ * プラグインの初期化など、sndの初期化完了と同時に走らせたいメソッドをここに入れてください。<br/>
+ * <br/>
+ * ここへ追加したメソッドは snd.init メソッドの完了時に呼び出されます。<br/>
+ * (引数なしの、snd.INIT_EVENT_LISTENERS[index]() の形で、添字の昇順で呼び出されます。)
+ * 
+ * @type Array 初期化完了時に呼び出される関数のリスト
+ */
+snd.INIT_EVENT_LISTENERS = [];
+
+/**
  * snd.jsを初期化します。
  * @memberOf snd
  */
-snd.init = function() {
+snd.init = function () {
     snd.resetAudioContext();
-    if (snd.SoundEnvironment != null) {
-        snd.SOUND_ENVIRONMENT = new snd.SoundEnvironment();
-    }
 
     Object.defineProperties(snd, {
         /* StaticValues */
         DOES_MP3_SUPPORTED: {
-            get: function() {
+            get: function () {
                 return snd._DOES_MP3_SUPPORTED;
             }
         },
         DOES_WAV_SUPPORTED: {
-            get: function() {
+            get: function () {
                 return snd._DOES_WAV_SUPPORTED;
             }
         },
         DOES_OGG_SUPPORTED: {
-            get: function() {
+            get: function () {
                 return snd._DOES_OGG_SUPPORTED;
             }
         },
         DOES_AAC_SUPPORTED: {
-            get: function() {
+            get: function () {
                 return snd._DOES_AAC_SUPPORTED;
             }
         },
         DOES_M4A_SUPPORTED: {
-            get: function() {
+            get: function () {
                 return snd._DOES_M4A_SUPPORTED;
             }
+        },
+        MAX_CHANNEL_COUNT: {
+            writable: false,
+            value: snd._AUDIO_CONTEXT.destination.maxChannelCount
         },
         IDX_2CH_L: {
             writable: false,
@@ -3682,8 +4387,47 @@ snd.init = function() {
             writable: false,
             value: 5
         },
+        LOWPASS: {
+            writable: false,
+            value: "lowpass"
+        },
+        HIGHPASS: {
+            writable: false,
+            value: "highpass"
+        },
+        BANDPASS: {
+            writable: false,
+            value: "bandpass"
+        },
+        LOWSHELF: {
+            writable: false,
+            value: "lowshelf"},
+        HIGHSHELF: {
+            writable: false,
+            value: "highshelf"},
+        PEAKING: {
+            writable: false,
+            value: "peaking"},
+        NOTCH: {
+            writable: false,
+            value: "notch"},
+        ALLPASS: {
+            writable: false,
+            value: "allpass"},
+        OVERSAMPLE_NONE: {
+            writable: false,
+            value: "none"
+        },
+        OVERSAMPLE_DOUBLE: {
+            writable: false,
+            value: "2x"
+        },
+        OVERSAMPLE_QUAD: {
+            writable: false,
+            value: "4x"
+        },
         status: {
-            value: (function() {
+            value: (function () {
                 var ret = {};
                 Object.defineProperties(ret, {
                     NONE: {
@@ -3712,7 +4456,7 @@ snd.init = function() {
             writable: false
         },
         srctype: {
-            value: (function() {
+            value: (function () {
                 var ret = {};
                 Object.defineProperties(ret, {
                     NONE: {
@@ -3741,7 +4485,7 @@ snd.init = function() {
             writable: false
         },
         oscillatortype: {
-            value: (function() {
+            value: (function () {
                 var ret = {};
                 Object.defineProperties(ret, {
                     SINE: {
@@ -3766,11 +4510,11 @@ snd.init = function() {
             writable: false
         },
         audioparam: {
-            value: (function() {
+            value: (function () {
                 var ret = {};
                 Object.defineProperties(this, {
                     type: {
-                        value: (function() {
+                        value: (function () {
                             var retret = {};
                             Object.defineProperties(this, {
                                 SET: {
@@ -3796,23 +4540,23 @@ snd.init = function() {
             writable: false
         },
         BLOWSER: {
-            get: function() {
+            get: function () {
                 window.navigator.userAgent.toLowerCase();
             }
         },
         /* Objects */
         AUDIO_CONTEXT: {
-            get: function() {
+            get: function () {
                 return snd._AUDIO_CONTEXT;
             }
         },
         MASTER: {
-            get: function() {
+            get: function () {
                 return snd._MASTER;
             }
         },
         AUDIO_DATA_MANAGER: {
-            get: function() {
+            get: function () {
                 return snd._AUDIO_DATA_MANAGER;
             }
         }
@@ -3820,6 +4564,10 @@ snd.init = function() {
 
     snd._MASTER = new snd.AudioMaster();
     snd._AUDIO_DATA_MANAGER = new snd.AudioDataManager();
+    
+    for (var i = 0; i < snd.INIT_EVENT_LISTENERS.length; i++) {
+        snd.INIT_EVENT_LISTENERS[i]();
+    }
 };
 
 /**
@@ -3827,7 +4575,7 @@ snd.init = function() {
  * snd#initメソッドから呼び出すためのメソッドですので、特別な理由が無い限り使用しないでください。
  * @private
  */
-snd.resetAudioContext = function() {
+snd.resetAudioContext = function () {
     if (snd._AUDIO_CONTEXT == null) {
         // Create AudioContext
         if ('AudioContext' in window) {
@@ -3837,5 +4585,6 @@ snd.resetAudioContext = function() {
             // crome etc
             snd._AUDIO_CONTEXT = new webkitAudioContext();
         }
+        snd._AUDIO_CONTEXT.destination.channelCount = snd._AUDIO_CONTEXT.destination.maxChannelCount;
     }
 };

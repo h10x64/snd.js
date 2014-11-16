@@ -38,6 +38,129 @@ snd.three.mode.DELAY = 0x0004;
 snd.three.mode.ALL = 0x0007;
 
 
+snd.PosDir = function () {
+    this._pos = {x: 0, y: 0, z: 0};
+    this._dir = {x: 0, y: 0, z: 0};
+    this._up = {x: 0, y: 0, z: 0};
+
+    Object.defineProperties(this, {
+        pos: {
+            get: function () {
+                var _this = this;
+                var ret = {};
+                Object.defineProperties(ret, {
+                    x: {
+                        get: function () {
+                            return _this._pos.x;
+                        },
+                        set: function (val) {
+                            _this._pos.x = val;
+                        }
+                    },
+                    y: {
+                        get: function () {
+                            return _this._pos.y;
+                        },
+                        set: function (val) {
+                            _this._pos.y = val;
+                        }
+                    },
+                    z: {
+                        get: function () {
+                            return _this._pos.z;
+                        },
+                        set: function (val) {
+                            _this._pos.z = val;
+                        }
+                    }
+                });
+                return ret;
+            }
+        },
+        dir: {
+            get: function () {
+                var _this = this;
+                var ret = {};
+                Object.defineProperties(ret, {
+                    x: {
+                        get: function () {
+                            return _this._dir.x;
+                        },
+                        set: function (val) {
+                            _this._dir.x = val;
+                        }
+                    },
+                    y: {
+                        get: function () {
+                            return _this._dir.y;
+                        },
+                        set: function (val) {
+                            _this._dir.y = val;
+                        }
+                    },
+                    z: {
+                        get: function () {
+                            return _this._dir.z;
+                        },
+                        set: function (val) {
+                            _this._dir.z = val;
+                        }
+                    }
+                });
+                return ret;
+            }
+        },
+        up: {
+            get: function () {
+                var _this = this;
+                var ret = {};
+                Object.defineProperties(ret, {
+                    x: {
+                        get: function () {
+                            return _this._up.x;
+                        },
+                        set: function (val) {
+                            _this._up.x = val;
+                        }
+                    },
+                    y: {
+                        get: function () {
+                            return _this._up.y;
+                        },
+                        set: function (val) {
+                            _this._up.y = val;
+                        }
+                    },
+                    z: {
+                        get: function () {
+                            return _this._up.z;
+                        },
+                        set: function (val) {
+                            _this._up.z = val;
+                        }
+                    }
+                });
+                return ret;
+            }
+        }
+    });
+};
+
+snd.PosDir.prototype.setPosition = function (x, y, z) {
+    this.pos.x = x;
+    this.pos.y = y;
+    this.pos.z = z;
+};
+
+snd.PosDir.prototype.setOrientation = function (x, y, z, ux, uy, uz) {
+    this.dir.x = x;
+    this.dir.y = y;
+    this.dir.z = z;
+    this.up.x = ux;
+    this.up.y = uy;
+    this.up.z = uz;
+};
+
 /**
  * 新しいインスタンスを作ります。
  * @class リスナを表すクラスです。<br/>
@@ -102,18 +225,6 @@ snd.Listener.prototype.setPosition = function(x, y, z) {
  */
 snd.Listener.prototype.setOrientation = function(x, y, z, ux, uy, uz) {
     snd.PosDir.prototype.setOrientation.call(this, x, y, z, ux, uy, uz);
-    if (this.listener != null) {
-        this.listener.setOrientation(this.dir.x, this.dir.y, this.dir.z, this.up.x, this.up.y, this.up.z);
-    }
-};
-
-/**
- * 球座標でリスナーの向きを設定します。
- * @param {snd.vec3} dir dir.x:方位角 dir.y:仰角 dir.z:距離
- * @param {snd.vec3} up up.x:方位角 up.y:仰角 up.z:距離
- */
-snd.Listener.prototype.setOrientationBySpherical = function(dir, up) {
-    snd.PosDir.prototype.setOrientationBySpherical.call(this, dir, up);
     if (this.listener != null) {
         this.listener.setOrientation(this.dir.x, this.dir.y, this.dir.z, this.up.x, this.up.y, this.up.z);
     }
@@ -1002,6 +1113,11 @@ snd.MediaElementAudioNode.prototype.removeOnWaitingEventListener = function(list
 
 
 
+
+snd.three.init = function() {
+    snd.SOUND_ENVIRONMENT = new snd.SoundEnvironment();
+};
+snd.INIT_EVENT_LISTENERS.push(snd.three.init);
 
 snd.three.update = function(mainCamera, time) {
     if (snd.SOUND_ENVIRONMENT.cameras[mainCamera.id] == null) {
