@@ -57,12 +57,6 @@ snd.BufferSource.prototype.constructor = snd.BufferSource;
 snd.BufferSource.CLASS_NAME = "snd.BufferSource";
 
 /**
- * srcプロパティに設定された文字列がDataURISchemeの文字列かどうかを判定する際に使われる正規表現です。
- * @type RegExp
- */
-snd.BufferSource.REGEX_DATA_URI_SCHEME = /^data:audio.*;base64,(.*)$/;
-
-/**
  * srcプロパティに設定された文字列がsnd.AUDIO_DATA_MANAGERのキー値かどうかを判定する際に使われる正規表現です。
  * @type RegExp
  */
@@ -180,7 +174,7 @@ snd.BufferSource.prototype.loadURL = function(url) {
     
     this._status.src = url;
     
-    this._key = snd.BufferSource.getNewKey(this.id);
+    this._key = snd.util.getNewKey(this.id);
     snd.AUDIO_DATA_MANAGER.add(this._key, url);
     snd.AUDIO_DATA_MANAGER.addOnLoadListener(this._key, function() {
         var audioBuffer = snd.AUDIO_DATA_MANAGER.getAudioBuffer(_this._key);
@@ -200,14 +194,14 @@ snd.BufferSource.prototype.loadURL = function(url) {
 snd.BufferSource.prototype.loadBase64 = function(base64) {
     var _this = this;
     
-    if (snd.BufferSource.REGEX_DATA_URI_SCHEME.exec(base64) != null) {
+    if (snd.util.REGEX_DATA_URI_SCHEME.exec(base64) != null) {
         this._status.src = base64;
     } else {
         //@TODO Detect audio encodings automatically.
         this._status.src = "data:audio/unknown;base64," + base64;
     }
     
-    this._key = snd.BufferSource.getNewKey(this.id);
+    this._key = snd.util.getNewKey(this.id);
     snd.AUDIO_DATA_MANAGER.addBase64(this._key, base64);
     snd.AUDIO_DATA_MANAGER.addOnLoadListener(this._key, function() {
         var audioBuffer = snd.AUDIO_DATA_MANAGER.getAudioBuffer(_this._key);
@@ -349,7 +343,7 @@ snd.BufferSource.prototype.toJSON = function() {
 snd.BufferSource.prototype.loadData = function(data) {
     snd.Source.prototype.loadData.apply(this, arguments);
     
-    var isDataURI = snd.BufferSource.REGEX_DATA_URI_SCHEME.exec(data.src);
+    var isDataURI = snd.util.REGEX_DATA_URI_SCHEME.exec(data.src);
     var isAudioManagerKey = snd.BufferSource.REGEX_KEY.exec(data.src);
     if (isDataURI != null) {
         this.loadBase64(data.src);
@@ -402,9 +396,5 @@ snd.BufferSource.Status = function() {
     this.loopStart = null;
     this.loopEnd = null;
     this.src = "";
-};
-
-snd.BufferSource.getNewKey = function(id) {
-    return id + "_buffer" + new Date().getTime().toString() + Math.floor(Math.random() * 1000);
 };
 

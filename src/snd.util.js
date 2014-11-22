@@ -5,6 +5,18 @@
 snd.util = {};
 
 /**
+ * 文字列がDataURIか否かを判定する際に使用される正規表現です。
+ * @type RegExp
+ */
+snd.util.REGEX_DATA_URI_SCHEME = /^data:audio.*;base64,(.*)$/;
+
+/**
+ * 文字列がsnd.AUDIO_DATA_MANAGERのキー値か否かを判定する際に使用される正規表現です。
+ * @type RegExp
+ */
+snd.util.REGEX_KEY = /^key:(.*)$/;
+
+/**
  * dataSetで指定されたURLの音源をまとめて作成します。<br/>
  * connectToMasterがtrueに設定されていた場合、snd.MASTERへの接続が同時に行われます。<br/>
  * elementには&lt;Audio&gt;タグを追加するDOMエレメントを指定してください。<br/>
@@ -145,6 +157,66 @@ snd.util.createMediaElementAudioSources = function(dataSet, connectToMaster, par
     
     return ret;
 }
+
+/**
+ * 引数 prefix を使用したユニークなキー文字列を生成します。<br/>
+ * 生成されるキー文字列のフォーマットは以下のとおりです。<br/>
+ * prefix + (Date.getTime) + (Math.random 1000桁)
+ * @param {String} prefix 生成する文字列の先頭に追加する文字列
+ * @returns {String} 生成されたキー文字列
+ */
+snd.util.getNewKey = function(prefix) {
+    return prefix + new Date().getTime().toString() + Math.floor(Math.random() * 1000);
+}
+
+/**
+ * 与えられた文字列がDataURISchemeの文字列か否かを判定します。
+ * @param {String} str 判定する文字列
+ * @returns {Boolean} strがDataURIならTrue, そうでなければFalse
+ */
+snd.util.isDataURI = function(str) {
+    return (snd.util.REGEX_DATA_URI_SCHEME.exec(str) != null);
+};
+
+/**
+ * 与えられた文字列がDataURI文字列だった場合、そのデータ部を抽出して戻します。(バイト列へのパースは行いません)<br/>
+ * 文字列がDataURIでは無かった場合は、undefinedを返します。
+ * @param {type} str データ部を抽出するDataURI文字列
+ * @returns {undefined}
+ */
+snd.util.stripDataURI = function(str) {
+    var uriMatches = str.match(snd.util.REGEX_DATA_URI_SCHEME);
+    if (uriMatches) {
+        return uriMatches[1];
+    } else {
+        return undefiend;
+    }
+};
+
+/**
+ * 
+ * @param {type} str
+ * @returns {Boolean} strがsnd.AUDIO_DATA_MANAGERのキー値を表す文字列ならTrue, そうでなければFalse
+ */
+snd.util.isAudioManagerKey = function(str) {
+    return (snd.util.REGEX_KEY.exec(str) != null);
+};
+
+/**
+ * 与えられた文字列がsnd.AUDIO_DATA_MANAGERのキー値を表す文字列ならそのキー値を返します。(snd.AUDIO_DATA_MANAGER上にデータがあるかどうかは関係ありません。)<br/>
+ * キー値を表す文字列でなければ、undefinedを返します。<br/>
+ * 
+ * @param {String} str キー値を取得する文字列
+ * @returns {String} キー値
+ */
+snd.util.stripAudioManagerKey = function(str) {
+    var keyMatches = uri.match(snd.util.REGEX_DATA_URI_SCHEME);
+    if (keyMatches) {
+        return keyMatches[1];
+    } else {
+        return undefiend;
+    }
+};
 
 /**
  * オクターブと音高から周波数を計算します。<br/>
