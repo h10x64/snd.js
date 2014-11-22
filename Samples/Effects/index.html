@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../libs/jquery/jquery-ui.min.css">
+        <link rel="stylesheet" href="../libs/jquery/jquery-ui.structure.min.css">
+        <link rel="stylesheet" href="../libs/jquery/jquery-ui.theme.min.css">
+        <script src="../libs/jquery/jquery-2.1.0.min.js"></script>
+        <script src="../libs/jquery/jquery-ui.min.js"></script>
+        <script src="../../dist/snd.js"></script>
+        <script>
+            MATCH_SOUND_FILE = "../sound/test.wav";
+            BGM_SOUND_FILE = "../sound/01 Liftoff (Get High).wav";
+            IR_CARPARK = "../sound/IR/carpark_balloon_ir_mono_16bit_44100.wav";
+            IR_MAES_HOWE = "../sound/IR/mh3_000_ortf_48k.wav";
+            IR_ST_PATRICKS_CHURCH_PATRINGTON = "../sound/IR/ortf_s1r1.wav";
+            IR_STAIRWAY_UNIVERSITY_YORK = "../sound/IR/stairwell_ortf.wav";
+            IR_INNOCENT_RAILWAY_TUNNEL = "../sound/IR/tunnel_entrance_f_1way_mono.wav";
+
+            // Analyserのcanvasで使う横方向の分割数
+            AUDIO_LEVEL_METER_BAND_NUM = 100;
+            
+            // 各エフェクタで使用する音源の設定
+            SOUND_FILES = {
+                "analyserSound": MATCH_SOUND_FILE,
+                "biquadSound": MATCH_SOUND_FILE,
+                "convolverSound": MATCH_SOUND_FILE,
+                "delaySound": MATCH_SOUND_FILE,
+                "compressorSound": MATCH_SOUND_FILE,
+                "gainSound": MATCH_SOUND_FILE,
+                "waveshaperSound": MATCH_SOUND_FILE
+            };
+
+            // IR(InpulseResponse:インパルス応答)データ
+            // データを読み込みAudioBufferに変換するが、音源としては使用しない
+            IR_FILES = {
+                "irBGM": BGM_SOUND_FILE,
+                "irCarpark": IR_CARPARK,
+                "irMaesHowe": IR_MAES_HOWE,
+                "irStPatricksChurchPatrington": IR_ST_PATRICKS_CHURCH_PATRINGTON,
+                "irStairwayUniversityYork": IR_STAIRWAY_UNIVERSITY_YORK,
+                "irInnocentRailwayTunnel": IR_INNOCENT_RAILWAY_TUNNEL
+            };
+
+            SOUNDS = null;
+            EFFECTS = null;
+
+            window.onload = function() {
+                // 見た目関係の設定
+                initHTML();
+                
+                // snd.jsを初期化
+                snd.init();
+
+                // データマネージャにIR_FILESで指定されたファイルを追加
+                snd.AUDIO_DATA_MANAGER.addAll(IR_FILES);
+                // IRデータ読み込み終了時に呼び出されるコールバック関数
+                var callback = function() {
+                    // 次回読み込み時に再度callbackが呼び出されないようにリスナのリストから消しておく
+                    snd.AUDIO_DATA_MANAGER.removeAllDataLoadListener(callback);
+                    // BufferSourceにするファイルを読み込み
+                    snd.util.createBufferSources(SOUND_FILES, false, onAllDataLoaded);
+                };
+                // データマネージャの全データ読み込み完了イベントのリスナにcallbackを追加
+                snd.AUDIO_DATA_MANAGER.addAllDataLoadListener(callback);
+
+                // 読み込み開始
+                snd.AUDIO_DATA_MANAGER.load();
+            };
+            
+            /**
+             * 画面周りの初期設定
+             */
+            initHTML = function() {
+                $("#tabs").tabs();
+                // Analyserの画面更新を設定
+                setInterval(updateChart, 1000 / 15);
+            };
+            
+            /**
+             * 音周りの初期設定
+             */
+            onAllDataLoaded = function(bufferSources) {
+                SOUNDS = bufferSources;
+                
+                // エフェクト・音源・マスターを接続する
+                createConnections(bufferSources);
+                // 画面で設定された値を取得し、各エフェクトに設定する
+                setEffectProperties();
+            };
+            
+            /**
+             * 各エフェクタと音源とを接続し、snd.MASTERへ接続します。
+             */
+            createConnections = function(bufferSources) {
+                EFFECTS = {};
+
+                /* Analyser */
+                var analyser = new snd.Analyser("analyserEffect");
+                bufferSources["analyserSound"].connect(analyser);
+                analyser.connect(snd.MASTER);
+                EFFECTS["analyser"] = analyser;
+
+                /* Biquad */
+                var biquad = new snd.BiquadFilter("biquadEffect");
+                bufferSources["biquadSound"].connect(biquad);
+                biquad.connect(snd.MASTER);
+                EFFECTS["biquad"] = biquad;
+
+                /* Convolver */
+                var convolver = new snd.Convolver("convolverEffect");
+                bufferSources["convolverSound"].connect(convolver);
+                convolver.connect(snd.MASTER);
+                EFFECTS["convolver"] = convolver;
+
+                /* Delay */
+                var delay = new snd.Delay("delayEffect");
+                bufferSources["delaySound"].connect(delay);
+                delay.connect(snd.MASTER);
+                EFFECTS["delay"] = delay
+
+                /* DynamicsCompressor */
+                var compressor = new snd.DynamicsCompressor("compressorEffect");
+                bufferSources["compressorSound"].connect(compressor);
+                compressor.connect(snd.MASTER);
+                EFFECTS["compressor"] = compressor;
+
+                /* Gain */
+                var gain = new snd.Gain("gainEffect");
+                bufferSources["gainSound"].connect(gain);
+                gain.connect(snd.MASTER);
+                EFFECTS["gain"] = gain;
+
+                /* WaveShaper */
+                var waveshaper = new snd.WaveShaper("waveshaperEffect");
+                bufferSources["waveshaperSound"].connect(waveshaper);
+                waveshaper.connect(snd.MASTER);
+                EFFECTS["waveshaper"] = waveshaper;
+            };
+
+            /**
+             * 画面から値を取得して各エフェクトに設定します
+             */
+            setEffectProperties = function() {
+                /* Analyser */
+                EFFECTS['analyser'].fftSize = $('input[name=analyserFFTSize]')[0].value;
+                EFFECTS['analyser'].smoothingTimeConstant = $('input[name=analyserSmoothingTimeConstant]')[0].value;
+                EFFECTS['analyser'].maxDecibels = $('input[name=analyserMaxDecibels]')[0].value;
+                EFFECTS['analyser'].minDecibels = $('input[name=analyserMinDecibels]')[0].value;
+
+                /* Biquad */
+                EFFECTS['biquad'].type = $('select[name=biquadBiquadType]')[0].value;
+                EFFECTS['biquad'].Q = $('input[name=biquadQ]')[0].value;
+                EFFECTS['biquad'].frequency = $('input[name=biquadFrequency]')[0].value;
+                EFFECTS['biquad'].detune = $('input[name=biquadDetune]')[0].value;
+                EFFECTS['biquad'].gain = $('input[name=biquadGain]')[0].value;
+
+                /* Convolver */
+                var selected = $('select[name=convolverBuffer]')[0].value;
+                EFFECTS['convolver'].buffer = (selected != 'none') ? snd.AUDIO_DATA_MANAGER.data[selected] : null;
+                EFFECTS['convolver'].normalize = ($('select[name=convolverNormalize]')[0].value == 'true') ? true : false;
+
+                /* Delay */
+                EFFECTS['delay'].maxDelay = $('input[name=delayMaxDelay]')[0].value;
+                EFFECTS['delay'].delayTime = $('input[name=delayDelayTime]')[0].value;
+
+                /* DynamicsCompressor */
+                EFFECTS['compressor'].attack = $('input[name=compressorAttack]')[0].value;
+                EFFECTS['compressor'].attack = $('input[name=compressorKnee]')[0].value;
+                EFFECTS['compressor'].attack = $('input[name=compressorRatio]')[0].value;
+                EFFECTS['compressor'].attack = $('input[name=compressorRelease]')[0].value;
+                EFFECTS['compressor'].attack = $('input[name=compressorThreshold]')[0].value;
+
+                /* Gain */
+                EFFECTS['gain'].gain = $('input[name=gainGain]')[0].value;
+
+                /* WaveShaper */
+                EFFECTS['waveshaper'].curve = calcWaveShaperCurve($('input[name=waveshaperCurve]')[0].value);
+                EFFECTS['waveshaper'].gain = $('input[name=waveshaperGain]')[0].value;
+                EFFECTS['waveshaper'].oversample = $('select[name=waveshaperOversample]')[0].value;
+            };
+            
+            /**
+             * 引数で指定された音源を再生/停止させます
+             */
+            playSound = function(name) {
+                if (SOUNDS) {
+                    if (SOUNDS[name]) {
+                        if (SOUNDS[name].status != snd.status.STARTED) {
+                            SOUNDS[name].start();
+                        } else {
+                            SOUNDS[name].stop();
+                        }
+                    }
+                }
+            };
+
+            /**
+             * Analyserのcanvasを更新するメソッド
+             */
+            updateChart = function() {
+                if (EFFECTS && EFFECTS["analyser"]) {
+                    var data = EFFECTS["analyser"].byteFrequencyData;
+                    var ctx = $("#freqAnalyser")[0].getContext("2d");
+
+                    var dx = Math.round(ctx.canvas.clientWidth / AUDIO_LEVEL_METER_BAND_NUM);
+                    var df = Math.floor(data.length / AUDIO_LEVEL_METER_BAND_NUM);
+
+                    var x0 = 0;
+                    var y0 = 0;
+                    var x1 = 0;
+                    var y1 = 0;
+                    ctx.clearRect(0, 0, ctx.canvas.clientWidth, ctx.canvas.clientHeight);
+                    ctx.beginPath();
+                    for (var i = 0; (i + 1) * df < data.length; i++) {
+                        x0 = dx * i;
+                        y0 = (1.0 - data[Math.floor(i * df)] / 255.0) * ctx.canvas.clientHeight;
+                        x1 = dx * (i + 1);
+                        y1 = (1.0 - data[Math.floor((i + 1) * df)] / 255.0) * ctx.canvas.clientHeight;
+
+                        ctx.moveTo(x0, y0);
+                        ctx.lineTo(x1, y1);
+                    }
+                    ctx.stroke();
+                }
+            };
+
+            /**
+             * WaveShaperのCurveを計算するメソッド
+             */
+            calcWaveShaperCurve = function(clip) {
+                var curve = new Float32Array(1000);
+                var dx = 1.0 / curve.length;
+                var clipPos = Math.floor((1.0 - clip) / dx);
+                for (var i = 0; i < curve.length / 2; i++) {
+                    curve[i] = -1.0;
+                    curve[curve.length - i] = 1.0;
+                }
+                for (var i = 0; i < curve.length - 2 * clipPos; i++) {
+                    curve[i + clipPos] = 2 * (i / (curve.length - 2 * clipPos) - 0.5);
+                }
+                return curve;
+            };
+        </script>
+        <style type='text/css'>
+            body {
+                background-color: #111;
+            }
+            div {
+                margin-top: 0.5em;
+                margin-bottom: 0.25em;
+            }
+            .EffectName {
+                width: 100%;
+                padding-bottm: 2px;
+                margin-bottom: 10px;
+                font-size: 1.5em;
+                font-weight: bolder;
+            }
+            .EffectInfo {
+                padding: 1em;
+                background-color: #000;
+            }
+            .EffectFooter {
+                margin: 1em;
+                font-size: 0.75em;
+            }
+            .Controls {
+                border: #000 solid 1px;
+                background-color: #000;
+                border-radius: 10px;
+                color: #EEE;
+                padding-left: 1em;
+                padding-right: 1em;
+            }
+            .Control {
+                margin-top: 1em;
+                margin-bottom: 1em;
+            }
+            .ControlName {
+                font-weight: bold;
+            }
+            .ControlValue {
+                margin-top: 0.25em;
+                margin-bottom: 0.25em;
+                margin-left: 1em;
+                margin-right: 0.25em;
+            }
+            table {
+                margin: 0.75em;
+                border-collapse: collapse;
+                border: #222 solid 1px;
+            }
+            th {
+                padding: 0.5em;
+                background-color: #222;
+                font-size: 0.8em;
+            }
+            td {
+                padding: 0.5em;
+                border: #222 solid 1px;
+                background-color: #000;
+                font-size: 0.8em;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="tabs">
+            <ul>
+                <li><a href="#Analyser">Analyser</a></li>
+                <li><a href="#BiquadFilter">BiquadFilter</a></li>
+                <li><a href="#Convolver">Convolver</a></li>
+                <li><a href="#Delay">Delay</a></li>
+                <li><a href="#DynamicsCompressor">DynamicsCompressor</a></li>
+                <li><a href="#Gain">Gain</a></li>
+                <li><a href="#WaveShaper">WaveShaper</a></li>
+            </ul>
+            <!-- Analyser -->
+            <div id="Analyser" class="EffectControler">
+                <div class="EffectName">Analyser</div>
+                <div class="EffectInfo">
+                    <div>
+                        信号解析を行います。
+                    </div>
+                    <div class="Display">
+                        <canvas id="freqAnalyser" width="250" height="150" style="background-color:#FFF; border: #AAA solid 1px;"/>
+                    </div>
+                </div>
+                <div class="Controls">
+                    <div id="analyser_smoothingTimeConstant" class="Control">
+                        <div class="ControlName">FFTSize:</div>
+                        <div class="ControlValue">
+                            <input type="number" name="analyserFFTSize" value="2048" readonly="readonly"
+                                   onchange="if (EFFECTS['analyser'])
+                                           EFFECTS['analyser'].fftSize = $('input[name=analyserFFTSize]')[0].value;"/>
+                        </div>
+                    </div>
+                    <div id="analyser_smoothingTimeConstant" class="Control">
+                        <div class="ControlName">SmoothingTimeConstant:</div>
+                        <div class="ControlValue">
+                            <input type="number" name="analyserSmoothingTimeConstant" value="0.8" max="1.0" min="0.0" step="0.1"
+                                   onchange="if (EFFECTS['analyser'])
+                                           EFFECTS['analyser'].smoothingTimeConstant = $('input[name=analyserSmoothingTimeConstant]')[0].value;"/>
+                        </div>
+                    </div>
+                    <div id="biquad_q" class="Control">
+                        <div class="ControlName">MaxDecibels:</div>
+                        <div class="ControlValue">
+                            <input type="number" name="analyserMaxDecibels" value="-30.0"
+                                   onchange="if (EFFECTS['analyser'])
+                                               EFFECTS['analyser'].maxDecibels = $('input[name=analyserMaxDecibels]')[0].value;"/>
+                        </div>
+                    </div>
+                    <div id="biquad_q" class="Control">
+                        <div class="ControlName">MinDecibels:</div>
+                        <div class="ControlValue">
+                            <input type="number" name="analyserMinDecibels" value="-100.0"
+                                   onchange="if (EFFECTS['analyser'])
+                                               EFFECTS['analyser'].minDecibels = $('input[name=analyserMinDecibels]')[0].value;"/>
+                        </div>
+                    </div>
+                    <div id="biquad_play" class="Control">
+                        <button onclick="playSound('analyserSound');">Play/Stop</button>
+                    </div>
+                </div>
+            </div>
+            <!-- BiquadFilter -->
+            <div id="BiquadFilter" class="EffectControler">
+                <div class="EffectName">BiquadFilter</div>
+                <div class="EffectInfo">
+                    <div>
+                    フィルタをかけます。<br/>
+                    </div>
+                    <div>
+                        フィルタは8種類あり、それぞれ以下のような特性を持っています。
+                        <table>
+                            <tr><th>フィルタ名</th><th>特性</th><th>typeに指定する定数名</th></tr>
+                            <tr><td>ローパス</td><td>frequencyで指定された周波数よりも低い音を通し、高い音は通さないフィルタです。</td><td>snd.LOWPASS</td></tr>
+                            <tr><td>ハイパス</td><td>frequencyで指定された周波数よりも高い音を通し、低い音は通さないフィルタです。</td><td>snd.HIGHPASS</td></tr>
+                            <tr><td>バンドパス</td><td>frequencyで指定された周波数を中心に、Qで指定されたバンド幅の周波数の音を通すフィルタです。<br/>Q値が大きくなるとバンド幅は狭くなります。</td><td>snd.BANDPASS</td></tr>
+                            <tr><td>ノッチ</td><td>frequencyで指定された周波数を中心に、Qで指定されたバンド幅の周波数の音を通さないフィルタです。（一般的にはバンドストップ・バンドリジェクトとも呼ばれます）<br/>Q値が大きくなるとバンド幅は狭くなります。</td><td>snd.NOTCH</td></tr>
+                            <tr><td>ローシェルフ</td><td>frequencyで指定された周波数よりも低い音に対して、gain[db]で指定されたゲインをかけて出力するフィルタです。<br/>gainはデシベル値なので、0の場合はそのまま、プラスの値なら音は大きく、マイナスの値なら音が小さくなります。</td><td>snd.LOWSHELF</td></tr>
+                            <tr><td>ハイシェルフ</td><td>frequencyで指定された周波数よりも高い音に対して、gain[db]で指定されたゲインをかけて出力するフィルタです。<br/>gainはデシベル値なので、0の場合はそのまま、プラスの値なら音は大きく、マイナスの値なら音が小さくなります。</td><td>snd.HIGHSHELF</td></tr>
+                            <tr><td>ピーキング</td><td>frequencyで指定された周波数を中心に、Qで指定されたバンド幅の周波数を音に対して、gain[db]で指定されたゲインをかけて出力するフィルタです。<br/>gainはデシベル値なので、0の場合はそのまま、プラスの値なら音は大きく、マイナスの値なら音が小さくなります。<br/>gain</td><td>snd.PEAKING</td></tr>
+                            <tr><td>オールパス</td><td>全周波数帯の音を通過させます。音の大きさには影響がありませんが、frequencyで指定された周波数にピークを持つ群遅延を起こします。</td><td>snd.ALLPASS</td></tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="Controls">
+                    <div id="biquad_type" class="Control">
+                        <div class="ControlName">Type:</div>
+                        <div class="ControlValue">
+                            <select name="biquadBiquadType"
+                                    onchange="if (EFFECTS['biquad'])
+                                                EFFECTS['biquad'].type = $('select[name=biquadBiquadType]')[0].value;">
+                                <option value="lowpass">LowPass</option>
+                                <option value="highpass">HighPass</option>
+                                <option value="bandpass">BandPass</option>
+                                <option value="lowshelf">LowShelf</option>
+                                <option value="highshelf">HighShelf</option>
+                                <option value="notch">Notch</option>
+                                <option value="peaking">Peaking</option>
+                                <option value="allpass">AllPass</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="biquad_q" class="Control">
+                        <div class="ControlName">Q:</div>
+                        <div class="ControlValue">
+                            <input type="number" name="biquadQ" value="1.0" step="0.01"
+                                   onchange="if (EFFECTS['biquad'])
+                                               EFFECTS['biquad'].Q = $('input[name=biquadQ]')[0].value;"/>
+                        </div>
+                    </div>
+                    <div id="biquad_frequency" class="Control">
+                        <div class="ControlName">Frequency:</div>
+                        <div class="ControlValue">
+                            <input type="number" name="biquadFrequency" value="350.0" step="0.01"
+                                   onchange="if (EFFECTS['biquad'])
+                                               EFFECTS['biquad'].frequency = $('input[name=biquadFrequency]')[0].value;"/>
+                        </div>
+                    </div>
+                    <div id="biquad_detune" class="Control">
+                        <div class="ControlName">Detune:</div>
+                        <div class="ControlValue">
+                            <input type="number" name="biquadDetune" value="0.0" step="0.01"
+                                   onchange="if (EFFECTS['biquad'])
+                                               EFFECTS['biquad'].detune = $('input[name=biquadDetune]')[0].value;"/>
+                        </div>
+                    </div>
+                    <div id="biquad_gain" class="Control">
+                        <div class="ControlName">Gain:</div>
+                        <div class="ControlValue">
+                            <input type="number" name="biquadGain" value="1.0" step="0.01"
+                                   onchange="if (EFFECTS['biquad'])
+                                               EFFECTS['biquad'].gain = $('input[name=biquadGain]')[0].value;"/>
+                        </div>
+                    </div>
+                    <div id="biquad_play" class="Control">
+                        <button onclick="playSound('biquadSound');">Play/Stop</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Convolver -->
+            <div id="Convolver" class="EffectControler">
+                <div class="EffectName">
+                    Convolver
+                </div>
+                <div class="EffectInfo">
+                    <div>
+                        入力信号にbufferに設定された音声データを畳み込んで出力します。<br/>
+                        エコーとの相性がとても良いエフェクトですが、エフェクトに限らず任意の信号を畳み込むことももちろん可能です。<br/>
+                    </div>
+                    <div>
+                        normalizeで出力信号をノーマライズ(音量を元のレベルに合わせて音量を絞る)を行うか否かを設定します。<br/>
+                        normalizeをfalseにすると、大抵の場合は音が割れるくらい大きくなってしまいますので、通常はtrueでよいと思います。<br/>
+                    </div>
+                    <div>
+                        Chrome, Firefoxなど、環境によりbufferがnullの場合の挙動が異なります。<br/>
+                        (Chromeではbufferがnullで出力がゼロとなりますが、Firefoxでは入力信号がそのまま出力されます)
+                    </div>
+                    <div>
+                        エコーを作成する場合は、Delayの使用も検討してみてください。<br/>
+                        遅延時間や遅延信号のフィルタ具合を動的に指定したい場合などは、Delayを使用する方が向いています。<br/>
+                        (Convolverのエコーは、測定済みのIRを決め打ちで使用する場合に向いています)
+                    </div>
+                </div>
+                <div class="Controls">
+                    <div id="convolver_buffer" class="Control">
+                        <div class="ControlName">Buffer:</div>
+                        <div class="ControlValue">
+                            <select name="convolverBuffer"
+                                    onchange="if (EFFECTS['convolver']) {
+                                                EFFECTS['convolver'].loadAudioBuffer($('select[name=convolverBuffer]')[0].value);
+                                            }">
+                                <option value="none">None</option>
+                                <option value="irCarpark">CarPark</option>
+                                <option value="irMaesHowe">Maes Howe</option>
+                                <option value="irStPatricksChurchPatrington">St.Patricks Church Patrington</option>
+                                <option value="irStairwayUniversityYork">Stairway University York</option>
+                                <option value="irInnocentRailwayTunnel">Innocent Railway Tunnel</option>
+                                <option value="irBGM">BGM</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="convolver_normalize" class="Control">
+                        <div class="ControlName">Normalize:</div>
+                        <div class="ControlValue">
+                            <select name="convolverNormalize"
+                                    onchange="if (EFFECTS['convolver']) {
+                                        EFFECTS['convolver'].normalize = ($('select[name=convolverNormalize]')[0].value == 'true') ? true : false;
+                                    }">
+                                <option value="true">true</option>
+                                <option value="false">false</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="convolver_play" class="Control">
+                        <button onclick="playSound('convolverSound');">Play/Stop</button>
+                    </div>
+                </div>
+                <div class="EffectFooter">
+                    これらのインパルス応答ファイルは、Open Acoustic Impulse Response Library(http://www.openairlib.net)で、クリエイティブ・コモンズライセンス 表示-継承 3.0（http://creativecommons.org/licenses/by-sa/3.0/deed.ja）の下に公開されたデータを加工して作成されたものです。（Audacityを使用してモノラル16bitのPCM形式に変換してあります。）<br/>
+                    各ファイルの帰属者名と測定内容情報へのリンクは下記のとおりです。<br/>
+                    <br/>
+                    - carpark_balloon_ir_mono_24bit_44100.wav<br/>
+                    &nbsp;&nbsp;Attribution:<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;www.openairlib.net<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;www.twitter.com/chrisunderdown<br/>
+                    &nbsp;&nbsp;Info:<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.openairlib.net/auralizationdb/content/underground-car-park">http://www.openairlib.net/auralizationdb/content/underground-car-park</a><br/>
+                    <br/>
+                    - mh3_000_ortf_48k.wav<br/>
+                    &nbsp;&nbsp;Attribution:<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;www.openairlib.net<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;Audiolab, University of York<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;Damian T. Murphy<br/>
+                    &nbsp;&nbsp;Info:<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.openairlib.net/auralizationdb/content/maes-howe">http://www.openairlib.net/auralizationdb/content/maes-howe</a><br/>
+                    <br/>
+                    - ortf_s1r1.wav<br/>
+                    &nbsp;&nbsp;Attribution:<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;www.openairlib.net <br/>
+                    &nbsp;&nbsp;Info:<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.openairlib.net/auralizationdb/content/st-patricks-church-patrington">http://www.openairlib.net/auralizationdb/content/st-patricks-church-patrington</a><br/>
+                    <br/>
+                    - stairwell_ortf.wav<br/>
+                    &nbsp;&nbsp;Attribution:<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;www.openairlib.net<br/>
+                    &nbsp;&nbsp;Audiolab, University of York<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;Simon Shelley <br/>
+                    &nbsp;&nbsp;Info:<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.openairlib.net/auralizationdb/content/stairway-university-york">http://www.openairlib.net/auralizationdb/content/stairway-university-york</a><br/>
+                    <br/>
+                    - tunnel_entrance_f_1way_mono.wav<br/>
+                    &nbsp;&nbsp;Attribution:<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;www.openairlib.net <br/>
+                    &nbsp;&nbsp;Info:<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<a href="http://www.openairlib.net/auralizationdb/content/innocent-railway-tunnel">http://www.openairlib.net/auralizationdb/content/innocent-railway-tunnel</a><br/>
+                </div>
+            </div>
+            <!-- Delay -->
+            <div id="Delay" class="EffectControler">
+                <div class="EffectName">
+                    Delay
+                </div>
+                <div class="EffectInfo">
+                    <div>
+                        入力された信号をdelayTimeで指定した秒数だけ遅れてから出力します。<br/>
+                    </div>
+                    <div>
+                        Delayでは純粋に信号の遅延のみを行うため、Delay単体ではエコーは作成できません。<br/>
+                        エコーのようなエフェクトを作るには、(GainやBiquadFilterで音量を絞って）出力を入力に再接続する必要があります。<br/>
+                    </div>
+                    <div>
+                        エコーの作成をする場合は、Convolverを使用する事も検討してみてください。<br/>
+                        既存の機器や部屋などのIRを使って決め打ちのエコーをかけたい場合は、Convolverの方が向いています。<br/>
+                        (Delayのエコーは、エコー部分のフィルタ具合や遅延時間を動的に制御する場合に向いています)
+                    </div>
+                </div>
+                <div class="Controls">
+                    <div id="delay_maxDelay" class="Control">
+                        <div class="ControlName">MaxDelay:</div>
+                        <div class="ControlValue">
+                            <input type="number" name="delayMaxDelay" min="1" max="180" step="1" value="120.0" step="1.0"
+                                   onchange="if (EFFECTS['delay'])
+                                                       EFFECTS['delay'].maxDelay = $('input[name=delayMaxDelay]')[0].value;"/>
+                        </div>
+                    </div>
+                    <div id="delay_delayTime" class="Control">
+                        <div class="ControlName">DelayTime:</div>
+                        <div class="ControlValue">
+                            <input type="number" name="delayDelayTime" min="0" max="180" value="1.0" step="0.01"
+                                   onchange="if (EFFECTS['delay'])
+                                                       EFFECTS['delay'].delayTime = $('input[name=delayDelayTime]')[0].value;"/>
+                        </div>
+                    </div>
+                    <div id="delay_play" class="Control">
+                        <button onclick="playSound('delaySound');">Play/Stop</button>
+                    </div>
+                </div>
+            </div>
+            <!-- DynamicsCompressor -->
+            <div id="DynamicsCompressor" class="EffectControler">
+                <div class="EffectName">
+                    DynamicsCompressor
+                </div>
+                <div class="EffectInfo">
+                    <div>
+                        音量がmaxレベルを超えないように自動でボリューム調整を行うノードです。<br/>
+                        入力信号がしきい値(Threshold)を超えたら徐々にボリュームを絞ることで、音量を規程のレベル内に収めます。
+                    </div>
+                </div>
+                <div class="Controls">
+                    <div id="compressor_attack" class="Control">
+                        <div class="ControlName">Attack:</div>
+                        <div class="ControlValue">
+                            <input type="number" name="compressorAttack" value="0.003" step="0.001"
+                                   onchange="if (EFFECTS['compressor'])
+                                                       EFFECTS['compressor'].attack = $('input[name=compressorAttack]')[0].value;"/>
+                        </div>
+                    </div>
+                    <div id="compressor_knee" class="Control">
+                        <div class="ControlName">Knee:</div>
+                        <div class="ControlValue">
+                            <input type="number" name="compressorKnee" value="30" step="0.1"
+                                   onchange="if (EFFECTS['compressor'])
+                                                       EFFECTS['compressor'].knee = $('input[name=compressorKnee]')[0].value;"/>
+                        </div>
+                    </div>
+                    <div id="compressor_ratio" class="Control">
+                        <div class="ControlName">Ratio:</div>
+                        <div class="ControlValue">
+                            <input type="number" name="compressorRatio" value="12" step="0.1"
+                                   onchange="if (EFFECTS['compressor'])
+                                                       EFFECTS['compressor'].ratio = $('input[name=compressorRatio]')[0].value;"/>
+                        </div>
+                    </div>
+                    <div id="compressor_release" class="Control">
+                        <div class="ControlName">Release:</div>
+                        <div class="ControlValue">
+                            <input type="number" name="compressorRelease" value="0.250" step="0.01"
+                                   onchange="if (EFFECTS['compressor'])
+                                                       EFFECTS['compressor'].release = $('input[name=compressorRelease]')[0].value;"/>
+                        </div>
+                    </div>
+                    <div id="compressor_threshold" class="Control">
+                        <div class="ControlName">Threshold:</div>
+                        <div class="ControlValue">
+                            <input type="number" name="compressorThreshold" value="-24" step="0.1"
+                                   onchange="if (EFFECTS['compressor'])
+                                                       EFFECTS['compressor'].threshold = $('input[name=compressorThreshold]')[0].value;"/>
+                        </div>
+                    </div>
+                    <div id="compressor_play" class="Control">
+                        <button onclick="playSound('compressorSound');">Play/Stop</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Gain -->
+            <div id="Gain" class="EffectControler">
+                <div class="EffectName">
+                    Gain
+                </div>
+                <div class="EffectInfo">
+                    <div>
+                        単純なボリュームです。<br/>
+                        プロパティ名はgainとなっていますが、値の単位は「デシベル」ではなく「倍」である点に注意してください。<br/>
+                        したがって、絶対値がゼロに近ければ近いほど音量が小さくなり、マイナス値では波形が逆転します。
+                    </div>
+                </div>
+                <div class="Controls">
+                    <div id="gain_gain" class="Control">
+                        <div class="ControlName">Gain:</div>
+                        <div class="ControlValue">
+                            <input type="number" name="gainGain" value="1.0" step="0.01"
+                                   onchange="if (EFFECTS['gain'])
+                                                       EFFECTS['gain'].gain = $('input[name=gainGain]')[0].value;"/>
+                        </div>
+                    </div>
+                    <div id="gain_play" class="Control">
+                        <button onclick="playSound('gainSound');">Play/Stop</button>
+                    </div>
+                </div>
+            </div>
+            <!-- WaveShaper -->
+            <div id="WaveShaper" class="EffectControler">
+                <div class="EffectName">
+                    WaveShaper
+                </div>
+                <div class="EffectInfo">
+                    <div>
+                        入力波形の最大値～最小値(-1.0～1.0)をcurveで設定された値に変換して出力します。<br/>
+                        curve[0]が-1.0が入力された時の出力値、curve[curve.length - 1]が1.0が入力された時の出力値となります。<br/>
+                        このノードを使うことで、ディストーションのようなエフェクトを作ることができます。<br/>
+                    </div>
+                </div>
+                <div class="Controls">
+                    <div id="waveshaper_curve" class="Control">
+                        <div class="ControlName">Curve（※設定内容はソースを参照してください）:</div>
+                        <div class="ControlValue">
+                            <input name="waveshaperCurve" type="number" min="0.5" max="1.0" value="1.0" step="0.001"
+                                   onchange="if (EFFECTS['waveshaper'])
+                                                       EFFECTS['waveshaper'].curve = calcWaveShaperCurve($('input[name=waveshaperCurve]')[0].value);"/>
+                        </div>
+                    </div>
+                    <div id="waveshaper_gain" class="Control">
+                        <div class="ControlName">Gain:</div>
+                        <div class="ControlValue">
+                            <input name="waveshaperGain" type="number" min="0" max="1.0" value="1.0" step="0.0001"
+                                   onchange="if (EFFECTS['waveshaper'])
+                                                       EFFECTS['waveshaper'].gain = $('input[name=waveshaperGain]')[0].value;"/>
+                        </div>
+                    </div>
+                    <div id="waveshaper_oversample" class="Control">
+                        <div class="ControlName">Oversample:</div>
+                        <div class="ControlValue">
+                            <select name="waveshaperOversample"
+                                    onchange="if (EFFECTS['waveshaper'])
+                                                        EFFECTS['waveshaper'].oversample = $('select[name=waveshaperOversample]')[0].value;">
+                                <option value="none">None</option>
+                                <option value="2x">2x</option>
+                                <option value="4x">4x</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="waveshaper_play" class="Control">
+                        <button onclick="playSound('waveshaperSound');">Play/Stop</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
