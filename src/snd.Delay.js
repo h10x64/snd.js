@@ -47,6 +47,7 @@ snd.Delay = function (id) {
             },
             set: function (val) {
                 if (val > 0 && val < 180) {
+                    this._connector.disconnect(this._delay);
                     delete this._delay;
                     
                     this._delay = snd.AUDIO_CONTEXT.createDelay(val);
