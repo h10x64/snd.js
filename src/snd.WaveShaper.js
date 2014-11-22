@@ -54,13 +54,22 @@ Object.defineProperties(this, {
           }
     },
     oversample: {
-          get: function () {
-                return this._shaper.oversample;
-          },
-          set: function (val) {
-                this._shaper.oversample = val;
-                this._status.oversample = val;
-          }
+        get: function () {
+            return this._shaper.oversample;
+        },
+        set: function (val) {
+            this._shaper.oversample = val;
+            this._status.oversample = val;
+        }
+    },
+    gain: {
+        get: function() {
+            return this._output.gain.value;
+        },
+        set: function(val) {
+            this._output.gain.value = val;
+            this._status.gain = val;
+        }
     }
 });
 };
@@ -101,6 +110,7 @@ snd.WaveShaper.Status = function () {
     
     this.curve = null;
     this.oversample = snd.WaveShaper.OVERSAMPLE_NONE;
+    this.gain = 1.0;
 };
 snd.WaveShaper.Status.prototype = Object.create(snd.AudioUnit.Status.prototype);
 snd.WaveShaper.Status.prototype.constructor = snd.WaveShaper.Status;
