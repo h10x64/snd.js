@@ -9,7 +9,7 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     concat: {
       options: {
-        banner: '/* snd.js - The Sound Library for JavaScript with WebAudioAPI - v.0.85 */'
+        banner: '/* snd.js - The Sound Library for JavaScript with WebAudioAPI - v.0.9 */'
       },
       basic_and_extras: {
         files: {
@@ -64,7 +64,7 @@ module.exports = function(grunt) {
     },
     uglify: {
       options: {
-        banner: '/* snd.js - The Sound Library for JavaScript with WebAudioAPI - v.0.85 */' + '\n' +
+        banner: '/* snd.js - The Sound Library for JavaScript with WebAudioAPI - v.0.9 */' + '\n' +
                 '/**' + '\n' +
                 ' * snd.js' + '\n' +
                 ' * ' + '\n' +

@@ -25,4 +25,4 @@
  * @property {snd.AudioDataManager} AUDIO_DATA_MANAGER 音データの読み込みなどの管理を行うクラスです。<br/>
  * ※snd.initメソッドが呼ばれるまで初期化されず、nullとなっている点に注意してください。
  */
-snd = {VERSION: "0.85_20140923", IS_BETA:true, ALIAS: "WIP_AutumnalEquinox"};
+snd = {VERSION: "0.9_20141123", IS_BETA:true, ALIAS: "WIP_MinorSnow"};
