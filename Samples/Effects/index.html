@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>TODO supply a title</title>
+        <title>snd.js - sample - Effects</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="../libs/jquery/jquery-ui.min.css">
@@ -383,7 +383,7 @@
                             <tr><td>ノッチ</td><td>frequencyで指定された周波数を中心に、Qで指定されたバンド幅の周波数の音を通さないフィルタです。（一般的にはバンドストップ・バンドリジェクトとも呼ばれます）<br/>Q値が大きくなるとバンド幅は狭くなります。</td><td>snd.NOTCH</td></tr>
                             <tr><td>ローシェルフ</td><td>frequencyで指定された周波数よりも低い音に対して、gain[db]で指定されたゲインをかけて出力するフィルタです。<br/>gainはデシベル値なので、0の場合はそのまま、プラスの値なら音は大きく、マイナスの値なら音が小さくなります。</td><td>snd.LOWSHELF</td></tr>
                             <tr><td>ハイシェルフ</td><td>frequencyで指定された周波数よりも高い音に対して、gain[db]で指定されたゲインをかけて出力するフィルタです。<br/>gainはデシベル値なので、0の場合はそのまま、プラスの値なら音は大きく、マイナスの値なら音が小さくなります。</td><td>snd.HIGHSHELF</td></tr>
-                            <tr><td>ピーキング</td><td>frequencyで指定された周波数を中心に、Qで指定されたバンド幅の周波数を音に対して、gain[db]で指定されたゲインをかけて出力するフィルタです。<br/>gainはデシベル値なので、0の場合はそのまま、プラスの値なら音は大きく、マイナスの値なら音が小さくなります。<br/>gain</td><td>snd.PEAKING</td></tr>
+                            <tr><td>ピーキング</td><td>frequencyで指定された周波数を中心に、Qで指定されたバンド幅の周波数を音に対して、gain[db]で指定されたゲインをかけて出力するフィルタです。<br/>gainはデシベル値なので、0の場合はそのまま、プラスの値なら音は大きく、マイナスの値なら音が小さくなります。</td><td>snd.PEAKING</td></tr>
                             <tr><td>オールパス</td><td>全周波数帯の音を通過させます。音の大きさには影響がありませんが、frequencyで指定された周波数にピークを持つ群遅延を起こします。</td><td>snd.ALLPASS</td></tr>
                         </table>
                     </div>
@@ -459,7 +459,8 @@
                     </div>
                     <div>
                         Chrome, Firefoxなど、環境によりbufferがnullの場合の挙動が異なります。<br/>
-                        (Chromeではbufferがnullで出力がゼロとなりますが、Firefoxでは入力信号がそのまま出力されます)
+                        (Chromeではbufferがnullで出力がゼロとなりますが、Firefoxでは入力信号がそのまま出力されます)<br/>
+                        また、bufferに設定されたデータのチャネル数と入力信号のチャネル数があってないなどの場合は、値が出力されません。
                     </div>
                     <div>
                         エコーを作成する場合は、Delayの使用も検討してみてください。<br/>
@@ -502,7 +503,7 @@
                     </div>
                 </div>
                 <div class="EffectFooter">
-                    これらのインパルス応答ファイルは、Open Acoustic Impulse Response Library(http://www.openairlib.net)で、クリエイティブ・コモンズライセンス 表示-継承 3.0（http://creativecommons.org/licenses/by-sa/3.0/deed.ja）の下に公開されたデータを加工して作成されたものです。（Audacityを使用してモノラル16bitのPCM形式に変換してあります。）<br/>
+                    インパルス応答ファイルは、Open Acoustic Impulse Response Library(http://www.openairlib.net)で、クリエイティブ・コモンズライセンス 表示-継承 3.0（http://creativecommons.org/licenses/by-sa/3.0/deed.ja）の下に公開されたデータを加工して作成されたものです。（Audacityを使用してモノラル16bitのPCM形式に変換してあります。）<br/>
                     各ファイルの帰属者名と測定内容情報へのリンクは下記のとおりです。<br/>
                     <br/>
                     - carpark_balloon_ir_mono_24bit_44100.wav<br/>
