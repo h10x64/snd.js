@@ -263,10 +263,12 @@ snd.AudioDataManager.prototype.removeAll = function(keySet) {
  */
 snd.AudioDataManager.prototype.load = function(key) {
     if (key == null) {
-        for (var key in this._requests) {
-            if (this._dataMap[key].doesLoaded == false) {
-                if (this._requests[key].readyState == null || this._requests[key].readyState < 2) {
-                    this._requests[key].send();
+        var reqKeys = Object.keys(this._requests);
+        for (var i = 0; i < reqKeys.length; i++) {
+            var reqKey = reqKeys[i];
+            if (this._dataMap[reqKey].doesLoaded == false) {
+                if (this._requests[reqKey].readyState == null || this._requests[reqKey].readyState < 2) {
+                    this._requests[reqKey].send();
                 }
             }
         }
