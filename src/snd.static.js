@@ -36,6 +36,10 @@ snd.INIT_EVENT_LISTENERS = [];
  */
 snd.init = function () {
     snd.resetAudioContext();
+    
+    for (var i = 0; i < snd.INIT_EVENT_LISTENERS.length; i++) {
+        snd.INIT_EVENT_LISTENERS[i]();
+    }
 
     Object.defineProperties(snd, {
         /* StaticValues */
@@ -293,10 +297,6 @@ snd.init = function () {
 
     snd._MASTER = new snd.AudioMaster();
     snd._AUDIO_DATA_MANAGER = new snd.AudioDataManager();
-    
-    for (var i = 0; i < snd.INIT_EVENT_LISTENERS.length; i++) {
-        snd.INIT_EVENT_LISTENERS[i]();
-    }
 };
 
 /**
