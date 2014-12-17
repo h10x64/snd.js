@@ -1,4 +1,4 @@
-/* snd.js - The Sound Library for JavaScript with WebAudioAPI - v.0.9 */
+
 /**
  * snd.js
  * 
@@ -4085,10 +4085,12 @@ snd.AudioDataManager.prototype.removeAll = function(keySet) {
  */
 snd.AudioDataManager.prototype.load = function(key) {
     if (key == null) {
-        for (var key in this._requests) {
-            if (this._dataMap[key].doesLoaded == false) {
-                if (this._requests[key].readyState == null || this._requests[key].readyState < 2) {
-                    this._requests[key].send();
+        var reqKeys = Object.keys(this._requests);
+        for (var i = 0; i < reqKeys.length; i++) {
+            var reqKey = reqKeys[i];
+            if (this._dataMap[reqKey].doesLoaded == false) {
+                if (this._requests[reqKey].readyState == null || this._requests[reqKey].readyState < 2) {
+                    this._requests[reqKey].send();
                 }
             }
         }
@@ -4454,7 +4456,7 @@ snd._DOES_M4A_SUPPORTED = false;
  * ここへ追加したメソッドは snd.init メソッドの完了時に呼び出されます。<br/>
  * (引数なしの、snd.INIT_EVENT_LISTENERS[index]() の形で、添字の昇順で呼び出されます。)
  * 
- * @type Array 初期化完了時に呼び出される関数のリスト
+ * @type Array
  */
 snd.INIT_EVENT_LISTENERS = [];
 
@@ -4464,6 +4466,10 @@ snd.INIT_EVENT_LISTENERS = [];
  */
 snd.init = function () {
     snd.resetAudioContext();
+    
+    for (var i = 0; i < snd.INIT_EVENT_LISTENERS.length; i++) {
+        snd.INIT_EVENT_LISTENERS[i]();
+    }
 
     Object.defineProperties(snd, {
         /* StaticValues */
@@ -4721,10 +4727,6 @@ snd.init = function () {
 
     snd._MASTER = new snd.AudioMaster();
     snd._AUDIO_DATA_MANAGER = new snd.AudioDataManager();
-    
-    for (var i = 0; i < snd.INIT_EVENT_LISTENERS.length; i++) {
-        snd.INIT_EVENT_LISTENERS[i]();
-    }
 };
 
 /**

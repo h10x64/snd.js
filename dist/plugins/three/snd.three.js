@@ -1,4 +1,4 @@
-/* snd.js - The Sound Library for JavaScript with WebAudioAPI - v.0.9 */
+
 /**
  * snd.js
  * three.js plugin
