@@ -9,8 +9,7 @@
         <link rel="stylesheet" href="../libs/jquery/jquery-ui.theme.min.css">
         <script src="../libs/jquery/jquery-2.1.0.min.js"></script>
         <script src="../libs/jquery/jquery-ui.min.js"></script>
-        <script src="../../dist/snd.js"></script>
-        <script src="./snd.using.js"></script>
+        <script src="../../dist/snd.all.in.one.js"></script>
         <script>
             MATCH_SOUND_FILE = "../sound/test.wav";
             BGM_SOUND_FILE = "../sound/01 Liftoff (Get High).wav";
@@ -54,24 +53,25 @@
                 
                 // snd.jsの初期化完了時に呼び出されるメソッド
                 snd.onload = function() {
-                    // データマネージャにIR_FILESで指定されたファイルを追加
-                    snd.AUDIO_DATA_MANAGER.addAll(IR_FILES);
-                    // IRデータ読み込み終了時に呼び出されるコールバック関数
-                    var callback = function() {
-                        // 次回読み込み時に再度callbackが呼び出されないようにリスナのリストから消しておく
-                        snd.AUDIO_DATA_MANAGER.removeAllDataLoadListener(callback);
-                        // BufferSourceにするファイルを読み込み
-                        snd.util.createBufferSources(SOUND_FILES, false, onAllDataLoaded);
-                    };
-                    // データマネージャの全データ読み込み完了イベントのリスナにcallbackを追加
-                    snd.AUDIO_DATA_MANAGER.addAllDataLoadListener(callback);
-                
-                    // 読み込み開始
-                    snd.AUDIO_DATA_MANAGER.load();
                 };
                 
                 // snd.jsを初期化
                 snd.init();
+                
+                // データマネージャにIR_FILESで指定されたファイルを追加
+                snd.AUDIO_DATA_MANAGER.addAll(IR_FILES);
+                // IRデータ読み込み終了時に呼び出されるコールバック関数
+                var callback = function() {
+                    // 次回読み込み時に再度callbackが呼び出されないようにリスナのリストから消しておく
+                    snd.AUDIO_DATA_MANAGER.removeAllDataLoadListener(callback);
+                    // BufferSourceにするファイルを読み込み
+                    snd.util.createBufferSources(SOUND_FILES, false, onAllDataLoaded);
+                };
+                // データマネージャの全データ読み込み完了イベントのリスナにcallbackを追加
+                snd.AUDIO_DATA_MANAGER.addAllDataLoadListener(callback);
+
+                // 読み込み開始
+                snd.AUDIO_DATA_MANAGER.load();
             };
             /**
              * 画面周りの初期設定
