@@ -72,6 +72,10 @@ snd.util.createSources = function(dataSet, connectToMaster, element, func) {
  * @memberOf snd.util
  */
 snd.util.createBufferSources = function(dataSet, connectToMaster, func) {
+    if (!snd.BufferSource) {
+        throw new snd.Exception("Please load snd.BufferSource.js");
+    }
+    
     var sourceMap = {};
     var urlMap = {};
     
@@ -130,6 +134,10 @@ snd.util.createBufferSources = function(dataSet, connectToMaster, func) {
  * @memberOf snd.util
  */
 snd.util.createMediaElementAudioSources = function(dataSet, connectToMaster, parentElem) {
+    if (!snd.MediaElementAudioSource) {
+        throw new snd.Exception("Please load snd.MediaElementAudioSource.js");
+    }
+    
     var ret = {};
     
     for (var id in dataSet) {

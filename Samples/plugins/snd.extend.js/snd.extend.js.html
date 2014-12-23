@@ -1,0 +1,53 @@
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <script src="../../../dist/snd.js"></script>
+    <script src="../../libs/jquery/jquery-2.1.0.min.js"></script>
+    <script>
+        snd.init();
+    </script>
+    <body>
+        <div class="Title" id="title">snd.extend.js</div>
+        <div class="Subtitle" id="subtitle">- &lt;Audio&gt;タグの拡張 -</div>
+        <div class="Content" id="main">
+            Audioタグを拡張し、エフェクトを使えるようにします。<br/>
+            例えば、このような感じで書きます。<br/>
+            &lt;audio ... connectTo="lowPass"&gt;<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&lt;biquadFilter id="lowPass" type="lowpass"  q="1.0" connectTo="gain"/&gt;<br/>
+            &nbsp;&nbsp;&nbsp;&nbsp;&lt;gain id="gain" gain="0.5" connectTo="MASTER"&gt;<br/>
+            &lt;/audio&gt;<br/>
+            この場合、audioタグからの出力はidがlowpassのバイクアッドフィルタとゲインを経由して<br/>
+            「audio -> lowpass -> gain -> 出力」<br/>
+            となって出力されます。<br/>
+            
+        </div>
+        <div class="Sample" id="analyzerSample">
+            <div class="SampleTitle">Analyzer</div>
+            <div class="AudioTag">
+                <audio id="analyzerAudioTag" src="../../sound/01 Liftoff (Get High).wav" controls loop connectTo="analyzer snd.MASTER">
+                    <effect id="analyzer" type="analyzer" fftSize="1024" smoothingTimeConstant="0.8" maxDecibels="-30.0" minDecibels="-1000.0"/>
+                </audio>
+            </div>
+        </div>
+        <div class="Sample" id="gainSample">
+            <div class="SampleTitle">Gain</div>
+            <div class="AudioTag">
+                <audio id="gainAudioTag" src="../../sound/01 Liftoff (Get High).wav" controls loop connectTo="gain">
+                    <effect id="gain" type="gain" gain="0.1" connectTo="snd.MASTER"/>
+                </audio>
+            </div>
+        </div>
+        <div class="Sample" id="gainSample">
+            <div class="SampleTitle">Gain</div>
+            <div class="AudioTag">
+                <audio id="gainAudioTag" src="../../sound/01 Liftoff (Get High).wav" controls loop preload></audio>
+            </div>
+        </div>
+        <div id="test">
+            
+        </div>
+    </body>
+</html>

@@ -10,6 +10,7 @@
         <meta name="viewport" content="width=device-width">
         <script src="../libs/jquery/jquery-2.1.0.min.js"></script>
         <script src="../../dist/snd.js"></script>
+        <script src="./snd.using.js"></script>
         <script>
             /**
              * コードフェードイン時の音源オブジェクトのID
@@ -90,18 +91,19 @@
                 // カーソルを砂時計に変更
                 window.document.body.style.cursor = "wait";
 
+                /* snd.jsの初期化完了時に呼び出されるメソッド */
+                snd.onload = function() {
+                    /* 音源オブジェクトの作成 */
+                    // snd.utilの音源作成メソッドを呼び出します。
+                    // snd.util.createBufferSoundNode(連想配列{"音源データのID":"URL" ... }, ロード終了時に呼び出されるコールバック関数});
+                    snd.util.createBufferSources(SOUND_DATA_SETTINGS, true, function(_loadedData) {
+                        // _loadDataの内容: 連想配列{"音源データのID":音源オブジェクト}
+                        main(_loadedData); // メイン関数の呼出し
+                    });
+                };
+                
                 /* snd.jsの初期化 */
-
                 snd.init();
-
-                /* 音源オブジェクトの作成 */
-                // snd.utilの音源作成メソッドを呼び出します。
-                // snd.util.createBufferSoundNode(連想配列{"音源データのID":"URL" ... }, ロード終了時に呼び出されるコールバック関数});
-                snd.util.createBufferSources(SOUND_DATA_SETTINGS, true, function(_loadedData) {
-                    // _loadDataの内容: 連想配列{"音源データのID":音源オブジェクト}
-
-                    main(_loadedData); // メイン関数の呼出し
-                });
             };
 
             /**

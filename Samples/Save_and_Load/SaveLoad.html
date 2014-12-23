@@ -1,45 +1,64 @@
 <!doctype html>
 <html>
     <head>
-        <title>Save / Load Test</title>
+        <title>Save / Load</title>
         <meta charset="UTF-8">
         <script src="../../dist/snd.js"></script>
+        <script src="./snd.using.js"></script>
         <script>
-            snd.init();
+            var AUDIO_UNIT, SOURCE, BUFFER_SOURCE,MEDIA_ELEMENT_AUDIO_SOURCE, OSCILLATOR_SOURCE, SCRIPTPROCESSOR_UNIT;
             
-            SCRIPT_PROCESSOR_START_FLAG = false;
+            window.onload = function() {
+                snd.onload = function() {
+                    SCRIPT_PROCESSOR_START_FLAG = false;
 
-            var AUDIO_UNIT = new snd.AudioUnit("SaveLoadTest_AudioUnit");
-            var SOURCE = new snd.Source("SaveLoadTest_Source");
-            var BUFFER_SOURCE = new snd.BufferSource("SaveLoadTest_BufferSource");
-            BUFFER_SOURCE.loadURL("../sound/test.wav");
-            var MEDIA_ELEMENT_AUDIO_SOURCE = new snd.MediaElementAudioSource("SaveLoadTest_MediaElementAudioSource");
-            var OSCILLATOR_SOURCE = new snd.OscillatorSource("SaveLoadTest_OscillatorSource");
-            var SCRIPT_PROCESSOR_UNIT = new snd.ScriptProcessor("SaveLoadTest_ScriptProcessor");
-            SCRIPT_PROCESSOR_UNIT.script = 
-                    "if (SCRIPT_PROCESSOR_START_FLAG) {"
-                    +     "for(var ch = 0; ch < evt.outputBuffer.numberOfChannels; ch++) {"
-                    +         "var channelData = evt.outputBuffer.getChannelData(ch);"
-                    +         "for (var i = 0; i < evt.outputBuffer.length; i++) {"
-                    +             "channelData[i] = Math.random();"
-                    +         "}"
-                    +     "}"
-                    + "} else {"
-                    +     "for(var ch = 0; ch < evt.outputBuffer.numberOfChannels; ch++) {"
-                    +         "var channelData = evt.outputBuffer.getChannelData(ch);"
-                    +         "for (var i = 0; i < evt.outputBuffer.length; i++) {"
-                    +             "channelData[i] = 0;"
-                    +         "}"
-                    +     "}"
-                    + "}";
+                    AUDIO_UNIT = new snd.AudioUnit("SaveLoadTest_AudioUnit");
+                    
+                    SOURCE = new snd.Source("SaveLoadTest_Source");
+                    
+                    BUFFER_SOURCE = new snd.BufferSource("SaveLoadTest_BufferSource");
+                    BUFFER_SOURCE.loadURL("../sound/test.wav");
+                    
+                    MEDIA_ELEMENT_AUDIO_SOURCE = new snd.MediaElementAudioSource("SaveLoadTest_MediaElementAudioSource");
+                    MEDIA_ELEMENT_AUDIO_SOURCE.element = document.getElementById("mediaElem");
 
-            snd.MASTER.connectAudioUnit(AUDIO_UNIT.id, AUDIO_UNIT);
-            snd.MASTER.connectAudioUnit(SOURCE.id, SOURCE);
-            snd.MASTER.connectAudioUnit(BUFFER_SOURCE.id, BUFFER_SOURCE);
-            snd.MASTER.connectAudioUnit(MEDIA_ELEMENT_AUDIO_SOURCE.id, MEDIA_ELEMENT_AUDIO_SOURCE);
-            snd.MASTER.connectAudioUnit(OSCILLATOR_SOURCE.id, OSCILLATOR_SOURCE);
-            snd.MASTER.connectAudioUnit(SCRIPT_PROCESSOR_UNIT.id, SCRIPT_PROCESSOR_UNIT);
+                    OSCILLATOR_SOURCE = new snd.OscillatorSource("SaveLoadTest_OscillatorSource");
 
+                    SCRIPT_PROCESSOR_UNIT = new snd.ScriptProcessor("SaveLoadTest_ScriptProcessor");
+                    SCRIPT_PROCESSOR_UNIT.script = 
+                            "if (SCRIPT_PROCESSOR_START_FLAG) {"
+                            +     "for(var ch = 0; ch < evt.outputBuffer.numberOfChannels; ch++) {"
+                            +         "var channelData = evt.outputBuffer.getChannelData(ch);"
+                            +         "for (var i = 0; i < evt.outputBuffer.length; i++) {"
+                            +             "channelData[i] = Math.random();"
+                            +         "}"
+                            +     "}"
+                            + "} else {"
+                            +     "for(var ch = 0; ch < evt.outputBuffer.numberOfChannels; ch++) {"
+                            +         "var channelData = evt.outputBuffer.getChannelData(ch);"
+                            +         "for (var i = 0; i < evt.outputBuffer.length; i++) {"
+                            +             "channelData[i] = 0;"
+                            +         "}"
+                            +     "}"
+                            + "}";
+
+                    snd.MASTER.connectAudioUnit(AUDIO_UNIT.id, AUDIO_UNIT);
+                    snd.MASTER.connectAudioUnit(SOURCE.id, SOURCE);
+                    snd.MASTER.connectAudioUnit(BUFFER_SOURCE.id, BUFFER_SOURCE);
+                    snd.MASTER.connectAudioUnit(MEDIA_ELEMENT_AUDIO_SOURCE.id, MEDIA_ELEMENT_AUDIO_SOURCE);
+                    snd.MASTER.connectAudioUnit(OSCILLATOR_SOURCE.id, OSCILLATOR_SOURCE);
+                    snd.MASTER.connectAudioUnit(SCRIPT_PROCESSOR_UNIT.id, SCRIPT_PROCESSOR_UNIT);
+                    
+                    onSaveAudioUnitButtonClick();
+                    onSaveSourceButtonClick();
+                    onSaveBufferSourceButtonClick();
+                    onSaveMediaElementAudioSourceButtonClick();
+                    onSaveOscillatorSourceButtonClick();
+                    onSaveScriptProcessorButtonClick();
+                }
+
+                snd.init();
+            };
         </script>
     </head>
     <body>
@@ -177,17 +196,7 @@
         snd.MASTER.connectAudioUnit(SCRIPT_PROCESSOR_UNIT.id, SCRIPT_PROCESSOR_UNIT);
     };
 
-    window.onload = function() {
-        MEDIA_ELEMENT_AUDIO_SOURCE.element = document.getElementById("mediaElem");
 
-        onSaveAudioUnitButtonClick();
-        onSaveSourceButtonClick();
-        onSaveBufferSourceButtonClick();
-        onSaveMediaElementAudioSourceButtonClick();
-        onSaveOscillatorSourceButtonClick();
-        onSaveScriptProcessorButtonClick();
-    };
-
-        </script>    
+</script>    
 </body>
 </html>

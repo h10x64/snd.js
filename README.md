@@ -8,24 +8,31 @@ MITライセンスですので、商用・非商用問わず、誰でも自由�
 ↓のような簡易な記述で、あなたのサイト・Webアプリに音を追加することができます。
 
 ```
-var SOUND_DATA_URL = {
-    "Sound1": "./sound/Sound1.mp3",
-    "Sound2": "./sound/Sound2.wav"
-}
+<script src="./lib/snd.js"></script>
+<script src="./lib/snd.using.js"></script>
+
+<script>
+    var SOUND_DATA_URL = {
+        "Sound1": "./sound/Sound1.mp3",
+        "Sound2": "./sound/Sound2.wav"
+    }
  
-// snd.js初期化
-snd.init();
- 
-// BufferSourceを生成して、再生の準備が整ったらコールバック関数を呼ぶ
-snd.util.createBufferSources(SOUND_DATA_URL, true, function(loadedSound) {
-    // "Sound1" (./sound/Sound1.mp3)を再生
-    loadedSound["Sound1"].start();
-    // ボタンクリック音として"Sound2"(./sound/Sound2.wav)を設定する
-    document.getElementById("button_with_sound").onclick = function() {
-        // "Sound2" (./sound/Sound2.wav)を再生
-        loadedSound["Sound2"].start();
+    snd.onload = function() {
+        // BufferSourceを生成して、再生の準備が整ったらコールバック関数を呼ぶ
+        snd.util.createBufferSources(SOUND_DATA_URL, true, function(loadedSound) {
+            // "Sound1" (./sound/Sound1.mp3)を再生
+            loadedSound["Sound1"].start();
+            // ボタンクリック音として"Sound2"(./sound/Sound2.wav)を設定する
+            document.getElementById("button_with_sound").onclick = function() {
+                // "Sound2" (./sound/Sound2.wav)を再生
+                loadedSound["Sound2"].start();
+            };
+        });
     };
-});
+
+    // snd.js初期化
+    snd.init();
+</script>
 ```
 
 単純な効果音再生の他、プラグインを利用すればthree.jsと連動したリアルタイムの立体音響化エフェクトなどの付加機能が使用可能です。

@@ -8,46 +8,97 @@ module.exports = function(grunt) {
     },
     pkg: grunt.file.readJSON('package.json'),
     concat: {
-      options: {
-        banner: '/* snd.js - The Sound Library for JavaScript with WebAudioAPI - v.0.9 */'
-      },
       basic_and_extras: {
         files: {
           'dist/snd.js': [
               'src/COPYRIGHT',
               'src/snd.base.js',
-              'src/snd.Exception.js',
-              'src/snd.vec3.js',
-              'src/snd.AudioUnit.js',
-              'src/snd.Source.js',
-              // Sources
-              'src/snd.BufferSource.js',
-              'src/snd.OscillatorSource.js',
-              'src/snd.MediaElementAudioSource.js',
-              'src/snd.MediaStreamAudioSource.js',
-              // Effects
-              'src/snd.Analyser.js',
-              'src/snd.BiquadFilter.js',
-              'src/snd.Convolver.js',
-              'src/snd.Delay.js',
-              'src/snd.DynamicsCompressor.js',
-              'src/snd.Gain.js',
-              'src/snd.WaveShaper.js',
-              // Misc.
-              'src/snd.ScriptProcessor.js',
-              'src/snd.Synth.js',
-              'src/snd.Listener.js',
-              // Util, Environment, etc..
-              'src/snd.AudioDataManager.js',
-              'src/snd.AudioMaster.js',
-              'src/snd.util.js',
-              'src/snd.static.js'
+              'src/snd.util.js'
           ],
-          'dist/plugins/snd.mml.js': [
+          'dist/snd.using.js' : [
+              'src/COPYRIGHT',
+              'src/snd.using.js'
+          ],
+          // required
+          'dist/class/required/snd.Exception.js': [
+              'src/COPYRIGHT',
+              'src/class/required/snd.Exception.js',
+          ],
+          'dist/class/required/snd.AudioDataManager.js': [
+              'src/COPYRIGHT',
+              'src/class/required/snd.AudioDataManager.js',
+          ],
+          'dist/class/required/snd.AudioMaster.js': [
+              'src/COPYRIGHT',
+              'src/class/required/snd.AudioMaster.js',
+          ],
+          'dist/class/required/snd.AudioUnit.js': [
+              'src/COPYRIGHT',
+              'src/class/required/snd.AudioUnit.js',
+          ],
+          'dist/class/required/snd.Source.js': [
+              'src/COPYRIGHT',
+              'src/class/required/snd.Source.js',
+          ],
+          // optional
+          'dist/class/optional/snd.Analyser.js': [
+              'src/COPYRIGHT',
+              'src/class/optional/snd.Analyser.js',
+          ],
+          'dist/class/optional/snd.BiquadFilter.js': [
+              'src/COPYRIGHT',
+              'src/class/optional/snd.BiquadFilter.js',
+          ],
+          'dist/class/optional/snd.BufferSource.js': [
+              'src/COPYRIGHT',
+              'src/class/optional/snd.BufferSource.js',
+          ],
+          'dist/class/optional/snd.Convolver.js': [
+              'src/COPYRIGHT',
+              'src/class/optional/snd.Convolver.js',
+          ],
+          'dist/class/optional/snd.Delay.js': [
+              'src/COPYRIGHT',
+              'src/class/optional/snd.Delay.js',
+          ],
+          'dist/class/optional/snd.DynamicsCompressor.js': [
+              'src/COPYRIGHT',
+              'src/class/optional/snd.DynamicsCompressor.js',
+          ],
+          'dist/class/optional/snd.Gain.js': [
+              'src/COPYRIGHT',
+              'src/class/optional/snd.Gain.js',
+          ],
+          'dist/class/optional/snd.MediaElementAudioSource.js': [
+              'src/COPYRIGHT',
+              'src/class/optional/snd.MediaElementAudioSource.js',
+          ],
+          'dist/class/optional/snd.MediaStreamAudioSource.js': [
+              'src/COPYRIGHT',
+              'src/class/optional/snd.MediaStreamAudioSource.js',
+          ],
+          'dist/class/optional/snd.OscillatorSource.js': [
+              'src/COPYRIGHT',
+              'src/class/optional/snd.OscillatorSource.js',
+          ],
+          'dist/class/optional/snd.ScriptProcessor.js': [
+              'src/COPYRIGHT',
+              'src/class/optional/snd.ScriptProcessor.js',
+          ],
+          'dist/class/optional/snd.Synth.js': [
+              'src/COPYRIGHT',
+              'src/class/optional/snd.Synth.js',
+          ],
+          'dist/class/optional/snd.WaveShaper.js': [
+              'src/COPYRIGHT',
+              'src/class/optional/snd.WaveShaper.js',
+          ],
+          // plugin
+          'dist/plugins/mml/snd.mml.js': [
               'src/plugins/mml/COPYRIGHT',
               'src/plugins/mml/snd.mml.js'
           ],
-          'dist/plugins/snd.three.js': [
+          'dist/plugins/three/snd.three.js': [
               'src/plugins/three/COPYRIGHT',
               'src/plugins/three/snd.three.static.js',
               'src/plugins/three/snd.PosDir.js',
@@ -58,15 +109,27 @@ module.exports = function(grunt) {
               'src/plugins/three/snd.MediaElementAudioNode.js',
               'src/plugins/three/snd.three.js',
               'src/plugins/three/snd.three.util.js'
+          ],
+          'dist/plugins/encrypt/snd.encrypt.js': [
+              'src/plugins/encrypt/COPYRIGHT',
+              'src/plugins/encrypt/snd.encrypt.js'
+          ],
+          'dist/plugins/encrypt/createKey.rb': [
+              'src/plugins/encrypt/createKey.rb'
+          ],
+          'dist/plugins/encrypt/encrypt.rb': [
+              'src/plugins/encrypt/encrypt.rb'
+          ],
+          'dist/plugins/encrypt/keygen.rb': [
+              'src/plugins/encrypt/keygen.rb'
           ]
         }
       }
     },
     uglify: {
       options: {
-        banner: '/* snd.js - The Sound Library for JavaScript with WebAudioAPI - v.0.9 */' + '\n' +
-                '/**' + '\n' +
-                ' * snd.js' + '\n' +
+        banner: '/**' + '\n' +
+                ' * snd.js - The Sound Library for JavaScript with WebAudioAPI - v.1.0 beta' + '\n' +
                 ' * ' + '\n' +
                 ' * The MIT License (MIT)' + '\n' +
                 ' * copyright (c) 2014 N_H <h.10x64@gmail.com>' + '\n' +
@@ -89,14 +152,32 @@ module.exports = function(grunt) {
                 ' * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN' + '\n' +
                 ' * THE SOFTWARE.' + '\n' +
                 ' * ' + '\n' +
-                ' **/'
+                ' **/' + '\n'
       },
       dist: {
         files: {
           'dist/snd.min.js' : ['dist/snd.js'],
-          'dist/plugins/snd.mml.min.js' : ['dist/plugins/snd.mml.js'],
-          'dist/plugins/snd.three.min.js' : ['dist/plugins/snd.three.js'],
-          'dist/plugins/snd.stereo.min.js' : ['dist/plugins/snd.three.js']
+          'dist/class.min/required/snd.AudioDataManager.min.js' : ['dist/class/required/snd.AudioDataManager.js'],
+          'dist/class.min/required/snd.AudioMaster.min.js' : ['dist/class/required/snd.AudioMaster.js'],
+          'dist/class.min/required/snd.AudioUnit.min.js' : ['dist/class/required/snd.AudioUnit.js'],
+          'dist/class.min/required/snd.Exception.min.js' : ['dist/class/required/snd.Exception.js'],
+          'dist/class.min/required/snd.Source.min.js' : ['dist/class/required/snd.Source.js'],
+          'dist/class.min/optional/snd.Analyser.min.js' : ['dist/class/optional/snd.Analyser.js'],
+          'dist/class.min/optional/snd.BiquadFilter.min.js' : ['dist/class/optional/snd.BiquadFilter.js'],
+          'dist/class.min/optional/snd.BufferSource.min.js' : ['dist/class/optional/snd.BufferSource.js'],
+          'dist/class.min/optional/snd.Convolver.min.js' : ['dist/class/optional/snd.Convolver.js'],
+          'dist/class.min/optional/snd.Delay.min.js' : ['dist/class/optional/snd.Delay.js'],
+          'dist/class.min/optional/snd.DynamicsCompressor.min.js' : ['dist/class/optional/snd.DynamicsCompressor.js'],
+          'dist/class.min/optional/snd.Gain.min.js' : ['dist/class/optional/snd.Gain.js'],
+          'dist/class.min/optional/snd.MediaElementAudioSource.min.js' : ['dist/class/optional/snd.MediaElementAudioSource.js'],
+          'dist/class.min/optional/snd.MediaStreamAudioSource.min.js' : ['dist/class/optional/snd.MediaStreamAudioSource.js'],
+          'dist/class.min/optional/snd.OscillatorSource.min.js' : ['dist/class/optional/snd.OscillatorSource.js'],
+          'dist/class.min/optional/snd.ScriptProcessor.min.js' : ['dist/class/optional/snd.ScriptProcessor.js'],
+          'dist/class.min/optional/snd.Synth.min.js' : ['dist/class/optional/snd.Synth.js'],
+          'dist/class.min/optional/snd.WaveShaper.min.js' : ['dist/class/optional/snd.WaveShaper.js'],
+          'dist/plugins/mml/snd.mml.min.js' : ['dist/plugins/mml/snd.mml.js'],
+          'dist/plugins/three/snd.three.min.js' : ['dist/plugins/three/snd.three.js'],
+          'dist/plugins/encrypt/snd.encrypt.min.js' : ['dist/plugins/encrypt/snd.encrypt.js']
         }
       }
     },
