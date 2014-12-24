@@ -209,7 +209,7 @@ module.exports = function(grunt) {
         destination: 'doc',
         configure: 'docConfig.json'
       },
-      src: ['dist/snd.js', 'README.md']
+      src: ['dist/snd.all.in.one.js', 'README.md']
     },
   });
   
