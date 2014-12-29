@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>snd.invalid.js</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="../../libs/jquery/jquery-2.1.3.js"></script>
+        <script src="../../../dist/snd.js"></script>
+        <script src="./snd.using.js"></script>
+        <script>
+            snd.onload = function() {
+                snd.invalid.init();
+            };
+            
+            window.onload = function() {
+                snd.init();
+            };
+        </script>
+        <style type="text/css">
+            .code {
+                margin:1em;
+                border: #000 solid 1px;
+                padding: 0.5em;
+                line-height: 150%;
+            }
+            .code .comment {
+                display: inline; color: #555;
+            }
+        </style>
+    </head>
+    <body>
+        <oscillator id="test"></oscillator>
+        
+        <div>
+            Please press "F12 - console" and try this !<br/>
+            <div class="code">
+                &gt; $("#test").attr("start", "true");<div class="comment"> // start oscillator</div><br/>
+                &gt; $("#test").animate({frequency: "110hz"}, 10000);<div class="comment"> // animate frequency 440 - 110 hz in 10sec.</div><br/>
+                &gt; $("#test").attr("start", null);<div class="comment"> // stop oscillator</div><br/>
+            </div>
+        </div>
+    </body>
+</html>
