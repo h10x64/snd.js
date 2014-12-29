@@ -1,10 +1,24 @@
+/**
+ * snd.jsで使用する外部jsファイルを読み込む関数です。<br/>
+ * snd.initメソッド内で、定数値の初期化が終わったタイミングで呼び出されます。<br/>
+ * htmlファイルにscriptタグをあらかじめ追加しておくのと内容的には同じです。
+ * @param {type} callback
+ * @returns {undefined}
+ */
 snd.using = function(callback){
     /**
      * クラス定義ファイルが格納されているディレクトリのパスを指定します。<br/>
      * 環境に合わせて書き換えてください。
-     * @type String|String
+     * @type String
      */
-    var CLASS_DIR = ".lib/class/";
+    var CLASS_DIR = "./lib/class/";
+    
+    /**
+     * プラグインファイルが格納されているディレクトリのパスを指定します。<br/>
+     * 環境に合わせて書き換えてください。
+     * @type String
+     */
+    var PLUGIN_DIR = "./lib/plugin/";
     
     /**
      * snd.jsの必須クラスです。<br/>
@@ -22,7 +36,7 @@ snd.using = function(callback){
     /**
      * snd.jsで使用するクラスです。
      * この配列内のクラスは必須ではないので、要・不要に応じて内容を書き換えてください。<br/>
-     * REQUIREDと同じで、"CLASS_DIR + REQUIRED[i]"にあるファイルを読み込みます。<br/>
+     * "CLASS_DIR + OPTIONAL[i]"にあるファイルを読み込みます。<br/>
      * @type Array
      */
     var OPTIONAL = [
@@ -40,13 +54,30 @@ snd.using = function(callback){
         './optional/snd.WaveShaper.js'
     ];
     
-    var load = REQUIRED.concat(OPTIONAL);
+    /**
+     * snd.jsで使用するプラグインです。
+     * 使いたいプラグインがある場合は、内容を書き換えてください。<br/>
+     * "PLUGIN_DIR + PLUGIN[i]"にあるファイルを読み込みます。<br/>
+     * @type Array
+     */
+    var PLUGIN = [
+    ];
+    
+    var load = [];
+    for (var i = 0; i < REQUIRED.length; i++) {
+        load.push(CLASS_DIR + REQUIRED[i]);
+    }
+    for (var i = 0; i < OPTIONAL.length; i++) {
+        load.push(CLASS_DIR + OPTIONAL[i]);
+    }
+    for (var i = 0; i < PLUGIN.length; i++) {
+        load.push(PLUGIN_DIR + PLUGIN[i]);
+    }
     var len = load.length;
     var i = 0;
 
     (function appendScript() {
         var script = document.createElement('script');
-        script.src = CLASS_DIR + load[i];
         document.head.appendChild(script);
 
         if (++i < len) {
