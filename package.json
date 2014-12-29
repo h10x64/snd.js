@@ -1,7 +1,8 @@
 {
   "name": "snd.js",
-  "version": "0.1.0",
-  "description": "The Sound Liblary with the Web Audio API",
+  "version": "1.0.0",
+  "description": "The Web Audio API Liblary",
+  "homepage": "http://sndjs.org",
   "devDependencies": {
     "grunt": "^0.4.4",
     "grunt-contrib-watch": "~0.6.1",
@@ -18,5 +19,8 @@
     "name": "n_h",
     "email": "h.10x64@gmail.com"
   },
-  "license": "MIT"
+  "licenses": {
+      "type": "MIT",
+      "url": "https://github.com/h10x64/snd.js/blob/master/LICENSE"
+  }
 }
