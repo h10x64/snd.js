@@ -3672,7 +3672,7 @@ snd.CLASS_DEF.push(function() {
                 },
                 set: function(val) {
                     if (this._source != null) {
-                        this._source.frequency.value = (val == null) ? 0.0 : val;
+                        this._source.frequency.value = (val) ? parseFloat(val) : 0.0;
                         this._status.frequency = this._source.frequency.value;
                     }
                 }
@@ -3699,7 +3699,7 @@ snd.CLASS_DEF.push(function() {
                 },
                 set: function(val) {
                     if (this._source != null) {
-                        this._source.detune.value = val;
+                        this._source.detune.value = (val) ? parseFloat(val) : 0.0;
                         this._status.detune = val;
                     }
                 }
@@ -3935,11 +3935,20 @@ snd.CLASS_DEF.push(function() {
             }
         }
     };
+    
+    snd.OscillatorSource.prototype.onended = function(oscillator) {
+    };
 
     snd.OscillatorSource.prototype.fireOnEndedEvent = function() {
+        if (typeof(this.onended) == "function") {
+            this.onended(this);
+        }
+        
         var listeners = this.listeners['onended'];
         for (var i = 0; i < listeners; i++) {
-            listeners[i](this);
+            if (typeof(listeners[i]) == "function") {
+                listeners[i](this);
+            }
         }
     };
 

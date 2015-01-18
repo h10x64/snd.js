@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>snd.js - The Sound Library for JavaScript with WebAudioAPI - Class: Exception</title>
+	<title>snd.js - The Sound Library for JavaScript with WebAudioAPI - Class: Source</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -79,11 +79,11 @@
 						</li>
 						
 						<li>
-							<a href="snd.Source.html">Source</a>
+							<a href="snd.Source.Status.html">Status</a>
 						</li>
 						
 						<li>
-							<a href="snd.Source.Status.html">Status</a>
+							<a href="Source.html">Source</a>
 						</li>
 						
 
@@ -117,18 +117,16 @@
 					
 
 
-	<h1 class="page-title">Class: Exception</h1>
+	<h1 class="page-title">Class: Source</h1>
 <section>
 
 <header>
     <h2>
-        <span class="ancestors"><a href="global.html#snd">snd</a>.</span>
-    
-    Exception
+    Source
     </h2>
     
-        <div class="class-description">snd.jsで使用される例外クラスです。<br/>
-JSON文字列からのデータロードなどで例外が発生した場合に使用されます。<br/></div>
+        <div class="class-description">各種音源クラスの親クラスとなる抽象クラスです。<br/>
+start, stopなどの抽象メソッドは継承する子クラスで実装してください。</div>
     
 </header>
 
@@ -139,7 +137,7 @@ JSON文字列からのデータロードなどで例外が発生した場合に�
     
         
 <dt>
-    <h4 class="name" id="Exception"><span class="type-signature"></span>new Exception<span class="signature">(message)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Source"><span class="type-signature"></span>new Source<span class="signature">(id)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -147,8 +145,10 @@ JSON文字列からのデータロードなどで例外が発生した場合に�
     
     
     <div class="description">
-        コンストラクタです。<br/>
-引数 message にエラー内容を表す文字列を設定してください。
+        音源を生成します。<br/>
+typeプロパティはsnd.srctype.NONEに<br/>
+statusプロパティはsnd.status.NONEに<br/>
+それぞれ設定されます。
     </div>
     
 
@@ -182,7 +182,7 @@ JSON文字列からのデータロードなどで例外が発生した場合に�
 
         <tr>
             
-                <td class="name"><code>message</code></td>
+                <td class="name"><code>id</code></td>
             
 
             <td class="type">
@@ -198,7 +198,7 @@ JSON文字列からのデータロードなどで例外が発生した場合に�
 
             
 
-            <td class="description last">エラー内容を表す文字列</td>
+            <td class="description last">この音源のID</td>
         </tr>
 
 	
@@ -209,6 +209,154 @@ JSON文字列からのデータロードなどで例外が発生した場合に�
     
     
 <dl class="details">
+    
+
+        <h5 class="subsection-title">Properties:</h5>
+
+        <dl>
+
+<table class="props table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>isSource</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">このオブジェクトがsnd.Sourceであることを表すプロパティです。</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>volumeParam</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">AudioParam</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">この音源の音量を設定するためのAudioParamです。他のAudioUnitの出力をこのOscillatorの周波数の値に渡す場合などに使用するためのもので、このプロパティに直接値を代入することはできません。<br/>
+この音源の音量に具体的な数値を設定したい場合は、volumeプロパティを使用してください。</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>volume</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">この音源の音量を取得・設定するプロパティです。<br/>
+単位は[倍]です。（デシベルではありません）<br/></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">この音源のクラス名です。<br/>
+値を設定することはできません。</td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>status</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">snd.status</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">この音源の状態を表すプロパティです。<br/>
+値を設定することはできません。</td>
+        </tr>
+
+	
+	</tbody>
+</table>
+</dl>
+
     
 
     
@@ -230,7 +378,7 @@ JSON文字列からのデータロードなどで例外が発生した場合に�
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        snd.all.in.one.js, line 650
+        snd.all.in.one.js, line 1268
     </li></ul></dd>
     
 
@@ -298,7 +446,7 @@ JSON文字列からのデータロードなどで例外が発生した場合に�
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a>
-		on Sun Jan 18 2015 00:17:51 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		on Mon Dec 29 2014 15:49:38 GMT+0900 (JST) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
 			</div>
