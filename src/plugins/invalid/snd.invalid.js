@@ -34,25 +34,31 @@ snd.PLUGIN_INIT.push(function() {
         for (var i = 0; i < records.length; i++) {
             var record = records[i];
             var target = record.target;
-            var invalid = target._invalid;
             
             if (record.type == "childList") {
-                if (!invalid) {
-                    // Setup new element
-                    var tagName = target.tagName;
-                    if (tagName in snd.invalid.TAG_DEF) {
-                        snd.invalid.Element.setup(target, snd.invalid.TAG_DEF[tagName]);
-                        invalid = target._invalid;
-                    } else {
-                        return;
+                for (var i = 0; i < record.addedNodes.length; i++) {
+                    var node = record.addedNodes[i];
+                    var invalid = node._invalid;
+
+                    if (!invalid) {
+                        // Setup new element
+                        var tagName = node.tagName.toLowerCase();
+                        if (tagName in snd.invalid.TAG_DEF) {
+                            snd.invalid.Element.setup(node, snd.invalid.TAG_DEF[tagName]);
+                        } else {
+                            return;
+                        }
                     }
+
                 }
                 
                 var nodeCallback = snd.invalid.getMethod(target, "nodeCallback");
-                if (typeof(nodeCallback) == "function") {
+                if (typeof (nodeCallback) == "function") {
                     nodeCallback(record, observer);
                 }
             } else {
+                var invalid = target._invalid;
+                
                 if (invalid) {
                     if (record.type == "attributes") {
                         var attributeCallback = snd.invalid.getMethod(target, "attributeCallback");
