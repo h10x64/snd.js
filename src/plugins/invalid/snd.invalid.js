@@ -304,7 +304,6 @@ snd.PLUGIN_INIT.push(function() {
                                 },
                                 set: function(ele, value) {
                                     ele.style[prop] = value;
-                                    console.log(value);
                                 }
                             };
                         }
