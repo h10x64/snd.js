@@ -29,14 +29,14 @@
         </style>
     </head>
     <body>
-        <oscillator id="test"></oscillator>
+        <snd-oscillator id="test"></snd-oscillator>
         
         <div>
             Please press "F12 - console" and try this !<br/>
             <div class="code">
-                &gt; $("#test").attr("start", "true");<div class="comment"> // start oscillator</div><br/>
-                &gt; $("#test").animate({frequency: "110hz"}, 10000);<div class="comment"> // animate frequency 440 - 110 hz in 10sec.</div><br/>
-                &gt; $("#test").attr("start", null);<div class="comment"> // stop oscillator</div><br/>
+                &gt; $("#test")[0].start();<div class="comment"> // start oscillator</div><br/>
+                &gt; $("#test").animate({frequency: "110hz"}, 10000);<div class="comment"> // animate frequency 440 to 110 hz in 10sec.</div><br/>
+                &gt; $("#test")[0].stop();<div class="comment"> // stop oscillator</div><br/>
             </div>
         </div>
     </body>
