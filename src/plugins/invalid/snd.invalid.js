@@ -6,7 +6,7 @@ if (jQuery && jQuery.cssHooks) {
 }
 
 snd.PLUGIN_INIT.push(function() {
-    
+
     /**
      * 初期化を行います。<br/>
      * document.bodyを使うため、document.onload内で実行するようにしてください。
@@ -17,24 +17,24 @@ snd.PLUGIN_INIT.push(function() {
             childList: true,
             subTree: true
         });
-        
+
         var tagNames = Object.keys(snd.invalid.TAG_DEF);
         for (var i = 0; i < tagNames.length; i++) {
             var tagName = tagNames[i];
             var tags = document.getElementsByTagName(tagName);
-            
+
             for (var j = 0; j < tags.length; j++) {
                 var tag = tags[j];
                 snd.invalid.Element.setup(tag, snd.invalid.TAG_DEF[tagName]);
             }
         }
     };
-    
+
     snd.invalid.observeCallback = function(records, observer) {
         for (var i = 0; i < records.length; i++) {
             var record = records[i];
             var target = record.target;
-            
+
             if (record.type == "childList") {
                 for (var i = 0; i < record.addedNodes.length; i++) {
                     var node = record.addedNodes[i];
@@ -46,26 +46,48 @@ snd.PLUGIN_INIT.push(function() {
                         if (tagName in snd.invalid.TAG_DEF) {
                             snd.invalid.Element.setup(node, snd.invalid.TAG_DEF[tagName]);
                         } else {
-                            return;
+                            continue;
                         }
                     }
-
                 }
-                
+                for (var i = 0; i < record.removedNodes.length; i++) {
+                    var node = record.removedNodes[i];
+                    var invalid = node._invalid;
+
+                    if (invalid) {
+                        // Disconnect from all
+                        var keys = Object.keys(invalid._connected.out);
+                        if (keys.length > 0) {
+                            for (var i = 0; i < keys.length; i++) {
+                                invalid.disconnect(keys[i]);
+                            }
+                        }
+                        keys = Object.keys(invalid._connected.in);
+                        if (keys.length > 0) {
+                            for (var i = 0; i < keys.length; i++) {
+                                var elem = document.querySelector(keys[i]);
+                                if (elem) {
+                                    elem._invalid._obj.disconnect(invalid._obj);
+                                }
+                            }
+                        }
+                    }
+                }
+
                 var nodeCallback = snd.invalid.getMethod(target, "nodeCallback");
                 if (typeof (nodeCallback) == "function") {
                     nodeCallback(record, observer);
                 }
             } else {
                 var invalid = target._invalid;
-                
+
                 if (invalid) {
                     if (record.type == "attributes") {
                         var attributeCallback = snd.invalid.getMethod(target, "attributeCallback");
-                        if (typeof(attributeCallback) == "function") {
+                        if (typeof (attributeCallback) == "function") {
                             attributeCallback(record, observer);
                         }
-                        
+
                         var attrName = record.attributeName;
                         if (attrName == "style") {
                             invalid.changeStyle(record, observer);
@@ -74,7 +96,7 @@ snd.PLUGIN_INIT.push(function() {
                         }
                     } else if (record.type == "characterData") {
                         var callback = snd.invalid.getMethod(target, "characterDataCallback");
-                        if (typeof(callback) == "function") {
+                        if (typeof (callback) == "function") {
                             callback(record, observer);
                         }
                     }
@@ -82,12 +104,12 @@ snd.PLUGIN_INIT.push(function() {
             }
         }
     };
-    
+
     snd.invalid.getMethodName = function(elem, type) {
         if (elem._invalid) {
             var invalid = elem._invalid;
             var sub = invalid._settings;
-            
+
             for (var i = 1; i < arguments.length; i++) {
                 var arg = arguments[i];
                 if (sub[arg]) {
@@ -96,17 +118,17 @@ snd.PLUGIN_INIT.push(function() {
                     return undefined;
                 }
             }
-            
+
             return sub;
         } else {
             return undefined;
         }
     };
-    
+
     snd.invalid.getMethod = function(elem, type) {
         if (elem._invalid && elem._invalid._obj) {
             var callbackName = snd.invalid.getMethodName(elem, type);
-            
+
             if (callbackName) {
                 return elem._invalid._obj[callbackName];
             } else {
@@ -116,19 +138,19 @@ snd.PLUGIN_INIT.push(function() {
             return undefined;
         }
     }
-    
+
     snd.invalid.attributeCallback = function(records, observer) {
         for (var i = 0; i < records.length; i++) {
             var record = records[i];
             var invalid = record.target._invalid;
-            
+
             if (invalid) {
                 var callbackName = invalid._settings.attributeCallback;
-                if (typeof(invalid._obj[callbackName]) == "function") {
+                if (typeof (invalid._obj[callbackName]) == "function") {
                     invalid._obj[callbackName](records, observer);
                 }
             }
-            
+
             var changedAttrList = [];
             if (!invalid._lastAttributes) {
                 for (var i = 0; i < record.target.attributes; i++) {
@@ -145,32 +167,36 @@ snd.PLUGIN_INIT.push(function() {
             invalid._lastAttributes = record.target.attributes;
         }
     };
-    
+
     snd.invalid.Element = function(elem, settings) {
         var baseClass = settings.class;
-        
+
         this._parent = elem;
         this._settings = settings;
         this._observer = new MutationObserver(snd.invalid.observeCallback);
-        
+        this._connected = {
+            in: {},
+            out: {}
+        };
+
         this._obj = new baseClass(elem.id);
-        
+
         this._lastAttribute = {};
         this._lastStyle = window.getComputedStyle(this._parent);
-        
+
         this._observer.observe(elem, {
             childlist: true,
             attributes: true
         });
     };
-    
+
     snd.invalid.Element.prototype.changeAttribute = function(record, observer) {
         var changedAttrName = record.attributeName;
         if (changedAttrName) {
-            setAttribute(changedAttrName);
+            this.setAttribute(changedAttrName);
         }
     };
-    
+
     snd.invalid.Element.prototype.setAttribute = function(attributeName) {
         if (attributeName == "connectto") {
             var attrVal = this._parent.getAttribute(attributeName);
@@ -198,71 +224,106 @@ snd.PLUGIN_INIT.push(function() {
             }
         }
     };
-    
+
     snd.invalid.Element.prototype.changeStyle = function(record, observer) {
         var last = this._lastStyle;
         var now = window.getComputedStyle(this._parent);
         var keys;
-        
+
         var diff = {};
         for (var i = 0; i < last.length; i++) {
             var itemName = last.item(i);
-            
+
             if (last.getPropertyValue(itemName) != now.getPropertyValue(itemName)) {
                 diff[itemName] = now.getPropertyValue(itemName);
             }
         }
         for (var i = 0; i < now.length; i++) {
             var itemName = now.item(i);
-            
+
             if (!diff[itemName]) {
                 if (now.getPropertyValue(itemName) != last.getPropertyValue(itemName)) {
                     diff[itemName] = now.getPropertyValue(itemName);
                 }
             }
         }
-        
+
         keys = Object.keys(diff);
         for (var i = 0; i < keys.length; i++) {
             var key = keys[i];
             var propertyName = snd.invalid.getMethod(this._parent, "styles", key);
             var propertyValue = diff[key];
-            
+
             this._obj[propertyName] = propertyValue;
         }
-        
+
         this._lastStyle = now;
     };
-    
+
     snd.invalid.Element.prototype.connectTo = function(elementIds) {
-        if (!elementIds) {
-            this._obj.connect(snd.MASTER);
-            return;
-        }
-        
-        for (var i = 0; i < elementIds.length; i++) {
-            var elementId = elementIds[i];
-            
-            if (elementId.toLowerCase() == "master" || elementId.toLowerCase() == "snd.master") {
-                this._obj.connect(snd.MASTER);
-            } else {
-                var elem = document.querySelector(elementId);
-                if (elem) {
-                    this._obj.connect(elem._invalid._obj);
-                    this.connected.push(elementId);
+        if (elementIds) {
+            var keys = Object.keys(this._connected.out);
+            for (var i = 0; i < keys.length; i++) {
+                if (elementIds.indexOf(keys[i]) < 0) {
+                    this.disconnect(keys[i]);
+                }
+            }
+            for (var i = 0; i < elementIds.length; i++) {
+                if (!this._connected.out[elementIds[i]]) {
+                    this.connect(elementIds[i]);
                 }
             }
         }
+
+        if (Object.keys(this._connected.out).length <= 0) {
+            this.connect("MASTER");
+        }
     };
-    
+
+    snd.invalid.Element.prototype.connect = function(selector) {
+        if (selector.toUpperCase() == "MASTER") {
+            this._obj.connect(snd.MASTER);
+            this._connected.out["MASTER"] = true;
+
+            return;
+        } else if (!selector) {
+            return;
+        }
+
+        var elem = document.querySelector(selector);
+        if (elem && !this._connected.out["#" + elem.id]) {
+            this._obj.connect(elem._invalid._obj);
+            this._connected.out["#" + elem.id] = true;
+            elem._invalid._connected.in["#" + this._parent.id] = true;
+        }
+    };
+
+    snd.invalid.Element.prototype.disconnect = function(selector) {
+        if (selector.toUpperCase() == "MASTER") {
+            this._obj.disconnect(snd.MASTER);
+            delete this._connected.out["MASTER"];
+
+            return;
+        } else if (!selector) {
+            return;
+        }
+
+        var elem = document.querySelector(selector);
+        if (elem && this._connected.out["#" + elem.id]) {
+            this._obj.disconnect(elem._invalid._obj);
+            delete this._connected.out["#" + elem.id];
+            delete elem._invalid._connected.in["#" + this._parent.id];
+        }
+    };
+
     snd.invalid.Element.setup = function(elem, tagSettings) {
         var e = new snd.invalid.Element(elem, tagSettings);
         elem._invalid = e;
-        
+
         var styles = tagSettings.styles;
         var methods = tagSettings.methods;
         var keys = Object.keys(styles);
-        
+
         // Add property
         for (var keyNo = 0; keyNo < keys.length; keyNo++) {
             (function(n, _elem) {
@@ -279,20 +340,20 @@ snd.PLUGIN_INIT.push(function() {
                 });
             })(keyNo, elem);
         }
-        
+
         // Define Methods
         keys = Object.keys(methods);
         for (var keyNo = 0; keyNo < keys.length; keyNo++) {
             (function(n, _elem) {
                 var i = n;
                 var methodName = methods[keys[i]];
-                
+
                 _elem[keys[i]] = function() {
                     _elem._invalid._obj[methodName].apply(_elem._invalid._obj, arguments);
                 };
             })(keyNo, elem);
         }
-        
+
         // jQuery setting
         if (jQuery && jQuery.cssHooks) {
             styles = tagSettings.styles;
@@ -302,7 +363,7 @@ snd.PLUGIN_INIT.push(function() {
                     var key = keys[i];
                     (function(propName) {
                         var prop = propName;
-                        
+
                         if (!jQuery.cssHooks[prop]) {
                             jQuery.cssHooks[prop] = {
                                 get: function(ele, computed, extra) {
@@ -317,7 +378,7 @@ snd.PLUGIN_INIT.push(function() {
                 }
             }
         }
-        
+
         var hasConnectTo = false;
         for (var i = 0; i < elem.attributes; i++) {
             elem._invalid.setAttribute(elem.attributes[i].name);
@@ -325,12 +386,12 @@ snd.PLUGIN_INIT.push(function() {
                 hasConnectTo = true;
             }
         }
-        
+
         if (!hasConnectTo) {
             elem._invalid.setAttribute("connectto");
         }
     };
-    
+
     for (var i = 0; i < snd.invalid.CLASS_DEF.length; i++) {
         snd.invalid.CLASS_DEF[i]();
     }
