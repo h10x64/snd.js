@@ -358,8 +358,10 @@ snd.init = function() {
 
         snd._MASTER = new snd.AudioMaster();
         snd._AUDIO_DATA_MANAGER = new snd.AudioDataManager();
-
-        snd.onload();
+        
+        if (typeof(snd.onload) == "function") {
+            snd.onload();
+        }
     };
     
     if (typeof(snd.using) == "function") {
