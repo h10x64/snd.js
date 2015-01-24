@@ -3,7 +3,6 @@
  * snd.initメソッド内で、定数値の初期化が終わったタイミングで呼び出されます。<br/>
  * htmlファイルにscriptタグをあらかじめ追加しておくのと内容的には同じです。
  * @param {type} callback
- * @returns {undefined}
  */
 snd.using = function(callback){
     /**
@@ -11,14 +10,14 @@ snd.using = function(callback){
      * 環境に合わせて書き換えてください。
      * @type String
      */
-    var CLASS_DIR = "./lib/class/";
+    var CLASS_DIR = "http://lib.sndjs.org/class/";
     
     /**
      * プラグインファイルが格納されているディレクトリのパスを指定します。<br/>
      * 環境に合わせて書き換えてください。
      * @type String
      */
-    var PLUGIN_DIR = "./lib/plugin/";
+    var PLUGIN_DIR = "http://lib.sndjs.org/plugin/";
     
     /**
      * snd.jsの必須クラスです。<br/>
@@ -78,7 +77,8 @@ snd.using = function(callback){
 
     (function appendScript() {
         var script = document.createElement('script');
-        document.head.appendChild(script);
+        document.body.appendChild(script);
+        script.src = load[i];
 
         if (++i < len) {
             script.onload = appendScript;
