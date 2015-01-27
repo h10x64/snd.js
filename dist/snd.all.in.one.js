@@ -3659,6 +3659,9 @@ snd.CLASS_DEF.push(function() {
                 },
                 set: function(val) {
                     this._status.oscillatorType = val;
+                    if (this._source) {
+                        this._source.type = val;
+                    }
 
                     this._periodicWave = null;
                     this._status.periodicWave = null;
