@@ -174,15 +174,21 @@ snd.CLASS_DEF.push(function() {
         var _this = this;
 
         this._status.src = url;
-
-        this._key = snd.util.getNewKey(this.id);
-        snd.AUDIO_DATA_MANAGER.add(this._key, url);
-        snd.AUDIO_DATA_MANAGER.addOnLoadListener(this._key, function() {
-            var audioBuffer = snd.AUDIO_DATA_MANAGER.getAudioBuffer(_this._key);
-            _this.setAudioBuffer(audioBuffer);
+        
+        var buf = snd.AUDIO_DATA_MANAGER.getAudioBuffer(url);
+        if (!buf) {
+            this._key = url;
+            snd.AUDIO_DATA_MANAGER.add(this._key, url);
+            snd.AUDIO_DATA_MANAGER.addOnLoadListener(this._key, function() {
+                var audioBuffer = snd.AUDIO_DATA_MANAGER.getAudioBuffer(_this._key);
+                _this.setAudioBuffer(audioBuffer);
+                _this.fireOnLoadEvent();
+            });
+            snd.AUDIO_DATA_MANAGER.load(this._key);
+        } else {
+            this.setAudioBuffer(buf);
             _this.fireOnLoadEvent();
-        });
-        snd.AUDIO_DATA_MANAGER.load(this._key);
+        }
     };
 
     /**
