@@ -19,18 +19,21 @@ snd.CLASS_DEF.push(function() {
                     return this._status.loop;
                 },
                 set: function(loop) {
-                    this._source.loop = loop;
-                    this._status.loop = loop;
+                    if (this._source && loop) {
+                        this._source.loop = loop;
+                        this._status.loop = loop;
+                    }
                 }
             },
             loopStart: {
                 get: function() {
                     return this._status.loopStart;
                 },
-                set: function(start) {
-                    if (this._source != null && start != null) {
-                        this._source.loopStart = start;
-                        this._status.loopStart = start;
+                set: function(val) {
+                    var v = parseFloat(val);
+                    if (this._source && v) {
+                        this._source.loopStart = v;
+                        this._status.loopStart = v;
                     }
                 }
             },
@@ -38,10 +41,11 @@ snd.CLASS_DEF.push(function() {
                 get: function() {
                     return this._status.loopEnd;
                 },
-                set: function(end) {
-                    if (this._source != null && end != null) {
-                        this._source.loopEnd = end;
-                        this._status.loopEnd = end;
+                set: function(val) {
+                    var v = parseFloat(val);
+                    if (this._source != null && v != null) {
+                        this._source.loopEnd = v;
+                        this._status.loopEnd = v;
                     }
                 }
             }
@@ -113,19 +117,14 @@ snd.CLASS_DEF.push(function() {
     };
 
     /**
-     * この音源がループするかどうかを設定します。
-     * @param {boolean} status ループするか否か
+     * @deprecated loop プロパティを使用してください。
      */
     snd.BufferSource.prototype.setLoop = function(status) {
-        if (this._source != null) {
-            this._source.loop = status;
-        }
         this.loop = status;
     };
 
     /**
-     * この音源がループするかどうかを取得します。
-     * @returns {Boolean} この音源がループするか否か
+     * @deprecated loop プロパティを使用してください。
      */
     snd.BufferSource.prototype.getLoop = function() {
         return this.loop;
@@ -135,9 +134,6 @@ snd.CLASS_DEF.push(function() {
      * @deprecated loopStart プロパティを使用してください。
      */
     snd.BufferSource.prototype.setLoopStart = function(when) {
-        if (this._source != null && when != null) {
-            this._source.loopStart = when;
-        }
         this.loopStart = when;
     };
 
@@ -152,9 +148,6 @@ snd.CLASS_DEF.push(function() {
      * @deprecated loopEnd プロパティを使用してください。
      */
     snd.BufferSource.prototype.setLoopEnd = function(when) {
-        if (this._source != null && when != null) {
-            this._source.loopEnd = when;
-        }
         this.loopEnd = when;
     };
 
