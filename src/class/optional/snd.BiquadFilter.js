@@ -110,7 +110,7 @@ snd.CLASS_DEF.push(function() {
                     return this._filter.gain.value;
                 },
                 set: function(val) {
-                    var v = parseFlaot(val);
+                    var v = parseFloat(val);
                     this._filter.gain.value = v;
                     this._status.gain = v;
                 }
