@@ -263,7 +263,7 @@ snd.CLASS_DEF.push(function() {
      * @see {snd.AudioDataManager.setOnloadListener}
      */
     snd.AudioDataManager.prototype.load = function(key) {
-        if (key == null) {
+        if (!key) {
             var reqKeys = Object.keys(this._requests);
             for (var i = 0; i < reqKeys.length; i++) {
                 var reqKey = reqKeys[i];
@@ -289,7 +289,7 @@ snd.CLASS_DEF.push(function() {
     snd.AudioDataManager.prototype.loaded = function(key, buffer) {
         this._dataMap[key].data = buffer;
         this._dataMap[key].doesLoaded = true;
-        if (this._eventListeners[key] != null) {
+        if (this._eventListeners[key]) {
             for (var i = 0; i < this._eventListeners[key].onload.length; i++) {
                 this._eventListeners[key].onload[i](buffer);
             }
