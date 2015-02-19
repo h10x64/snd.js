@@ -102,7 +102,11 @@ snd.CLASS_DEF.push(function() {
         if (connectTo.isAudioUnit || connectTo.getConnector != null) {
             this._gain.connect(connectTo.getConnector(), indexIn, indexOut);
         } else {
-            this._gain.connect(connectTo, indexIn, indexOut);
+            if (!indexOut) {
+                this._gain.connect(connectTo, indexIn);
+            } else {
+                this._gain.connect(connectTo, indexIn, indexOut);
+            }
         }
     };
 
