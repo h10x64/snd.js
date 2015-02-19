@@ -17,26 +17,91 @@
             };
         </script>
         <style type="text/css">
-            .code {
+            .HTML {
+                padding: 1em;
+            }
+            .Sample {
+                padding: 1em;
+            }
+            .Title {
+                border-bottom: #5867ad dotted 1px;
+            }
+            .Subtitle {
+                display: inline;
+                font-size: 0.7em;
+                color: #5867ad;
+            }
+            .Code {
                 margin:1em;
                 border: #000 solid 1px;
                 padding: 0.5em;
                 line-height: 150%;
             }
-            .code .comment {
+            .Code .Comment {
                 display: inline; color: #555;
             }
         </style>
     </head>
     <body>
-        <snd-oscillator id="test"></snd-oscillator>
-        
+        <div id="snd">
+            <snd-oscillator id="lfo" type="sine" style="volume:440; frequency:1hz;" connectto="#osc detune-param"></snd-oscillator>
+            <snd-oscillator id="osc" type="square" style="volume:0.5"></snd-oscillator>
+            <div class="AudioUnit" id="echo" style="width:0px; height:0px;">
+                <snd-gain id="inputGain" style="gain:0.5" connectto="#echo #delay"></snd-gain>
+                <snd-delay id="delay" style="delayTime: 0.5sec" connectto="#echo #filter"></snd-delay>
+                <snd-filter id="filter" type="lowpassfilter" style="frequency:440hz; gain:-0.1db;" connectto="#echo #inputGain, MASTER"></snd-filter>
+            </div>
+        </div>
         <div>
-            Please press "F12 - console" and try this !<br/>
-            <div class="code">
-                &gt; $("#test")[0].start();<div class="comment"> // start oscillator</div><br/>
-                &gt; $("#test").animate({frequency: "110hz"}, 10000);<div class="comment"> // animate frequency 440 to 110 hz in 10sec.</div><br/>
-                &gt; $("#test")[0].stop();<div class="comment"> // stop oscillator</div><br/>
+            <div>
+                Please press "F12 - console" and try this !<br/>
+                F12キーを押して、コンソールから以下のサンプルコードを実行してみてください。<br/>
+            </div>
+            <div class="HTML">
+                <div class="Title">HTML</div>
+                <div class="Code">
+                    &lt;snd-oscillator id="lfo" type="sine" style="volume:440; frequency:1Hz;" connectto="#osc detune-param"&gt;&lt;/snd-oscillator&gt;<br/>
+                    &lt;snd-oscillator id="osc" type="square" style="volume:0.5"&gt;&lt;/snd-oscillator&gt;<br/>
+                    &lt;div class="AudioUnit" id="echo" style="width:0px; height:0px;"&gt;<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;snd-gain id="inputGain" style="gain:0.5" connectto="#echo #delay"&gt;&lt;/snd-gain&gt;<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;snd-delay id="delay" style="delayTime: 0.5sec" connectto="#echo #filter"&gt;&lt;/snd-delay&gt;<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&lt;snd-filter id="filter" type="lowpassfilter" style="frequency:440hz; gain:-0.1db;" connectto="#echo #inputGain, MASTER"&gt;&lt;/snd-filter&gt;<br/>
+                    &lt;/div&gt;<br/>
+                </div>
+            </div>
+            <div class="Sample" id="sample1">
+                <div class="Title">Sample1: オシレータから出力 & 周波数と音量のフェードアウト<div class="Subtitle"> … とりあえず出力 & jQueryの使用</div></div>
+                <div class="Code">
+                    <div class="Comment">// Set oscillator volume</div>
+                    $("#osc")[0].style.volume = 0.5;<div class="Comment"> // Set oscillator volume to 0.5 (max: 1.0)</div><br/>
+                    $("#osc")[0].style.frequency = 440;<div class="Comment"> // Set oscillator frequency to 440Hz</div><br/>
+                    <div class="Comment">// Start oscillator</div>
+                    $("#osc")[0].start();<div class="Comment"> // Start oscillator</div><br/>
+                    <br/>
+                    <div class="Comment">// Declare frequency and volume in 10sec.(with jquery)</div><br/>
+                    $("#osc").animate({frequency: "0hz", volume: "0"}, 10000);<div class="Comment"> // Animate "frequency: 440 to 110 hz", "volume: 0.5 to 0.0" in 10sec.</div><br/>
+                    setTimeout(function() {$("#osc")[0].stop();}, 10000);<div class="Comment"> // Stop oscillator at 10sec.</div><br/>
+                </div>
+                <div class="Info">
+                    &lt;snd-oscillator&gt;タグを使って矩形波を出力し、jQueryのanimateを使って10秒かけて少しづつ周波数とボリュームをゼロに落としていくコードです。<br/>
+                </div>
+            </div>
+            <div class="Sample" id="sample2">
+                <div class="Title">Sample2: オシレータをエコーユニットへ接続して効果音っぽく<div class="Subtitle"> … connectto属性の書き換え</div></div>
+                <div class="Code">
+                    $("#osc").attr("connectto", "MASTER, #echo #inputGain");<div class="Comment"> // Connect the oscillator to the AudioMaster and EchoUnit</div><br/>
+                    <br/>
+                    <div class="Comment">// ↓Same as Sample1 but animation time is changed to 0.25sec. ↓</div><br/>
+                    $("#osc")[0].style.volume = 0.5;<br/>
+                    $("#osc")[0].style.frequency = 440;<br/>
+                    $("#osc")[0].start();<br/>
+                    $("#osc").animate({frequency: "110hz", volume: "0"}, 250);<br/>
+                    setTimeout(function() {$("#osc")[0].stop();}, 250);<br/>
+                </div>
+                <div class="Info">
+                    事前にオーディオユニット"#echo"に接続してからオシレータをスタートさせます。<br/>
+                    エコーユニットに接続させる以外の内容はSample1と同じですが、フェードアウトの速度を早くして効果音っぽくしています。<br/>
+                </div>
             </div>
         </div>
     </body>

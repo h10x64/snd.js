@@ -91,6 +91,12 @@ snd.using = function(callback){
      */
     var PLUGIN = [
         './invalid/snd.invalid.js',
+        './invalid/snd.invalid.Analyser.js',
+        './invalid/snd.invalid.BiquadFilter.js',
+        './invalid/snd.invalid.BufferSource.js',
+        './invalid/snd.invalid.Convolver.js',
+        './invalid/snd.invalid.Delay.js',
+        './invalid/snd.invalid.Gain.js',
         './invalid/snd.invalid.Oscillator.js'
     ];
     
