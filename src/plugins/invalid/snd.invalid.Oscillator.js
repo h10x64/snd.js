@@ -1,27 +1,33 @@
 snd.invalid.CLASS_DEF.push(function() {
     snd.invalid.TAG_DEF["snd-oscillator"] = {
-        "tagName": "snd-oscillator",
-        "class": snd.OscillatorSource,
+        tagName: "snd-oscillator",
+        class: snd.OscillatorSource,
         // "attributeCallback" : "ADD_METHOD_NAME_(CHANGE_ATTRIBUTE_EVENT)_HERE",
         // "characterDataCallback" : "ADD_METHOD_NAME_(CHANGE_INNER_TEXT_EVENT)_HERE",
         // "nodeCallback" : "ADD_METHOD_NAME_(CHANGE_CHILD_NODE_EVENT)_HERE",
-        "styles": {
-            // "CSS_NAME" : "PROPERTY_NAME"
-            "type": "oscillatorType",
-            "volume": "volume",
-            "frequency": "frequency",
-            "detune": "detune"
+        styles: {
+            // cssName: {type:"property", name:"propName"},
+            // cssName: {type:"function", func: {getter:"getFuncName", setter:"setFuncName"}},
+            volume: {type:"property", name:"volume"},
+            frequency: {type:"property", name:"frequency"},
+            detune: {type:"property", name:"detune"}
         },
-        "attributes": {
-            // "ATTRIBUTE_NAME" : "METHOD_NAME"
-            // "connectto": "connectTo" <- define automatically
+        attributes: {
+            // attrName: {type:"property", name:"propName"},
+            // attrName: {type:"function", {name:"attrName", func:"functionName"}},
+            type: {type:"property", name:"oscillatorType"}
         },
-        "events": {
-            "onended": "onended"
+        parameters: [
+            {name: "volume-param", param: "volumeParam"},
+            {name: "frequency-param", param: "frequencyParam"},
+            {name: "detune-param", param: "detuneParam"}
+        ],
+        events: {
+            onended:"onended"
         },
-        "methods": {
-            "start": "start",
-            "stop": "stop"
+        methods: {
+            start:"start",
+            stop:"stop"
         }
     };
 });
