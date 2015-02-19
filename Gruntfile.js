@@ -164,6 +164,24 @@ module.exports = function(grunt) {
                     'dist/plugins/invalid/snd.invalid.js': [
                         'src/plugins/invalid/snd.invalid.js'
                     ],
+                    'dist/plugins/invalid/snd.invalid.Analyser.js': [
+                        'src/plugins/invalid/snd.invalid.Analyser.js'
+                    ],
+                    'dist/plugins/invalid/snd.invalid.BiquadFilter.js': [
+                        'src/plugins/invalid/snd.invalid.BiquadFilter.js'
+                    ],
+                    'dist/plugins/invalid/snd.invalid.BufferSource.js': [
+                        'src/plugins/invalid/snd.invalid.BufferSource.js'
+                    ],
+                    'dist/plugins/invalid/snd.invalid.Convolver.js': [
+                        'src/plugins/invalid/snd.invalid.Convolver.js'
+                    ],
+                    'dist/plugins/invalid/snd.invalid.Delay.js': [
+                        'src/plugins/invalid/snd.invalid.Delay.js'
+                    ],
+                    'dist/plugins/invalid/snd.invalid.Gain.js': [
+                        'src/plugins/invalid/snd.invalid.Gain.js'
+                    ],
                     'dist/plugins/invalid/snd.invalid.Oscillator.js': [
                         'src/plugins/invalid/snd.invalid.Oscillator.js'
                     ]
@@ -224,7 +242,12 @@ module.exports = function(grunt) {
                     'dist/plugins/three/snd.three.min.js': ['dist/plugins/three/snd.three.js'],
                     'dist/plugins/encrypt/snd.encrypt.min.js': ['dist/plugins/encrypt/snd.encrypt.js'],
                     'dist/plugins/invalid/min/snd.invalid.min.js':['dist/plugins/invalid/snd.invalid.js'],
-                    'dist/plugins/invalid/min/snd.invalid.Oscillator.min.js':['dist/plugins/invalid/snd.invalid.Oscillator.js'],
+                    'dist/plugins/invalid/min/snd.invalid.Analyser.min.js':['dist/plugins/invalid/snd.invalid.Analyser.js'],
+                    'dist/plugins/invalid/min/snd.invalid.BiquadFilter.min.js':['dist/plugins/invalid/snd.invalid.BiquadFilter.js'],
+                    'dist/plugins/invalid/min/snd.invalid.BufferSource.min.js':['dist/plugins/invalid/snd.invalid.BufferSource.js'],
+                    'dist/plugins/invalid/min/snd.invalid.Convolver.min.js':['dist/plugins/invalid/snd.invalid.Convolver.js'],
+                    'dist/plugins/invalid/min/snd.invalid.Delay.min.js':['dist/plugins/invalid/snd.invalid.Delay.js'],
+                    'dist/plugins/invalid/min/snd.invalid.Oscillator.min.js':['dist/plugins/invalid/snd.invalid.Oscillator.js']
                 }
             }
         },
