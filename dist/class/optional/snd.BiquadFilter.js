@@ -88,8 +88,9 @@ snd.CLASS_DEF.push(function() {
                     return this._filter.frequency.value;
                 },
                 set: function(val) {
-                    this._filter.frequency.value = val;
-                    this._status.frequency = val;
+                    var v = parseFloat(val);
+                    this._filter.frequency.value = v;
+                    this._status.frequency = v;
                 }
             },
             frequencyParam: {
@@ -104,8 +105,9 @@ snd.CLASS_DEF.push(function() {
                     return this._filter.detune.value;
                 },
                 set: function(val) {
-                    this._filter.detune.value = val;
-                    this._status.detune = val;
+                    var v = parseFloat(val);
+                    this._filter.detune.value = v;
+                    this._status.detune = v;
                 }
             },
             detuneParam: {
@@ -120,8 +122,9 @@ snd.CLASS_DEF.push(function() {
                     return this._filter.Q.value;
                 },
                 set: function(val) {
-                    this._filter.Q.value = val;
-                    this._status.Q = val;
+                    var v = parseFloat(val);
+                    this._filter.Q.value = v;
+                    this._status.Q = v;
                 }
             },
             QParam: {
@@ -136,8 +139,9 @@ snd.CLASS_DEF.push(function() {
                     return this._filter.gain.value;
                 },
                 set: function(val) {
-                    this._filter.gain.value = val;
-                    this._status.gain = val;
+                    var v = parseFloat(val);
+                    this._filter.gain.value = v;
+                    this._status.gain = v;
                 }
             },
             gainParam: {

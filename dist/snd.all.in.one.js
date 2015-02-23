@@ -929,7 +929,7 @@ snd.CLASS_DEF.push(function() {
      * @see {snd.AudioDataManager.setOnloadListener}
      */
     snd.AudioDataManager.prototype.load = function(key) {
-        if (key == null) {
+        if (!key) {
             var reqKeys = Object.keys(this._requests);
             for (var i = 0; i < reqKeys.length; i++) {
                 var reqKey = reqKeys[i];
@@ -955,7 +955,7 @@ snd.CLASS_DEF.push(function() {
     snd.AudioDataManager.prototype.loaded = function(key, buffer) {
         this._dataMap[key].data = buffer;
         this._dataMap[key].doesLoaded = true;
-        if (this._eventListeners[key] != null) {
+        if (this._eventListeners[key]) {
             for (var i = 0; i < this._eventListeners[key].onload.length; i++) {
                 this._eventListeners[key].onload[i](buffer);
             }
@@ -1303,8 +1303,9 @@ snd.CLASS_DEF.push(function() {
                     return this._gain.gain.value;
                 },
                 set: function(val) {
-                    this._gain.gain.value = val;
-                    this._status.volume = val;
+                    var v = parseFloat(val);
+                    this._gain.gain.value = v;
+                    this._status.volume = v;
                 }
             },
             type: {
@@ -1362,7 +1363,11 @@ snd.CLASS_DEF.push(function() {
         if (connectTo.isAudioUnit || connectTo.getConnector != null) {
             this._gain.connect(connectTo.getConnector(), indexIn, indexOut);
         } else {
-            this._gain.connect(connectTo, indexIn, indexOut);
+            if (!indexOut) {
+                this._gain.connect(connectTo, indexIn);
+            } else {
+                this._gain.connect(connectTo, indexIn, indexOut);
+            }
         }
     };
 
@@ -1511,7 +1516,8 @@ snd.CLASS_DEF.push(function() {
                     return this._analyser.fftSize;
                 },
                 set: function(val) {
-                    this._analyser.fftSize = val;
+                    var v = parseInt(val);
+                    this._analyser.fftSize = v;
                     this.resetBufferSize();
                 }
             },
@@ -1525,7 +1531,8 @@ snd.CLASS_DEF.push(function() {
                     return this._analyser.minDecibels;
                 },
                 set: function(val) {
-                    this._analyser.minDecibels = val;
+                    var v = parseFloat(val);
+                    this._analyser.minDecibels = v;
                 }
             },
             maxDecibels: {
@@ -1533,7 +1540,8 @@ snd.CLASS_DEF.push(function() {
                     return this._analyser.maxDecibels;
                 },
                 set: function(val) {
-                    this._analyser.maxDecibels = val;
+                    var v = parseFloat(val);
+                    this._analyser.maxDecibels = v;
                 }
             },
             smoothingTimeConstant: {
@@ -1541,7 +1549,8 @@ snd.CLASS_DEF.push(function() {
                     return this._analyser.smoothingTimeConstant;
                 },
                 set: function(val) {
-                    this._analyser.smoothingTimeConstant = val;
+                    var v = parseFloat(val);
+                    this._analyser.smoothingTimeConstant = v;
                 }
             }
         });
@@ -1663,8 +1672,9 @@ snd.CLASS_DEF.push(function() {
                     return this._filter.frequency.value;
                 },
                 set: function(val) {
-                    this._filter.frequency.value = val;
-                    this._status.frequency = val;
+                    var v = parseFloat(val);
+                    this._filter.frequency.value = v;
+                    this._status.frequency = v;
                 }
             },
             frequencyParam: {
@@ -1679,8 +1689,9 @@ snd.CLASS_DEF.push(function() {
                     return this._filter.detune.value;
                 },
                 set: function(val) {
-                    this._filter.detune.value = val;
-                    this._status.detune = val;
+                    var v = parseFloat(val);
+                    this._filter.detune.value = v;
+                    this._status.detune = v;
                 }
             },
             detuneParam: {
@@ -1695,8 +1706,9 @@ snd.CLASS_DEF.push(function() {
                     return this._filter.Q.value;
                 },
                 set: function(val) {
-                    this._filter.Q.value = val;
-                    this._status.Q = val;
+                    var v = parseFloat(val);
+                    this._filter.Q.value = v;
+                    this._status.Q = v;
                 }
             },
             QParam: {
@@ -1711,8 +1723,9 @@ snd.CLASS_DEF.push(function() {
                     return this._filter.gain.value;
                 },
                 set: function(val) {
-                    this._filter.gain.value = val;
-                    this._status.gain = val;
+                    var v = parseFloat(val);
+                    this._filter.gain.value = v;
+                    this._status.gain = v;
                 }
             },
             gainParam: {
@@ -1790,18 +1803,21 @@ snd.CLASS_DEF.push(function() {
                     return this._status.loop;
                 },
                 set: function(loop) {
-                    this._source.loop = loop;
-                    this._status.loop = loop;
+                    if (this._source && loop) {
+                        this._source.loop = loop;
+                        this._status.loop = loop;
+                    }
                 }
             },
             loopStart: {
                 get: function() {
                     return this._status.loopStart;
                 },
-                set: function(start) {
-                    if (this._source != null && start != null) {
-                        this._source.loopStart = start;
-                        this._status.loopStart = start;
+                set: function(val) {
+                    var v = parseFloat(val);
+                    if (this._source && v) {
+                        this._source.loopStart = v;
+                        this._status.loopStart = v;
                     }
                 }
             },
@@ -1809,10 +1825,11 @@ snd.CLASS_DEF.push(function() {
                 get: function() {
                     return this._status.loopEnd;
                 },
-                set: function(end) {
-                    if (this._source != null && end != null) {
-                        this._source.loopEnd = end;
-                        this._status.loopEnd = end;
+                set: function(val) {
+                    var v = parseFloat(val);
+                    if (this._source != null && v != null) {
+                        this._source.loopEnd = v;
+                        this._status.loopEnd = v;
                     }
                 }
             }
@@ -1884,19 +1901,14 @@ snd.CLASS_DEF.push(function() {
     };
 
     /**
-     * この音源がループするかどうかを設定します。
-     * @param {boolean} status ループするか否か
+     * @deprecated loop プロパティを使用してください。
      */
     snd.BufferSource.prototype.setLoop = function(status) {
-        if (this._source != null) {
-            this._source.loop = status;
-        }
         this.loop = status;
     };
 
     /**
-     * この音源がループするかどうかを取得します。
-     * @returns {Boolean} この音源がループするか否か
+     * @deprecated loop プロパティを使用してください。
      */
     snd.BufferSource.prototype.getLoop = function() {
         return this.loop;
@@ -1906,9 +1918,6 @@ snd.CLASS_DEF.push(function() {
      * @deprecated loopStart プロパティを使用してください。
      */
     snd.BufferSource.prototype.setLoopStart = function(when) {
-        if (this._source != null && when != null) {
-            this._source.loopStart = when;
-        }
         this.loopStart = when;
     };
 
@@ -1923,9 +1932,6 @@ snd.CLASS_DEF.push(function() {
      * @deprecated loopEnd プロパティを使用してください。
      */
     snd.BufferSource.prototype.setLoopEnd = function(when) {
-        if (this._source != null && when != null) {
-            this._source.loopEnd = when;
-        }
         this.loopEnd = when;
     };
 
@@ -1945,15 +1951,21 @@ snd.CLASS_DEF.push(function() {
         var _this = this;
 
         this._status.src = url;
-
-        this._key = snd.util.getNewKey(this.id);
-        snd.AUDIO_DATA_MANAGER.add(this._key, url);
-        snd.AUDIO_DATA_MANAGER.addOnLoadListener(this._key, function() {
-            var audioBuffer = snd.AUDIO_DATA_MANAGER.getAudioBuffer(_this._key);
-            _this.setAudioBuffer(audioBuffer);
+        
+        var buf = snd.AUDIO_DATA_MANAGER.getAudioBuffer(url);
+        if (!buf) {
+            this._key = url;
+            snd.AUDIO_DATA_MANAGER.add(this._key, url);
+            snd.AUDIO_DATA_MANAGER.addOnLoadListener(this._key, function() {
+                var audioBuffer = snd.AUDIO_DATA_MANAGER.getAudioBuffer(_this._key);
+                _this.setAudioBuffer(audioBuffer);
+                _this.fireOnLoadEvent();
+            });
+            snd.AUDIO_DATA_MANAGER.load(this._key);
+        } else {
+            this.setAudioBuffer(buf);
             _this.fireOnLoadEvent();
-        });
-        snd.AUDIO_DATA_MANAGER.load(this._key);
+        }
     };
 
     /**
@@ -2278,13 +2290,18 @@ snd.CLASS_DEF.push(function() {
         var _this = this;
 
         this._status.src = url;
-        this._key = snd.util.getNewKey(url);
-
-        snd.AUDIO_DATA_MANAGER.add(this._key, url);
-        snd.AUDIO_DATA_MANAGER.addOnLoadListener(this._key, function() {
-            _this.buffer = snd.AUDIO_DATA_MANAGER.getAudioBuffer(_this._key);
-        });
-        snd.AUDIO_DATA_MANAGER.load(this._key);
+        this._key = url;
+        
+        var buf = snd.AUDIO_DATA_MANAGER.getAudioBuffer(this._key);
+        if (!buf) {
+            snd.AUDIO_DATA_MANAGER.add(this._key, url);
+            snd.AUDIO_DATA_MANAGER.addOnLoadListener(this._key, function() {
+                _this.buffer = snd.AUDIO_DATA_MANAGER.getAudioBuffer(_this._key);
+            });
+            snd.AUDIO_DATA_MANAGER.load(this._key);
+        } else {
+            this.buffer = buf;
+        }
     };
 
     /**
@@ -2395,8 +2412,9 @@ snd.CLASS_DEF.push(function() {
                     return this._compressor.attack.value;
                 },
                 set: function(val) {
-                    this._compressor.attack.value = val;
-                    this._status.attack = val;
+                    var v = parseFloat(val);
+                    this._compressor.attack.value = v;
+                    this._status.attack = v;
                 }
             },
             attackParam: {
@@ -2411,8 +2429,9 @@ snd.CLASS_DEF.push(function() {
                     return this._compressor.knee.value;
                 },
                 set: function(val) {
-                    this._compressor.knee.value = val;
-                    this._status.knee = val;
+                    var v = parseFloat(val);
+                    this._compressor.knee.value = v;
+                    this._status.knee = v;
                 }
             },
             kneeParam: {
@@ -2427,8 +2446,9 @@ snd.CLASS_DEF.push(function() {
                     return this._compressor.ratio.value;
                 },
                 set: function(val) {
-                    this._compressor.ratio.value = val;
-                    this._status.ratio = val;
+                    var v = parseFloat(val);
+                    this._compressor.ratio.value = v;
+                    this._status.ratio = v;
                 }
             },
             ratioParam: {
@@ -2448,8 +2468,9 @@ snd.CLASS_DEF.push(function() {
                     return this._compressor.release.value;
                 },
                 set: function(val) {
-                    this._compressor.release.value = val;
-                    this._status.release = val;
+                    var v = parseFloat(val);
+                    this._compressor.release.value = v;
+                    this._status.release = v;
                 }
             },
             releaseParam: {
@@ -2464,8 +2485,9 @@ snd.CLASS_DEF.push(function() {
                     return this._compressor.threshold.value;
                 },
                 set: function(val) {
-                    this._compressor.threshold.value = val;
-                    this._status.threshold = val;
+                    var v = parseFloat(val);
+                    this._compressor.threshold.value = v;
+                    this._status.threshold = v;
                 }
             },
             thresholdParam: {
@@ -2573,17 +2595,24 @@ snd.CLASS_DEF.push(function() {
                     return this._status.maxDelay;
                 },
                 set: function(val) {
-                    if (val > 0 && val < 180) {
+                    var v = parseFloat(val);
+                    if (v > 0 && v < 180) {
                         this._connector.disconnect(this._delay);
                         delete this._delay;
 
-                        this._delay = snd.AUDIO_CONTEXT.createDelay(val);
+                        this._delay = snd.AUDIO_CONTEXT.createDelay(v);
                         this._delay.delayTime.value = this._status.delayTime;
 
                         this._connector.connect(this._delay);
                         this._delay.connect(this._output);
 
-                        this._status.maxDelay = val;
+                        this._status.maxDelay = v;
+                    } else {
+                        if (v < 0) {
+                            cosole.log("maxDelay must grater than 0")
+                        } else {
+                            console.log("maxDelay must lesser than 180");
+                        }
                     }
                 }
             },
@@ -2592,9 +2621,16 @@ snd.CLASS_DEF.push(function() {
                     return this._status.delayTime;
                 },
                 set: function(val) {
-                    if (val >= 0 && val < 180) {
-                        this._delay.delayTime.value = val;
-                        this._status.delayTime = val;
+                    var v = parseFloat(val);
+                    if (v >= 0 && v < 180) {
+                        this._delay.delayTime.value = v;
+                        this._status.delayTime = v;
+                    } else {
+                        if (v < 0) {
+                            cosole.log("delayTime must grater than 0")
+                        } else {
+                            console.log("delayTime must lesser than 180");
+                        }
                     }
                 }
             },
@@ -2687,8 +2723,9 @@ snd.CLASS_DEF.push(function() {
                     return this._gain.gain.value;
                 },
                 set: function(val) {
-                    this._gain.gain.value = val;
-                    this._status.gain = val;
+                    var v = parseFloat(val);
+                    this._gain.gain.value = v;
+                    this._status.gain = v;
                 }
             },
             gainParam: {
@@ -3919,6 +3956,8 @@ snd.CLASS_DEF.push(function() {
         };
 
         this.setWaveForm();
+        this.detune = this._status.detune;
+        this.frequency = this._status.frequency;
 
         this._source.connect(this._gain);
 
@@ -4203,8 +4242,9 @@ snd.CLASS_DEF.push(function() {
                     return this._output.gain.value;
                 },
                 set: function(val) {
-                    this._output.gain.value = val;
-                    this._status.gain = val;
+                    var v = parseFloat(val);
+                    this._output.gain.value = v;
+                    this._status.gain = v;
                 }
             }
         });

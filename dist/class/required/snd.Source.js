@@ -71,8 +71,9 @@ snd.CLASS_DEF.push(function() {
                     return this._gain.gain.value;
                 },
                 set: function(val) {
-                    this._gain.gain.value = val;
-                    this._status.volume = val;
+                    var v = parseFloat(val);
+                    this._gain.gain.value = v;
+                    this._status.volume = v;
                 }
             },
             type: {
@@ -130,7 +131,11 @@ snd.CLASS_DEF.push(function() {
         if (connectTo.isAudioUnit || connectTo.getConnector != null) {
             this._gain.connect(connectTo.getConnector(), indexIn, indexOut);
         } else {
-            this._gain.connect(connectTo, indexIn, indexOut);
+            if (!indexOut) {
+                this._gain.connect(connectTo, indexIn);
+            } else {
+                this._gain.connect(connectTo, indexIn, indexOut);
+            }
         }
     };
 

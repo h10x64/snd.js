@@ -79,8 +79,9 @@ snd.CLASS_DEF.push(function() {
                     return this._compressor.attack.value;
                 },
                 set: function(val) {
-                    this._compressor.attack.value = val;
-                    this._status.attack = val;
+                    var v = parseFloat(val);
+                    this._compressor.attack.value = v;
+                    this._status.attack = v;
                 }
             },
             attackParam: {
@@ -95,8 +96,9 @@ snd.CLASS_DEF.push(function() {
                     return this._compressor.knee.value;
                 },
                 set: function(val) {
-                    this._compressor.knee.value = val;
-                    this._status.knee = val;
+                    var v = parseFloat(val);
+                    this._compressor.knee.value = v;
+                    this._status.knee = v;
                 }
             },
             kneeParam: {
@@ -111,8 +113,9 @@ snd.CLASS_DEF.push(function() {
                     return this._compressor.ratio.value;
                 },
                 set: function(val) {
-                    this._compressor.ratio.value = val;
-                    this._status.ratio = val;
+                    var v = parseFloat(val);
+                    this._compressor.ratio.value = v;
+                    this._status.ratio = v;
                 }
             },
             ratioParam: {
@@ -132,8 +135,9 @@ snd.CLASS_DEF.push(function() {
                     return this._compressor.release.value;
                 },
                 set: function(val) {
-                    this._compressor.release.value = val;
-                    this._status.release = val;
+                    var v = parseFloat(val);
+                    this._compressor.release.value = v;
+                    this._status.release = v;
                 }
             },
             releaseParam: {
@@ -148,8 +152,9 @@ snd.CLASS_DEF.push(function() {
                     return this._compressor.threshold.value;
                 },
                 set: function(val) {
-                    this._compressor.threshold.value = val;
-                    this._status.threshold = val;
+                    var v = parseFloat(val);
+                    this._compressor.threshold.value = v;
+                    this._status.threshold = v;
                 }
             },
             thresholdParam: {

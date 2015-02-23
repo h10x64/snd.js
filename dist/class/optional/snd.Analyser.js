@@ -99,7 +99,8 @@ snd.CLASS_DEF.push(function() {
                     return this._analyser.fftSize;
                 },
                 set: function(val) {
-                    this._analyser.fftSize = val;
+                    var v = parseInt(val);
+                    this._analyser.fftSize = v;
                     this.resetBufferSize();
                 }
             },
@@ -113,7 +114,8 @@ snd.CLASS_DEF.push(function() {
                     return this._analyser.minDecibels;
                 },
                 set: function(val) {
-                    this._analyser.minDecibels = val;
+                    var v = parseFloat(val);
+                    this._analyser.minDecibels = v;
                 }
             },
             maxDecibels: {
@@ -121,7 +123,8 @@ snd.CLASS_DEF.push(function() {
                     return this._analyser.maxDecibels;
                 },
                 set: function(val) {
-                    this._analyser.maxDecibels = val;
+                    var v = parseFloat(val);
+                    this._analyser.maxDecibels = v;
                 }
             },
             smoothingTimeConstant: {
@@ -129,7 +132,8 @@ snd.CLASS_DEF.push(function() {
                     return this._analyser.smoothingTimeConstant;
                 },
                 set: function(val) {
-                    this._analyser.smoothingTimeConstant = val;
+                    var v = parseFloat(val);
+                    this._analyser.smoothingTimeConstant = v;
                 }
             }
         });

@@ -97,8 +97,9 @@ snd.CLASS_DEF.push(function() {
                     return this._output.gain.value;
                 },
                 set: function(val) {
-                    this._output.gain.value = val;
-                    this._status.gain = val;
+                    var v = parseFloat(val);
+                    this._output.gain.value = v;
+                    this._status.gain = v;
                 }
             }
         });

@@ -133,13 +133,18 @@ snd.CLASS_DEF.push(function() {
         var _this = this;
 
         this._status.src = url;
-        this._key = snd.util.getNewKey(url);
-
-        snd.AUDIO_DATA_MANAGER.add(this._key, url);
-        snd.AUDIO_DATA_MANAGER.addOnLoadListener(this._key, function() {
-            _this.buffer = snd.AUDIO_DATA_MANAGER.getAudioBuffer(_this._key);
-        });
-        snd.AUDIO_DATA_MANAGER.load(this._key);
+        this._key = url;
+        
+        var buf = snd.AUDIO_DATA_MANAGER.getAudioBuffer(this._key);
+        if (!buf) {
+            snd.AUDIO_DATA_MANAGER.add(this._key, url);
+            snd.AUDIO_DATA_MANAGER.addOnLoadListener(this._key, function() {
+                _this.buffer = snd.AUDIO_DATA_MANAGER.getAudioBuffer(_this._key);
+            });
+            snd.AUDIO_DATA_MANAGER.load(this._key);
+        } else {
+            this.buffer = buf;
+        }
     };
 
     /**

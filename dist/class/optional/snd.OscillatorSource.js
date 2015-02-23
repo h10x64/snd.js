@@ -362,6 +362,8 @@ snd.CLASS_DEF.push(function() {
         };
 
         this.setWaveForm();
+        this.detune = this._status.detune;
+        this.frequency = this._status.frequency;
 
         this._source.connect(this._gain);
 

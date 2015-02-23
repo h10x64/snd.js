@@ -76,17 +76,24 @@ snd.CLASS_DEF.push(function() {
                     return this._status.maxDelay;
                 },
                 set: function(val) {
-                    if (val > 0 && val < 180) {
+                    var v = parseFloat(val);
+                    if (v > 0 && v < 180) {
                         this._connector.disconnect(this._delay);
                         delete this._delay;
 
-                        this._delay = snd.AUDIO_CONTEXT.createDelay(val);
+                        this._delay = snd.AUDIO_CONTEXT.createDelay(v);
                         this._delay.delayTime.value = this._status.delayTime;
 
                         this._connector.connect(this._delay);
                         this._delay.connect(this._output);
 
-                        this._status.maxDelay = val;
+                        this._status.maxDelay = v;
+                    } else {
+                        if (v < 0) {
+                            cosole.log("maxDelay must grater than 0")
+                        } else {
+                            console.log("maxDelay must lesser than 180");
+                        }
                     }
                 }
             },
@@ -95,9 +102,16 @@ snd.CLASS_DEF.push(function() {
                     return this._status.delayTime;
                 },
                 set: function(val) {
-                    if (val >= 0 && val < 180) {
-                        this._delay.delayTime.value = val;
-                        this._status.delayTime = val;
+                    var v = parseFloat(val);
+                    if (v >= 0 && v < 180) {
+                        this._delay.delayTime.value = v;
+                        this._status.delayTime = v;
+                    } else {
+                        if (v < 0) {
+                            cosole.log("delayTime must grater than 0")
+                        } else {
+                            console.log("delayTime must lesser than 180");
+                        }
                     }
                 }
             },

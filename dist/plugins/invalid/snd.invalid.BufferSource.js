@@ -1,7 +1,7 @@
 snd.invalid.CLASS_DEF.push(function() {
-    snd.invalid.TAG_DEF["snd-oscillator"] = {
-        tagName: "snd-oscillator",
-        class: snd.OscillatorSource,
+    snd.invalid.TAG_DEF["snd-buffersource"] = {
+        tagName: "snd-buffersource",
+        class: snd.BufferSource,
         // "attributeCallback" : "ADD_METHOD_NAME_(CHANGE_ATTRIBUTE_EVENT)_HERE",
         // "characterDataCallback" : "ADD_METHOD_NAME_(CHANGE_INNER_TEXT_EVENT)_HERE",
         // "nodeCallback" : "ADD_METHOD_NAME_(CHANGE_CHILD_NODE_EVENT)_HERE",
@@ -9,13 +9,14 @@ snd.invalid.CLASS_DEF.push(function() {
             // cssName: {type:"property", name:"propName"},
             // cssName: {type:"function", func: {getter:"getFuncName", setter:"setFuncName"}},
             volume: {type:"property", name:"volume"},
-            frequency: {type:"property", name:"frequency"},
-            detune: {type:"property", name:"detune"}
+            loopStart: {type:"property", name:"loopStart"},
+            loopEnd: {type:"property", name:"loopEnd"}
         },
         attributes: {
             // attrName: {type:"property", name:"propName"},
-            // attrName: {type:"function", {name:"attrName", func:"functionName"}},
-            type: {type:"property", name:"oscillatorType"}
+            // attrName: {type:"function", name:"funcName"},
+            loop: {type:"property", name:"loop"},
+            src: {type:"function", name:"loadURL"}
         },
         parameters: [
             {name: "volume-param", param: "volumeParam"},
@@ -31,3 +32,5 @@ snd.invalid.CLASS_DEF.push(function() {
         }
     };
 });
+
+

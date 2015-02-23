@@ -69,8 +69,9 @@ snd.CLASS_DEF.push(function() {
                     return this._gain.gain.value;
                 },
                 set: function(val) {
-                    this._gain.gain.value = val;
-                    this._status.gain = val;
+                    var v = parseFloat(val);
+                    this._gain.gain.value = v;
+                    this._status.gain = v;
                 }
             },
             gainParam: {
