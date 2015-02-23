@@ -72,11 +72,11 @@
             <div class="Sample" id="sample1">
                 <div class="Title">Sample1: オシレータから出力 & 周波数と音量のフェードアウト<div class="Subtitle"> … とりあえず出力 & jQueryの使用</div></div>
                 <div class="Code">
-                    <div class="Comment">// Set oscillator volume</div>
+                    <div class="Comment">// Set oscillator volume</div><br/>
                     $("#osc")[0].style.volume = 0.5;<div class="Comment"> // Set oscillator volume to 0.5 (max: 1.0)</div><br/>
                     $("#osc")[0].style.frequency = 440;<div class="Comment"> // Set oscillator frequency to 440Hz</div><br/>
-                    <div class="Comment">// Start oscillator</div>
-                    $("#osc")[0].start();<div class="Comment"> // Start oscillator</div><br/>
+                    <div class="Comment">// Start oscillator</div><br/>
+                    $("#osc")[0].start();<br/>
                     <br/>
                     <div class="Comment">// Declare frequency and volume in 10sec.(with jquery)</div><br/>
                     $("#osc").animate({frequency: "0hz", volume: "0"}, 10000);<div class="Comment"> // Animate "frequency: 440 to 110 hz", "volume: 0.5 to 0.0" in 10sec.</div><br/>
