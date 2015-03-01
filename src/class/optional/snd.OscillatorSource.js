@@ -25,6 +25,9 @@ snd.CLASS_DEF.push(function() {
 
         this._periodicWave = null;
         this._source = null;
+        
+        this._frequencyGain = null;
+        this._detuneGain = null;
 
         this.listeners = {
             onended: []
@@ -62,11 +65,6 @@ snd.CLASS_DEF.push(function() {
                     }
                 }
             },
-            periodicWaveParam: {
-                get: function() {
-                    return this._periodicWave;
-                }
-            },
             oscillatorType: {
                 get: function() {
                     return this._status.oscillatorType;
@@ -99,10 +97,10 @@ snd.CLASS_DEF.push(function() {
             frequencyParam: {
                 get: function() {
                     if (this._source != null) {
-                        if (this._source.detune.id == null) {
-                            this._source.detune.id = this.id + ".frequency";
+                        if (!this._frequencyGain.id) {
+                            this._frequencyGain.id = this.id + ".frequency";
                         }
-                        return this._source.frequency;
+                        return this._frequencyGain;
                     } else {
                         return undefined;
                     }
@@ -126,10 +124,10 @@ snd.CLASS_DEF.push(function() {
             detuneParam: {
                 get: function() {
                     if (this._source != null) {
-                        if (this._source.detune.id == null) {
-                            this._source.detune.id = this.id + ".detune";
+                        if (!this._detuneGain.id) {
+                            this._detuneGain.id = this.id + ".detune";
                         }
-                        return this._source.detune;
+                        return this._detuneGain;
                     } else {
                         return undefined;
                     }
@@ -335,6 +333,17 @@ snd.CLASS_DEF.push(function() {
         this.setWaveForm();
         this.detune = this._status.detune;
         this.frequency = this._status.frequency;
+        
+        if (!this._frequencyGain) {
+            this._frequencyGain = this.createParamGain(this._source.frequency);
+        } else {
+            this._frequencyGain.setAudioParam(this._source.frequency);
+        }
+        if (!this._detuneGain) {
+            this._detuneGain = this.createParamGain(this._source.detune);
+        } else {
+            this._detuneGain.setAudioParam(this._source.detune);
+        }
 
         this._source.connect(this._gain);
 
