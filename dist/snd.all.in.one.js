@@ -1170,7 +1170,63 @@ snd.CLASS_DEF.push(function() {
     snd.AudioUnit.prototype.getConnector = function() {
         // PLEASE OVERRIDE ME
     };
-
+    
+    /**
+     * 引数で渡されたAudioParamに接続されたGainノードを作り、返します。<br/>
+     * 返されるGainノードには、渡されたAudioParamが持つ各メソッドを移譲したメソッドが定義されます。<br/>
+     * AudioUnit内部のノードで再生成が必要となった際、外部からのAudioParamへの接続を維持するために使われます。<br/>
+     * AudioUnitを継承するクラスで使用するメソッドなので、外部からは使用しないでください。
+     * @param {AudioParam} audioParam 
+     * @returns {Gain} 
+     */
+    snd.AudioUnit.prototype.createParamGain = function(audioParam) {
+        var ret = snd.AUDIO_CONTEXT.createGain();
+        ret._audioParam = audioParam;
+        ret.connect(ret._audioParam);
+        
+        Object.defineProperties(ret, {
+            value: {
+                set: function(val) {
+                    ret._audioParam.value = val;
+                },
+                get: function() {
+                    return ret._audioParam.value;
+                }
+            },
+            defaultValue: {
+                get: function() {
+                    return ret._audioParam.defaultValue;
+                }
+            }
+        });
+        ret.setValueAtTime = function(value, startTime) {
+            ret._audioParam.setValueAtTime(value, startTime);
+        };
+        ret.linearRampToValueAtTime = function(value, endTime) {
+            ret._audioParam.setRampToValueAtTime(value, endTime);
+        };
+        ret.exponentialRampToValueAtTime = function(value, endTime) {
+            ret._audioParam.exponentialRampToValueAtTime(value, endTime);
+        };
+        ret.setTargetAtTime = function(target, startTime, timeConstant) {
+            ret._audioParam.setTargetAtTime(target, startTime, timeConstant);
+        };
+        ret.setValueCurveAtTime  = function(values, startTime, duration) {
+            ret._audioParam.setValueCurveAtTime(values, startTime, duration);
+        };
+        ret.cancelScheduledValues = function(startTime) {
+            ret._audioParam.cancelScheduledValues(startTime);
+        };
+        
+        ret.setAudioParam = function(audioParam) {
+            ret.disconnect(ret._audioParam);
+            ret._audioParam = audioParam;
+            ret.connect(ret._audioParam);
+        }
+        
+        return ret;
+    };
+    
     /**
      * JSON.stringifyで使用されるメソッドです。<br/>
      * このメソッドの戻り値がJSON.stringifyの出力に使用されます。
@@ -3648,6 +3704,9 @@ snd.CLASS_DEF.push(function() {
 
         this._periodicWave = null;
         this._source = null;
+        
+        this._frequencyGain = null;
+        this._detuneGain = null;
 
         this.listeners = {
             onended: []
@@ -3685,11 +3744,6 @@ snd.CLASS_DEF.push(function() {
                     }
                 }
             },
-            periodicWaveParam: {
-                get: function() {
-                    return this._periodicWave;
-                }
-            },
             oscillatorType: {
                 get: function() {
                     return this._status.oscillatorType;
@@ -3722,10 +3776,10 @@ snd.CLASS_DEF.push(function() {
             frequencyParam: {
                 get: function() {
                     if (this._source != null) {
-                        if (this._source.detune.id == null) {
-                            this._source.detune.id = this.id + ".frequency";
+                        if (!this._frequencyGain.id) {
+                            this._frequencyGain.id = this.id + ".frequency";
                         }
-                        return this._source.frequency;
+                        return this._frequencyGain;
                     } else {
                         return undefined;
                     }
@@ -3749,10 +3803,10 @@ snd.CLASS_DEF.push(function() {
             detuneParam: {
                 get: function() {
                     if (this._source != null) {
-                        if (this._source.detune.id == null) {
-                            this._source.detune.id = this.id + ".detune";
+                        if (!this._detuneGain.id) {
+                            this._detuneGain.id = this.id + ".detune";
                         }
-                        return this._source.detune;
+                        return this._detuneGain;
                     } else {
                         return undefined;
                     }
@@ -3958,6 +4012,17 @@ snd.CLASS_DEF.push(function() {
         this.setWaveForm();
         this.detune = this._status.detune;
         this.frequency = this._status.frequency;
+        
+        if (!this._frequencyGain) {
+            this._frequencyGain = this.createParamGain(this._source.frequency);
+        } else {
+            this._frequencyGain.setAudioParam(this._source.frequency);
+        }
+        if (!this._detuneGain) {
+            this._detuneGain = this.createParamGain(this._source.detune);
+        } else {
+            this._detuneGain.setAudioParam(this._source.detune);
+        }
 
         this._source.connect(this._gain);
 

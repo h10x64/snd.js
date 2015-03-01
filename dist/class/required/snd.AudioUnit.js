@@ -167,7 +167,63 @@ snd.CLASS_DEF.push(function() {
     snd.AudioUnit.prototype.getConnector = function() {
         // PLEASE OVERRIDE ME
     };
-
+    
+    /**
+     * 引数で渡されたAudioParamに接続されたGainノードを作り、返します。<br/>
+     * 返されるGainノードには、渡されたAudioParamが持つ各メソッドを移譲したメソッドが定義されます。<br/>
+     * AudioUnit内部のノードで再生成が必要となった際、外部からのAudioParamへの接続を維持するために使われます。<br/>
+     * AudioUnitを継承するクラスで使用するメソッドなので、外部からは使用しないでください。
+     * @param {AudioParam} audioParam 
+     * @returns {Gain} 
+     */
+    snd.AudioUnit.prototype.createParamGain = function(audioParam) {
+        var ret = snd.AUDIO_CONTEXT.createGain();
+        ret._audioParam = audioParam;
+        ret.connect(ret._audioParam);
+        
+        Object.defineProperties(ret, {
+            value: {
+                set: function(val) {
+                    ret._audioParam.value = val;
+                },
+                get: function() {
+                    return ret._audioParam.value;
+                }
+            },
+            defaultValue: {
+                get: function() {
+                    return ret._audioParam.defaultValue;
+                }
+            }
+        });
+        ret.setValueAtTime = function(value, startTime) {
+            ret._audioParam.setValueAtTime(value, startTime);
+        };
+        ret.linearRampToValueAtTime = function(value, endTime) {
+            ret._audioParam.setRampToValueAtTime(value, endTime);
+        };
+        ret.exponentialRampToValueAtTime = function(value, endTime) {
+            ret._audioParam.exponentialRampToValueAtTime(value, endTime);
+        };
+        ret.setTargetAtTime = function(target, startTime, timeConstant) {
+            ret._audioParam.setTargetAtTime(target, startTime, timeConstant);
+        };
+        ret.setValueCurveAtTime  = function(values, startTime, duration) {
+            ret._audioParam.setValueCurveAtTime(values, startTime, duration);
+        };
+        ret.cancelScheduledValues = function(startTime) {
+            ret._audioParam.cancelScheduledValues(startTime);
+        };
+        
+        ret.setAudioParam = function(audioParam) {
+            ret.disconnect(ret._audioParam);
+            ret._audioParam = audioParam;
+            ret.connect(ret._audioParam);
+        }
+        
+        return ret;
+    };
+    
     /**
      * JSON.stringifyで使用されるメソッドです。<br/>
      * このメソッドの戻り値がJSON.stringifyの出力に使用されます。
