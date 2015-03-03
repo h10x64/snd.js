@@ -77,6 +77,7 @@ snd.using = function(callback){
         './optional/snd.DynamicsCompressor.js',
         './optional/snd.Gain.js',
         './optional/snd.MediaElementAudioSource.js',
+        './optional/snd.MediaStreamAudioSource.js',
         './optional/snd.OscillatorSource.js',
         './optional/snd.ScriptProcessor.js',
         './optional/snd.Synth.js',
