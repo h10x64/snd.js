@@ -246,6 +246,7 @@ module.exports = function(grunt) {
                     'dist/class.min/optional/snd.ScriptProcessor.min.js': ['dist/class/optional/snd.ScriptProcessor.js'],
                     'dist/class.min/optional/snd.Synth.min.js': ['dist/class/optional/snd.Synth.js'],
                     'dist/class.min/optional/snd.WaveShaper.min.js': ['dist/class/optional/snd.WaveShaper.js'],
+                    'dist/class.min/optional/snd.Noise.min.js': ['dist/class/optional/snd.Noise.js'],
                     'dist/plugins/mml/snd.mml.min.js': ['dist/plugins/mml/snd.mml.js'],
                     'dist/plugins/three/snd.three.min.js': ['dist/plugins/three/snd.three.js'],
                     'dist/plugins/encrypt/snd.encrypt.min.js': ['dist/plugins/encrypt/snd.encrypt.js'],
