@@ -81,7 +81,8 @@ snd.using = function(callback){
         './optional/snd.OscillatorSource.js',
         './optional/snd.ScriptProcessor.js',
         './optional/snd.Synth.js',
-        './optional/snd.WaveShaper.js'
+        './optional/snd.WaveShaper.js',
+        './optional/snd.Noise.js'
     ];
     
     /**
@@ -98,7 +99,8 @@ snd.using = function(callback){
         './invalid/snd.invalid.Convolver.js',
         './invalid/snd.invalid.Delay.js',
         './invalid/snd.invalid.Gain.js',
-        './invalid/snd.invalid.Oscillator.js'
+        './invalid/snd.invalid.Oscillator.js',
+        './invalid/snd.invalid.Noise.js'
     ];
     
     var load = [];

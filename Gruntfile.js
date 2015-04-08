@@ -122,6 +122,10 @@ module.exports = function(grunt) {
                         'src/COPYRIGHT',
                         'src/class/optional/snd.WaveShaper.js'
                     ],
+                    'dist/class/optional/snd.Noise.js': [
+                        'src/COPYRIGHT',
+                        'src/class/optional/snd.Noise.js'
+                    ],
                     
                     /* plugin */
                     
@@ -184,7 +188,11 @@ module.exports = function(grunt) {
                     ],
                     'dist/plugins/invalid/snd.invalid.Oscillator.js': [
                         'src/plugins/invalid/snd.invalid.Oscillator.js'
+                    ],
+                    'dist/plugins/invalid/snd.invalid.Noise.js': [
+                        'src/plugins/invalid/snd.invalid.Noise.js'
                     ]
+
                 }
             }
         },
@@ -247,7 +255,8 @@ module.exports = function(grunt) {
                     'dist/plugins/invalid/min/snd.invalid.BufferSource.min.js':['dist/plugins/invalid/snd.invalid.BufferSource.js'],
                     'dist/plugins/invalid/min/snd.invalid.Convolver.min.js':['dist/plugins/invalid/snd.invalid.Convolver.js'],
                     'dist/plugins/invalid/min/snd.invalid.Delay.min.js':['dist/plugins/invalid/snd.invalid.Delay.js'],
-                    'dist/plugins/invalid/min/snd.invalid.Oscillator.min.js':['dist/plugins/invalid/snd.invalid.Oscillator.js']
+                    'dist/plugins/invalid/min/snd.invalid.Oscillator.min.js':['dist/plugins/invalid/snd.invalid.Oscillator.js'],
+                    'dist/plugins/invalid/min/snd.invalid.Noise.min.js':['dist/plugins/invalid/snd.invalid.Noise.js']
                 }
             }
         },
