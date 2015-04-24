@@ -86,9 +86,7 @@ snd.CLASS_DEF.push(function() {
             },
             attackParam: {
                 get: function() {
-                    var ret = this._compressor.attack;
-                    ret.id = this.id + ".attack";
-                    return ret;
+                    return this.modAudioParam("attack", this._compressor.attack);
                 }
             },
             knee: {
@@ -103,9 +101,7 @@ snd.CLASS_DEF.push(function() {
             },
             kneeParam: {
                 get: function() {
-                    var ret = this._compressor.knee;
-                    ret.id = this.id + ".knee";
-                    return ret;
+                    return this.modAudioParam("knee", this._compressor.knee);
                 }
             },
             ratio: {
@@ -120,9 +116,7 @@ snd.CLASS_DEF.push(function() {
             },
             ratioParam: {
                 get: function() {
-                    var ret = this._compressor.ratio;
-                    ret.id = this.id + ".ratio";
-                    return ret;
+                    return this.modAudioParam("ratio", this._compressor.ratio);
                 }
             },
             reduction: {
@@ -142,9 +136,7 @@ snd.CLASS_DEF.push(function() {
             },
             releaseParam: {
                 get: function() {
-                    var ret = this._compressor.release;
-                    ret.id = this.id + ".release";
-                    return ret;
+                    return this.modAudioParam("release", this._compressor.release);
                 }
             },
             threshold: {
@@ -159,9 +151,7 @@ snd.CLASS_DEF.push(function() {
             },
             thresholdParam: {
                 get: function() {
-                    var ret = this._compressor.threshold;
-                    ret.id = this.id + ".threshold";
-                    return ret;
+                    return this.modAudioParam("threshold", this._compressor.threshold);
                 }
             },
         });

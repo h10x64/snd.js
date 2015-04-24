@@ -126,10 +126,7 @@ snd.CLASS_DEF.push(function() {
             frequencyParam: {
                 get: function() {
                     if (this._source != null) {
-                        if (!this._frequencyGain.id) {
-                            this._frequencyGain.id = this.id + ".frequency";
-                        }
-                        return this._frequencyGain;
+                        return this.modAudioParam("frequency", this._frequencyGain);
                     } else {
                         return undefined;
                     }
@@ -153,10 +150,7 @@ snd.CLASS_DEF.push(function() {
             detuneParam: {
                 get: function() {
                     if (this._source != null) {
-                        if (!this._detuneGain.id) {
-                            this._detuneGain.id = this.id + ".detune";
-                        }
-                        return this._detuneGain;
+                        return this.modAudioParam("detune", this._detuneGain);
                     } else {
                         return undefined;
                     }
@@ -226,7 +220,7 @@ snd.CLASS_DEF.push(function() {
 
     /**
      * 波形の種類を設定します。<br/>
-     * 引数には、snd.oscillatortype.SINE, snd.oscillatortype.SQUARE, snd.oscillatortype.SAWTOOTH, snd.oscillatortype.TRIANGLEのいずれかを設定してください。
+     * 引数には、snd.SINE, snd.SQUARE, snd.SAWTOOTH, snd.oscillatortype.TRIANGLEのいずれかを設定してください。
      * @param {OscillatorType} oscillatorType
      * @deprecated oscillatorTypeプロパティを使用してください。
      */

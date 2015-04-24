@@ -212,6 +212,34 @@ snd.init = function() {
             writable: false,
             value: "4x"
         },
+        SET: {
+            writable: false,
+            value: "set"
+        },
+        LINER: {
+            writable: false,
+            value: "liner"
+        },
+        EXPONENTIALLY: {
+            writable: false,
+            value: "exponentially"
+        },
+        SINE: {
+            writable: false,
+            value: "sine"
+        },
+        SQUARE: {
+            writable: false,
+            value: "square"
+        },
+        SAWTOOTH: {
+            writable: false,
+            value: "sawtooth"
+        },
+        TRIANGLE: {
+            writable: false,
+            value: "triangle"
+        },
         status: {
             value: (function () {
                 var ret = {};
@@ -275,19 +303,19 @@ snd.init = function() {
                 var ret = {};
                 Object.defineProperties(ret, {
                     SINE: {
-                        value: "sine",
+                        value: snd.SINE,
                         writable: false
                     },
                     SQUARE: {
-                        value: "square",
+                        value: snd.SQUARE,
                         writable: false
                     },
                     SAWTOOTH: {
-                        value: "sawtooth",
+                        value: snd.SAWTOOTH,
                         writable: false
                     },
                     TRIANGLE: {
-                        value: "triangle",
+                        value: snd.TRIANGLE,
                         writable: false
                     }
                 });
@@ -304,15 +332,15 @@ snd.init = function() {
                             var retret = {};
                             Object.defineProperties(retret, {
                                 SET: {
-                                    value: "set",
+                                    value: snd.SET,
                                     writable: false
                                 },
                                 LINER: {
-                                    value: "liner",
+                                    value: snd.LINER,
                                     writable: false,
                                 },
                                 EXPONENTIALLY: {
-                                    value: "exponentially",
+                                    value: snd.EXPONENTIALLY,
                                     writable: false
                                 }
                             });
@@ -327,7 +355,12 @@ snd.init = function() {
         },
         BLOWSER: {
             get: function () {
-                window.navigator.userAgent.toLowerCase();
+                return window.navigator.userAgent.toLowerCase();
+            }
+        },
+        CURRENT_TIME: {
+            get: function() {
+                return snd.AUDIO_CONTEXT.currentTime;
             }
         },
         /* Objects */
@@ -640,6 +673,24 @@ snd.util.noteToFrequency = function(octave, pitch) {
  */
 snd.util.noteToSec = function(tempo, noteValue) {
     return 60.0 / (tempo * noteValue / 4);
+};
+
+snd.util.setScheduledValues = function(param, settings) {
+    var currentTime = snd.CURRENT_TIME;
+    param.cancelScheduledValues(currentTime);
+    
+    for (var i = 0; i < settings.length; i++) {
+        var setting = settings[i];
+        
+        if (setting.type == snd.LINER) {
+            param.linearRampToValueAtTime(setting.value, currentTime + setting.time);
+        } else if (setting.type == snd.EXPONENTIALLY) {
+            param.exponentialRampToValueAtTime(setting.value, currentTime + setting.time);
+        } else {
+            // DEFAULT: snd.audioparam.type.SET
+            param.setValueAtTime(setting.value, currentTime + setting.time);
+        }
+    }
 };
 
 /**
@@ -1203,7 +1254,7 @@ snd.CLASS_DEF.push(function() {
             ret._audioParam.setValueAtTime(value, startTime);
         };
         ret.linearRampToValueAtTime = function(value, endTime) {
-            ret._audioParam.setRampToValueAtTime(value, endTime);
+            ret._audioParam.linearRampToValueAtTime(value, endTime);
         };
         ret.exponentialRampToValueAtTime = function(value, endTime) {
             ret._audioParam.exponentialRampToValueAtTime(value, endTime);
@@ -1279,6 +1330,39 @@ snd.CLASS_DEF.push(function() {
         // SubClass.prototype.connect = function(connectTo, bra, bra) {
         //     AudioUnit.prototype.loadData.apply(this, arguments);
         // };
+    };
+    
+    /**
+     * paramに渡されたAudioParamに所定のパラメータ・メソッドを追加して返します。<br/>
+     * AudioUnitを継承するクラス内で使用される前提のメソッドですので、通常は使用しないようにしてください。<br/>
+     * 追加されるものは以下の通りです。<br/>
+     * <ul>
+     *  <li>id プロパティ<br/>何のAudioParamであるかを表すID<br/>"osc0.volume"のように、AudioUnit.id + "." + subIDの形で使用されます。</li>
+     *  <li>setScheduledValues メソッド<br/>このAudioParamの時間変化を設定するメソッド。<br/>詳細はsnd.util.setScheduledValuesメソッドの説明を参照してください。</li>
+     * </ul>
+     * @param {String} subID 何のAudioParamであるかを表すID
+     * @param {AudioParam} param パラメータ等を追加するAudioParam 
+     * @returns {AudioParam} 所定のパラメータ・メソッドを追加したparam
+     */
+    snd.AudioUnit.prototype.modAudioParam = function(subID, param) {
+        if (!param.id) {
+            var _param = param;
+
+            param._id = this.id + "." + subID;
+
+            Object.defineProperties(param, {
+                id: {
+                    get: function() {
+                        return this._id;
+                    }
+                }
+            });
+
+            param.setScheduledValues = function(settings) {
+                snd.util.setScheduledValues(_param, settings);
+            };
+        }
+        return param;
     };
 
     /**
@@ -1735,9 +1819,7 @@ snd.CLASS_DEF.push(function() {
             },
             frequencyParam: {
                 get: function() {
-                    var ret = this._filter.frequency;
-                    ret.id = this.id + ".frequency";
-                    return ret;
+                    return this.modAudioParam("frequency", this._filter.frequency)
                 }
             },
             detune: {
@@ -1752,9 +1834,7 @@ snd.CLASS_DEF.push(function() {
             },
             detuneParam: {
                 get: function() {
-                    var ret = this._filter.detune;
-                    ret.id = this.id + ".detune";
-                    return ret;
+                    return this.modAudioParam("detune", this._filter.detune);
                 }
             },
             Q: {
@@ -1769,9 +1849,7 @@ snd.CLASS_DEF.push(function() {
             },
             QParam: {
                 get: function() {
-                    var ret = this._filter.Q;
-                    ret.id = this.id + ".Q";
-                    return ret;
+                    return this.modAudioParam("q", this._filter.Q);
                 }
             },
             gain: {
@@ -1786,9 +1864,7 @@ snd.CLASS_DEF.push(function() {
             },
             gainParam: {
                 get: function() {
-                    var ret = this._filter.gain;
-                    ret.id = this.id + ".gain";
-                    return ret;
+                    return this.modAudioParam("gain", this._filter.gain);
                 }
             }
         });
@@ -2475,9 +2551,7 @@ snd.CLASS_DEF.push(function() {
             },
             attackParam: {
                 get: function() {
-                    var ret = this._compressor.attack;
-                    ret.id = this.id + ".attack";
-                    return ret;
+                    return this.modAudioParam("attack", this._compressor.attack);
                 }
             },
             knee: {
@@ -2492,9 +2566,7 @@ snd.CLASS_DEF.push(function() {
             },
             kneeParam: {
                 get: function() {
-                    var ret = this._compressor.knee;
-                    ret.id = this.id + ".knee";
-                    return ret;
+                    return this.modAudioParam("knee", this._compressor.knee);
                 }
             },
             ratio: {
@@ -2509,9 +2581,7 @@ snd.CLASS_DEF.push(function() {
             },
             ratioParam: {
                 get: function() {
-                    var ret = this._compressor.ratio;
-                    ret.id = this.id + ".ratio";
-                    return ret;
+                    return this.modAudioParam("ratio", this._compressor.ratio);
                 }
             },
             reduction: {
@@ -2531,9 +2601,7 @@ snd.CLASS_DEF.push(function() {
             },
             releaseParam: {
                 get: function() {
-                    var ret = this._compressor.release;
-                    ret.id = this.id + ".release";
-                    return ret;
+                    return this.modAudioParam("release", this._compressor.release);
                 }
             },
             threshold: {
@@ -2548,9 +2616,7 @@ snd.CLASS_DEF.push(function() {
             },
             thresholdParam: {
                 get: function() {
-                    var ret = this._compressor.threshold;
-                    ret.id = this.id + ".threshold";
-                    return ret;
+                    return this.modAudioParam("threshold", this._compressor.threshold);
                 }
             },
         });
@@ -2692,7 +2758,7 @@ snd.CLASS_DEF.push(function() {
             },
             delayTimeParam: {
                 get: function() {
-                    return this._delay.delayTime;
+                    return this.modAudioParam("delayTime", this._delay.delayTime);
                 }
             }
         });
@@ -2786,9 +2852,7 @@ snd.CLASS_DEF.push(function() {
             },
             gainParam: {
                 get: function() {
-                    var ret = this._gain.gain;
-                    ret.id = this.id + ".gain";
-                    return ret;
+                    return this.modAudioParam("gain", this._gain.gain);
                 }
             }
         });
@@ -3815,10 +3879,7 @@ snd.CLASS_DEF.push(function() {
             frequencyParam: {
                 get: function() {
                     if (this._source != null) {
-                        if (!this._frequencyGain.id) {
-                            this._frequencyGain.id = this.id + ".frequency";
-                        }
-                        return this._frequencyGain;
+                        return this.modAudioParam("frequency", this._frequencyGain);
                     } else {
                         return undefined;
                     }
@@ -3842,10 +3903,7 @@ snd.CLASS_DEF.push(function() {
             detuneParam: {
                 get: function() {
                     if (this._source != null) {
-                        if (!this._detuneGain.id) {
-                            this._detuneGain.id = this.id + ".detune";
-                        }
-                        return this._detuneGain;
+                        return this.modAudioParam("detune", this._detuneGain);
                     } else {
                         return undefined;
                     }
@@ -3915,7 +3973,7 @@ snd.CLASS_DEF.push(function() {
 
     /**
      * 波形の種類を設定します。<br/>
-     * 引数には、snd.oscillatortype.SINE, snd.oscillatortype.SQUARE, snd.oscillatortype.SAWTOOTH, snd.oscillatortype.TRIANGLEのいずれかを設定してください。
+     * 引数には、snd.SINE, snd.SQUARE, snd.SAWTOOTH, snd.oscillatortype.TRIANGLEのいずれかを設定してください。
      * @param {OscillatorType} oscillatorType
      * @deprecated oscillatorTypeプロパティを使用してください。
      */

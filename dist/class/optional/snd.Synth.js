@@ -74,10 +74,10 @@ snd.CLASS_DEF.push(function() {
      */
     snd.Synth.setWaveForm = function(waveForm) {
         this.settings.waveform = waveForm;
-        if (waveForm === snd.oscillatortype.SINE
-                || waveForm === snd.oscillatortype.SQUARE
-                || waveForm === snd.oscillatortype.SAWTOOTH
-                || waveForm === snd.oscillatortype.TRIANGLE) {
+        if (waveForm === snd.SINE
+                || waveForm === snd.SQUARE
+                || waveForm === snd.SAWTOOTH
+                || waveForm === snd.TRIANGLE) {
             for (i = 0; i < this.partes.length; i++) {
                 this.partes[i].setOscillatorType(waveForm);
             }
