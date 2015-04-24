@@ -171,7 +171,7 @@ snd.CLASS_DEF.push(function() {
             ret._audioParam.setValueAtTime(value, startTime);
         };
         ret.linearRampToValueAtTime = function(value, endTime) {
-            ret._audioParam.setRampToValueAtTime(value, endTime);
+            ret._audioParam.linearRampToValueAtTime(value, endTime);
         };
         ret.exponentialRampToValueAtTime = function(value, endTime) {
             ret._audioParam.exponentialRampToValueAtTime(value, endTime);
@@ -247,6 +247,39 @@ snd.CLASS_DEF.push(function() {
         // SubClass.prototype.connect = function(connectTo, bra, bra) {
         //     AudioUnit.prototype.loadData.apply(this, arguments);
         // };
+    };
+    
+    /**
+     * paramに渡されたAudioParamに所定のパラメータ・メソッドを追加して返します。<br/>
+     * AudioUnitを継承するクラス内で使用される前提のメソッドですので、通常は使用しないようにしてください。<br/>
+     * 追加されるものは以下の通りです。<br/>
+     * <ul>
+     *  <li>id プロパティ<br/>何のAudioParamであるかを表すID<br/>"osc0.volume"のように、AudioUnit.id + "." + subIDの形で使用されます。</li>
+     *  <li>setScheduledValues メソッド<br/>このAudioParamの時間変化を設定するメソッド。<br/>詳細はsnd.util.setScheduledValuesメソッドの説明を参照してください。</li>
+     * </ul>
+     * @param {String} subID 何のAudioParamであるかを表すID
+     * @param {AudioParam} param パラメータ等を追加するAudioParam 
+     * @returns {AudioParam} 所定のパラメータ・メソッドを追加したparam
+     */
+    snd.AudioUnit.prototype.modAudioParam = function(subID, param) {
+        if (!param.id) {
+            var _param = param;
+
+            param._id = this.id + "." + subID;
+
+            Object.defineProperties(param, {
+                id: {
+                    get: function() {
+                        return this._id;
+                    }
+                }
+            });
+
+            param.setScheduledValues = function(settings) {
+                snd.util.setScheduledValues(_param, settings);
+            };
+        }
+        return param;
     };
 
     /**

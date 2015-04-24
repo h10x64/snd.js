@@ -183,6 +183,34 @@ snd.init = function() {
             writable: false,
             value: "4x"
         },
+        SET: {
+            writable: false,
+            value: "set"
+        },
+        LINER: {
+            writable: false,
+            value: "liner"
+        },
+        EXPONENTIALLY: {
+            writable: false,
+            value: "exponentially"
+        },
+        SINE: {
+            writable: false,
+            value: "sine"
+        },
+        SQUARE: {
+            writable: false,
+            value: "square"
+        },
+        SAWTOOTH: {
+            writable: false,
+            value: "sawtooth"
+        },
+        TRIANGLE: {
+            writable: false,
+            value: "triangle"
+        },
         status: {
             value: (function () {
                 var ret = {};
@@ -246,19 +274,19 @@ snd.init = function() {
                 var ret = {};
                 Object.defineProperties(ret, {
                     SINE: {
-                        value: "sine",
+                        value: snd.SINE,
                         writable: false
                     },
                     SQUARE: {
-                        value: "square",
+                        value: snd.SQUARE,
                         writable: false
                     },
                     SAWTOOTH: {
-                        value: "sawtooth",
+                        value: snd.SAWTOOTH,
                         writable: false
                     },
                     TRIANGLE: {
-                        value: "triangle",
+                        value: snd.TRIANGLE,
                         writable: false
                     }
                 });
@@ -275,15 +303,15 @@ snd.init = function() {
                             var retret = {};
                             Object.defineProperties(retret, {
                                 SET: {
-                                    value: "set",
+                                    value: snd.SET,
                                     writable: false
                                 },
                                 LINER: {
-                                    value: "liner",
+                                    value: snd.LINER,
                                     writable: false,
                                 },
                                 EXPONENTIALLY: {
-                                    value: "exponentially",
+                                    value: snd.EXPONENTIALLY,
                                     writable: false
                                 }
                             });
@@ -298,7 +326,12 @@ snd.init = function() {
         },
         BLOWSER: {
             get: function () {
-                window.navigator.userAgent.toLowerCase();
+                return window.navigator.userAgent.toLowerCase();
+            }
+        },
+        CURRENT_TIME: {
+            get: function() {
+                return snd.AUDIO_CONTEXT.currentTime;
             }
         },
         /* Objects */

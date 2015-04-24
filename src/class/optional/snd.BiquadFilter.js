@@ -66,9 +66,7 @@ snd.CLASS_DEF.push(function() {
             },
             frequencyParam: {
                 get: function() {
-                    var ret = this._filter.frequency;
-                    ret.id = this.id + ".frequency";
-                    return ret;
+                    return this.modAudioParam("frequency", this._filter.frequency)
                 }
             },
             detune: {
@@ -83,9 +81,7 @@ snd.CLASS_DEF.push(function() {
             },
             detuneParam: {
                 get: function() {
-                    var ret = this._filter.detune;
-                    ret.id = this.id + ".detune";
-                    return ret;
+                    return this.modAudioParam("detune", this._filter.detune);
                 }
             },
             Q: {
@@ -100,9 +96,7 @@ snd.CLASS_DEF.push(function() {
             },
             QParam: {
                 get: function() {
-                    var ret = this._filter.Q;
-                    ret.id = this.id + ".Q";
-                    return ret;
+                    return this.modAudioParam("q", this._filter.Q);
                 }
             },
             gain: {
@@ -117,9 +111,7 @@ snd.CLASS_DEF.push(function() {
             },
             gainParam: {
                 get: function() {
-                    var ret = this._filter.gain;
-                    ret.id = this.id + ".gain";
-                    return ret;
+                    return this.modAudioParam("gain", this._filter.gain);
                 }
             }
         });

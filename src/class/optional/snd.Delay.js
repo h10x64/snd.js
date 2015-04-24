@@ -88,7 +88,7 @@ snd.CLASS_DEF.push(function() {
             },
             delayTimeParam: {
                 get: function() {
-                    return this._delay.delayTime;
+                    return this.modAudioParam("delayTime", this._delay.delayTime);
                 }
             }
         });

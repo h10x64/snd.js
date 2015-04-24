@@ -47,9 +47,7 @@ snd.CLASS_DEF.push(function() {
             },
             gainParam: {
                 get: function() {
-                    var ret = this._gain.gain;
-                    ret.id = this.id + ".gain";
-                    return ret;
+                    return this.modAudioParam("gain", this._gain.gain);
                 }
             }
         });

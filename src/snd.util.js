@@ -249,3 +249,21 @@ snd.util.noteToFrequency = function(octave, pitch) {
 snd.util.noteToSec = function(tempo, noteValue) {
     return 60.0 / (tempo * noteValue / 4);
 };
+
+snd.util.setScheduledValues = function(param, settings) {
+    var currentTime = snd.CURRENT_TIME;
+    param.cancelScheduledValues(currentTime);
+    
+    for (var i = 0; i < settings.length; i++) {
+        var setting = settings[i];
+        
+        if (setting.type == snd.LINER) {
+            param.linearRampToValueAtTime(setting.value, currentTime + setting.time);
+        } else if (setting.type == snd.EXPONENTIALLY) {
+            param.exponentialRampToValueAtTime(setting.value, currentTime + setting.time);
+        } else {
+            // DEFAULT: snd.audioparam.type.SET
+            param.setValueAtTime(setting.value, currentTime + setting.time);
+        }
+    }
+};
