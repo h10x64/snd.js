@@ -1431,11 +1431,7 @@ snd.CLASS_DEF.push(function() {
             },
             volumeParam: {
                 get: function() {
-                    var ret = this._gain.gain;
-                    if (ret.id == null) {
-                        ret.id = this.id + ".gain";
-                    }
-                    return ret;
+                    return this.modAudioParam("volume", this._gain.gain);
                 }
             },
             volume: {
