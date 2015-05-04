@@ -3,7 +3,7 @@
  * snd.js
  * 
  * The MIT License (MIT)
- * copyright (c) 2014 N_H <h.10x64@gmail.com>
+ * copyright (c) 2014 - 2015 N_H <h.10x64@gmail.com>
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -54,7 +54,7 @@
  * @property {snd.AudioDataManager} AUDIO_DATA_MANAGER 音データの読み込みなどの管理を行うクラスです。<br/>
  * ※snd.initメソッドが呼ばれるまで初期化されず、nullとなっている点に注意してください。
  */
-snd = {VERSION: "1.0.20150426", IS_BETA:true, ALIAS: "PeachBlossom"};
+snd = {VERSION: "1.0.20150504", IS_BETA:true, ALIAS: "PeachBlossom"};
 
 snd._AUDIO_CONTEXT = null;
 snd._MASTER = null;

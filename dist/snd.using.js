@@ -3,7 +3,7 @@
  * snd.js
  * 
  * The MIT License (MIT)
- * copyright (c) 2014 N_H <h.10x64@gmail.com>
+ * copyright (c) 2014 - 2015 N_H <h.10x64@gmail.com>
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -79,7 +79,9 @@ snd.using = function(callback){
         './optional/snd.OscillatorSource.js',
         './optional/snd.ScriptProcessor.js',
         './optional/snd.Synth.js',
-        './optional/snd.WaveShaper.js'
+        './optional/snd.WaveShaper.js',
+        './optional/snd.Noise.js',
+        './optional/snd.VinylNoise.js'
     ];
     
     /**
