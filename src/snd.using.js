@@ -50,7 +50,9 @@ snd.using = function(callback){
         './optional/snd.OscillatorSource.js',
         './optional/snd.ScriptProcessor.js',
         './optional/snd.Synth.js',
-        './optional/snd.WaveShaper.js'
+        './optional/snd.WaveShaper.js',
+        './optional/snd.Noise.js',
+        './optional/snd.VinylNoise.js'
     ];
     
     /**

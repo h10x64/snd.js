@@ -126,6 +126,10 @@ module.exports = function(grunt) {
                         'src/COPYRIGHT',
                         'src/class/optional/snd.Noise.js'
                     ],
+                    'dist/class/optional/snd.VinylNoise.js' : [
+                        'src/COPYRIGHT',
+                        'src/class/optional/snd.VinylNoise.js'
+                    ],
                     
                     /* plugin */
                     
@@ -202,7 +206,7 @@ module.exports = function(grunt) {
                         ' * snd.js - The Sound Library for JavaScript with WebAudioAPI - v.1.0 beta' + '\n' +
                         ' * ' + '\n' +
                         ' * The MIT License (MIT)' + '\n' +
-                        ' * copyright (c) 2014 N_H <h.10x64@gmail.com>' + '\n' +
+                        ' * copyright (c) 2014 - 2015 N_H <h.10x64@gmail.com>' + '\n' +
                         ' * ' + '\n' +
                         ' * Permission is hereby granted, free of charge, to any person obtaining a copy' + '\n' +
                         ' * of this software and associated documentation files (the "Software"), to deal' + '\n' +
@@ -247,6 +251,7 @@ module.exports = function(grunt) {
                     'dist/class.min/optional/snd.Synth.min.js': ['dist/class/optional/snd.Synth.js'],
                     'dist/class.min/optional/snd.WaveShaper.min.js': ['dist/class/optional/snd.WaveShaper.js'],
                     'dist/class.min/optional/snd.Noise.min.js': ['dist/class/optional/snd.Noise.js'],
+                    'dist/class.min/optional/snd.VinylNoise.min.js': ['dist/class/optional/snd.VinylNoise.js'],
                     'dist/plugins/mml/snd.mml.min.js': ['dist/plugins/mml/snd.mml.js'],
                     'dist/plugins/three/snd.three.min.js': ['dist/plugins/three/snd.three.js'],
                     'dist/plugins/encrypt/snd.encrypt.min.js': ['dist/plugins/encrypt/snd.encrypt.js'],
@@ -257,7 +262,7 @@ module.exports = function(grunt) {
                     'dist/plugins/invalid/min/snd.invalid.Convolver.min.js':['dist/plugins/invalid/snd.invalid.Convolver.js'],
                     'dist/plugins/invalid/min/snd.invalid.Delay.min.js':['dist/plugins/invalid/snd.invalid.Delay.js'],
                     'dist/plugins/invalid/min/snd.invalid.Oscillator.min.js':['dist/plugins/invalid/snd.invalid.Oscillator.js'],
-                    'dist/plugins/invalid/min/snd.invalid.Noise.min.js':['dist/plugins/invalid/snd.invalid.Noise.js']
+                    'dist/plugins/invalid/min/snd.invalid.Noise.min.js':['dist/plugins/invalid/snd.invalid.Noise.js'],
                 }
             }
         },
