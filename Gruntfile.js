@@ -1,11 +1,5 @@
 module.exports = function(grunt) {
     grunt.initConfig({
-        watch: {
-            scripts: {
-                files: ['src/*.js', 'src/**/*.js'],
-                tasks: ['default'],
-            }
-        },
         pkg: grunt.file.readJSON('package.json'),
         concat: {
             basic_and_extras: {
@@ -38,7 +32,10 @@ module.exports = function(grunt) {
                         'src/class/optional/snd.MediaStreamAudioSource.js',
                         'src/class/optional/snd.OscillatorSource.js',
                         'src/class/optional/snd.ScriptProcessor.js',
-                        'src/class/optional/snd.WaveShaper.js'
+                        'src/class/optional/snd.WaveShaper.js',
+                        'src/class/optional/snd.Noise.js',
+                        'src/class/optional/MIDI/snd.MIDIBase.js',
+                        'src/class/optional/MIDI/snd.MIDIUtil.js'
                     ],
                     'dist/snd.using.js': [
                         'src/COPYRIGHT',
@@ -129,6 +126,11 @@ module.exports = function(grunt) {
                     'dist/class/optional/snd.VinylNoise.js' : [
                         'src/COPYRIGHT',
                         'src/class/optional/snd.VinylNoise.js'
+                    ],
+                    'dist/class/optional/MIDI/snd.MIDI.js' : [
+                        'src/COPYRIGHT',
+                        'src/class/optional/MIDI/snd.MIDIBase.js',
+                        'src/class/optional/MIDI/snd.MIDIUtil.js'
                     ],
                     
                     /* plugin */
@@ -252,6 +254,7 @@ module.exports = function(grunt) {
                     'dist/class.min/optional/snd.WaveShaper.min.js': ['dist/class/optional/snd.WaveShaper.js'],
                     'dist/class.min/optional/snd.Noise.min.js': ['dist/class/optional/snd.Noise.js'],
                     'dist/class.min/optional/snd.VinylNoise.min.js': ['dist/class/optional/snd.VinylNoise.js'],
+                    'dist/class.min/optional/snd.MIDI.min.js': ['dist/class/optional/snd.MIDI.js'],
                     'dist/plugins/mml/snd.mml.min.js': ['dist/plugins/mml/snd.mml.js'],
                     'dist/plugins/three/snd.three.min.js': ['dist/plugins/three/snd.three.js'],
                     'dist/plugins/encrypt/snd.encrypt.min.js': ['dist/plugins/encrypt/snd.encrypt.js'],

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>snd.js - The Sound Library for JavaScript with WebAudioAPI - Classes</title>
+	<title>snd.js - The Sound Library for JavaScript with WebAudioAPI - Namespace: util</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -124,12 +124,14 @@
 					
 
 
-	<h1 class="page-title">Classes</h1>
+	<h1 class="page-title">Namespace: util</h1>
 <section>
 
 <header>
     <h2>
+        <span class="ancestors"><a href="global.html#snd">snd</a><a href="snd.MIDI.html">.MIDI</a>.</span>
     
+    util
     </h2>
     
 </header>
@@ -139,6 +141,8 @@
     
 
     
+        
+            <div class="description">MIDI機能でよく使う機能をまとめたネームスペースです</div>
         
 
         
@@ -184,61 +188,293 @@
     
 
     
-        <h3 class="subsection-title">Classes</h3>
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
 
         <dl>
-            <dt><a href="snd.AudioDataManager.html">AudioDataManager</a></dt>
-            <dd></dd>
+            
+<dt>
+    <h4 class="name" id="getCh"><span class="type-signature">&lt;static> </span>getCh<span class="signature">(bytes)</span><span class="type-signature"> &rarr; {Integer}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        MIDIメッセージからチャンネルNoが取得できる場合、そのチャンネルNoを返します。<br/>
+取得できなかった場合はundefinedを返します。
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
         
-            <dt><a href="snd.AudioMaster.html">AudioMaster</a></dt>
-            <dd></dd>
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>bytes</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">MIDIメッセージ</td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    チャンネルが取得できるメッセージの場合はそのチャンネルNo、チャンネルが取得できない場合はundefined
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">Integer</span>
+
+
+	</dd>
+</dl>
+
+
         
-            <dt><a href="snd.AudioUnit.html">AudioUnit</a></dt>
-            <dd></dd>
+    
+    
+</dd>
+
         
-            <dt><a href="snd.BufferSource.html">BufferSource</a></dt>
-            <dd></dd>
+            
+<dt>
+    <h4 class="name" id="toHz"><span class="type-signature">&lt;static> </span>toHz<span class="signature">(noteNo)</span><span class="type-signature"> &rarr; {Number}</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        MIDIメッセージで渡されるMIDIノートNo(中央ドが60)を周波数に変換して返します。<br/>
+MIDIノートNoの範囲外(負の値など)でも計算結果を返します。
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
         
-            <dt><a href="snd.BufferSource.Status.html">Status</a></dt>
-            <dd></dd>
+
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+
+		<th>Type</th>
+
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>noteNo</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">type</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">MIDIノートNo</td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    周波数
+</div>
+
+
+
+<dl>
+	<dt>
+		Type
+	</dt>
+	<dd>
+		
+<span class="param-type">Number</span>
+
+
+	</dd>
+</dl>
+
+
         
-            <dt><a href="snd.Exception.html">Exception</a></dt>
-            <dd></dd>
-        
-            <dt><a href="snd.MediaElementAudioSource.html">MediaElementAudioSource</a></dt>
-            <dd></dd>
-        
-            <dt><a href="snd.MediaStreamAudioSource.html">MediaStreamAudioSource</a></dt>
-            <dd></dd>
-        
-            <dt><a href="snd.OscillatorSource.html">OscillatorSource</a></dt>
-            <dd></dd>
-        
-            <dt><a href="snd.Source.html">Source</a></dt>
-            <dd></dd>
-        
-            <dt><a href="snd.Source.Status.html">Status</a></dt>
-            <dd></dd>
+    
+    
+</dd>
+
         </dl>
-    
-
-    
-        <h3 class="subsection-title">Namespaces</h3>
-
-        <dl>
-            <dt><a href="namespaces.html#snd.MIDI"><a href="snd.MIDI.html">MIDI</a></a></dt>
-            <dd></dd>
-        
-            <dt><a href="namespaces.html#snd.MIDI.util"><a href="snd.MIDI.util.html">util</a></a></dt>
-            <dd></dd>
-        
-            <dt><a href="namespaces.html#snd.util"><a href="snd.util.html">util</a></a></dt>
-            <dd></dd>
-        </dl>
-    
-
-    
-
     
 
     
@@ -267,7 +503,7 @@
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.2</a>
-		on 2015-05-05T15:50:26+09:00 using the <a
+		on 2015-05-05T15:50:28+09:00 using the <a
 			href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>

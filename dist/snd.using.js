@@ -81,7 +81,8 @@ snd.using = function(callback){
         './optional/snd.Synth.js',
         './optional/snd.WaveShaper.js',
         './optional/snd.Noise.js',
-        './optional/snd.VinylNoise.js'
+        './optional/snd.VinylNoise.js',
+        './optional/MIDI/snd.MIDI.js'
     ];
     
     /**
