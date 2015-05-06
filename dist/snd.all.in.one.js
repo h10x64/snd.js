@@ -54,7 +54,7 @@
  * @property {snd.AudioDataManager} AUDIO_DATA_MANAGER 音データの読み込みなどの管理を行うクラスです。<br/>
  * ※snd.initメソッドが呼ばれるまで初期化されず、nullとなっている点に注意してください。
  */
-snd = {VERSION: "1.0.20150504", IS_BETA:true, ALIAS: "PeachBlossom"};
+snd = {VERSION: "1.0.20150505", IS_BETA:true, ALIAS: "Tango"};
 
 snd._AUDIO_CONTEXT = null;
 snd._MASTER = null;
@@ -4542,19 +4542,58 @@ snd.CLASS_DEF.push(function() {
     snd.Noise.Status.prototype.constructor = snd.Noise.Status;
 });
 
+if (typeof(snd) == "undefined") snd = {};
+
 /**
  * MIDI機能の基幹ネームスペースです。
+ * @property {MidiAccess} MIDI_ACCESS MIDIAccessを取得します。
+ * @property {HashMap} INPUTS 接続済みのMIDI入力デバイスを列挙したハッシュマップを取得します。<br/>
+ * キー値は各デバイスのIDで、値にはMIDIInputオブジェクトが格納されています。
+ * @property {HashMap} OUTPUTS 接続済みのMIDI出力デバイスを列挙したハッシュマップを取得します。<br/>
+ * キー値は各デバイスのIDで、値にはMIDIOutputオブジェクトが格納されています。
  * @namespace snd.MIDI
  */
 snd.MIDI = {}
 
 snd.MIDI._MIDI_ACCESS = null;
+snd.MIDI._INPUTS = {};
+snd.MIDI._OUTPUTS = {};
 
 Object.defineProperties(snd.MIDI, {
     MIDI_ACCESS: {
         get: function() {
             return snd.MIDI._MIDI_ACCESS;
         }
+    },
+    INPUTS: {
+        get: function() {
+            return snd.MIDI._INPUTS;
+        }
+    },
+    OUTPUTS: {
+        get: function() {
+            return snd.MIDI._OUTPUTS;
+        }
+    },
+    DISCONNECTED: {
+        value: "disconnected",
+        writable: false
+    },
+    CONNECTED: {
+        value: "connected",
+        writable: false
+    },
+    OPEN: {
+        value: "open",
+        writable: false
+    },
+    CLOSED: {
+        value: "closed",
+        writable: false
+    },
+    PENDING: {
+        value: "pending",
+        writable: false
     },
     MESSAGE_FILTER: {
         value: 0xF0,
@@ -5178,7 +5217,20 @@ snd.MIDI.init = function(opt, successCallback, failureCallback) {
     if (navigator && typeof(navigator.requestMIDIAccess) == "function") {
         navigator.requestMIDIAccess(opt).then(
                 function(midiAccess) {
+                    var values = null, v = null;
+                    
                     snd.MIDI._MIDI_ACCESS = midiAccess;
+                    
+                    values = snd.MIDI._MIDI_ACCESS.inputs.values();
+                    while (!(v = values.next()).done) {
+                        snd.MIDI._INPUTS[v.value.id] = v.value;
+                    }
+                    
+                    values = snd.MIDI._MIDI_ACCESS.outputs.values();
+                    while (!(v = values.next()).done) {
+                        snd.MIDI._OUTPUTS[v.value.id] = v.value;
+                    }
+                    
                     if (typeof(successCallback) == "function") {
                         successCallback(snd.MIDI.MIDI_ACCESS);
                     }
