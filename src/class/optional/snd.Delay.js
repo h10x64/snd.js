@@ -1,4 +1,4 @@
-snd.CLASS_DEF.push(function() {
+define(["snd.AudioUnit"], function(snd) {
     snd.Delay = function(id) {
         snd.AudioUnit.apply(this, arguments);
 
@@ -131,4 +131,6 @@ snd.CLASS_DEF.push(function() {
     };
     snd.Delay.Status.prototype = Object.create(snd.AudioUnit.Status.prototype);
     snd.Delay.Status.prototype.constructor = snd.Delay.Status;
+    
+    return snd;
 });

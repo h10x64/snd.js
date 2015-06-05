@@ -27,7 +27,7 @@
  
  
 
-snd.CLASS_DEF.push(function() {
+define(["snd.Source"], function(snd) {
     /**
      * 新しくオシレータ音源を生成します。
      * @class 任意の波形を再生するオシレータ音源を扱うクラスです。<br/>
@@ -455,4 +455,6 @@ snd.CLASS_DEF.push(function() {
         this.frequency = snd.OscillatorSource.DEFAULT_FREQUENCY;
         this.detune = 0.0;
     };
+    
+    return snd;
 });

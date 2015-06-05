@@ -1,4 +1,4 @@
-snd.invalid.CLASS_DEF.push(function() {
+define(["snd.invalid", "snd.OscillatorSource"], function(snd) {
     snd.invalid.TAG_DEF["snd-oscillator"] = {
         tagName: "snd-oscillator",
         class: snd.OscillatorSource,
@@ -30,4 +30,6 @@ snd.invalid.CLASS_DEF.push(function() {
             stop:"stop"
         }
     };
+    
+    return snd;
 });

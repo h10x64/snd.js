@@ -1,4 +1,4 @@
-snd.invalid.CLASS_DEF.push(function() {
+define(["snd.invalid"], function(snd) {
     snd.invalid.TAG_DEF["snd-gain"] = {
         "tagName": "snd-gain",
         "class": snd.Gain,
@@ -15,4 +15,6 @@ snd.invalid.CLASS_DEF.push(function() {
         "methods": {
         }
     };
+    
+    return snd;
 });

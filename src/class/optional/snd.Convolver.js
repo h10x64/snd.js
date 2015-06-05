@@ -1,4 +1,4 @@
-snd.CLASS_DEF.push(function() {
+define(["snd.AudioUnit"], function(snd) {
     snd.Convolver = function(id) {
         snd.AudioUnit.apply(this, arguments);
 
@@ -172,4 +172,6 @@ snd.CLASS_DEF.push(function() {
     };
     snd.Convolver.Status.prototype = Object.create(snd.AudioUnit.Status.prototype);
     snd.Convolver.Status.prototype.constructor = snd.Convolver.Status;
+    
+    return snd;
 });

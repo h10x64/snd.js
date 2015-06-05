@@ -27,7 +27,8 @@
  
  
 
-snd.CLASS_DEF.push(function() {
+define(['snd'], function(snd) {
+    
     /**
      * コンストラクタは使用せず、snd.AUDIO_DATA_MANAGERを使用してください。<br/>
      * @class AudioBufferの管理を行うクラスです。<br/>
@@ -62,8 +63,7 @@ snd.CLASS_DEF.push(function() {
                             prop[key] = {
                                 get: function() {
                                     return thisarg._dataMap[key].data;
-                                }
-                            };
+                                }};
                             Object.defineProperties(obj, prop);
                         })(ret, keys[i], this);
                     }
@@ -157,8 +157,7 @@ snd.CLASS_DEF.push(function() {
      * keyがキー値となるAudioBufferを追加します。
      * @param {type} key 追加されるAudioBufferのキー値
      * @param {type} url 追加されるAudioBufferが読込むURL
-     */
-    snd.AudioDataManager.prototype.add = function(key, url) {
+     */         snd.AudioDataManager.prototype.add = function(key, url) {
         var _this = this;
         this._dataMap[key] = {doesLoaded: false};
 
@@ -181,8 +180,7 @@ snd.CLASS_DEF.push(function() {
 
     /**
      * keyがキー値となるAudioBufferを追加します。<br/>
-     * このメソッドはBase64形式のデータ文字列をAudioBufferにデコードして使用します。
-     * @param {String} key キー値
+     * このメソッドはBase64形式のデータ文字列をAudioBufferにデコードして使用します。          * @param {String} key キー値
      * @param {String} base64String Base64形式のデータ文字列
      **/
     snd.AudioDataManager.prototype.addBase64 = function(key, base64String) {
@@ -270,7 +268,6 @@ snd.CLASS_DEF.push(function() {
             delete this.eventLiteners[key];
         }
     }
-
     /**
      * keySetで指定された全てのデータをこのオブジェクトから削除します
      * @param {Array} keySet key文字列の配列
@@ -331,4 +328,9 @@ snd.CLASS_DEF.push(function() {
         }
         this.onload();
     };
+    
+    snd._AUDIO_DATA_MANAGER = new snd.AudioDataManager();
+    
+    return snd;
 });
+

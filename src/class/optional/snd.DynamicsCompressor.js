@@ -1,4 +1,4 @@
-snd.CLASS_DEF.push(function() {
+define(["snd.AudioUnit"], function(snd) {
     snd.DynamicsCompressor = function(id) {
         snd.AudioUnit.apply(this, arguments);
 
@@ -172,4 +172,6 @@ snd.CLASS_DEF.push(function() {
     };
     snd.DynamicsCompressor.Status.prototype = Object.create(snd.AudioUnit.Status.prototype);
     snd.DynamicsCompressor.Status.prototype.constructor = snd.DynamicsCompressor.Status;
+    
+    return snd;
 });

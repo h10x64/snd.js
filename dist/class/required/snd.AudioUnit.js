@@ -27,7 +27,7 @@
  
  
 
-snd.CLASS_DEF.push(function() {
+define(["snd", "snd.AudioMaster"], function(snd) {
     /**
      * 新しいオーディオユニットを生成します。
      * @class 1つのオーディオユニットを定義する抽象クラスです。<br/>
@@ -284,7 +284,7 @@ snd.CLASS_DEF.push(function() {
      * 追加されるものは以下の通りです。<br/>
      * <ul>
      *  <li>id プロパティ<br/>何のAudioParamであるかを表すID<br/>"osc0.volume"のように、AudioUnit.id + "." + subIDの形で使用されます。</li>
-     *  <li>setScheduledValues メソッド<br/>このAudioParamの時間変化を設定するメソッド。<br/>詳細はsnd.util.setScheduledValuesメソッドの説明を参照してください。</li>
+     *  <li>setScheduledValues メソッド<br/>このAudioParamの時間変化を設定するメソッド。</li>
      * </ul>
      * @param {String} subID 何のAudioParamであるかを表すID
      * @param {AudioParam} param パラメータ等を追加するAudioParam 
@@ -305,7 +305,21 @@ snd.CLASS_DEF.push(function() {
             });
 
             param.setScheduledValues = function(settings) {
-                snd.util.setScheduledValues(_param, settings);
+                var currentTime = snd.CURRENT_TIME;
+                _param.cancelScheduledValues(currentTime);
+
+                for (var i = 0; i < settings.length; i++) {
+                    var setting = settings[i];
+
+                    if (setting.type == snd.LINER) {
+                        _param.linearRampToValueAtTime(setting.value, currentTime + setting.time);
+                    } else if (setting.type == snd.EXPONENTIALLY) {
+                        _param.exponentialRampToValueAtTime(setting.value, currentTime + setting.time);
+                    } else {
+                        // DEFAULT: snd.audioparam.type.SET
+                        _param.setValueAtTime(setting.value, currentTime + setting.time);
+                    }
+                }
             };
         }
         return param;
@@ -342,5 +356,7 @@ snd.CLASS_DEF.push(function() {
         this.channelCountMode = "max";
         this.channelInterpretation = "discrete";
     };
+    
+    return snd;
 });
 

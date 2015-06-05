@@ -1,4 +1,4 @@
-snd.CLASS_DEF.push(function() {
+define(["snd.AudioUnit"], function(snd) {
     snd.Analyser = function(id) {
         snd.AudioUnit.apply(this, arguments);
 
@@ -163,4 +163,6 @@ snd.CLASS_DEF.push(function() {
     };
     snd.Analyser.Status.prototype = Object.create(snd.AudioUnit.Status.prototype);
     snd.Analyser.Status.prototype.constructor = snd.Analyser.Status;
+    
+    return snd;
 });

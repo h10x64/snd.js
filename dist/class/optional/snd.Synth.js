@@ -27,7 +27,7 @@
  
  
 
-snd.CLASS_DEF.push(function() {
+define(["snd.Source"], function(snd) {
     /**
      * コンストラクタです。<br/>
      * @class シンセサイザクラスです。<br/>
@@ -591,4 +591,6 @@ snd.CLASS_DEF.push(function() {
     };
     snd.Synth.Settings.EnvelopeSettings.prototype.onchange = function() {
     };
+    
+    return snd;
 });

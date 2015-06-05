@@ -27,7 +27,7 @@
  
  
 
-snd.CLASS_DEF.push(function() {
+define(["snd.AudioUnit"], function(snd) {
     var calcNoise = function(buffer) {
         for (var ch = 0; ch < buffer.numberOfChannels; ch++) {
             var chBuf = buffer.getChannelData(ch);
@@ -117,4 +117,6 @@ snd.CLASS_DEF.push(function() {
     };
     snd.Noise.Status.prototype = Object.create(snd.AudioUnit.Status.prototype);
     snd.Noise.Status.prototype.constructor = snd.Noise.Status;
+    
+    return snd;
 });

@@ -1,4 +1,4 @@
-snd.invalid.CLASS_DEF.push(function() {
+define(["snd.invalid"], function(snd) {
     snd.invalid.TAG_DEF["snd-buffersource"] = {
         tagName: "snd-buffersource",
         class: snd.BufferSource,
@@ -31,6 +31,8 @@ snd.invalid.CLASS_DEF.push(function() {
             stop:"stop"
         }
     };
+    
+    return snd;
 });
 
 

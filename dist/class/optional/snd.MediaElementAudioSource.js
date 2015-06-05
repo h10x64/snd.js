@@ -27,7 +27,7 @@
  
  
 
-snd.CLASS_DEF.push(function() {
+define(["snd.AudioMaster","snd.util","snd.Source"], function(snd) {
     /**
      * 新しくメディアタグを使用する音源を生成します。
      * @class HTMLのメディア要素（Audioタグなど）を音源として使用する音源クラスです。<br/>
@@ -827,6 +827,55 @@ snd.CLASS_DEF.push(function() {
     }
     snd.MediaElementAudioSource.Status.prototype = Object.create(snd.Source.Status.prototype);
     snd.MediaElementAudioSource.Status.prototype.constructor = snd.MediaElementAudioSource.Status;
+    
+    /* snd.util Methods */
+
+    /**
+     * Audioタグを使用した音源を複数作成するメソッドです。<br/>
+     * 音源のIDとデータのURLをまとめたハッシュマップdataSetを渡すと、指定されたelementにAudioタグを追加し、
+     *MediaElementAudioSourceクラスのオブジェクトを生成し、ハッシュマップにまとめて返します。<br/>
+     * 戻値のキー値にはデータセットで設定したIDが使用され、src属性がdataSetで指定されたURLとなったAudioタグのエレメントが値として入ります。<br/>
+     * <br/>
+     * また、connectToMasterをtrueに設定した場合、自動でsnd.MASTER.connectAudioUnitを実行します。<br/>
+     * この場合、funcの中でBufferSourceオブジェクトのstartメソッドを使うだけで音が再生されるようになります。<br/>
+     * 音源と出力の間にエフェクトを追加する必要が無い場合、connectToMasterをtrueに設定すると便利です。
+     * 
+     * @param {HashMap} dataSet 音源のIDと、データURLのハッシュマップ {ID1: "URL1", ID2: "URL2", ... IDn: "URLn"}
+     * @param {boolean} connectToMaster 読み込み完了時にsnd.MASTERへ接続するかどうか
+     * @param {type} parentElem Audioタグを追加するDOMエレメント
+     * @returns {HashMap}
+     * @memberOf snd.util
+     */
+    snd.util.createMediaElementAudioSources = function(dataSet, connectToMaster, parentElem) {
+        var ret = {};
+
+        for (var id in dataSet) {
+            var audioElem;
+            var docElem = document.getElementById(id);
+            if (docElem == null) {
+                audioElem = new Audio(id);
+                parentElem.appendChild(audioElem);
+            } else {
+                audioElem = docElem;
+            }
+
+            if (dataSet[id] != null && dataSet[id] != "") {
+                audioElem.src = dataSet[id];
+            }
+
+            var source = new snd.MediaElementAudioSource(id, audioElem);
+
+            ret[id] = source;
+
+            if (connectToMaster) {
+                snd.MASTER.connectAudioUnit(id, source);
+            }
+        }
+
+        return ret;
+    };
+    
+    return snd;
 });
 
 

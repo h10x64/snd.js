@@ -1,4 +1,4 @@
-snd.invalid.CLASS_DEF.push(function() {
+define(["snd.invalid"], function(snd) {
     snd.invalid.TAG_DEF["snd-delay"] = {
         "tagName": "snd-delay",
         "class": snd.Delay,
@@ -16,4 +16,6 @@ snd.invalid.CLASS_DEF.push(function() {
         "methods": {
         }
     };
+    
+    return snd;
 });

@@ -1,4 +1,4 @@
-snd.CLASS_DEF.push(function() {
+define(["snd.AudioUnit"], function(snd) {
     var calcNoise = function(buffer, maxPetitNoiseSize, minPetitNoiseSize, maxNoiseSize, probability) {
         for (var ch = 0; ch < buffer.numberOfChannels; ch++) {
             var chBuf = buffer.getChannelData(ch);
@@ -103,7 +103,7 @@ snd.CLASS_DEF.push(function() {
                     return this._status.maxPetitNoiseSize;
                 },
                 set: function(val) {
-                    this._status.maxPetitNoiseSize = (val > 1.0) ? 1.0 : (val < 0.0) ? 0.0 : val;
+                    this._status.maxPetitNoiseSize = (val < 0.0) ? 0.0 : val;
                     if (this._status.maxPetitNoiseSize < this._status.minPetitNoiseSize) {
                         this._status.minPetitNoiseSize = this._status.maxPetitNoiseSize;
                     }
@@ -114,7 +114,7 @@ snd.CLASS_DEF.push(function() {
                     return this._status.minPetitNoiseSize;
                 },
                 set: function(val) {
-                    this._status.minPetitNoiseSize = (val > 1.0) ? 1.0 : (val < 0.0) ? 0.0 : val;
+                    this._status.minPetitNoiseSize = (val < 0.0) ? 0.0 : val;
                     if (this._status.minPetitNoiseSize > this._status.maxPetitNoiseSize) {
                         this._status.maxPetitNoiseSize = this._status.minPetitNoiseSize;
                     }
@@ -125,7 +125,7 @@ snd.CLASS_DEF.push(function() {
                     return this._status.maxNoiseSize;
                 },
                 set: function(val) {
-                    this._status.maxNoiseSize = val;
+                    this._status.maxNoiseSize = (val < 0.0) ? 0.0 : val;
                 }
             },
             probability: {
@@ -145,10 +145,14 @@ snd.CLASS_DEF.push(function() {
 
     snd.VinylNoise.prototype.connect = function(connectTo, indexIn, indexOut, id) {
         snd.AudioUnit.prototype.connect.apply(this, arguments);
-        if (connectTo.getConnector != null) {
+        if (connectTo.isAudioUnit || connectTo.getConnector != null) {
             this._gain.connect(connectTo.getConnector(), indexIn, indexOut);
         } else {
-            this._gain.connect(connectTo, indexIn, indexOut);
+            if (!indexOut) {
+                this._gain.connect(connectTo, indexIn);
+            } else {
+                this._gain.connect(connectTo, indexIn, indexOut);
+            }
         }
     };
     snd.VinylNoise.prototype.disconnect = function(disconnectFrom, indexIn, id) {
@@ -183,4 +187,6 @@ snd.CLASS_DEF.push(function() {
     };
     snd.VinylNoise.Status.prototype = Object.create(snd.AudioUnit.Status.prototype);
     snd.VinylNoise.Status.prototype.constructor = snd.VinylNoise.Status;
+    
+    return snd;
 });

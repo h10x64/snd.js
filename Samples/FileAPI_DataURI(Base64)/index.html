@@ -4,61 +4,14 @@
         <title>Demo - FileAPI,DataURI(Base64)</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="../../dist/snd.js"></script>
-        <script src="./snd.using.js"></script>
         <script>
-            var fileOpenButton = null;
-            var audioTagDiv = null;
-            var mediaElementAudioNode = null;
-            
+            LOADED = false;
             window.onload = function() {
-                snd.onload = function() {
-                    // オーディオタグを追加する親エレメント
-                    audioTagDiv = document.getElementById("audioTagDiv");
-
-                    // 生成する音源のデータセット（URLに空文字列を指定）
-                    var dataSet = {
-                        '音源ID': ""
-                    };
-                    // 音源を生成
-                    var createdSources = snd.util.createMediaElementAudioSources(dataSet, true, audioTagDiv);
-
-                    // 生成した音源を取得しておく
-                    mediaElementAudioNode = createdSources['音源ID'];
-
-                    // 音源のoncanplayイベントにリスナを追加
-                    mediaElementAudioNode.addOnCanPlayEventListener(function() {
-                        // 再生可能になったら再生開始
-                        mediaElementAudioNode.start();
-                    });
-
-                    fileOpenButton = document.getElementById("selectFile");
-                    fileOpenButton.addEventListener("change", function(evt) {
-                        var files = evt.target.files;
-                        if (files.length > 0) {
-                            if (!files[0].type.match("audio.*")) {
-                                aleart("オーディオファイルを選択してください。");
-                            } else {
-                                var fileReader = new FileReader();
-                                fileReader.onloadend = function(evt) {
-                                    // 読み込んだデータ（DataURI形式）
-                                    var data = fileReader.result;
-
-                                    // MediaElementAudioNodeのsrcにDataURI形式の文字列を設定
-                                    mediaElementAudioNode.src = data;
-
-                                    // ロード開始
-                                    mediaElementAudioNode.load();
-                                };
-                                fileReader.readAsDataURL(files[0]);
-                            }
-                        }
-                    }, false);
-                }
-
-                snd.init();
-            };
+                LOADED = true;
+            }
         </script>
+        <script src="require.config.js"></script>
+        <script src="../../lib/require.js" data-main="./FileAPI_use_element.js"></script>
     </head>
     <body>
         <div>

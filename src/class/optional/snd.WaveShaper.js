@@ -1,4 +1,4 @@
-snd.CLASS_DEF.push(function() {
+define(["snd.AudioUnit"], function(snd) {
     snd.WaveShaper = function(id) {
         snd.AudioUnit.apply(this, arguments);
 
@@ -116,4 +116,6 @@ snd.CLASS_DEF.push(function() {
     };
     snd.WaveShaper.Status.prototype = Object.create(snd.AudioUnit.Status.prototype);
     snd.WaveShaper.Status.prototype.constructor = snd.WaveShaper.Status;
+    
+    return snd;
 });

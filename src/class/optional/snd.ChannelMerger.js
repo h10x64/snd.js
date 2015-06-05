@@ -1,4 +1,4 @@
-snd.CLASS_DEF.push(function() {
+define(["snd.AudioUnit"], function(snd) {
     snd.ChannelMerger = function(id, channels) {
         snd.AudioUnit.apply(this, arguments);
 
@@ -53,4 +53,6 @@ snd.CLASS_DEF.push(function() {
     };
     snd.ChannelMerger.Status.prototype = Object.create(snd.AudioUnit.Status);
     snd.ChannelMerger.Status.prototype.constructor = snd.ChannelMerger.Status;
+    
+    return snd;
 });

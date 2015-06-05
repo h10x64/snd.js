@@ -1,4 +1,5 @@
-snd.CLASS_DEF.push(function() {
+define(['snd'], function(snd) {
+    
     /**
      * コンストラクタは使用せず、snd.MASTERを使用してください。
      * @class ミキサークラスです。<br/>
@@ -56,4 +57,8 @@ snd.CLASS_DEF.push(function() {
     snd.AudioMaster.prototype.getConnector = function() {
         return this._gain;
     };
+    
+    snd._MASTER = new snd.AudioMaster();
+
+    return snd;
 });

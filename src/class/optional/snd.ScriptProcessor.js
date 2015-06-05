@@ -1,4 +1,4 @@
-snd.CLASS_DEF.push(function() {
+define(["snd.Source"], function(snd) {
     snd.ScriptProcessor = function(id) {
         snd.Source.apply(this, arguments);
 
@@ -120,4 +120,6 @@ snd.CLASS_DEF.push(function() {
     };
     snd.ScriptProcessor.Status.prototype = Object.create(snd.Source.prototype);
     snd.ScriptProcessor.Status.prototype.constructor = snd.ScriptProcessor.Status;
+    
+    return snd;
 });

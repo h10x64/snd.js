@@ -1,21 +1,16 @@
-snd.invalid = {varsion: "0.1.20150213",  isBeta: true};
-snd.invalid.CLASS_DEF = [];
-snd.invalid.TAG_DEF = {};
-if (jQuery && jQuery.cssHooks) {
-    snd.invalid.doesCSSHooked = {};
-}
-
-snd.PLUGIN_INIT.push(function() {
+define(["snd"], function(snd) {
+    snd.invalid = {varsion: "0.1.20150606",  isBeta: true};
+    snd.invalid.CLASS_DEF = [];
+    snd.invalid.TAG_DEF = {};
+    if (jQuery && jQuery.cssHooks) {
+        snd.invalid.doesCSSHooked = {};
+    }
 
     /**
      * 初期化を行います。<br/>
      * document.bodyを使うため、document.onload内で実行するようにしてください。
      */
     snd.invalid.init = function() {
-        for (var i = 0; i < snd.invalid.CLASS_DEF.length; i++) {
-            snd.invalid.CLASS_DEF[i]();
-        }
-        
         var baseObserver = new MutationObserver(snd.invalid.observeCallback);
         baseObserver.observe(document.body, {
             childList: true,
@@ -520,4 +515,6 @@ snd.PLUGIN_INIT.push(function() {
         delete parentElem._invalid._connection.in["#" + htmlElem.id];
         delete htmlElem._invalid._connection.out["#" + this._htmlElem.id];
     };
+    
+    return snd;
 });

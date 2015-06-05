@@ -1,4 +1,4 @@
-snd.CLASS_DEF.push(function() {
+define(["snd.Source","snd.util","snd.AudioDataManager"], function(snd) {
     /**
      * AudioBufferを使用する音源を新しく生成します。
      * @class AudioBufferを使用してバイナリデータを再生する音源です。<br/>
@@ -397,5 +397,71 @@ snd.CLASS_DEF.push(function() {
         this.loopEnd = null;
         this.src = "";
     };
+    
+    /* snd.util Methods  */
+
+    /**
+     * AudioBufferを使用した音源を複数作成するメソッドです。<br/>
+     * 音源のIDとデータのURLをまとめたハッシュマップdataSetを渡すと、読み込み終了時に
+     *コールバック関数funcが呼び出されます。<br/>
+     * コールバック関数funcの引数には、BufferSourceクラスのオブジェクトをまとめたハッシュマップが渡されます。<br/>
+     * このマップのキー値にはデータセットで設定したIDが使用され、データURLの内容を出力する音源がその値として入っています。<br/>
+     * <br/>
+     * また、connectToMasterをtrueに設定した場合、自動でsnd.MASTER.connectAudioUnitを実行します。<br/>
+     * この場合、funcの中でBufferSourceオブジェクトのstartメソッドを使うだけで音が再生されるようになります。<br/>
+     * 音源と出力の間にエフェクトを追加する必要が無い場合、connectToMasterをtrueに設定すると便利です。
+     * 
+     * @param {HashMap} dataSet 音源のIDと、データURLのハッシュマップ {ID1: "URL1", ID2: "URL2", ... IDn: "URLn"}
+     * @param {boolean} connectToMaster 読み込み完了時にsnd.MASTERへ接続するかどうか
+     * @param {function} func 読込みが終了し、音源の準備が完了した時に呼ばれるコールバック関数
+     * @memberOf snd.util
+     */
+    snd.util.createBufferSources = function(dataSet, connectToMaster, func) {
+        if (!snd.BufferSource) {
+            throw new snd.Exception("Please load snd.BufferSource.js");
+        }
+
+        var sourceMap = {};
+        var urlMap = {};
+
+        for (var id in dataSet) {
+            var url = dataSet[id];
+            if (sourceMap[url] == null) {
+                sourceMap[url] = [];
+            }
+
+            var source = new snd.BufferSource(id);
+            sourceMap[url].push(source);
+        }
+
+        for (var url in sourceMap) {
+            urlMap[url] = url;
+        }
+        snd.AUDIO_DATA_MANAGER.addAll(urlMap);
+
+        var callback = function() {
+            var ret = {};
+
+            for (var url in sourceMap) {
+                for (var i = 0; i < sourceMap[url].length; i++) {
+                    sourceMap[url][i].loadAudioBuffer(url);
+                    ret[sourceMap[url][i].id] = sourceMap[url][i];
+
+                    if (connectToMaster) {
+                        snd.MASTER.connectAudioUnit(sourceMap[url][i].id, sourceMap[url][i]);
+                    }
+                }
+            }
+
+            snd.AUDIO_DATA_MANAGER.removeAllDataLoadListener(callback);
+            func(ret);
+        };
+
+        snd.AUDIO_DATA_MANAGER.addAllDataLoadListener(callback);
+
+        snd.AUDIO_DATA_MANAGER.load();
+    };
+    
+    return snd;
 });
 

@@ -1,4 +1,4 @@
-snd.CLASS_DEF.push(function() {
+define(["snd.AudioUnit"], function(snd) {
     snd.BiquadFilter = function(id) {
         snd.AudioUnit.apply(this, arguments);
 
@@ -158,5 +158,7 @@ snd.CLASS_DEF.push(function() {
     };
     snd.BiquadFilter.Status.prototype = Object.create(snd.AudioUnit.Status.prototype);
     snd.BiquadFilter.Status.prototype.constructor = snd.BiquadFilter.Status;
+    
+    return snd;
 });
 

@@ -27,7 +27,7 @@
  
  
 
-snd.CLASS_DEF.push(function() {
+define(["snd.AudioUnit"], function(snd) {
     /**
      * 音源を生成します。<br/>
      * typeプロパティはsnd.srctype.NONEに<br/>
@@ -206,4 +206,6 @@ snd.CLASS_DEF.push(function() {
 
         this.className = snd.Source.CLASS_NAME;
     };
+    
+    return snd;
 });

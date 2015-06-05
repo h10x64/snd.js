@@ -27,7 +27,7 @@
  
  
 
-snd.CLASS_DEF.push(function() {
+define(["snd.AudioUnit"], function(snd) {
     snd.Gain = function(id) {
         snd.AudioUnit.apply(this, arguments);
 
@@ -118,4 +118,6 @@ snd.CLASS_DEF.push(function() {
     };
     snd.Gain.Status.prototype = Object.create(snd.AudioUnit.Status.prototype);
     snd.Gain.Status.prototype.constructor = snd.Gain.Status;
+    
+    return snd;
 });

@@ -92,5 +92,5 @@ three.jsへ対応するためのプラグインです。
 ## ライセンス
 
 The MIT License (MIT)
-copyright (c) 2014 N_H <h.10x64@sndjs.org>
+copyright (c) 2014 - 2015 N_H <h.10x64@sndjs.org>
 

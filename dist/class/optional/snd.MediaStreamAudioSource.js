@@ -27,7 +27,7 @@
  
  
 
-snd.CLASS_DEF.push(function() {
+define(["snd.Source"], function(snd) {
     /**
      * 新しくストリーム音源を作ります。
      * @class 音声ストリームを音源として使用する音源クラスです。<br/>
@@ -105,4 +105,6 @@ snd.CLASS_DEF.push(function() {
     };
     snd.MediaStreamAudioSource.prototype = Object.create(snd.Source.prototype);
     snd.MediaStreamAudioSource.prototype.constructor = snd.MediaStreamAudioSource;
+    
+    return snd;
 });

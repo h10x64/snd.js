@@ -1,4 +1,4 @@
-snd.CLASS_DEF.push(function() {
+define(["snd.AudioUnit"], function(snd) {
     snd.ChannelSplitter = function(id, channelCount) {
         snd.AudioUnit.apply(this, arguments);
 
@@ -54,4 +54,6 @@ snd.CLASS_DEF.push(function() {
     };
     snd.ChannelSplitter.Status.prototype = Object.create(snd.AudioUnit.Status.prototype);
     snd.ChannelSplitter.Status.prototype.constructor = snd.ChannelSplitter;
+    
+    return snd;
 });
