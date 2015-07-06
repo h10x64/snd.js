@@ -85,6 +85,14 @@ module.exports = function(grunt) {
                         'src/COPYRIGHT',
                         'src/class/optional/snd.Synth.js'
                     ],
+                    'dist/class/optional/TimeLine/snd.TimeLine.js':[
+                        'src/COPYRIGHT',
+                        'src/class/optional/TimeLine/snd.TimeLine.js'
+                    ],
+                    'dist/class/optional/TimeLine/snd.TimeLineEvent.js':[
+                        'src/COPYRIGHT',
+                        'src/class/optional/TimeLine/snd.TimeLineEvent.js'
+                    ],
                     'dist/class/optional/snd.WaveShaper.js': [
                         'src/COPYRIGHT',
                         'src/class/optional/snd.WaveShaper.js'
@@ -243,6 +251,8 @@ module.exports = function(grunt) {
                     'dist/min/class/optional/snd.OscillatorSource.js': ['dist/class/optional/snd.OscillatorSource.js'],
                     'dist/min/class/optional/snd.ScriptProcessor.js': ['dist/class/optional/snd.ScriptProcessor.js'],
                     'dist/min/class/optional/snd.Synth.js': ['dist/class/optional/snd.Synth.js'],
+                    'dist/min/class/optional/snd.TimeLine.js': ['dist/class/optional/snd.TimeLine.js'],
+                    'dist/min/class/optional/snd.TimeLineEvent.js': ['dist/class/optional/snd.TimeLineEvent.js'],
                     'dist/min/class/optional/snd.WaveShaper.js': ['dist/class/optional/snd.WaveShaper.js'],
                     'dist/min/class/optional/snd.Noise.js': ['dist/class/optional/snd.Noise.js'],
                     'dist/min/class/optional/snd.VinylNoise.js': ['dist/class/optional/snd.VinylNoise.js'],

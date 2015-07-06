@@ -312,12 +312,12 @@ define(["snd.Source"], function(snd) {
         }
 
         if (this._source != null && this.status != snd.status.STARTED && this.status != snd.status.STOPPED) {
-            if (when == null) {
-                this._source.start(0);
-            } else {
-                this._source.start(when);
-            }
+            this._source.start((when != null) ? when : 0)
             this._status.status = snd.status.STARTED;
+            
+            if (duration != null) {
+                this.stop(snd.CURRENT_TIME + when + duration);
+            }
         }
     };
 

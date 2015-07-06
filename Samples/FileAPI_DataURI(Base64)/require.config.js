@@ -22,11 +22,13 @@ var require = {
         'snd.OscillatorSource': '../../dist/class/optional/snd.OscillatorSource',
         'snd.ScriptProcessor': '../../dist/class/optional/snd.ScriptProcessor',
         'snd.Synth': '../../dist/class/optional/snd.Synth',
+        'snd.TimeLine': '../../dist/class/optional/TimeLine/snd.TimeLine',
+        'snd.TimeLineEvent': '../../dist/class/optional/TimeLine/snd.TimeLineEvent',
         'snd.WaveShaper': '../../dist/class/optional/snd.WaveShaper',
         'snd.Noise': '../../dist/class/optional/snd.Noise',
         'snd.VinylNoise': '../../dist/class/optional/snd.VinylNoise',
-        'snd.MIDI': '../../dist/class/optional/MIDI/snd.MIDI',
-        'snd.MIDI.util': '../../dist/class/optional/MIDI/snd.MIDI.util'
+        'snd.MIDI': '../../dist/class/optional/snd.MIDI',
+        'snd.MIDI.util': '../../dist/class/optional/snd.MIDI.util'
     }
 };
 

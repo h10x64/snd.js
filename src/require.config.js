@@ -30,6 +30,8 @@ var require = {
         'snd.OscillatorSource': '%SND_BASE_URL%/class/optional/snd.OscillatorSource',
         'snd.ScriptProcessor': '%SND_BASE_URL%/class/optional/snd.ScriptProcessor',
         'snd.Synth': '%SND_BASE_URL%/class/optional/snd.Synth',
+        'snd.TimeLine': '%SND_BASE_URL%/class/optional/TimeLine/snd.TimeLine',
+        'snd.TimeLineEvent': '%SND_BASE_URL%/class/optional/TimeLine/snd.TimeLineEvent',
         'snd.WaveShaper': '%SND_BASE_URL%/class/optional/snd.WaveShaper',
         'snd.Noise': '%SND_BASE_URL%/class/optional/snd.Noise',
         'snd.VinylNoise': '%SND_BASE_URL%/class/optional/snd.VinylNoise',

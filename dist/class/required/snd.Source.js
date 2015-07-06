@@ -92,14 +92,14 @@ define(["snd.AudioUnit"], function(snd) {
     /**
      * 音源の再生を開始します。
      */
-    snd.Source.prototype.start = function() {
+    snd.Source.prototype.start = function(when, offset, duration) {
         // PLEASE OVERRIDE ME
     };
 
     /**
      * 音源の再生を停止します。
      */
-    snd.Source.prototype.stop = function() {
+    snd.Source.prototype.stop = function(when) {
         // PLEASE OVERRIDE ME
     };
 
