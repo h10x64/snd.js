@@ -341,6 +341,11 @@ define(function() {
                 return snd.AUDIO_CONTEXT.currentTime;
             }
         },
+        SAMPLE_RATE: {
+            get: function() {
+                return snd.AUDIO_CONTEXT.sampleRate;
+            }
+        },
         /* Objects */
         AUDIO_CONTEXT: {
             get: function() {
