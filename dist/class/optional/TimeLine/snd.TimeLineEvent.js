@@ -75,9 +75,10 @@ define(["snd"], function(snd) {
 
     snd.TimeLineEvent.prototype.start = function(time) {
         if (this.target && this.target.start) {
-            var when = this.startTime - time;
-            var offset = (when < 0) ? Math.abs(when) : 0;
-            var duration = this.endTime - this.startTime + when;
+            var diff = this.startTime - time;
+            var when = (diff < 0) ? 0 : diff;
+            var offset = (diff < 0) ? Math.abs(diff) : 0;
+            var duration = this.endTime - this.startTime - offset;
             
             this.target.start(when, offset, duration);
             
@@ -89,8 +90,12 @@ define(["snd"], function(snd) {
         if (this.target && this.target.stop) {
             this.target.stop(0);
             
-            this._status = snd.status.STOPPED;
+            this._status = snd.status.READY;
         }
+    };
+    
+    snd.TimeLineEvent.prototype.resetStatus = function() {
+        this._status = snd.status.READY;
     };
     
     snd.TimeLineEvent.prototype.changeStartTime = function(time) {

@@ -48,10 +48,17 @@ define(["snd.TimeLineEvent"], function(snd) {
         
         this._lastEventId = 0;
         
+        this._status = snd.status.READY;
+        
         Object.defineProperties(this, {
             id: {
                 get: function() {
                     return this._id;
+                }
+            },
+            status: {
+                get: function() {
+                    return this._status;
                 }
             },
             startAt: {
@@ -140,6 +147,10 @@ define(["snd.TimeLineEvent"], function(snd) {
     };
     
     snd.TimeLine.prototype.start = function() {
+        if (this.status == snd.status.STARTED) {
+            console.log("TimeLine already started.");
+            return;
+        }
         if (this.interval <= 0) {
             console.log("TimeLine.interval must more or equals than 0.0s");
             return;
@@ -148,6 +159,8 @@ define(["snd.TimeLineEvent"], function(snd) {
             console.log("TimeLine.endTime must more than 0.0s");
             return;
         }
+        
+        this._status = snd.status.STARTED;
         
         this._startedTime = snd.CURRENT_TIME;
         this._elapsedTime = -1;
@@ -183,6 +196,10 @@ define(["snd.TimeLineEvent"], function(snd) {
         for (var i in currentEvents) {
             currentEvents[i].stop(this.now);
         }
+        
+        this.resetAllEvents();
+        
+        this._status = snd.status.READY;
         
         this.onstopped(this.now);
     };
@@ -225,8 +242,14 @@ define(["snd.TimeLineEvent"], function(snd) {
         this._startAt = t;
     };
     
+    snd.TimeLine.prototype.resetAllEvents = function() {
+        for (var i = 0; i < this._events.length; i++) {
+            this._events[i].resetStatus();
+        }
+    };
+    
     /**
-     * 指定された区間で開始するイベント全てを配列で返します。
+     * 指定された区間で再生が予定されているイベント全てを配列で返します。
      * @param {type} lt 検索開始時刻
      * @param {type} rt 検索終了時刻
      * @returns {Array} 指定された時間区切りの間に開始するイベントの配列
@@ -236,8 +259,10 @@ define(["snd.TimeLineEvent"], function(snd) {
         
         for (var i = 0; i < this._events.length; i++) {
             var st = this._events[i].startTime;
+            var et = this._events[i].endTime;
             
-            if (lt <= st && st <= rt) {
+            if (((lt <= et && st <= rt) || (lt <= et && et <= rt))
+                || (st <= lt && lt <= et) || (st <= rt && rt <= et)){
                 ret.push(this._events[i]);
             } else if (rt < st) {
                 break;
