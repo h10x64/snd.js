@@ -1,4 +1,14 @@
-define(["snd.Source"], function(snd) {
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['snd.Source'], factory);
+    } else if (typeof exports === 'object') {
+        // Node
+    } else {
+        // Browser globals (root is window)
+        root.snd = factory(root.snd);
+    }
+}(this, function(snd) {
     snd.ScriptProcessor = function(id) {
         snd.Source.apply(this, arguments);
 
@@ -122,4 +132,4 @@ define(["snd.Source"], function(snd) {
     snd.ScriptProcessor.Status.prototype.constructor = snd.ScriptProcessor.Status;
     
     return snd;
-});
+}));

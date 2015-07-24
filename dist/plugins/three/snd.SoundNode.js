@@ -28,7 +28,17 @@
  
  
 
-define(["snd.AudioUnit", "snd.PosDir"], function(snd) {
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['snd.AudioUnit', 'snd.PosDir'], factory);
+    } else if (typeof exports === 'object') {
+        // Node
+    } else {
+        // Browser globals (root is window)
+        root.snd = factory(root.snd);
+    }
+}(this, function(snd) {
     /**
      * @class PannerNodeを使用するパンニングに対応したユニットです。
      * @param {String} id このユニットを表す固有のID
@@ -162,5 +172,5 @@ define(["snd.AudioUnit", "snd.PosDir"], function(snd) {
     };
 
     return snd;
-});
+}));
 

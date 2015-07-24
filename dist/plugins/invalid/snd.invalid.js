@@ -1,4 +1,14 @@
-define(["snd"], function(snd) {
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['snd'], factory);
+    } else if (typeof exports === 'object') {
+        // Node
+    } else {
+        // Browser globals (root is window)
+        root.snd = factory(root.snd);
+    }
+}(this, function(snd) {
     snd.invalid = {varsion: "0.1.20150606",  isBeta: true};
     snd.invalid.CLASS_DEF = [];
     snd.invalid.TAG_DEF = {};
@@ -517,4 +527,4 @@ define(["snd"], function(snd) {
     };
     
     return snd;
-});
+}));

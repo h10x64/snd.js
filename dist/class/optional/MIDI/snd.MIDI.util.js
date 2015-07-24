@@ -27,7 +27,17 @@
  
  
 
-define(["snd.MIDI"], function(snd) {
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['snd.MIDI'], factory);
+    } else if (typeof exports === 'object') {
+        // Node
+    } else {
+        // Browser globals (root is window)
+        root.snd = factory(root.snd);
+    }
+}(this, function(snd) {
 
     /**
      * MIDI機能でよく使う機能をまとめたネームスペースです
@@ -72,4 +82,4 @@ define(["snd.MIDI"], function(snd) {
     };
     
     return snd;
-});
+}));

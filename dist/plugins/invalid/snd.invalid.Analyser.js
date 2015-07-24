@@ -1,4 +1,14 @@
-define(["snd.invalid"], function(snd) {
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['snd.Invalid'], factory);
+    } else if (typeof exports === 'object') {
+        // Node
+    } else {
+        // Browser globals (root is window)
+        root.snd = factory(root.snd);
+    }
+}(this, function(snd) {
     snd.invalid.TAG_DEF["snd-analyser"] = {
         "tagName": "snd-analyser",
         "class": snd.Analyser,
@@ -23,4 +33,4 @@ define(["snd.invalid"], function(snd) {
     };
     
     return snd;
-});
+}));

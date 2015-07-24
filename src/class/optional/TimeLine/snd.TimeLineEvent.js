@@ -1,4 +1,14 @@
-define(["snd"], function(snd) {
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['snd'], factory);
+    } else if (typeof exports === 'object') {
+        // Node
+    } else {
+        // Browser globals (root is window)
+        root.snd = factory(root.snd);
+    }
+}(this, function(snd) {
 
     snd.TimeLineEvent = function(id, target, startTime, endTime) {
         this._id = id;
@@ -50,9 +60,9 @@ define(["snd"], function(snd) {
             var when = (diff < 0) ? 0 : diff;
             var offset = (diff < 0) ? Math.abs(diff) : 0;
             var duration = this.endTime - this.startTime - offset;
-            
+
             this.target.start(when, offset, duration);
-            
+
             this._status = snd.status.STARTED;
         }
     };
@@ -60,19 +70,19 @@ define(["snd"], function(snd) {
     snd.TimeLineEvent.prototype.stop = function(time) {
         if (this.target && this.target.stop) {
             this.target.stop(0);
-            
+
             this._status = snd.status.READY;
         }
     };
-    
+
     snd.TimeLineEvent.prototype.resetStatus = function() {
         this._status = snd.status.READY;
     };
-    
+
     snd.TimeLineEvent.prototype.changeStartTime = function(time) {
         // PLEASE OVERRIDE ME
     };
-    
+
     snd.TimeLineEvent.prototype.changeEndTime = function(time) {
         // PLEASE OVERRIDE ME
     }
@@ -102,4 +112,4 @@ define(["snd"], function(snd) {
     };
 
     return snd;
-});
+}));

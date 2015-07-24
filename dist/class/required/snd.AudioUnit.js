@@ -27,7 +27,17 @@
  
  
 
-define(["snd", "snd.AudioMaster"], function(snd) {
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['snd.AudioMaster'], factory);
+    } else if (typeof exports === 'object') {
+        // Node
+    } else {
+        // Browser globals (root is window)
+        root.snd = factory(root.snd);
+    }
+}(this, function(snd) {
     /**
      * 新しいオーディオユニットを生成します。
      * @class 1つのオーディオユニットを定義する抽象クラスです。<br/>
@@ -358,5 +368,5 @@ define(["snd", "snd.AudioMaster"], function(snd) {
     };
     
     return snd;
-});
+}));
 

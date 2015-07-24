@@ -1,4 +1,14 @@
-define(["snd"], function(snd) {
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['snd'], factory);
+    } else if (typeof exports === 'object') {
+        // Node
+    } else {
+        // Browser globals (root is window)
+        root.snd = factory(root.snd);
+    }
+}(this, function(snd) {
     snd.PosDir = function() {
         this._pos = {x: 0, y: 0, z: 0};
         this._dir = {x: 0, y: 0, z: 0};
@@ -123,4 +133,4 @@ define(["snd"], function(snd) {
     };
 
     return snd;
-});
+}));

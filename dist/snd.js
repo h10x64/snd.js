@@ -27,7 +27,17 @@
  
  
 
-define(function() {
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define([], factory);
+    } else if (typeof exports === 'object') {
+        // Node
+    } else {
+        // Browser globals (root is window)
+        root.snd = factory();
+    }
+}(this, function() {
 
     /**
      * snd.jsの基幹ネームスペースです。
@@ -370,6 +380,11 @@ define(function() {
                 return snd.AUDIO_CONTEXT.currentTime;
             }
         },
+        SAMPLE_RATE: {
+            get: function() {
+                return snd.AUDIO_CONTEXT.sampleRate;
+            }
+        },
         /* Objects */
         AUDIO_CONTEXT: {
             get: function() {
@@ -389,5 +404,5 @@ define(function() {
     });
 
     return snd;
-});
+}));
 

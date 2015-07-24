@@ -27,7 +27,17 @@
  
  
 
-define(["snd.Source"], function(snd) {
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['snd.Source'], factory);
+    } else if (typeof exports === 'object') {
+        // Node
+    } else {
+        // Browser globals (root is window)
+        root.snd = factory(root.snd);
+    }
+}(this, function(snd) {
     /**
      * 新しくストリーム音源を作ります。
      * @class 音声ストリームを音源として使用する音源クラスです。<br/>
@@ -107,4 +117,4 @@ define(["snd.Source"], function(snd) {
     snd.MediaStreamAudioSource.prototype.constructor = snd.MediaStreamAudioSource;
     
     return snd;
-});
+}));

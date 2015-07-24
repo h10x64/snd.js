@@ -1,4 +1,14 @@
-define(["snd.AudioUnit"], function(snd) {
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['snd.AudioUnit'], factory);
+    } else if (typeof exports === 'object') {
+        // Node
+    } else {
+        // Browser globals (root is window)
+        root.snd = factory(root.snd);
+    }
+}(this, function(snd) {
     snd.ChannelSplitter = function(id, channelCount) {
         snd.AudioUnit.apply(this, arguments);
 
@@ -56,4 +66,4 @@ define(["snd.AudioUnit"], function(snd) {
     snd.ChannelSplitter.Status.prototype.constructor = snd.ChannelSplitter;
     
     return snd;
-});
+}));

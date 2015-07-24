@@ -9,6 +9,7 @@
  * 使用しない行は消してしまって問題ありません。
  */
 var require = {
+//    baseUrl: "%BASE_URL%" 
     paths: {
         /* snd */
         'snd': '%SND_BASE_URL%/snd',
@@ -24,6 +25,7 @@ var require = {
         'snd.Convolver': '%SND_BASE_URL%/class/optional/snd.Convolver',
         'snd.Delay': '%SND_BASE_URL%/class/optional/snd.Delay',
         'snd.DynamicsCompressor': '%SND_BASE_URL%/class/optional/snd.DynamicsCompressor',
+        'snd.Envelope': '%SND_BASE_URL%/class/optional/snd.Envelope',
         'snd.Gain': '%SND_BASE_URL%/class/optional/snd.Gain',
         'snd.MediaElementAudioSource': '%SND_BASE_URL%/class/optional/snd.MediaElementAudioSource',
         'snd.MediaStreamAudioSource': '%SND_BASE_URL%/class/optional/snd.MediaStreamAudioSource',
@@ -35,8 +37,8 @@ var require = {
         'snd.WaveShaper': '%SND_BASE_URL%/class/optional/snd.WaveShaper',
         'snd.Noise': '%SND_BASE_URL%/class/optional/snd.Noise',
         'snd.VinylNoise': '%SND_BASE_URL%/class/optional/snd.VinylNoise',
-        'snd.MIDI': '%SND_BASE_URL%/class/optional/snd.MIDI',
-        'snd.MIDI.util': '%SND_BASE_URL%/class/optional/snd.MIDI.util',
+        'snd.MIDI': '%SND_BASE_URL%/class/optional/MIDI/snd.MIDI',
+        'snd.MIDI.util': '%SND_BASE_URL%/class/optional/MIDI/snd.MIDI.util',
         /* Plugins */
         /* snd.invalid.js */
         'snd.invalid': '%SND_BASE_URL%/plugins/invalid/snd.invalid',

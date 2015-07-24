@@ -27,7 +27,17 @@
  
  
 
-define(['snd'], function(snd) {
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['snd'], factory);
+    } else if (typeof exports === 'object') {
+        // Node
+    } else {
+        // Browser globals (root is window)
+        root.snd = factory(root.snd);
+    }
+}(this, function(snd) {
     
     /**
      * コンストラクタは使用せず、snd.MASTERを使用してください。
@@ -90,4 +100,4 @@ define(['snd'], function(snd) {
     snd._MASTER = new snd.AudioMaster();
 
     return snd;
-});
+}));

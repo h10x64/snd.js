@@ -1,4 +1,14 @@
-define(["snd.Source"], function(snd) {
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['snd.OscillatorSource'], factory);
+    } else if (typeof exports === 'object') {
+        // Node
+    } else {
+        // Browser globals (root is window)
+        root.snd = factory(root.snd);
+    }
+}(this, function(snd) {
     /**
      * コンストラクタです。<br/>
      * @class シンセサイザクラスです。<br/>
@@ -97,9 +107,9 @@ define(["snd.Source"], function(snd) {
             _this.setWaveType(_this.settings.waveform);
         };
 
-        this.ampEnvelope = new snd.Envelope(this.volumeParam, this.settings.amplitude.envelope);
+        this.ampEnvelope = new snd.Synth.Envelope(this.volumeParam, this.settings.amplitude.envelope);
         this.ampLFO = new snd.Synth.LFO(this.id + "_AmpLFO", this.volumeParam, this.settings.amplitude.lfo);
-        this.freqEnvelope = new snd.Envelope(this.frequencyParam, this.settings.frequency.envelope);
+        this.freqEnvelope = new snd.Synth.Envelope(this.frequencyParam, this.settings.frequency.envelope);
         this.freqLFO = new snd.Synth.LFO(this.id + "_FreqLFO", this.frequencyParam, this.settings.frequency.lfo);
     };
     snd.Synth.Partes.prototype = Object.create(snd.OscillatorSource.prototype);
@@ -138,8 +148,8 @@ define(["snd.Source"], function(snd) {
         this.param = param;
         this._gain.connect(this.param);
         this._settings = lfoSettings;
-        this.freqEnvelope = new snd.Envelope(this.frequencyParam, lfoSettings.frequency);
-        this.ampEnvelope = new snd.Envelope(this.volumeParam, lfoSettings.amplitude);
+        this.freqEnvelope = new snd.Synth.Envelope(this.frequencyParam, lfoSettings.frequency);
+        this.ampEnvelope = new snd.Synth.Envelope(this.volumeParam, lfoSettings.amplitude);
         this._settings.onchange = function() {
             _this.source.setWaveForm(_this.settings.waveform);
         };
@@ -208,12 +218,12 @@ define(["snd.Source"], function(snd) {
      * @param {Number} release リリース
      * @param {Number} releaseType リリースの補間法
      */
-    snd.Envelope = function(param, settings) {
+    snd.Synth.Envelope = function(param, settings) {
         this.param = param;
         this.settings = settings;
     };
 
-    snd.Envelope.prototype.noteOn = function() {
+    snd.Synth.Envelope.prototype.noteOn = function() {
         var now = snd.AUDIO_CONTEXT.currentTime;
         this.param.cancelScheduledValues(now);
         this.param.value = 0;
@@ -298,7 +308,7 @@ define(["snd.Source"], function(snd) {
         }
     };
 
-    snd.Envelope.prototype.noteOff = function() {
+    snd.Synth.Envelope.prototype.noteOff = function() {
         var now = snd.AUDIO_CONTEXT.currentTime;
         this.param.cancelScheduledValues(now);
 
@@ -564,4 +574,4 @@ define(["snd.Source"], function(snd) {
     };
     
     return snd;
-});
+}));

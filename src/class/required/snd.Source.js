@@ -1,4 +1,14 @@
-define(["snd.AudioUnit"], function(snd) {
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['snd.AudioUnit'], factory);
+    } else if (typeof exports === 'object') {
+        // Node
+    } else {
+        // Browser globals (root is window)
+        root.snd = factory(root.snd);
+    }
+}(this, function(snd) {
     /**
      * 音源を生成します。<br/>
      * typeプロパティはsnd.srctype.NONEに<br/>
@@ -179,4 +189,4 @@ define(["snd.AudioUnit"], function(snd) {
     };
     
     return snd;
-});
+}));

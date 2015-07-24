@@ -27,7 +27,18 @@
  
  
 
-define(["snd.Source","snd.util","snd.AudioDataManager"], function(snd) {
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['snd.Source', 'snd.util', 'snd.AudioDataManager'], factory);
+    } else if (typeof exports === 'object') {
+        // Node
+    } else {
+        // Browser globals (root is window)
+        root.snd = factory(root.snd);
+    }
+}(this, function(snd) {
+
     /**
      * AudioBufferを使用する音源を新しく生成します。
      * @class AudioBufferを使用してバイナリデータを再生する音源です。<br/>
@@ -492,5 +503,5 @@ define(["snd.Source","snd.util","snd.AudioDataManager"], function(snd) {
     };
     
     return snd;
-});
+}));
 

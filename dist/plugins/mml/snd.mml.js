@@ -28,6 +28,17 @@
  
  
 
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['snd.OscillatorSource'], factory);
+    } else if (typeof exports === 'object') {
+        // Node
+    } else {
+        // Browser globals (root is window)
+        root.snd = factory(root.snd);
+    }
+}(this, function(snd) {
 snd.mml = {version: 0.1, BETA: true};
 
 /**
@@ -704,3 +715,5 @@ snd.mml.Note.prototype.setting = function() {
 snd.mml.Note.getNoteId = function() {
     return new Date().getTime().toString() + Math.floor(Math.random() * 9999);
 };
+
+}));

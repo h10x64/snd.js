@@ -1,4 +1,6 @@
-require(["snd.BufferSource"], function(snd) {
+require(["snd.BufferSource", "snd.ScriptProcessor"], function(snd) {
+    _snd_ = snd;
+    
     /**
      * コードフェードイン時の音源オブジェクトのID
      * @type String

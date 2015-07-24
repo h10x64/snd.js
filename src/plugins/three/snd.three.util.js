@@ -1,4 +1,14 @@
-define(["snd.three", "snd.MediaElementAudioNode", "snd.BufferSoundNode"], function(snd) {
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['snd.three', 'snd.MediaElementAudioNode', 'snd.BufferSoundNode'], factory);
+    } else if (typeof exports === 'object') {
+        // Node
+    } else {
+        // Browser globals (root is window)
+        root.snd = factory(root.snd);
+    }
+}(this, function(snd) {
     /**
      * @namespace three.jsプラグインでよく使う処理をまとめたネームスペース
      */
@@ -107,4 +117,6 @@ define(["snd.three", "snd.MediaElementAudioNode", "snd.BufferSoundNode"], functi
 
         return ret;
     }
-});
+    
+    return snd;
+}));

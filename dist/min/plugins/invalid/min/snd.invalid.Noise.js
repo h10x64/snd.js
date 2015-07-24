@@ -23,4 +23,4 @@
  * THE SOFTWARE.
  * 
  **/
-define(["snd.invalid"],function(a){return a.invalid.TAG_DEF["snd-noise"]={tagName:"snd-noise","class":a.Noise,styles:{volume:{type:"property",name:"volume"}},attributes:{},parameters:[{name:"volume-param",param:"volumeParam"}],events:{},methods:{}},a});
+!function(a,b){"function"==typeof define&&define.amd?define(["snd.invalid"],b):"object"==typeof exports||(a.snd=b(a.snd))}(this,function(a){return a.invalid.TAG_DEF["snd-noise"]={tagName:"snd-noise","class":a.Noise,styles:{volume:{type:"property",name:"volume"}},attributes:{},parameters:[{name:"volume-param",param:"volumeParam"}],events:{},methods:{}},a});

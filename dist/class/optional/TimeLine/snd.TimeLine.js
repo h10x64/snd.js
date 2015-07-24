@@ -27,7 +27,17 @@
  
  
 
-define(["snd.TimeLineEvent"], function(snd) {
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['snd.TimeLineEvent'], factory);
+    } else if (typeof exports === 'object') {
+        // Node
+    } else {
+        // Browser globals (root is window)
+        root.snd = factory(root.snd);
+    }
+}(this, function(snd) {
     
     /**
      * 
@@ -293,4 +303,4 @@ define(["snd.TimeLineEvent"], function(snd) {
     };
     
     return snd;
-});
+}));

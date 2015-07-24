@@ -61,6 +61,10 @@ module.exports = function(grunt) {
                         'src/COPYRIGHT',
                         'src/class/optional/snd.DynamicsCompressor.js'
                     ],
+                    'dist/class/optional/snd.Envelope.js': [
+                        'src/COPYRIGHT',
+                        'src/class/optional/snd.Envelope.js'
+                    ],
                     'dist/class/optional/snd.Gain.js': [
                         'src/COPYRIGHT',
                         'src/class/optional/snd.Gain.js'
@@ -245,6 +249,7 @@ module.exports = function(grunt) {
                     'dist/min/class/optional/snd.Convolver.js': ['dist/class/optional/snd.Convolver.js'],
                     'dist/min/class/optional/snd.Delay.js': ['dist/class/optional/snd.Delay.js'],
                     'dist/min/class/optional/snd.DynamicsCompressor.js': ['dist/class/optional/snd.DynamicsCompressor.js'],
+                    'dist/min/class/optional/snd.Envelope.js': ['dist/class/optional/snd.Envelope.js'],
                     'dist/min/class/optional/snd.Gain.js': ['dist/class/optional/snd.Gain.js'],
                     'dist/min/class/optional/snd.MediaElementAudioSource.js': ['dist/class/optional/snd.MediaElementAudioSource.js'],
                     'dist/min/class/optional/snd.MediaStreamAudioSource.js': ['dist/class/optional/snd.MediaStreamAudioSource.js'],

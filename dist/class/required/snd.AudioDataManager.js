@@ -27,8 +27,17 @@
  
  
 
-define(['snd'], function(snd) {
-    
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['snd'], factory);
+    } else if (typeof exports === 'object') {
+        // Node
+    } else {
+        // Browser globals (root is window)
+        root.snd = factory(root.snd);
+    }
+}(this, function(snd) {
     /**
      * コンストラクタは使用せず、snd.AUDIO_DATA_MANAGERを使用してください。<br/>
      * @class AudioBufferの管理を行うクラスです。<br/>
@@ -328,9 +337,9 @@ define(['snd'], function(snd) {
         }
         this.onload();
     };
-    
+
     snd._AUDIO_DATA_MANAGER = new snd.AudioDataManager();
-    
+
     return snd;
-});
+}));
 

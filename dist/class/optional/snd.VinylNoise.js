@@ -27,7 +27,17 @@
  
  
 
-define(["snd.AudioUnit"], function(snd) {
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['snd.AudioUnit'], factory);
+    } else if (typeof exports === 'object') {
+        // Node
+    } else {
+        // Browser globals (root is window)
+        root.snd = factory(root.snd);
+    }
+}(this, function(snd) {
     var calcNoise = function(buffer, maxPetitNoiseSize, minPetitNoiseSize, maxNoiseSize, probability) {
         for (var ch = 0; ch < buffer.numberOfChannels; ch++) {
             var chBuf = buffer.getChannelData(ch);
@@ -218,4 +228,4 @@ define(["snd.AudioUnit"], function(snd) {
     snd.VinylNoise.Status.prototype.constructor = snd.VinylNoise.Status;
     
     return snd;
-});
+}));

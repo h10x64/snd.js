@@ -28,7 +28,17 @@
  
  
 
-define(["snd", "snd.MediaElementAudioSource", "snd.SoundNode"], function(snd) {
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['snd', 'snd.MediaElementAudioSource', 'snd.SoundNode'], factory);
+    } else if (typeof exports === 'object') {
+        // Node
+    } else {
+        // Browser globals (root is window)
+        root.snd = factory(root.snd);
+    }
+}(this, function(snd) {
     /**
      * sourceで指定された音源を使用して新しいインスタンスを生成します。<br/>
      * sourceで渡すオブジェクトは、snd.MediaElementAudioSourceクラスである必要があります。
@@ -475,4 +485,4 @@ define(["snd", "snd.MediaElementAudioSource", "snd.SoundNode"], function(snd) {
     };
 
     return snd;
-});
+}));

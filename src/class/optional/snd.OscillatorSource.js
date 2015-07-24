@@ -1,4 +1,14 @@
-define(["snd.Source"], function(snd) {
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['snd.Source'], factory);
+    } else if (typeof exports === 'object') {
+        // Node
+    } else {
+        // Browser globals (root is window)
+        root.snd = factory(root.snd);
+    }
+}(this, function(snd) {
     /**
      * 新しくオシレータ音源を生成します。
      * @class 任意の波形を再生するオシレータ音源を扱うクラスです。<br/>
@@ -428,4 +438,4 @@ define(["snd.Source"], function(snd) {
     };
     
     return snd;
-});
+}));

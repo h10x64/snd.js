@@ -27,7 +27,17 @@
  
  
 
-define(["snd.AudioMaster","snd.util","snd.Source"], function(snd) {
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['snd.AudioMaster', 'snd.util', 'snd.Source'], factory);
+    } else if (typeof exports === 'object') {
+        // Node
+    } else {
+        // Browser globals (root is window)
+        root.snd = factory(root.snd);
+    }
+}(this, function(snd) {
     /**
      * 新しくメディアタグを使用する音源を生成します。
      * @class HTMLのメディア要素（Audioタグなど）を音源として使用する音源クラスです。<br/>
@@ -876,6 +886,6 @@ define(["snd.AudioMaster","snd.util","snd.Source"], function(snd) {
     };
     
     return snd;
-});
+}));
 
 

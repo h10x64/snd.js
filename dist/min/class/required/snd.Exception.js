@@ -23,4 +23,4 @@
  * THE SOFTWARE.
  * 
  **/
-define(["snd"],function(a){return a.Exception=function(a){this._message=a,Object.defineProperties(this,{message:{enumerable:!0,get:function(){return this._message}}})},a});
+!function(a,b){"function"==typeof define&&define.amd?define(["snd"],b):"object"==typeof exports||(a.snd=b(a.snd))}(this,function(a){return a.Exception=function(a){this._message=a,Object.defineProperties(this,{message:{enumerable:!0,get:function(){return this._message}}})},a});

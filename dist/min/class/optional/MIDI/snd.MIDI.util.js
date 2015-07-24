@@ -23,4 +23,4 @@
  * THE SOFTWARE.
  * 
  **/
-define(["snd.MIDI"],function(a){return a.MIDI.util={},a.MIDI.util.getCh=function(b){return b.length<=0?void 0:b[0]&0!=a.MIDI.NOTE_OFF||b[0]&0!=a.MIDI.NOTE_ON||b[0]&0!=a.MIDI.POLYPHONIC_KEY_PRESSURE||b[0]&0!=a.MIDI.CONTROL_CHANGE||b[0]&0!=a.MIDI.PROGRAM_CHANGE||b[0]&0!=a.MIDI.CHANNEL_PRESSURE||b[0]&0!=a.MIDI.PITCH_BEND?b[0]&a.MIDI.CH_FILTER:void 0},a.MIDI.util.toHz=function(a){return 440*Math.pow(2,(a-69)/12)},a});
+!function(a,b){"function"==typeof define&&define.amd?define(["snd.MIDI"],b):"object"==typeof exports||(a.snd=b(a.snd))}(this,function(a){return a.MIDI.util={},a.MIDI.util.getCh=function(b){return b.length<=0?void 0:b[0]&0!=a.MIDI.NOTE_OFF||b[0]&0!=a.MIDI.NOTE_ON||b[0]&0!=a.MIDI.POLYPHONIC_KEY_PRESSURE||b[0]&0!=a.MIDI.CONTROL_CHANGE||b[0]&0!=a.MIDI.PROGRAM_CHANGE||b[0]&0!=a.MIDI.CHANNEL_PRESSURE||b[0]&0!=a.MIDI.PITCH_BEND?b[0]&a.MIDI.CH_FILTER:void 0},a.MIDI.util.toHz=function(a){return 440*Math.pow(2,(a-69)/12)},a});
