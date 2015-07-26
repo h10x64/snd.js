@@ -341,6 +341,43 @@
             })(),
             writable: false
         },
+        params: {
+            value: (function() {
+                var ret = {};
+
+                Object.defineProperties(ret, {
+                    type: {
+                        get: function() {
+                            var re = {};
+
+                            Object.defineProperties(re, {
+                                READ_ONLY: {
+                                    value: "readonly",
+                                    writable: false
+                                },
+                                AUDIO_PARAM: {
+                                    value: "audioparam",
+                                    writable: false
+                                },
+                                VALUE: {
+                                    value: "value",
+                                    writable: false
+                                },
+                                ENUM: {
+                                    value: "enum",
+                                    writable: false
+                                }
+                            });
+
+                            return re;
+                        }
+                    }
+                });
+
+                return ret;
+            })(),
+            writable: false
+        },
         BLOWSER: {
             get: function() {
                 return window.navigator.userAgent.toLowerCase();

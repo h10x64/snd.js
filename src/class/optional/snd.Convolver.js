@@ -81,7 +81,8 @@
         this.channelCount = this._status.channelCount;
     };
     snd.Convolver.prototype = Object.create(snd.AudioUnit.prototype);
-    snd.Convolver.prototype.constructor = snd.Gain;
+    snd.Convolver.prototype.constructor = snd.Convolver;
+    
     snd.Convolver.prototype.connect = function(connectTo, indexIn, indexOut, id) {
         snd.AudioUnit.prototype.connect.apply(this, arguments);
         if (connectTo.getConnector != null) {
@@ -90,6 +91,7 @@
             this._output.connect(connectTo, indexIn, indexOut);
         }
     };
+    
     snd.Convolver.prototype.disconnect = function(disconnectFrom, indexIn, id) {
         snd.AudioUnit.prototype.disconnect.apply(this, arguments);
         if (disconnectFrom.getConnector != null) {
@@ -98,11 +100,34 @@
             this._output.disconnect(disconnectFrom, indexIn);
         }
     };
+    
     snd.Convolver.prototype.createStatus = function() {
         return new snd.Convolver.Status();
     };
+    
     snd.Convolver.prototype.getConnector = function() {
         return this._connector;
+    };
+    
+    snd.Convolver.prototype.getParamDescription = function() {
+        var ret = snd.AudioUnit.prototype.getParamDescription.apply(this, arguemtns);
+        
+        ret.buffer = {
+            type: snd.params.type.VALUE,
+            default: undefined,
+            max: undefined,
+            min: undefined
+        };
+        ret.normalize = {
+            type: snd.params.type.ENUM,
+            value: [
+                false,
+                true
+            ],
+            default: true
+        };
+        
+        return ret;
     };
 
     /**

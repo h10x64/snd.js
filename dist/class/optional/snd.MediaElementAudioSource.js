@@ -796,6 +796,25 @@
         }
         return false;
     };
+    
+    snd.MediaElementAudioSource.prototype.getParamDescription = function() {
+        var ret = snd.Source.prototype.getParamDescription.apply(this, arguments);
+        
+        ret.element = {
+            type: snd.params.type.VALUE,
+            default: undefined,
+            max: undefined,
+            min: undefined
+        };
+        ret.src = {
+            type: snd.params.type.VALUE,
+            default: undefined,
+            max: undefined,
+            min: undefined
+        };
+        
+        return ret;
+    };
 
     snd.MediaElementAudioSource.prototype.createStatus = function() {
         return new snd.MediaElementAudioSource.Status();

@@ -73,6 +73,7 @@
             this._gain.connect(connectTo, indexIn, indexOut);
         }
     };
+    
     snd.Gain.prototype.disconnect = function(disconnectFrom, indexIn, id) {
         snd.AudioUnit.prototype.disconnect.apply(this, arguments);
         if (disconnectFrom.getConnector != null) {
@@ -81,12 +82,29 @@
             this._gain.disconnect(disconnectFrom, indexIn);
         }
     };
+    
+    snd.Gain.prototype.getParamDescription = function() {
+        var ret = snd.AudioUnit.prototype.getAudioParams.apply(this, arguments);
+        
+        ret.gain = {
+            type: snd.params.type.AUDIO_PARAM,
+            value: this.gainParam,
+            default: 1.0,
+            max: Infinity,
+            min: -Infinity
+        };
+        
+        return ret;
+    };
+    
     snd.Gain.prototype.createStatus = function() {
         return new snd.Gain.Status();
     };
+    
     snd.Gain.prototype.getConnector = function() {
         return this._gain;
     };
+    
     snd.Gain.prototype.loadData = function(data) {
         snd.AudioUnit.prototype.loadData.apply(this, arguments);
 

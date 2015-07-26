@@ -104,7 +104,8 @@
         });
     };
     snd.Delay.prototype = Object.create(snd.AudioUnit.prototype);
-    snd.Delay.prototype.constructor = snd.Gain;
+    snd.Delay.prototype.constructor = snd.Delay;
+    
     snd.Delay.prototype.connect = function(connectTo, indexIn, indexOut, id) {
         snd.AudioUnit.prototype.connect.apply(this, arguments);
         if (connectTo.getConnector != null) {
@@ -113,6 +114,7 @@
             this._output.connect(connectTo, indexIn, indexOut);
         }
     };
+    
     snd.Delay.prototype.disconnect = function(disconnectFrom, indexIn, id) {
         snd.AudioUnit.prototype.disconnect.apply(this, arguments);
         if (disconnectFrom.getConnector != null) {
@@ -121,12 +123,40 @@
             this._output.disconnect(disconnectFrom, indexIn);
         }
     };
+    
+    snd.Delay.prototype.getParamDescription = function() {
+        var ret = snd.AudioUnit.prototype.getParamDescription.apply(this, arguments);
+        
+        ret.maxDelayTime = {
+            type: snd.params.type.VALUE,
+            default: 60,
+            max: 180,
+            min: 0
+        }
+        ret.delayTime = {
+            type: snd.params.type.VALUE,
+            default: 0,
+            max: ret.maxDelayTime.max,
+            min: 0
+        };
+        ret.delayTimeParam = {
+            type: snd.params.type.AUDIO_PARAM,
+            default: ret.delayTime.default,
+            max: ret.delayTime.max,
+            min: ret.delayTime.min
+        };
+        
+        return ret;
+    };
+    
     snd.Delay.prototype.createStatus = function() {
         return new snd.Delay.Status();
     };
+    
     snd.Delay.prototype.getConnector = function() {
         return this._connector;
     };
+    
     snd.Delay.prototype.loadData = function(data) {
         snd.AudioUnit.prototype.loadData.apply(this, arguments);
 

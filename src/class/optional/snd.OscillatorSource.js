@@ -302,7 +302,6 @@
         }
     };
 
-
     /**
      * 波形の出力を停止します。<br/>
      * !!注意!!<br/>
@@ -384,6 +383,56 @@
                 listeners[i](this);
             }
         }
+    };
+    
+    snd.OscillatorSource.prototype.getParamDescription = function() {
+        var ret = snd.Source.prototype.getParamDescription.apply(this, arguments);
+        
+        ret.periodicWave = {
+            type: snd.params.type.VALUE,
+            default: undefined,
+            max: undefined,
+            min: undefined
+        };
+        ret.oscillatorType = {
+            type: snd.params.type.ENUM,
+            value: [
+                snd.OscillatorSource.SINE,
+                snd.OscillatorSource.SQUARE,
+                snd.OscillatorSource.SAWTOOTH,
+                snd.OscillatorSource.TRIANGLE,
+                snd.OscillatorSource.CUSTOM
+            ],
+            default: snd.OscillatorSource.SINE
+        };
+        ret.frequency = {
+            type: snd.params.type.VALUE,
+            default: snd.OscillatorSource.DEFAULT_FREQUENCY,
+            max: Infinity,
+            min: -Infinity
+        };
+        ret.detune = {
+            type: snd.params.type.VALUE,
+            default: 0,
+            max: Infinity,
+            min: -Infinity
+        };
+        ret.frequencyParam = {
+            type: snd.params.type.AUDIO_PARAM,
+            audioParam: this.frequencyParam,
+            default: ret.frequency.default,
+            max: ret.frequency.max,
+            min: ret.frequency.min
+        };
+        ret.detuneParam = {
+            type: snd.params.type.AUDIO_PARAM,
+            audioParam: this.detuneParam,
+            default: ret.detune.default,
+            max: ret.detune.max,
+            min: ret.detune.min
+        };
+        
+        return ret;
     };
 
     snd.OscillatorSource.prototype.createStatus = function() {

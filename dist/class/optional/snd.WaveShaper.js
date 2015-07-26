@@ -64,7 +64,6 @@
             channelCountMode: {
                 get: function() {
                     return this._status.channelCountMode;
-
                 },
                 set: function(val) {
                     this._output.channelCountMode = val;
@@ -111,11 +110,16 @@
                     this._output.gain.value = v;
                     this._status.gain = v;
                 }
+            },
+            gainParam: {
+                get: function() {
+                    return this.modAudioParam("gain", this._output.gain);
+                }
             }
         });
     };
     snd.WaveShaper.prototype = Object.create(snd.AudioUnit.prototype);
-    snd.WaveShaper.prototype.constructor = snd.Gain;
+    snd.WaveShaper.prototype.constructor = snd.WaveShaper;
 
     snd.WaveShaper.prototype.connect = function(connectTo, indexIn, indexOut, id) {
         snd.AudioUnit.prototype.connect.apply(this, arguments);
@@ -133,12 +137,50 @@
             this._output.disconnect(disconnectFrom, indexIn);
         }
     };
+    
+    snd.WaveShaper.prototype.getParamDescription = function() {
+        var ret = snd.AudioUnit.prototype.getParamDescription.apply(this, arguments);
+        
+            ret.curve = {
+                type: snd.params.type.VALUE,
+                default: undefined,
+                max: undefined,
+                min: undefined
+            };
+            ret.oversample = {
+                type: snd.params.type.ENUM,
+                value: [
+                    snd.OVERSAMPLE_NONE,
+                    snd.OVERSAMPLE_DOUBLE,
+                    snd.OVERSAMPLE_QUAD
+                ],
+                default: snd.OVERSAMPLE_NONE
+            };
+            ret.gain = {
+                type: snd.params.type.VALUE,
+                default: 1.0,
+                max: Infinity,
+                min: -Inifinity
+            };
+            ret.gainParam = {
+                type: snd.params.type.AUDIO_PARAM,
+                value: this.gainParam,
+                default: ret.gain.default,
+                max: ret.gain.max,
+                min: ret.gain.min
+            };
+        
+        return ret;
+    };
+    
     snd.WaveShaper.prototype.createStatus = function() {
         return new snd.WaveShaper.Status();
     };
+    
     snd.WaveShaper.prototype.getConnector = function() {
         return this._connector;
     };
+    
     snd.WaveShaper.prototype.loadData = function(data) {
         snd.AudioUnit.prototype.loadData.apply(this, arguments);
 

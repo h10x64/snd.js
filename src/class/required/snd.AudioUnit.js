@@ -24,21 +24,24 @@
 
         Object.defineProperties(this, {
             isAudioUnit: {
-                enumerable: true,
                 get: function() {
                     return this._status.isAudioUnit;
                 }
             },
             id: {
-                enumerable: true,
                 get: function() {
                     return this._status.id;
                 }
             },
             connection: {
-                enumerable: true,
                 get: function() {
                     var ret = Object.create(this._status.connection);
+                    return ret;
+                }
+            },
+            audioParams: {
+                get: function() {
+                    var ret = this.getAudioParams();
                     return ret;
                 }
             }
@@ -147,6 +150,20 @@
      */
     snd.AudioUnit.prototype.getConnector = function() {
         // PLEASE OVERRIDE ME
+    };
+    
+    /**
+     * このオーディオユニットのAudioParam
+     * @returns {HashMap} このオーディオユニットのAudioParamをまとめたハッシュマップ(キー:パラメータ名, 値: AudioParam)
+     */
+    snd.AudioUnit.prototype.getParamDescription = function() {
+        // PLEASE OVERRIDE ME LIKE THIS
+        // var ret = snd.AudioUnit.prototype.getParamDescription.apply(this, arguments);
+        // ret.foo = this.node1.gainParam;
+        // ret.bar = this.node2.frequencyParam;
+        // return ret;
+        
+        return {};
     };
     
     /**

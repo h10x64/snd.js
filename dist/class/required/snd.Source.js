@@ -162,6 +162,23 @@
     snd.Source.prototype.getConnector = function() {
         return this._gain;
     };
+    
+    snd.Source.prototype.getParamDescription = function() {
+        var ret = snd.AudioUnit.prototype.getParamDescription.apply(this, arguments);
+        
+        ret.volume = {
+            type: snd.params.type.AUDIO_PARAM,
+            value: this.volumeParam
+        };
+        ret.type = {
+            type: snd.params.type.READ_ONLY
+        };
+        ret.status =  {
+            type: snd.params.type.READ_ONLY
+        };
+        
+        return ret;
+    };
 
     /**
      * 詳細はAudioUnitクラスの createStatus を参照してください。

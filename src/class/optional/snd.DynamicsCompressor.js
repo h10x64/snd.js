@@ -134,11 +134,12 @@
                 get: function() {
                     return this.modAudioParam("threshold", this._compressor.threshold);
                 }
-            },
+            }
         });
     };
     snd.DynamicsCompressor.prototype = Object.create(snd.AudioUnit.prototype);
-    snd.DynamicsCompressor.prototype.constructor = snd.Gain;
+    snd.DynamicsCompressor.prototype.constructor = snd.DynamicsCompressor;
+
     snd.DynamicsCompressor.prototype.connect = function(connectTo, indexIn, indexOut, id) {
         snd.AudioUnit.prototype.connect.apply(this, arguments);
         if (connectTo.getConnector != null) {
@@ -147,6 +148,7 @@
             this._output.connect(connectTo, indexIn, indexOut);
         }
     };
+
     snd.DynamicsCompressor.prototype.disconnect = function(disconnectFrom, indexIn, id) {
         snd.AudioUnit.prototype.disconnect.apply(this, arguments);
         if (disconnectFrom.getConnector != null) {
@@ -155,12 +157,91 @@
             this._output.disconnect(disconnectFrom, indexIn);
         }
     };
+
+    snd.DynamicsCompressor.prototype.getParamDescription = function() {
+        var ret = snd.AudioUnit.prototype.getParamDescription.apply(this, arguments);
+
+        ret.attack = {
+            type: snd.params.type.VALUE,
+            default: 0.003,
+            max: 1.0,
+            min: 0
+        };
+        ret.knee = {
+            type: snd.params.type.VALUE,
+            default: 30,
+            max: 40,
+            min: 0
+        };
+        ret.ratio = {
+            type: snd.params.type.VALUE,
+            default: 12,
+            max: 20,
+            min: 1
+        };
+        ret.reduction = {
+            type: snd.params.type.READ_ONLY
+        };
+        ret.release = {
+            type: snd.params.type.VALUE,
+            default: 0.250,
+            max: 1.0,
+            min: 0
+        };
+        ret.threshold = {
+            type: snd.params.type.VALUE,
+            default: -24,
+            max: 0,
+            min: -100
+        };
+        
+        ret.attackParam = {
+            type: snd.params.type.AUDIO_PARAM,
+            value: this.attackParam,
+            default: ret.attack.default,
+            max: ret.attack.max,
+            min: ret.attack.min
+        };
+        ret.kneeParam = {
+            type: snd.params.type.AUDIO_PARAM,
+            value: this.kneeParam,
+            default: ret.knee.default,
+            max: ret.knee.max,
+            min: ret.knee.min
+        };
+        ret.ratioParam = {
+            type: snd.params.type.AUDIO_PARAM,
+            value: this.ratioParam,
+            default: ret.ratio.default,
+            max: ret.ratio.max,
+            min: ret.ratio.min
+        };
+        ret.releaseParam = {
+            type: snd.params.type.AUDIO_PARAM,
+            value: this.releaseParam,
+            default: ret.release.default,
+            max: ret.release.max,
+            min: ret.release.min
+        };
+        ret.thresholdParam = {
+            type: snd.params.type.AUDIO_PARAM,
+            value: this.thresholdParam,
+            default: ret.threshold.default,
+            max: ret.threshold.max,
+            min: ret.threshold.min
+        };
+
+        return ret;
+    };
+
     snd.DynamicsCompressor.prototype.createStatus = function() {
         return new snd.DynamicsCompressor.Status();
     };
+
     snd.DynamicsCompressor.prototype.getConnector = function() {
         return this._connector;
     };
+
     snd.DynamicsCompressor.prototype.loadData = function(data) {
         snd.AudioUnit.prototype.loadData.apply(this, arguments);
 
@@ -182,6 +263,6 @@
     };
     snd.DynamicsCompressor.Status.prototype = Object.create(snd.AudioUnit.Status.prototype);
     snd.DynamicsCompressor.Status.prototype.constructor = snd.DynamicsCompressor.Status;
-    
+
     return snd;
 }));

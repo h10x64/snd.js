@@ -126,7 +126,8 @@
         this._status.minDecibels = this._analyser.minDecibels;
     };
     snd.Analyser.prototype = Object.create(snd.AudioUnit.prototype);
-    snd.Analyser.prototype.constructor = snd.Gain;
+    snd.Analyser.prototype.constructor = snd.Analyser;
+    
     snd.Analyser.prototype.connect = function(connectTo, indexIn, indexOut, id) {
         snd.AudioUnit.prototype.connect.apply(this, arguments);
         if (connectTo.getConnector != null) {
@@ -135,6 +136,7 @@
             this._analyser.connect(connectTo, indexIn, indexOut);
         }
     };
+    
     snd.Analyser.prototype.disconnect = function(disconnectFrom, indexIn, id) {
         snd.AudioUnit.prototype.disconnect.apply(this, arguments);
         if (disconnectFrom.getConnector != null) {
@@ -143,12 +145,61 @@
             this._analyser.disconnect(disconnectFrom, indexIn);
         }
     };
+    
+    snd.Analyser.prototype.getParamDescription = function() {
+        var ret = snd.AudioUnit.prototype.getParamDescription.apply(this, arguments);
+        
+        ret.floatFrequencyData = {
+            type: snd.params.type.READ_ONLY
+        };
+        ret.byteFrequencyData = {
+            type: snd.params.type.READ_ONLY
+        };
+        ret.floatTimeDomainData = {
+            type: snd.params.type.READ_ONLY
+        };
+        ret.byteTimeDomainData = {
+            type: snd.params.type.READ_ONLY
+        };
+        ret.fftSize = {
+            type: snd.params.type.VALUE,
+            default: 2048,
+            max: undefined,
+            min: 2
+        };
+        ret.frequencyBinCount = {
+            type: snd.params.type.READ_ONLY
+        };
+        ret.minDecibels = {
+            type: snd.params.type.VALUE,
+            default: -100,
+            max: Infinity,
+            min: -Infinity
+        };
+        ret.maxDecibels = {
+            type: snd.params.type.VALUE,
+            default: -30,
+            max: Infinity,
+            min: -Infinity
+        };
+        ret.smoothingTimeConstant = {
+            type: snd.params.type.VALUE,
+            default: 0.1,
+            max: Infinity,
+            min: -Infinity
+        };
+        
+        return ret;
+    };
+    
     snd.Analyser.prototype.createStatus = function() {
         return new snd.Analyser.Status();
     };
+    
     snd.Analyser.prototype.getConnector = function() {
         return this._analyser;
     };
+    
     snd.Analyser.prototype.loadData = function(data) {
         snd.AudioUnit.prototype.loadData.apply(this, arguments);
 

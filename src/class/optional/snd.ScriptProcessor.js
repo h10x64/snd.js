@@ -85,6 +85,33 @@
 
         this._unit.connect(this._gain);
     };
+    
+    snd.ScriptProcessor.prototype.getParamDescription = function() {
+        var ret = snd.Source.prototype.getParamDescription.apply(this, arguments);
+        
+        ret.bufferLength = {
+            type: snd.params.type.ENUM,
+            value: [
+                0,
+                256,
+                512,
+                1024,
+                2048,
+                4096,
+                8192,
+                16384
+            ],
+            default: 4096
+        };
+        ret.script = {
+            type: snd.params.type.VALUE,
+            default: undefined,
+            max: undefined,
+            min: undefined
+        };
+        
+        return ret;
+    };
 
     snd.ScriptProcessor.prototype.createStatus = function() {
         return new snd.ScriptProcessor.Status();

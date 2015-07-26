@@ -194,6 +194,7 @@
             }
         }
     };
+    
     snd.VinylNoise.prototype.disconnect = function(disconnectFrom, indexIn, id) {
         snd.AudioUnit.prototype.disconnect.apply(this, arguments);
         if (disconnectFrom.getConnector != null) {
@@ -202,12 +203,65 @@
             this._gain.disconnect(disconnectFrom, indexIn);
         }
     };
+    
+    snd.VinylNoise.prototype.getParamDescription = function() {
+        var ret = snd.AudioUnit.prototype.getParamDescription.apply(this, arguments);
+        
+            ret.volume = {
+                type: snd.params.type.VALUE,
+                default: 1.0,
+                max: Infinity,
+                min: -Infinity
+            };
+            ret.often = {
+                type: snd.params.type.VALUE,
+                default: 57,
+                max: Infinity,
+                min: 0
+            };
+            ret.maxPetitNoiseSize = {
+                type: snd.params.type.VALUE,
+                default: 0.5,
+                max: Infinity,
+                min: 0
+            };
+            ret.minPetitNoiseSize = {
+                type: snd.params.type.VALUE,
+                default: 0.0,
+                max: Infinity,
+                min: 0
+            };
+            ret.maxNoiseSize = {
+                type: snd.params.type.VALUE,
+                default: 0.0025,
+                max: Infinity,
+                min: 0
+            };
+            ret.probability = {
+                type: snd.params.type.VALUE,
+                default: 0.8,
+                max: 1.0,
+                min: 0
+            }
+            ret.volumeParam = {
+                type: snd.params.type.AUDIO_PARAM,
+                value: this.volumeParam,
+                default: ret.volume.default,
+                max: ret.volume.max,
+                min: ret.volume.min
+            };
+        
+        return ret;
+    };
+    
     snd.VinylNoise.prototype.createStatus = function() {
         return new snd.VinylNoise.Status();
     };
+    
     snd.VinylNoise.prototype.getConnector = function() {
         return this._gain;
     };
+    
     snd.VinylNoise.prototype.loadData = function(data) {
         snd.AudioUnit.prototype.loadData.apply(this, arguments);
 

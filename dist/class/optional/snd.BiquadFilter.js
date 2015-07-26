@@ -156,7 +156,7 @@
         });
     };
     snd.BiquadFilter.prototype = Object.create(snd.AudioUnit.prototype);
-    snd.BiquadFilter.prototype.constructor = snd.Gain;
+    snd.BiquadFilter.prototype.constructor = snd.BiquadFilter;
 
     snd.BiquadFilter.prototype.connect = function(connectTo, indexIn, indexOut, id) {
         snd.AudioUnit.prototype.connect.apply(this, arguments);
@@ -166,6 +166,7 @@
             this._output.connect(connectTo, indexIn, indexOut);
         }
     };
+    
     snd.BiquadFilter.prototype.disconnect = function(disconnectFrom, indexIn, id) {
         snd.AudioUnit.prototype.disconnect.apply(this, arguments);
         if (disconnectFrom.getConnector != null) {
@@ -174,12 +175,88 @@
             this._output.disconnect(disconnectFrom, indexIn);
         }
     };
+    
     snd.BiquadFilter.prototype.createStatus = function() {
         return new snd.BiquadFilter.Status();
     };
+    
     snd.BiquadFilter.prototype.getConnector = function() {
         return this._connector;
     };
+    
+    snd.BiquadFilter.prototype.getParamDescription = function() {
+        var ret = snd.AudioUnit.prototype.getParamDescription.apply(this, arguments);
+        
+        ret.type = {
+            type: snd.params.type.ENUM,
+            value: [
+                snd.LOWPASS,
+                snd.HIGHPASS,
+                snd.BANDPASS,
+                snd.LOWSHELF,
+                snd.HIGHSHELF,
+                snd.PEAKING,
+                snd.NOTCH,
+                snd.ALLPASS
+            ],
+            default: snd.LOWPASS
+        };
+        ret.frequency = {
+            type: snd.params.type.VALUE,
+            default: 350,
+            max: Infinity,
+            min: -Infinity
+        };
+        ret.detune = {
+            type: snd.params.type.VALUE,
+            default: 0,
+            max: Infinity,
+            min: -Infinity
+        };
+        ret.Q = {
+            type: snd.params.type.VALUE,
+            default: 1.0,
+            max: Infinity,
+            min: -Infinity
+        };
+        ret.gain = {
+            type: snd.params.type.VALUE,
+            default: 0,
+            max: Infinity,
+            min: -Infinity
+        };
+        ret.frequencyParam = {
+            type: snd.params.type.AUDIO_PARAM,
+            value: this.frequencyParam,
+            default: ret.frequency.default,
+            max: ret.frequency.max,
+            min: ret.frequency.min
+        };
+        ret.detuneParam = {
+            type: snd.params.type.AUDIO_PARAM,
+            value: this.detuneParam,
+            default: ret.detune.default,
+            max: ret.detune.max,
+            min: ret.detune.min
+        };
+        ret.QParam = {
+            type: snd.params.type.AUDIO_PARAM,
+            value: this.QParam,
+            default: ret.Q.default,
+            max: ret.Q.max,
+            min: ret.Q.min
+        };
+        ret.gainParam = {
+            type: snd.params.type.AUDIO_PARAM,
+            value: this.gainParam,
+            default: ret.gain.default,
+            max: ret.gain.max,
+            min: ret.gain.min
+        };
+        
+        return ret;
+    };
+    
     snd.BiquadFilter.prototype.loadData = function(data) {
         snd.AudioUnit.prototype.loadData.apply(this, arguments);
 

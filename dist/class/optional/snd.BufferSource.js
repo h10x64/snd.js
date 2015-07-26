@@ -372,6 +372,33 @@
         };
     };
 
+    snd.BufferSource.prototype.getParamDescription = function() {
+        var ret = snd.Source.prototype.getParamDescription.apply(this, arguments);
+        
+        ret.loop = {
+            type: snd.params.type.ENUM,
+            value: [
+                false,
+                true
+            ],
+            default: false
+        };
+        ret.loopStart = {
+            type: snd.params.type.VALUE,
+            default: 0,
+            max: Infinity,
+            min: -Infinity
+        };
+        ret.loopEnd = {
+            type: snd.params.type.VALUE,
+            default: 0,
+            max: Infinity,
+            min: -Infinity
+        };
+        
+        return ret;
+    };
+
     snd.BufferSource.prototype.createStatus = function() {
         return new snd.BufferSource.Status();
     };
