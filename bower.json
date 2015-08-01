@@ -1,0 +1,39 @@
+{
+  "name": "snd.js",
+  "version": "1.0.20150707",
+  "homepage": "https://github.com/h10x64/snd.js",
+  "authors": [
+    "n_h <h.10x64@gmail.com>"
+  ],
+  "description": "The WebAudioAPI Library",
+  "main": "dist/snd.js",
+  "moduleType": [
+    "amd",
+    "globals"
+  ],
+  "keywords": [
+    "WebAudioAPI",
+    "sound",
+    "soundeffect",
+    "audio",
+    "midi"
+  ],
+  "license": "MIT",
+  "repository": {
+      "type": "git",
+      "url": "git://github.com/h10x64/snd.js"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "Samples",
+    "lib",
+    "logo",
+    "src",
+    "Gruntfile.js",
+    "src",
+    "docConfig.json",
+    "package.json"
+  ]
+}
