@@ -66,7 +66,7 @@
      * @property {snd.AudioDataManager} AUDIO_DATA_MANAGER 音データの読み込みなどの管理を行うクラスです。<br/>
      * ※snd.initメソッドが呼ばれるまで初期化されず、nullとなっている点に注意してください。
      */
-    var snd = {VERSION: "1.0.20150801", IS_BETA: true, ALIAS: "Major Heat"};
+    var snd = {VERSION: "1.0.20150808", IS_BETA: true, ALIAS: "Start of Autumn"};
 
     snd._AUDIO_CONTEXT = null;
     snd._MASTER = null;
@@ -394,6 +394,10 @@
                                 },
                                 ENUM: {
                                     value: "enum",
+                                    writable: false
+                                },
+                                FUNCTION: {
+                                    value: "function",
                                     writable: false
                                 }
                             });

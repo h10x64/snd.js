@@ -325,7 +325,9 @@
 
         var listeners = this._eventListeners['onended'];
         for (i = 0; i < listeners.length; i++) {
-            listeners[i].onended(_this);
+            if (typeof(listeners[i]) == 'function') {
+                listeners[i](_this);
+            }
         }
     };
 
@@ -359,7 +361,9 @@
 
         var listeners = this._eventListeners['onload'];
         for (i = 0; i < listeners.length; i++) {
-            listeners[i].onload(_this);
+            if (typeof(listeners[i]) == 'function') {
+                listeners[i](_this);
+            }
         }
     };
 
