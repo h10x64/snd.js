@@ -65,11 +65,11 @@
             var _this = this;
             var cb, ecb;
             cb = function(localMediaStream) {
-                _this._source = new snd.MediaStreamAudioSource(id, localMediaStream);
+                _this._source = snd.AUDIO_CONTEXT.createMediaStreamSource(localMediaStream);
                 _this._source.connect(_this._gain);
                 _this._status.status = snd.status.READY;
                 
-                if (callback) {
+                if (typeof(callback) == 'function') {
                     callback(_this);
                 }
             };

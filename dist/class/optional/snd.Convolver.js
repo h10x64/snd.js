@@ -50,6 +50,7 @@
         this._convolver.connect(this._output);
 
         this._key = "";
+        this._listeners = [];
 
         /* DEFINE PROPERTIES */
         Object.defineProperties(this, {
@@ -175,6 +176,7 @@
             snd.AUDIO_DATA_MANAGER.add(this._key, url);
             snd.AUDIO_DATA_MANAGER.addOnLoadListener(this._key, function() {
                 _this.buffer = snd.AUDIO_DATA_MANAGER.getAudioBuffer(_this._key);
+                _this.fireOnLoadEvent();
             });
             snd.AUDIO_DATA_MANAGER.load(this._key);
         } else {
@@ -200,6 +202,7 @@
         snd.AUDIO_DATA_MANAGER.addBase64(this._key, base64String);
         snd.AUDIO_DATA_MANAGER.addOnLoadListener(this._key, function() {
             _this.buffer = snd.AUDIO_DATA_MANAGER.getAudioBuffer(_this._key);
+            _this.fireOnLoadEvent();
         });
         snd.AUDIO_DATA_MANAGER.load(this._key);
     };
@@ -227,6 +230,26 @@
         }
 
         this._status.normalize = data.normalize;
+    };
+    
+    snd.Convolver.prototype.addOnLoadEventListener = function(listener) {
+        this._listeners.push(listener);
+    };
+    
+    snd.Convolver.prototype.removeOnLoadEventListener = function(listener) {
+        var i = this._listeners.indexOf(listener);
+        if (i >= 0) {
+            this._listeners.splice(i, 1);
+        }
+    };
+    
+    snd.Convolver.prototype.fireOnLoadEvent = function() {
+        for (var i in this._listeners) {
+            var listener = this._listeners[i];
+            if (typeof(listener) == 'function') {
+                listener(this);
+            }
+        }
     };
 
     snd.Convolver.Status = function() {
