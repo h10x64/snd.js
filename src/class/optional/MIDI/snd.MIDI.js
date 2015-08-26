@@ -689,12 +689,12 @@
 
                         values = snd.MIDI._MIDI_ACCESS.inputs.values();
                         while (!(v = values.next()).done) {
-                            snd.MIDI._INPUTS[v.value.id] = v.value;
+                            snd.MIDI._INPUTS[v.value.name] = v.value;
                         }
 
                         values = snd.MIDI._MIDI_ACCESS.outputs.values();
                         while (!(v = values.next()).done) {
-                            snd.MIDI._OUTPUTS[v.value.id] = v.value;
+                            snd.MIDI._OUTPUTS[v.value.name] = v.value;
                         }
 
                         if (typeof (successCallback) == "function") {
