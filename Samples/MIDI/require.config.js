@@ -27,8 +27,8 @@ var require = {
         'snd.WaveShaper': '../../dist/class/optional/snd.WaveShaper',
         'snd.Noise': '../../dist/class/optional/snd.Noise',
         'snd.VinylNoise': '../../dist/class/optional/snd.VinylNoise',
-        'snd.MIDI': '../../dist/class/optional/snd.MIDI',
-        'snd.MIDI.util': '../../dist/class/optional/snd.MIDI.util'
+        'snd.MIDI': '../../dist/class/optional/MIDI/snd.MIDI',
+        'snd.MIDI.util': '../../dist/class/optional/MIDI/snd.MIDI.util'
     }
 };
 

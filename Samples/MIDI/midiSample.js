@@ -269,6 +269,8 @@ require(["snd.OscillatorSource", "snd.VinylNoise", "snd.MIDI", "snd.MIDI.util"],
         );
     };
     
+    window.snd = snd;
+    
     if (LOADED) {
         onLoad();
     } else {
