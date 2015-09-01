@@ -63,6 +63,8 @@ require(["snd.OscillatorSource", "snd.VinylNoise", "snd.MIDI", "snd.MIDI.util"],
             noise.maxNoiseSize = 0;
         }
     };
+    
+    /* Status Change Event */
     onInputSelectChange = function() {
         if (!INPUT_SELECT) {
             return;
@@ -72,11 +74,18 @@ require(["snd.OscillatorSource", "snd.VinylNoise", "snd.MIDI", "snd.MIDI.util"],
         if (selectedValue) {
             var selectedInput = snd.MIDI.INPUTS[selectedValue];
             if (SELECTED) {
-                SELECTED.onmidimessage = function() {
-                };
+                SELECTED.onmidimessage = function() {};
+                SELECTED.onnoteon = function() {};
+                SELECTED.onnoteoff = function() {};
+                SELECTED.onpitchbendchange = function() {};
+                SELECTED.onmodulationchange = function() {};
             }
             SELECTED = selectedInput;
             SELECTED.onmidimessage = onMIDIMessage;
+            SELECTED.onnoteon = onNoteOn;
+            SELECTED.onnoteoff = onNoteOff;
+            SELECTED.onpitchbendchangeon = onPitchBendChange;
+            SELECTED.onmodulationchange = onModulationChange;
         }
     };
     onTypeSelectChange = function() {
@@ -143,10 +152,11 @@ require(["snd.OscillatorSource", "snd.VinylNoise", "snd.MIDI", "snd.MIDI.util"],
             }
         }
     };
-    onNoteOn = function(message) {
-        var ch = message[0] & snd.MIDI.CH_FILTER;
-        var note = message[1];
-        var velocity = message[2];
+    
+    /* MIDI Event */
+    onNoteOn = function(ch, no, pos, values, message) {
+        var note = values[0];
+        var velocity = values[1];
         if (!MIDI_CHANNELS[ch][note]) {
             MIDI_CHANNELS[ch][note] = {};
             MIDI_CHANNELS[ch][note].osc = new snd.OscillatorSource("OSC" + note);
@@ -176,15 +186,13 @@ require(["snd.OscillatorSource", "snd.VinylNoise", "snd.MIDI", "snd.MIDI.util"],
 
         MIDI_CHANNELS[ch][note].lfo.start();
     };
-    onNoteOff = function(message) {
-        var ch = message[0] & snd.MIDI.CH_FILTER;
-        var note = message[1];
+    onNoteOff = function(ch, no, pos, values, message) {
+        var note = values[0];
         MIDI_CHANNELS[ch][note].osc.stop();
         MIDI_CHANNELS[ch][note].lfo.stop();
     };
-    onPitchBend = function(message) {
-        var ch = message[0] & snd.MIDI.CH_FILTER;
-        var val = (message[2] << 7) | message[1];
+    onPitchBendChange = function(ch, no, pos, values, message) {
+        var val = (values[1] << 7) | values[0];
         if (Math.abs(val) >= 0.0) {
             val = 2.0 * (val - 0x2000) / 0x2000;
         }
@@ -199,9 +207,8 @@ require(["snd.OscillatorSource", "snd.VinylNoise", "snd.MIDI", "snd.MIDI.util"],
             }
         }
     };
-    onModulationChange = function(message) {
-        var ch = message[0] & snd.MIDI.CH_FILTER;
-        MOD_VALUE = message[2];
+    onModulationChange = function(ch, no, pos, values, message) {
+        MOD_VALUE = values[0];
         var notes = Object.keys(MIDI_CHANNELS[ch]);
         for (var i = 0; i < notes.length; i++) {
             var note = notes[i];
@@ -220,23 +227,9 @@ require(["snd.OscillatorSource", "snd.VinylNoise", "snd.MIDI", "snd.MIDI.util"],
     };
     onMIDIMessage = function(evt) {
         console.log(evt);
-        var message = evt.data;
-        if (message.length > 0) {
-            var messageID = message[0] & snd.MIDI.MESSAGE_FILTER;
-            if (messageID == snd.MIDI.NOTE_ON) {
-                onNoteOn(message);
-            } else if (messageID == snd.MIDI.NOTE_OFF) {
-                onNoteOff(message);
-            } else if (messageID == snd.MIDI.PITCH_BEND) {
-                onPitchBend(message);
-            } else if (messageID == snd.MIDI.CONTROL_CHANGE) {
-                if (message[1] == snd.MIDI.CTRL_MODULATION) {
-                    onModulationChange(message);
-                }
-            }
-        }
     };
     
+    /* Window Event */
     var onLoad = function() {
         WORNING = document.getElementById("worning");
         INPUT_SELECT = document.getElementById("inputs");

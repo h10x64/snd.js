@@ -38,6 +38,8 @@ var require = {
         'snd.Noise': '%SND_BASE_URL%/class/optional/snd.Noise',
         'snd.VinylNoise': '%SND_BASE_URL%/class/optional/snd.VinylNoise',
         'snd.MIDI': '%SND_BASE_URL%/class/optional/MIDI/snd.MIDI',
+        'snd.MIDIIn': '%SND_BASE_URL%/class/optional/MIDI/snd.MIDIIn',
+        'snd.MIDIOut': '%SND_BASE_URL%/class/optional/MIDI/snd.MIDIOut',
         'snd.MIDI.util': '%SND_BASE_URL%/class/optional/MIDI/snd.MIDI.util',
         /* Plugins */
         /* snd.invalid.js */

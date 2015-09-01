@@ -113,6 +113,14 @@ module.exports = function(grunt) {
                         'src/COPYRIGHT',
                         'src/class/optional/MIDI/snd.MIDI.js',
                     ],
+                    'dist/class/optional/MIDI/snd.MIDIIn.js' : [
+                        'src/COPYRIGHT',
+                        'src/class/optional/MIDI/snd.MIDIIn.js',
+                    ],
+                    'dist/class/optional/MIDI/snd.MIDIOut.js' : [
+                        'src/COPYRIGHT',
+                        'src/class/optional/MIDI/snd.MIDIOut.js',
+                    ],
                     'dist/class/optional/MIDI/snd.MIDI.util.js' : [
                         'src/COPYRIGHT',
                         'src/class/optional/MIDI/snd.MIDI.util.js'
@@ -262,6 +270,8 @@ module.exports = function(grunt) {
                     'dist/min/class/optional/snd.Noise.js': ['dist/class/optional/snd.Noise.js'],
                     'dist/min/class/optional/snd.VinylNoise.js': ['dist/class/optional/snd.VinylNoise.js'],
                     'dist/min/class/optional/MIDI/snd.MIDI.js': ['dist/class/optional/MIDI/snd.MIDI.js'],
+                    'dist/min/class/optional/MIDI/snd.MIDIIn.js': ['dist/class/optional/MIDI/snd.MIDIIn.js'],
+                    'dist/min/class/optional/MIDI/snd.MIDIOut.js': ['dist/class/optional/MIDI/snd.MIDIOut.js'],
                     'dist/min/class/optional/MIDI/snd.MIDI.util.js': ['dist/class/optional/MIDI/snd.MIDI.util.js'],
                     'dist/min/plugins/mml/snd.mml.js': ['dist/plugins/mml/snd.mml.js'],
                     'dist/min/plugins/three/snd.three.js': ['dist/plugins/three/snd.three.js'],
