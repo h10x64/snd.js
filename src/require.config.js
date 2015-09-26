@@ -29,6 +29,7 @@ var require = {
         'snd.Gain': '%SND_BASE_URL%/class/optional/snd.Gain',
         'snd.MediaElementAudioSource': '%SND_BASE_URL%/class/optional/snd.MediaElementAudioSource',
         'snd.MediaStreamAudioSource': '%SND_BASE_URL%/class/optional/snd.MediaStreamAudioSource',
+        'snd.MediaStreamAudioDestination': '%SND_BASE_URL%/class/optional/snd.MediaStreamAudioDestination',
         'snd.OscillatorSource': '%SND_BASE_URL%/class/optional/snd.OscillatorSource',
         'snd.ScriptProcessor': '%SND_BASE_URL%/class/optional/snd.ScriptProcessor',
         'snd.Synth': '%SND_BASE_URL%/class/optional/snd.Synth',
@@ -52,6 +53,8 @@ var require = {
         'snd.invalid.Gain': '%SND_BASE_URL%/plugins/invalid/snd.invalid.Gain',
         'snd.invalid.Noise': '%SND_BASE_URL%/plugins/invalid/snd.invalid.Noise',
         'snd.invalid.Oscillator': '%SND_BASE_URL%/plugins/invalid/snd.invalid.Oscillator',
+        /* snd.Peer.js */
+        'snd.Peer': '%SND_BASE_URL%/plugins/peer/snd.Peer',
         /* snd.encrypt.js */
         'snd.encrypt': '%SND_BASE_URL%/plugins/encript/snd.encrypt',
         /* snd.three.js */

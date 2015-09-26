@@ -44,7 +44,11 @@
      * WebRTCのGetUserMediaで取得したストリームを使用することができます。
      * @param {String} id この音源のID
      * @param {MediaStream} mediaStream 再生するデータストリーム<br/>
-     * nullの場合、自動で音声ストリームを取得します。
+     * nullの場合、自動で(マイク入力やWebカメラなどの)ローカルのストリームを取得します。
+     * @param {boolean} useAudio 自動でストリームを取得する場合に、そのストリームで音声入力を使うかどうかを設定します。<br/>
+     * mediaStreamがnullの場合のみ使用される引数で、mediaStreamに値が設定されている場合は使用されません。
+     * @param {boolean} useVideo 自動でストリームを取得する場合に、そのストリームでビデオ入力を使うかどうかを設定します。<br/>
+     * mediaStreamがnullの場合のみ使用される引数で、mediaStreamに値が設定されている場合は使用されません。
      * @param {function} callback オブジェクトの生成に成功した時に呼び出されるコールバックメソッドです。(未設定可)<br/>
      * 呼び出される際は、引数として生成されたオブジェクトが渡されます。<br/>
      * mediaStreamがnullの場合のみ使用される引数で、mediaStreamに値が設定されている場合は使用されません。
@@ -54,7 +58,7 @@
      * 未設定の場合、コンソールへのログ出力のみ行います。
      * @memberOf snd
      */
-    snd.MediaStreamAudioSource = function(id, mediaStream, callback, errorCallback) {
+    snd.MediaStreamAudioSource = function(id, mediaStream, useAudio, useVideo, callback, errorCallback) {
         snd.Source.apply(this, arguments);
 
         this._status.type = snd.srctype.MEDIA_STREAM;
@@ -65,6 +69,7 @@
             var _this = this;
             var cb, ecb;
             cb = function(localMediaStream) {
+                _this._stream = localMediaStream;
                 _this._source = snd.AUDIO_CONTEXT.createMediaStreamSource(localMediaStream);
                 _this._source.connect(_this._gain);
                 _this._status.status = snd.status.READY;
@@ -82,22 +87,31 @@
             }
             
             if (navigator.getUserMedia) {
-                navigator.getUserMedia({audio:true}, cb, ecb);
+                navigator.getUserMedia({audio:useAudio, video:useVideo}, cb, ecb);
             } else if (navigator.mozGetUserMedia) {
-                navigator.mozGetUserMedia({audio:true}, cb, ecb);
+                navigator.mozGetUserMedia({audio:useAudio, video:useVideo}, cb, ecb);
             } else if (navigator.webkitGetUserMedia) {
-                navigator.webkitGetUserMedia({audio:true}, cb, ecb);
+                navigator.webkitGetUserMedia({audio:useAudio, video:useVideo}, cb, ecb);
             }
         } else {
+            this._stream = mediaStream;
             this._source = snd.AUDIO_CONTEXT.createMediaStreamSource(mediaStream);
             this._source.connect(this._gain);
             this._status.status = snd.status.READY;
         }
+        
+        Object.defineProperties(this, {
+            stream: {
+                get: function() {
+                    return this._stream;
+                }
+            }
+        })
     };
     snd.MediaStreamAudioSource.prototype = Object.create(snd.Source.prototype);
     snd.MediaStreamAudioSource.prototype.constructor = snd.MediaStreamAudioSource;
 
-    snd.MediaStreamAudioSource.prototype.createSource = function() {
+    snd.MediaStreamAudioSource.prototype.createStatus = function() {
         return new snd.MediaStreamAudioSource.Status();
     };
 
@@ -113,8 +127,6 @@
         snd.Source.Status.apply(this, arguments);
 
     };
-    snd.MediaStreamAudioSource.prototype = Object.create(snd.Source.prototype);
-    snd.MediaStreamAudioSource.prototype.constructor = snd.MediaStreamAudioSource;
     
     return snd;
 }));

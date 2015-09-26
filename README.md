@@ -1,96 +1,268 @@
-#snd.js -The Sound Library for JavaScript with WebAudioAPI -#
+# snd.js -The Sound Library for JavaScript with WebAudioAPI - #
 
-## snd.jsについて
+## About
 
-snd.jsはHTML5のWebAudioAPIを使用したJavaScriptを「楽に・簡単に・素早く」実装するためのライブラリです。  
-MITライセンスですので、商用・非商用問わず、誰でも自由にご利用いただけます。  
+snd.js is the HTML5 WebAudioAPI Sounds Library.  
+You can make Soundful-HTML5 with Fun, Easy, Rapidry.  
+Ofcause, it's MIT licensed. Free!  
   
-↓のような簡易な記述で、あなたのサイト・Webアプリに音を追加することができます。  
+（日本語の説明は下部にあります）  
+  
+## Sample
+
+You can make the ButtonClickSoundEffect like this ↓  
+
+### Path
 
 ```
-<script src="./lib/snd.js"></script>
-<script src="./lib/snd.using.js"></script>
+  ./
+  ├ lib
+  │  ├ sndjs
+  │  │  ├ dist
+  │  │  
+  │  └ require.js
+  ├ index.html
+  ├ require.config.js
+  └ SoundEffect.js
+```
 
-<script>
-    var SOUND_DATA_URL = {
-        "Sound1": "./sound/Sound1.mp3",
-        "Sound2": "./sound/Sound2.wav"
-    }
+### index.html
+
+```
+  <html>
+  <head>
+    <script src="./require.config.js"></script>
+    <script src="./lib/require.js" data-main="./SoundEffect.js"></script>
+  </head>
+  <body>
+    <button id="snd1">sound1</button>
+    <button id="snd2">sound2</button>
+  </body>
+```
+
+### SoundEffect.js
+
+```
+require(["snd.BufferSource"], function(snd) {
+  var SOUND_DATA_URL = {
+      "Sound1": "./sound/Sound1.mp3",
+      "Sound2": "./sound/Sound2.wav"
+  }
  
-    snd.onload = function() {
-        // BufferSourceを生成して、再生の準備が整ったらコールバック関数を呼ぶ
-        snd.util.createBufferSources(SOUND_DATA_URL, true, function(loadedSound) {
-            // "Sound1" (./sound/Sound1.mp3)を再生
-            loadedSound["Sound1"].start();
-            // ボタンクリック音として"Sound2"(./sound/Sound2.wav)を設定する
-            document.getElementById("button_with_sound").onclick = function() {
-                // "Sound2" (./sound/Sound2.wav)を再生
-                loadedSound["Sound2"].start();
-            };
-        });
-    };
+  // Decode Sounds and create snd.BufferSource.
+  snd.util.createBufferSources(
+    SOUND_DATA_URL,           // Data URL
+    true,                     // Connect to snd.MASTER automatically
+    function(loadedSound) {   // Success callback
 
-    window.onload = function() {
-        // snd.js初期化
-        snd.init();
+      /* Setup button click events. */
+
+      // Play "Sound1"(./sound/Sound1.mp3) when #snd1 clicked.
+      document.getElementById("snd1").onclick = function() {
+          loadedSound["Sound1"].start();
+      };
+
+      // Play "Sound2"(./sound/Sound2.wav) when #snd2 clicked.
+      document.getElementById("button_with_sound").onclick = function() {
+          loadedSound["Sound2"].start();
+      };
+
     }
-</script>
+  );
+}
 ```
 
-単純な効果音再生の他、プラグインを利用すればthree.jsと連動したリアルタイムの立体音響化エフェクトなどの付加機能が使用可能です。  
-  
-distフォルダにビルド済みのjsファイルが入っています。  
-*.min.jsはuglifyした軽量版のjsファイルです。  
-*.js, *.min.js共に内容は同じものですので、用途により使い分けてください。  
+You can load snd.js with <script> tag, if you can't use require.js.   
 
-### 使い方・サンプル
+## Can I use Web Audio API ? 
 
-Samplesフォルダに各種サンプルが含まれています。
-また、<a href="http://sndjs.org/">サイト（sndjs.org）</a>にもサンプルがありますので、併せてご覧ください。
+Please refer to <http://caniuse.com/audio-api>.  
 
-### 付属プラグイン
+## Install
 
-* snd.invalid.js  
-HTMLにタグを追加します。  
-jQueryから直接WebAudioAPIが叩けるようになる他、自作のクラスをHTMLのタグとして追加することも可能です。  
-このプラグインで追加されたタグを使用すると、W3CのバリデータがInvalidを出力するようになるので注意してください。  
+### Requirement
 
-* snd.three.js  
-three.jsへ対応するためのプラグインです。
+* Bower
 
-* snd.encrypt.js  
-サーバから送信するデータにユーザー情報で復号する暗号をかける事で、所定のアドレスへアクセスすれば音源データをダウンロードできる状態を避けます。
+### How to
 
-## 各ブラウザのWebAudioAPI対応状況
+Simply, you can install snd.js with this command.  
 
-スマホを含めた各ブラウザのWebAudioAPI対応状況はCan I use Web Audio API?を参照してください。
-<http://caniuse.com/audio-api>
+```
+  bower install sndjs --save
+```
 
-## 自分でビルドする時は
+Bower installs snd.js to your "bower_components" directory.  
+(Without pre-build sources)  
 
-ビルドに以下のソフトを使用しています。  
+## Build
+
+### Requirement
 
 * Node.js
 * Grunt
 
-上記ソフトをインストールした後、package.jsonなどのあるフォルダをカレントディレクトリにし、コンソールで
+### How to
 
-    npm install
+Please move current directory to the snd.js path.  
 
-を実行してください。
-その後、
+```
+cd ./path/to/snd.js
+```
 
-    grunt
+And run "npm install".
 
-を実行することでdistフォルダにjsファイルがビルドされます。
+```
+npm install
+```
+
+Then you already to build with grunt.
+
+```
+grunt
+```
+
+## require.config.js
+
+You can get require.config.js in "../snd.js/src/require.config.js"  
+Please replace "%SND_BASE_URL%" to your "sndjs/dist" path.  
+
+## License
+
+The MIT License (MIT)  
+copyright (c) 2014 - 2015 N_H <h.10x64@sndjs.org>  
+
+
+## snd.jsについて
+
+snd.jsは HTML5 の WebAudioAPI を使用したサウンドライブラリです。  
+音声を使用したサイトやWebアプリなどを「楽しく・簡単に・素早く」作ることができます。  
+MITライセンスの下で頒布していますので、商用を含めて自由にご利用いただけます。  
+  
+2種類のクリック音付きボタンは以下のような感じで作ることができます。  
+
+### Path
+
+```
+  ./
+  ├ lib
+  │  ├ sndjs
+  │  │  ├ dist
+  │  │  
+  │  └ require.js
+  ├ index.html
+  ├ require.config.js
+  └ SoundEffect.js
+```
+
+### index.html
+
+```
+  <html>
+  <head>
+    <script src="./require.config.js"></script>
+    <script src="./lib/require.js" data-main="./SoundEffect.js"></script>
+  </head>
+  <body>
+    <button id="snd1">sound1</button>
+    <button id="snd2">sound2</button>
+  </body>
+```
+
+### SoundEffect.js
+
+```
+require(["snd.BufferSource"], function(snd) {
+  var SOUND_DATA_URL = {
+      "Sound1": "./sound/Sound1.mp3",
+      "Sound2": "./sound/Sound2.wav"
+  }
+ 
+  // Decode Sounds and create snd.BufferSource.
+  snd.util.createBufferSources(
+    SOUND_DATA_URL,           // 読み込むURLをまとめたオブジェクト
+    true,                     // snd.MASTER(AudioDestinationをラップしたノード)へ自動的に接続するか否か
+    function(loadedSound) {   // コールバック
+
+      /* ボタンクリックイベントを設定する */
+
+      // #snd1がクリックされたら"Sound1"(./sound/Sound1.mp3)を再生する
+      document.getElementById("snd1").onclick = function() {
+          loadedSound["Sound1"].start();
+      };
+
+      // #snd1がクリックされたら"Sound2"(./sound/Sound2.wav)を再生する
+      document.getElementById("button_with_sound").onclick = function() {
+          loadedSound["Sound2"].start();
+      };
+
+    }
+  );
+}
+```
+
+もちろん、require.js が使えない場合は、シンプルに<script>タグを使ってライブラリを読み込む事も可能です。  
+
+## ブラウザの対応状況について 
+
+HTML5 の WebAudioAPI は一部のブラウザで未対応のものもあります。  
+過去のバージョンも含め、対応状況については <http://caniuse.com/audio-api> を参照してください。  
+
+## インストール
+
+### 必要なもの
+
+* Bower
+
+### 方法
+
+以下のコマンドを実行してください。  
+
+```
+  bower install sndjs --save
+```
+
+bower_components に snd.js を使用するのに必要なファイルがインストールされます。   
+(ビルド前ソースなど、不要なものはインストールされません)  
+
+## ビルド
+
+### 必要なもの
+
+* Node.js
+* Grunt
+
+### 方法
+
+カレントディレクトリを snd.js へ移動します。  
+
+```
+cd ./path/to/snd.js
+```
+
+"npm install"を実行します。  
+
+```
+npm install
+```
+
+grunt を使う準備ができていますので、"grunt"でビルドします。  
+
+```
+grunt
+```
+
+## require.config.js について
+
+require.js でパスの指定などに使う require.config.js が "../snd.js/src/require.config.js" にあります。  
+"%SND_BASE_URL%" となっている箇所を、環境の "sndjs/dist" のパスに置換してお使いください。  
 
 ## 課題・目標など
 
 課題や、今後扱う目標などはGithubのIssuesを参照してください。  
-<https://github.com/h10x64/snd.js/issues>
+<https://github.com/h10x64/snd.js/issues>  
 
 ## ライセンス
 
-The MIT License (MIT)
+The MIT License (MIT)  
 copyright (c) 2014 - 2015 N_H <h.10x64@sndjs.org>
-

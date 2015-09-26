@@ -77,6 +77,10 @@ module.exports = function(grunt) {
                         'src/COPYRIGHT',
                         'src/class/optional/snd.MediaStreamAudioSource.js'
                     ],
+                    'dist/class/optional/snd.MediaStreamAudioDestination.js': [
+                        'src/COPYRIGHT',
+                        'src/class/optional/snd.MediaStreamAudioDestination.js'
+                    ],
                     'dist/class/optional/snd.OscillatorSource.js': [
                         'src/COPYRIGHT',
                         'src/class/optional/snd.OscillatorSource.js'
@@ -209,8 +213,12 @@ module.exports = function(grunt) {
                     ],
                     'dist/plugins/invalid/snd.invalid.Noise.js': [
                         'src/plugins/invalid/snd.invalid.Noise.js'
+                    ],
+                    
+                    // Peer
+                    'dist/plugins/peer/snd.Peer.js': [
+                        'src/plugins/peer/snd.Peer.js'
                     ]
-
                 }
             }
         },
@@ -276,14 +284,15 @@ module.exports = function(grunt) {
                     'dist/min/plugins/mml/snd.mml.js': ['dist/plugins/mml/snd.mml.js'],
                     'dist/min/plugins/three/snd.three.js': ['dist/plugins/three/snd.three.js'],
                     'dist/min/plugins/encrypt/snd.encrypt.js': ['dist/plugins/encrypt/snd.encrypt.js'],
-                    'dist/min/plugins/invalid/min/snd.invalid.js':['dist/plugins/invalid/snd.invalid.js'],
-                    'dist/min/plugins/invalid/min/snd.invalid.Analyser.js':['dist/plugins/invalid/snd.invalid.Analyser.js'],
-                    'dist/min/plugins/invalid/min/snd.invalid.BiquadFilter.js':['dist/plugins/invalid/snd.invalid.BiquadFilter.js'],
-                    'dist/min/plugins/invalid/min/snd.invalid.BufferSource.js':['dist/plugins/invalid/snd.invalid.BufferSource.js'],
-                    'dist/min/plugins/invalid/min/snd.invalid.Convolver.js':['dist/plugins/invalid/snd.invalid.Convolver.js'],
-                    'dist/min/plugins/invalid/min/snd.invalid.Delay.js':['dist/plugins/invalid/snd.invalid.Delay.js'],
-                    'dist/min/plugins/invalid/min/snd.invalid.Oscillator.js':['dist/plugins/invalid/snd.invalid.Oscillator.js'],
-                    'dist/min/plugins/invalid/min/snd.invalid.Noise.js':['dist/plugins/invalid/snd.invalid.Noise.js'],
+                    'dist/min/plugins/invalid/snd.invalid.js':['dist/plugins/invalid/snd.invalid.js'],
+                    'dist/min/plugins/invalid/snd.invalid.Analyser.js':['dist/plugins/invalid/snd.invalid.Analyser.js'],
+                    'dist/min/plugins/invalid/snd.invalid.BiquadFilter.js':['dist/plugins/invalid/snd.invalid.BiquadFilter.js'],
+                    'dist/min/plugins/invalid/snd.invalid.BufferSource.js':['dist/plugins/invalid/snd.invalid.BufferSource.js'],
+                    'dist/min/plugins/invalid/snd.invalid.Convolver.js':['dist/plugins/invalid/snd.invalid.Convolver.js'],
+                    'dist/min/plugins/invalid/snd.invalid.Delay.js':['dist/plugins/invalid/snd.invalid.Delay.js'],
+                    'dist/min/plugins/invalid/snd.invalid.Oscillator.js':['dist/plugins/invalid/snd.invalid.Oscillator.js'],
+                    'dist/min/plugins/invalid/snd.invalid.Noise.js':['dist/plugins/invalid/snd.invalid.Noise.js'],
+                    'dist/min/plugins/peer/snd.Peer.js':['dist/plugins/peer/snd.Peer.js'],
                 }
             }
         },

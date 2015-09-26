@@ -135,6 +135,8 @@ require(["snd.BufferSource", "snd.ScriptProcessor"], function(snd) {
         window.document.body.style.cursor = "default";
     };
     
+    window.snd = snd;
+    
     if (LOADED) {
         onLoad();
     } else {
