@@ -72,7 +72,7 @@ require(["snd.BufferSource"], function(snd) {
 }
 ```
 
-You can load snd.js with <script> tag, if you can't use require.js.   
+You can load snd.js with &lt;script&gt; tag, if you can't use require.js.   
 
 ## Can I use Web Audio API ? 
 
@@ -130,7 +130,7 @@ Please replace "%SND_BASE_URL%" to your "sndjs/dist" path.
 ## License
 
 The MIT License (MIT)  
-copyright (c) 2014 - 2015 N_H <h.10x64@sndjs.org>  
+copyright (c) 2014 - 2015 N_H &lt;h.10x64@sndjs.org&gt;  
 
 
 ## snd.jsについて
@@ -201,7 +201,7 @@ require(["snd.BufferSource"], function(snd) {
 }
 ```
 
-もちろん、require.js が使えない場合は、シンプルに<script>タグを使ってライブラリを読み込む事も可能です。  
+もちろん、require.js が使えない場合は、シンプルに&lt;script&gt;タグを使ってライブラリを読み込む事も可能です。  
 
 ## ブラウザの対応状況について 
 
@@ -265,4 +265,5 @@ require.js でパスの指定などに使う require.config.js が "../snd.js/sr
 ## ライセンス
 
 The MIT License (MIT)  
-copyright (c) 2014 - 2015 N_H <h.10x64@sndjs.org>
+copyright (c) 2014 - 2015 N_H &lt;h.10x64@sndjs.org&gt;
+
