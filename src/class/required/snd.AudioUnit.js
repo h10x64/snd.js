@@ -174,50 +174,79 @@
      * @param {AudioParam} audioParam 
      * @returns {Gain} 
      */
-    snd.AudioUnit.prototype.createParamGain = function(audioParam) {
+    snd.AudioUnit.prototype.createParamGain = function() {
         var ret = snd.AUDIO_CONTEXT.createGain();
-        ret._audioParam = audioParam;
-        ret.connect(ret._audioParam);
+        ret._audioParams = [];
         
         Object.defineProperties(ret, {
             value: {
                 set: function(val) {
-                    ret._audioParam.value = val;
+                    for (var i in this._audioParams) {
+                        this._audioParams[i].value = val;
+                    }
                 },
                 get: function() {
-                    return ret._audioParam.value;
+                    if (this._audioParams.length <= 0) {
+                        return undefined;
+                    }
+                    
+                    return this._audioParams[0].value;
                 }
             },
             defaultValue: {
                 get: function() {
-                    return ret._audioParam.defaultValue;
+                    if (this._audioParams.length <= 0) {
+                        return undefined;
+                    }
+                    
+                    return this._audioParams[0].defaultValue;
                 }
             }
         });
+        
         ret.setValueAtTime = function(value, startTime) {
-            ret._audioParam.setValueAtTime(value, startTime);
+            for (var i in ret._audioParams) {
+                ret._audioParams[i].setValueAtTime(value, startTime);
+            }
         };
         ret.linearRampToValueAtTime = function(value, endTime) {
-            ret._audioParam.linearRampToValueAtTime(value, endTime);
+            for (var i in ret._audioParams) {
+                ret._audioParams[i].linearRampToValueAtTime(value, endTime);
+            }
         };
         ret.exponentialRampToValueAtTime = function(value, endTime) {
-            ret._audioParam.exponentialRampToValueAtTime(value, endTime);
+            for (var i in ret._audioParams) {
+                ret._audioParams[i].exponentialRampToValueAtTime(value, endTime);
+            }
         };
         ret.setTargetAtTime = function(target, startTime, timeConstant) {
-            ret._audioParam.setTargetAtTime(target, startTime, timeConstant);
+            for (var i in ret._audioParams) {
+                ret._audioParams[i].setTargetAtTime(target, startTime, timeConstant);
+            }
         };
         ret.setValueCurveAtTime  = function(values, startTime, duration) {
-            ret._audioParam.setValueCurveAtTime(values, startTime, duration);
+            for (var i in ret._audioParams) {
+                ret._audioParams[i].setValueCurveAtTime(values, startTime, duration);
+            }
         };
         ret.cancelScheduledValues = function(startTime) {
-            ret._audioParam.cancelScheduledValues(startTime);
+            for (var i in ret._audioParams) {
+                ret._audioParams[i].cancelScheduledValues(startTime);
+            }
         };
-        
-        ret.setAudioParam = function(audioParam) {
-            ret.disconnect(ret._audioParam);
-            ret._audioParam = audioParam;
-            ret.connect(ret._audioParam);
-        }
+        ret.addAudioParam = function(audioParam) {
+            ret.connect(audioParam);
+            
+            ret._audioParams.push(audioParam);
+        };
+        ret.removeAudioParam = function(audioParam) {
+            ret.disconnect(audioParam);
+            
+            var i = ret._audioParams.indexOf(audioParam);
+            if (i >= 0) {
+                ret._audioParams.splice(i, 1);
+            }
+        };
         
         return ret;
     };
