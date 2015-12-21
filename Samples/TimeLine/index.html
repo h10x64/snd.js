@@ -1,8 +1,4 @@
 <!DOCTYPE html>
-<!--
-    全画面でカーソル形状を変更するために、htmlとbodyタグのheightを100%にする必要があります。
-    htmlタグやbodyタグでheightに100%を指定しなかった場合、画面全体でなく、bodyタグの内側にカーソルが入った場合のみカーソルが変更されるようになってしまいます。
--->
 <html style="height:100%;">
     <head>
         <title>タイムライン</title>
@@ -13,11 +9,32 @@
             window.onload = function() {
                 LOADED = true;
             };
+            
+            onStartButtonClick = function() {
+                if (window.player) {
+                    window.player.start();
+                }
+            };
+            
+            onStopButtonClick = function() {
+                if (window.player) {
+                    window.player.stop();
+                }
+            };
         </script>
-        <script src="./require.config.js"></script>
-        <script src="../../lib/require.js" data-main="./TimeLineSample.js"></script>
     </head>
     <body style="height:100%;">
-        10秒間、BufferSourceとOscillatorSourceを交互に0.5秒づつ鳴らします。<br/>
+        <canvas id="player" width="680" height="30" style="background-color: #FFF; border:#000 1px solid;"></canvas><br/>
+        <button id="startButton" onclick="onStartButtonClick()">Start</button><button id="stopButton" onclick="onStopButtonClick()">Stop</button><br/>
+        タイムライン(snd.TimeLine)を使ってオシレータ音源(snd.OscillatorSource)とバッファ音源(snd.OscillatorSource)を交互に鳴らします。<br/>
+        Play snd.OscillatorSource and snd.BufferSource alternately with snd.TimeLine.<br/>
+        <br/>
+        canvasタグをクリックするとスタート位置を変更することができます。<br/>
+        You can change start at time when click the "canvas" tag.<br/>
+        <br/>
+        !注意! サーバが必要です。（バッファ音源で再生するデータの取得にXMLHttpRequestを使用しています）<br/>
+        !NOTICE! Need some server. (This sample uses XMLHttpRequest to load sound data of the Buffered Source)
+        <script src="./require.config.js"></script>
+        <script src="../../lib/require.js" data-main="./TimeLineSample.js"></script>
    </body>
 </html>

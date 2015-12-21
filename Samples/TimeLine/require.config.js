@@ -28,7 +28,8 @@ var require = {
         'snd.Noise': '../../dist/class/optional/snd.Noise',
         'snd.VinylNoise': '../../dist/class/optional/snd.VinylNoise',
         'snd.MIDI': '../../dist/class/optional/snd.MIDI',
-        'snd.MIDI.util': '../../dist/class/optional/snd.MIDI.util'
+        'snd.MIDI.util': '../../dist/class/optional/snd.MIDI.util',
+        'Player': 'Player'
     }
 };
 
