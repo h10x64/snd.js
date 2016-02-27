@@ -100,11 +100,11 @@ require(["snd.BufferSource", "snd.ScriptProcessor"], function(snd) {
         var fadeInSound = loadedData[FADE_IN_SOUND_ID];
         var fadeOutSound = loadedData[FADE_OUT_SOUND_ID];
 
-        /* 取得した音データをオーディオ環境にセット */
-        snd.MASTER.connectAudioUnit(buttonSound1.id, buttonSound1);
-        snd.MASTER.connectAudioUnit(buttonSound2.id, buttonSound2);
-        snd.MASTER.connectAudioUnit(fadeInSound.id, fadeInSound);
-        snd.MASTER.connectAudioUnit(fadeOutSound.id, fadeOutSound);
+        /* 取得した音データをマスタに接続 */
+        buttonSound1.connect(snd.MASTER);
+        buttonSound2.connect(snd.MASTER);
+        fadeInSound.connect(snd.MASTER);
+        fadeOutSound.connect([snd.MASTER]); // 配列も可
 
         /* 再生メソッドの書き換え */
         // コードフェードイン時に呼び出されるfadeinメソッドを書き換える
