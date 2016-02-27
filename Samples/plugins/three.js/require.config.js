@@ -11,8 +11,8 @@
 var require = {
     paths: {
         /* snd */
-        'snd': '../../../dist/snd',
-        'snd.util': '../../../dist/snd.util',
+        'snd': '../../../dist/class/snd',
+        'snd.util': '../../../dist/class/snd.util',
         'snd.AudioDataManager': '../../../dist/class/required/snd.AudioDataManager',
         'snd.AudioMaster': '../../../dist/class/required/snd.AudioMaster',
         'snd.AudioUnit': '../../../dist/class/required/snd.AudioUnit',

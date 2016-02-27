@@ -3,8 +3,8 @@
  */
 var require = {
     paths: {
-        'snd': '../../dist/snd',
-        'snd.util': '../../dist/snd.util',
+        'snd': '../../dist/class/snd',
+        'snd.util': '../../dist/class/snd.util',
         'snd.AudioDataManager': '../../dist/class/required/snd.AudioDataManager',
         'snd.AudioMaster': '../../dist/class/required/snd.AudioMaster',
         'snd.AudioUnit': '../../dist/class/required/snd.AudioUnit',
@@ -24,6 +24,7 @@ var require = {
         'snd.Synth': '../../dist/class/optional/snd.Synth',
         'snd.TimeLine': '../../dist/class/optional/TimeLine/snd.TimeLine',
         'snd.TimeLineEvent': '../../dist/class/optional/TimeLine/snd.TimeLineEvent',
+        'snd.Envelope': '../../dist/class/optional/TimeLine/snd.Envelope',
         'snd.WaveShaper': '../../dist/class/optional/snd.WaveShaper',
         'snd.Noise': '../../dist/class/optional/snd.Noise',
         'snd.VinylNoise': '../../dist/class/optional/snd.VinylNoise',
@@ -32,4 +33,3 @@ var require = {
         'Player': 'Player'
     }
 };
-

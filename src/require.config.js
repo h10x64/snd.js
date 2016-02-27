@@ -9,11 +9,11 @@
  * 使用しない行は消してしまって問題ありません。
  */
 var require = {
-//    baseUrl: "%BASE_URL%" 
+//    baseUrl: "%BASE_URL%"
     paths: {
         /* snd */
-        'snd': '%SND_BASE_URL%/snd',
-        'snd.util': '%SND_BASE_URL%/snd.util',
+        'snd': '%SND_BASE_URL%/class/snd',
+        'snd.util': '%SND_BASE_URL%/class/snd.util',
         'snd.AudioDataManager': '%SND_BASE_URL%/class/required/snd.AudioDataManager',
         'snd.AudioMaster': '%SND_BASE_URL%/class/required/snd.AudioMaster',
         'snd.AudioUnit': '%SND_BASE_URL%/class/required/snd.AudioUnit',
@@ -68,4 +68,3 @@ var require = {
         'snd.MediaElementAudioNode': '%SND_BASE_URL%/plugins/three/snd.MediaElementAudioNode'
     }
 };
-
