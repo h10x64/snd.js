@@ -128,24 +128,6 @@
     snd.Analyser.prototype = Object.create(snd.AudioUnit.prototype);
     snd.Analyser.prototype.constructor = snd.Analyser;
     
-    snd.Analyser.prototype.connect = function(connectTo, indexIn, indexOut, id) {
-        snd.AudioUnit.prototype.connect.apply(this, arguments);
-        if (connectTo.getConnector != null) {
-            this._analyser.connect(connectTo.getConnector(), indexIn, indexOut);
-        } else {
-            this._analyser.connect(connectTo, indexIn, indexOut);
-        }
-    };
-    
-    snd.Analyser.prototype.disconnect = function(disconnectFrom, indexIn, id) {
-        snd.AudioUnit.prototype.disconnect.apply(this, arguments);
-        if (disconnectFrom.getConnector != null) {
-            this._analyser.disconnect(disconnectFrom.getConnector(), indexIn);
-        } else {
-            this._analyser.disconnect(disconnectFrom, indexIn);
-        }
-    };
-    
     snd.Analyser.prototype.getParamDescription = function() {
         var ret = snd.AudioUnit.prototype.getParamDescription.apply(this, arguments);
         
@@ -197,6 +179,10 @@
     };
     
     snd.Analyser.prototype.getConnector = function() {
+        return this._analyser;
+    };
+    
+    snd.Analyser.prototype.getOutputConnector = function() {
         return this._analyser;
     };
     

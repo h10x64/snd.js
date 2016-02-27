@@ -11,7 +11,7 @@
 }(this, function(snd) {
     snd.ChannelMerger = function(id, channels) {
         snd.AudioUnit.apply(this, arguments);
-
+        
         Object.defineProperties(this, {
             channelCount: {
                 get: function() {
@@ -25,17 +25,11 @@
     snd.ChannelMerger.prototype = Object.create(snd.AudioUnit.prototype);
     snd.ChannelMerger.prototype.constructor = snd.ChannelMerger;
 
-    snd.ChannelMerger.prototype.connect = function(connectTo, indexIn, indexOut, id) {
-        snd.AudioUnit.prototype.connect.apply(this, arguments);
-        this._merger.connect(connectTo, indexIn, indexOut);
-    };
-
-    snd.ChannelMerger.prototype.disconnect = function(disconnectFrom, indexOut, id) {
-        snd.AudioUnit.prototype.disconnect.apply(this, arguments);
-        this._merger.disconnect(disconnectFrom, indexOut);
-    };
-
     snd.ChannelMerger.prototype.getConnector = function() {
+        return this._merger;
+    };
+    
+    snd.ChannelMerger.prototype.getOutputConnector = function() {
         return this._merger;
     };
 

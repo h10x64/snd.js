@@ -46,6 +46,10 @@
         return this._gain;
     };
     
+    snd.MediaStreamAudioDestination.prototype.getOutputConnector = function() {
+        return undefined;
+    };
+    
     snd.STREAM_MASTER = new snd.MediaStreamAudioDestination("STREAM_MASTER");
 
     return snd;

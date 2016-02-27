@@ -23,17 +23,11 @@
         this.setChannelCount(channelCount);
     };
 
-    snd.ChannelSplitter.prototype.connect = function(connectTo, indexIn, indexOut, id) {
-        snd.AudioUnit.prototype.connect.apply(this, arguments);
-        this._splitter.connect(connectTo, indexIn, indexOut, id);
-    };
-
-    snd.ChannelSplitter.prototype.disconnect = function(disconnectFrom, indexOut, id) {
-        snd.AudioUnit.prototype.disconnect.apply(this, arguments);
-        this._splitter.disconnect(disconnectFrom, indexOut, id);
-    };
-
     snd.ChannelSplitter.prototype.getConnector = function() {
+        return this._splitter;
+    };
+    
+    snd.ChannelSplitter.prototype.getOutputConnector = function() {
         return this._splitter;
     };
 

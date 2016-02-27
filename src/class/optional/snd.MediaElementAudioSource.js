@@ -811,10 +811,10 @@
         }
         return false;
     };
-    
+
     snd.MediaElementAudioSource.prototype.getParamDescription = function() {
         var ret = snd.Source.prototype.getParamDescription.apply(this, arguments);
-        
+
         ret.element = {
             type: snd.params.type.VALUE,
             default: undefined,
@@ -827,7 +827,7 @@
             max: undefined,
             min: undefined
         };
-        
+
         return ret;
     };
 
@@ -871,7 +871,7 @@
     }
     snd.MediaElementAudioSource.Status.prototype = Object.create(snd.Source.Status.prototype);
     snd.MediaElementAudioSource.Status.prototype.constructor = snd.MediaElementAudioSource.Status;
-    
+
     /* snd.util Methods */
 
     /**
@@ -883,7 +883,7 @@
      * また、connectToMasterをtrueに設定した場合、自動でsnd.MASTER.connectAudioUnitを実行します。<br/>
      * この場合、funcの中でBufferSourceオブジェクトのstartメソッドを使うだけで音が再生されるようになります。<br/>
      * 音源と出力の間にエフェクトを追加する必要が無い場合、connectToMasterをtrueに設定すると便利です。
-     * 
+     *
      * @param {HashMap} dataSet 音源のIDと、データURLのハッシュマップ {ID1: "URL1", ID2: "URL2", ... IDn: "URLn"}
      * @param {boolean} connectToMaster 読み込み完了時にsnd.MASTERへ接続するかどうか
      * @param {type} parentElem Audioタグを追加するDOMエレメント
@@ -918,8 +918,6 @@
 
         return ret;
     };
-    
+
     return snd;
 }));
-
-

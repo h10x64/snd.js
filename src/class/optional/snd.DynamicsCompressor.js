@@ -140,24 +140,6 @@
     snd.DynamicsCompressor.prototype = Object.create(snd.AudioUnit.prototype);
     snd.DynamicsCompressor.prototype.constructor = snd.DynamicsCompressor;
 
-    snd.DynamicsCompressor.prototype.connect = function(connectTo, indexIn, indexOut, id) {
-        snd.AudioUnit.prototype.connect.apply(this, arguments);
-        if (connectTo.getConnector != null) {
-            this._output.connect(connectTo.getConnector(), indexIn, indexOut);
-        } else {
-            this._output.connect(connectTo, indexIn, indexOut);
-        }
-    };
-
-    snd.DynamicsCompressor.prototype.disconnect = function(disconnectFrom, indexIn, id) {
-        snd.AudioUnit.prototype.disconnect.apply(this, arguments);
-        if (disconnectFrom.getConnector != null) {
-            this._output.disconnect(disconnectFrom.getConnector(), indexIn);
-        } else {
-            this._output.disconnect(disconnectFrom, indexIn);
-        }
-    };
-
     snd.DynamicsCompressor.prototype.getParamDescription = function() {
         var ret = snd.AudioUnit.prototype.getParamDescription.apply(this, arguments);
 
@@ -240,6 +222,10 @@
 
     snd.DynamicsCompressor.prototype.getConnector = function() {
         return this._connector;
+    };
+    
+    snd.DynamicsCompressor.prototype.getOutputConnector = function() {
+        return this._output;
     };
 
     snd.DynamicsCompressor.prototype.loadData = function(data) {

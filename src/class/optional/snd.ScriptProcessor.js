@@ -10,7 +10,7 @@
     }
 }(this, function(snd) {
     snd.ScriptProcessor = function(id) {
-        snd.Source.apply(this, arguments);
+        snd.AudioUnit.apply(this, arguments);
 
         Object.defineProperties(this, {
             inputChannels: {
@@ -111,6 +111,14 @@
         };
         
         return ret;
+    };
+    
+    snd.ScriptProcessor.prototype.getConnector = function() {
+        return this._unit;
+    };
+    
+    snd.ScriptProcessor.prototype.getOutputConnector = function() {
+        return this._gain;
     };
 
     snd.ScriptProcessor.prototype.createStatus = function() {
