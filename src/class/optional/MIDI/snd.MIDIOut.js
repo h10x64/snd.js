@@ -9,24 +9,24 @@
         root.snd = factory(root.snd);
     }
 }(this, function(snd) {
-    
+
     if (!snd.MIDI) {
         snd.MIDI = {};
     }
-    
+
     Object.defineProperties(snd.MIDI, {
         GENERAL_MIDI_OUT: {
             value: {
-                noteoff: {ch:true,val:0x80},
-                noteon: {ch:true,val:0x90},
-                sysex: {ch:true,val:0xF0},
-                quarterframe: {ch:true,val:0xF1},
-                songselect: {ch:true,val:0xF2},
-                start: {ch:true,val:0xFA},
-                continue: {ch:true,val:0xFB},
-                stop: {ch:true,val:0xFC},
-                endex: {ch:true,val:0xF7},
-                reset: {ch:true,val:0xFF},
+                noteoff: {ch:true,val:0x80,second:undefined},
+                noteon: {ch:true,val:0x90,second:undefined},
+                sysex: {ch:false,val:0xF0,second:undefined},
+                quarterframe: {ch:false,val:0xF1,second:undefined},
+                songselect: {ch:false,val:0xF2,second:undefined},
+                start: {ch:false,val:0xFA,second:undefined},
+                continue: {ch:false,val:0xFB,second:undefined},
+                stop: {ch:false,val:0xFC,second:undefined},
+                endex: {ch:false,val:0xF7,second:undefined},
+                reset: {ch:false,val:0xFF,second:undefined},
                 sysundef: {ch:true,val:0xB0,second:[
                     [0xF3],
                     [0xF4],
@@ -238,22 +238,22 @@
             writable: false
         }
     });
-    
+
     snd.MIDI.MIDIOut = function(midiOut, midiDef) {
         this._midiOut = midiOut;
         this._midiDef = (midiDef) ? midiDef : snd.MIDI.GENERAL_MIDI_OUT;
     };
-    
+
     snd.MIDI.MIDIOut.prototype.sendMessage = function(message, ch, no, pos, values, timestamp) {
         var msgBytes = [];
         var keys;
-        
+
         if (typeof(message) == "string") {
             var headerBytes = snd.MIDI.MIDIOut.convMsgStrToByte(message, ch, no, pos);
             if (headerBytes.length == 0) {
                 return this;
             }
-            
+
             keys = Object.keys(headerBytes);
             for (var key in keys) {
                 msgBytes.push(headerBytes[key]);
@@ -262,40 +262,40 @@
             console.log("message must be String like \"NoteOn\".(If you need send some MIDI Bytes like [0x81, 60, 127], please use send method.)");
             return;
         }
-        
+
         var keys = Object.keys(values);
         for (var key in keys) {
             msgBytes.push(values[key]);
         }
-        
+
         return this.send(msgBytes.slice(0, 3), timestamp);
     }
-    
+
     snd.MIDI.MIDIOut.prototype.send = function(messageBytes, timestamp) {
         this._midiOut.send(messageBytes, timestamp);
         return this;
     };
-    
+
     snd.MIDI.MIDIOut.convMsgStrToBytes = function(str, ch, no, pos) {
         var ret = [];
         var b;
-        
+
         var def = this._midiDef[str.toLowerCase()];
         if (!def) {
             console.log("\"" + str + "\" is not supported.");
             return ret;
         }
-        
+
         if (def.ch) {
             b = (def.val & 0xF0) | (ch & 0x0F);
         } else {
             b = def.val;
         }
         ret.push(b);
-        
+
         if (def.second) {
             var second = null;
-            
+
             if (def.second.length == 1) {
                 if (def.second[0].length == 1) {
                     second = def.second[0][0];
@@ -313,17 +313,17 @@
                     }
                 }
             }
-            
+
             if (!second) {
                 console.log("Massage \"" + str + "\" (no." + no + " pos." + pos + ") is not listed.");
                 ret = [];
             }
-            
+
             ret.push(second);
         }
-        
+
         return ret;
     };
-    
+
     return snd;
 }));
