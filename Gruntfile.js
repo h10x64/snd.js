@@ -5,15 +5,15 @@ module.exports = function(grunt) {
             basic_and_extras: {
                 files: {
                     /* base */
-                    'dist/snd.js': [
+                    'dist/class/snd.js': [
                         'src/COPYRIGHT',
-                        'src/snd.js'
+                        'src/class/snd.js'
                     ],
-                    'dist/snd.util.js':[
+                    'dist/class/snd.util.js':[
                         'src/COPYRIGHT',
-                        'src/snd.util.js'
+                        'src/class/snd.util.js'
                     ],
-                    
+
                     /* required */
                     'dist/class/required/snd.Exception.js': [
                         'src/COPYRIGHT',
@@ -35,7 +35,7 @@ module.exports = function(grunt) {
                         'src/COPYRIGHT',
                         'src/class/required/snd.Source.js'
                     ],
-                    
+
                     /* optional */
                     'dist/class/optional/snd.Analyser.js': [
                         'src/COPYRIGHT',
@@ -101,6 +101,10 @@ module.exports = function(grunt) {
                         'src/COPYRIGHT',
                         'src/class/optional/TimeLine/snd.TimeLineEvent.js'
                     ],
+                    'dist/class/optional/TimeLine/snd.Envelope.js':[
+                        'src/COPYRIGHT',
+                        'src/class/optional/TimeLine/snd.Envelope.js'
+                    ],
                     'dist/class/optional/snd.WaveShaper.js': [
                         'src/COPYRIGHT',
                         'src/class/optional/snd.WaveShaper.js'
@@ -129,14 +133,14 @@ module.exports = function(grunt) {
                         'src/COPYRIGHT',
                         'src/class/optional/MIDI/snd.MIDI.util.js'
                     ],
-                    
+
                     /* plugin */
                     // mml
                     'dist/plugins/mml/snd.mml.js': [
                         'src/plugins/mml/COPYRIGHT',
                         'src/plugins/mml/snd.mml.js'
                     ],
-                    
+
                     // three
                     'dist/plugins/three/snd.three.js': [
                         'src/plugins/three/COPYRIGHT',
@@ -170,7 +174,7 @@ module.exports = function(grunt) {
                         'src/plugins/three/COPYRIGHT',
                         'src/plugins/three/snd.MediaElementAudioNode.js',
                     ],
-                    
+
                     // encrypt
                     'dist/plugins/encrypt/snd.encrypt.js': [
                         'src/plugins/encrypt/COPYRIGHT',
@@ -185,7 +189,7 @@ module.exports = function(grunt) {
                     'dist/plugins/encrypt/keygen.rb': [
                         'src/plugins/encrypt/keygen.rb'
                     ],
-                    
+
                     // invalid
                     'dist/plugins/invalid/snd.invalid.js': [
                         'src/plugins/invalid/snd.invalid.js'
@@ -214,7 +218,7 @@ module.exports = function(grunt) {
                     'dist/plugins/invalid/snd.invalid.Noise.js': [
                         'src/plugins/invalid/snd.invalid.Noise.js'
                     ],
-                    
+
                     // Peer
                     'dist/plugins/peer/snd.Peer.js': [
                         'src/plugins/peer/snd.Peer.js'
@@ -252,8 +256,8 @@ module.exports = function(grunt) {
             },
             dist: {
                 files: {
-                    'dist/min/snd.js': ['dist/snd.js'],
-                    'dist/min/snd.util.js': ['dist/snd.util.js'],
+                    'dist/min/class/snd.js': ['dist/class/snd.js'],
+                    'dist/min/class/snd.util.js': ['dist/class/snd.util.js'],
                     'dist/min/class/required/snd.AudioDataManager.js': ['dist/class/required/snd.AudioDataManager.js'],
                     'dist/min/class/required/snd.AudioMaster.js': ['dist/class/required/snd.AudioMaster.js'],
                     'dist/min/class/required/snd.AudioUnit.js': ['dist/class/required/snd.AudioUnit.js'],
@@ -265,15 +269,15 @@ module.exports = function(grunt) {
                     'dist/min/class/optional/snd.Convolver.js': ['dist/class/optional/snd.Convolver.js'],
                     'dist/min/class/optional/snd.Delay.js': ['dist/class/optional/snd.Delay.js'],
                     'dist/min/class/optional/snd.DynamicsCompressor.js': ['dist/class/optional/snd.DynamicsCompressor.js'],
-                    'dist/min/class/optional/snd.Envelope.js': ['dist/class/optional/snd.Envelope.js'],
                     'dist/min/class/optional/snd.Gain.js': ['dist/class/optional/snd.Gain.js'],
                     'dist/min/class/optional/snd.MediaElementAudioSource.js': ['dist/class/optional/snd.MediaElementAudioSource.js'],
                     'dist/min/class/optional/snd.MediaStreamAudioSource.js': ['dist/class/optional/snd.MediaStreamAudioSource.js'],
                     'dist/min/class/optional/snd.OscillatorSource.js': ['dist/class/optional/snd.OscillatorSource.js'],
                     'dist/min/class/optional/snd.ScriptProcessor.js': ['dist/class/optional/snd.ScriptProcessor.js'],
                     'dist/min/class/optional/snd.Synth.js': ['dist/class/optional/snd.Synth.js'],
-                    'dist/min/class/optional/snd.TimeLine.js': ['dist/class/optional/snd.TimeLine.js'],
-                    'dist/min/class/optional/snd.TimeLineEvent.js': ['dist/class/optional/snd.TimeLineEvent.js'],
+                    'dist/min/class/optional/TimeLine/snd.TimeLine.js': ['dist/class/optional/TimeLine/snd.TimeLine.js'],
+                    'dist/min/class/optional/TimeLine/snd.TimeLineEvent.js': ['dist/class/optional/TimeLine/snd.TimeLineEvent.js'],
+                    'dist/min/class/optional/TimeLine/snd.Envelope.js': ['dist/class/optional/TimeLine/snd.Envelope.js'],
                     'dist/min/class/optional/snd.WaveShaper.js': ['dist/class/optional/snd.WaveShaper.js'],
                     'dist/min/class/optional/snd.Noise.js': ['dist/class/optional/snd.Noise.js'],
                     'dist/min/class/optional/snd.VinylNoise.js': ['dist/class/optional/snd.VinylNoise.js'],
