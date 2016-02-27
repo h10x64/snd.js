@@ -137,7 +137,8 @@
      * keyがキー値となるAudioBufferを追加します。
      * @param {type} key 追加されるAudioBufferのキー値
      * @param {type} url 追加されるAudioBufferが読込むURL
-     */         snd.AudioDataManager.prototype.add = function(key, url) {
+     */
+    snd.AudioDataManager.prototype.add = function(key, url) {
         var _this = this;
         this._dataMap[key] = {doesLoaded: false};
 
@@ -313,4 +314,3 @@
 
     return snd;
 }));
-
