@@ -114,7 +114,7 @@
     snd.MediaStreamAudioSource.prototype.createStatus = function() {
         return new snd.MediaStreamAudioSource.Status();
     };
-
+    
     snd.MediaStreamAudioSource.prototype.toJSON = function() {
         return this._status;
     };

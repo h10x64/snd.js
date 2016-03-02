@@ -30,7 +30,7 @@
 (function(root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD
-        define(['snd.TimeLineEvent'], factory);
+        define(['snd.TimeLineEvent', 'snd.Envelope'], factory);
     } else if (typeof exports === 'object') {
         // Node
     } else {
@@ -86,16 +86,20 @@
             },
             elapsedTime: {
                 get: function() {
-                    if (this._elapsedTime < 0) {
-                        return snd.CURRENT_TIME - this._startedTime;
+                    if (this.status != snd.status.STARTED) {
+                        return 0;
                     } else {
-                        return this._elapsedTime;
+                        return snd.CURRENT_TIME - this._startedTime;
                     }
                 }
             },
             now: {
                 get: function() {
-                    return this._startAt + this.elapsedTime;
+                    if (this.status != snd.status.STARTED) {
+                        return this._startAt;
+                    } else {
+                        return this._startAt + this.elapsedTime;
+                    }
                 }
             },
             interval: {
@@ -128,32 +132,49 @@
     };
     
     snd.TimeLine.prototype.push = function(timeLineEvent) {
-        this.addEvent(timeLineEvent);
-    };
-    
-    snd.TimeLine.prototype.addEvent = function(target, startTime, endTime) {
-        var st = (startTime) ? startTime : 0;
-        var et = (endTime) ? endTime : 1;
+        timeLineEvent.addStartTimeChangedEventListener(this.onTimeLineEventStartTimeChanged);
         
-        var eventId = this.id + "." + this.getNewEventId();
+        this._events.push(timeLineEvent);
         
-        var event = new snd.TimeLineEvent(eventId, target, st, et);
-        
-        this._events.push(event);
         this._events.sort(snd.TimeLineEvent.compare);
+        
+        this.onTimeLineEventAdded(timeLineEvent);
     };
     
-    snd.TimeLine.prototype.removeEvent = function(time) {
-        var removeEvents = this.searchEvents(time);
-        
-        for (var i in removeEvents) {
-            var event = removeEvents[i];
-            
-            var idx = this._events.indexof(event);
-            if (idx >= 0) {
-                this._events.splice(idx, 1);
-            }
+    snd.TimeLine.prototype.onTimeLineEventAdded = function(evt) {
+    };
+    
+    snd.TimeLine.prototype.size = function() {
+        return this._events.length;
+    };
+    
+    snd.TimeLine.prototype.getEvent = function(i) {
+        if (i >= 0 && i < this._events.length) {
+            return this._events[i];
+        } else {
+            console.log("Index out of range. Return undefined. (timeline.size = " + this._events.length + ", i = " + i + ")");
+            return undefined;
         }
+    };
+    
+    snd.TimeLine.prototype.removeEvent = function(timeLineEvent) {
+        var i = this._events.indexof(timeLineEvent);
+        this.remove(i);
+    };
+    
+    snd.TimeLine.prototype.remove = function(i) {
+        if (i >= 0 && i < this._events.length) {
+            var evt = this._events[i];
+            
+            evt.removeStartTimeChangedEventListener(this.onTimeLineEventStartTimeChanged);
+            
+            this._events.splice(i, 1);
+            
+            this.onTimeLineEventRemoved(evt);
+        }
+    };
+    
+    snd.TimeLine.prototype.onTimeLineEventRemoved = function(evt) {
     };
     
     snd.TimeLine.prototype.start = function() {
@@ -173,7 +194,6 @@
         this._status = snd.status.STARTED;
         
         this._startedTime = snd.CURRENT_TIME;
-        this._elapsedTime = -1;
         
         this.startInterval();
         
@@ -181,7 +201,6 @@
     };
     
     snd.TimeLine.prototype.onstarted = function(startedTime) {
-        
     };
     
     /**
@@ -197,14 +216,14 @@
      * </ul>
      * @returns {undefined}
      */
-    snd.TimeLine.prototype.stop = function() {
+    snd.TimeLine.prototype.stop = function(when) {
+        var now = this.now;
+        
         window.clearInterval(this._intervalID);
         
-        this._elapsedTime = snd.CURRENT_TIME - this._startedTime;
-        
-        var currentEvents = this.searchEvents(this.now);
+        var currentEvents = this.searchEvents(now);
         for (var i in currentEvents) {
-            currentEvents[i].stop(this.now);
+            currentEvents[i].stop(when);
         }
         
         this.resetAllEvents();
@@ -215,6 +234,20 @@
     };
     
     snd.TimeLine.prototype.onstopped = function(now) {
+    };
+    
+    snd.TimeLine.prototype.setStartAt = function(t) {
+        if (this._currentEvents != null) {
+            this.stop();
+            this._currentEvents = null;
+        }
+        
+        this._startAt = t;
+        
+        this.onStartAtChanged(t);
+    };
+    
+    snd.TimeLine.prototype.onStartAtChanged = function(t) {
         
     };
     
@@ -230,26 +263,12 @@
         }
     };
     
-    snd.TimeLine.prototype.getNewEventId = function() {
-        this._lastEventId++;
-        return this._lastEventId;
-    };
-    
     snd.TimeLine.prototype.startInterval = function() {
         var _this = this;
         
         this.tick(_this);
         
         this._intervalID = window.setInterval(_this.tick, Math.max(1, _this.interval * 1000), _this);
-    };
-    
-    snd.TimeLine.prototype.setStartAt = function(t) {
-        if (this._currentEvents != null) {
-            this.stop();
-            this._currentEvents = null;
-        }
-        
-        this._startAt = t;
     };
     
     snd.TimeLine.prototype.resetAllEvents = function() {
@@ -300,6 +319,10 @@
         }
         
         return ret;
+    };
+    
+    snd.TimeLine.prototype.onTimeLineEventStartTimeChanged = function(evt, t) {
+        this._events.sort(snd.TimeLineEvent.compare);
     };
     
     return snd;

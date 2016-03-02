@@ -91,24 +91,6 @@
     };
     snd.Noise.prototype = Object.create(snd.AudioUnit.prototype);
     snd.Noise.prototype.constructor = snd.Noise;
-
-    snd.Noise.prototype.connect = function(connectTo, indexIn, indexOut, id) {
-        snd.AudioUnit.prototype.connect.apply(this, arguments);
-        if (connectTo.getConnector != null) {
-            this._gain.connect(connectTo.getConnector(), indexIn, indexOut);
-        } else {
-            this._gain.connect(connectTo, indexIn, indexOut);
-        }
-    };
-    
-    snd.Noise.prototype.disconnect = function(disconnectFrom, indexIn, id) {
-        snd.AudioUnit.prototype.disconnect.apply(this, arguments);
-        if (disconnectFrom.getConnector != null) {
-            this._gain.disconnect(disconnectFrom.getConnector(), indexIn);
-        } else {
-            this._gain.disconnect(disconnectFrom, indexIn);
-        }
-    };
     
     snd.Noise.prototype.getParamDescription = function() {
         var ret = snd.AudioUnit.prototype.getParamDescription.apply(this, arguments);
@@ -135,8 +117,12 @@
     };
     
     snd.Noise.prototype.getConnector = function() {
-        return this._gain;
+        return undefined;
     };
+    
+    snd.Noise.prototype.getOutputConnector = function() {
+        return this._gain;
+    }
     
     snd.Noise.prototype.loadData = function(data) {
         snd.AudioUnit.prototype.loadData.apply(this, arguments);

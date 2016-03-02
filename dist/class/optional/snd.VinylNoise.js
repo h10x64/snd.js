@@ -181,28 +181,6 @@
     };
     snd.VinylNoise.prototype = Object.create(snd.AudioUnit.prototype);
     snd.VinylNoise.prototype.constructor = snd.VinylNoise;
-
-    snd.VinylNoise.prototype.connect = function(connectTo, indexIn, indexOut, id) {
-        snd.AudioUnit.prototype.connect.apply(this, arguments);
-        if (connectTo.isAudioUnit || connectTo.getConnector != null) {
-            this._gain.connect(connectTo.getConnector(), indexIn, indexOut);
-        } else {
-            if (!indexOut) {
-                this._gain.connect(connectTo, indexIn);
-            } else {
-                this._gain.connect(connectTo, indexIn, indexOut);
-            }
-        }
-    };
-    
-    snd.VinylNoise.prototype.disconnect = function(disconnectFrom, indexIn, id) {
-        snd.AudioUnit.prototype.disconnect.apply(this, arguments);
-        if (disconnectFrom.getConnector != null) {
-            this._gain.disconnect(disconnectFrom.getConnector(), indexIn);
-        } else {
-            this._gain.disconnect(disconnectFrom, indexIn);
-        }
-    };
     
     snd.VinylNoise.prototype.getParamDescription = function() {
         var ret = snd.AudioUnit.prototype.getParamDescription.apply(this, arguments);
@@ -259,6 +237,10 @@
     };
     
     snd.VinylNoise.prototype.getConnector = function() {
+        return undefined;
+    };
+    
+    snd.VinylNoise.prototype.getOutputConnector = function() {
         return this._gain;
     };
     

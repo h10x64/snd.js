@@ -135,24 +135,6 @@
     snd.Delay.prototype = Object.create(snd.AudioUnit.prototype);
     snd.Delay.prototype.constructor = snd.Delay;
     
-    snd.Delay.prototype.connect = function(connectTo, indexIn, indexOut, id) {
-        snd.AudioUnit.prototype.connect.apply(this, arguments);
-        if (connectTo.getConnector != null) {
-            this._output.connect(connectTo.getConnector(), indexIn, indexOut);
-        } else {
-            this._output.connect(connectTo, indexIn, indexOut);
-        }
-    };
-    
-    snd.Delay.prototype.disconnect = function(disconnectFrom, indexIn, id) {
-        snd.AudioUnit.prototype.disconnect.apply(this, arguments);
-        if (disconnectFrom.getConnector != null) {
-            this._output.disconnect(disconnectFrom.getConnector(), indexIn);
-        } else {
-            this._output.disconnect(disconnectFrom, indexIn);
-        }
-    };
-    
     snd.Delay.prototype.getParamDescription = function() {
         var ret = snd.AudioUnit.prototype.getParamDescription.apply(this, arguments);
         
@@ -184,6 +166,10 @@
     
     snd.Delay.prototype.getConnector = function() {
         return this._connector;
+    };
+    
+    snd.Delay.prototype.getOutputConnector = function() {
+        return this._output;
     };
     
     snd.Delay.prototype.loadData = function(data) {

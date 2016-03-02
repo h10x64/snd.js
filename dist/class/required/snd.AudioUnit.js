@@ -70,7 +70,7 @@
             },
             audioParams: {
                 get: function() {
-                    var ret = this.getAudioParams();
+                    var ret = this.getParamDescription();
                     return ret;
                 }
             }
@@ -112,23 +112,37 @@
      * @param {String} id connectTo.idがnullの場合に使用されるID
      */
     snd.AudioUnit.prototype.connect = function(connectTo, indexOut, indexIn, id) {
-        if (connectTo.id != null || id != null) {
-            var str = null;
-            if (connectTo.id != null) {
-                str = connectTo.id;
-            } else if (id != null) {
-                str = id;
+        if (Array.isArray(connectTo)) {
+            for (var i in connectTo) {
+              this.connect(connectTo[i], indexOut, indexIn, id);
             }
+        } else if (connectTo.id != null || id != null) {
+            var str = null;
+            var connector = this.getOutputConnector();
+            
+            if (connector != null) {
+                if (connectTo.id != null) {
+                    str = connectTo.id;
+                } else if (id != null) {
+                    str = id;
+                }
+                str += "[" + ((indexOut != null) ? indexOut : "0") + ":" + ((indexIn != null) ? indexIn : "0") + "]";
 
-            str += "[" + ((indexOut != null) ? indexOut : "0") + ":" + ((indexIn != null) ? indexIn : "0") + "]";
-
-            this._status.connection.push(str);
+                this._status.connection.push(str);
+                
+                if (typeof(connectTo.getConnector) == 'function') {
+                    var conn = connectTo.getConnector();
+                    
+                    if (conn == null) {
+                        console.log(connectTo.id + " have not output node.");
+                    } else {
+                        connector.connect(connectTo.getConnector(), indexOut, indexIn, id);
+                    }
+                } else {
+                    connector.connect(connectTo, indexOut, indexIn, id);
+                }
+            }
         }
-
-        // PLEASE OVERRIDE ME LIKE THIS
-        // SubClass.prototype.connect = function(connectTo, bra, bra) {
-        //     AudioUnit.prototype.connect.apply(this, arguments);
-        // };
     };
 
     /**
@@ -142,45 +156,70 @@
      * @param {String} id disconnectFrom.id が null の場合に使用されるID
      */
     snd.AudioUnit.prototype.disconnect = function(disconnectFrom, indexOut, id) {
-        if (disconnectFrom.id != null || id != null) {
+        if (Array.isArray(disconnectFrom)) {
+            for (var i in disconnectFrom) {
+                this.disconnect(disconnectFrom[i], indexOut, id);
+            }
+        } else if (disconnectFrom.id != null || id != null) {
             var idx = -1;
             var str = "";
+            var connector = this.getOutputConnector();
+            
+            if (connector != null) {
+                if (disconnectFrom.id != null) {
+                    str = disconnectFrom.id;
+                } else if (id != null) {
+                    str = id;
+                }
 
-            if (disconnectFrom.id != null) {
-                str = disconnectFrom.id;
-            } else if (id != null) {
-                str = id;
-            }
+                str += "[" + ((indexOut != null) ? indexOut : "0");
+                for (var i = 0; i < this._status.connection.length; i++) {
+                    if (this._status.connection[i].substring(0, str.length) === str) {
+                        idx = i;
+                        break;
+                    }
+                }
 
-            str += "[" + ((indexOut != null) ? indexOut : "0");
-            for (var i = 0; i < this._status.connection.length; i++) {
-                if (this._status.connection[i].substring(0, str.length) === str) {
-                    idx = i;
-                    break;
+                if (idx >= 0) {
+                    this._status.connection.splice(idx, 1);
+                }
+
+                if (typeof(disconnectFrom.getConnector) == 'function') {
+                    var conn = disconnectFrom.getConnector();
+                    
+                    if (conn == null) {
+                        console.log(disconnectFrom.id + " have not input node.");
+                    } else {
+                        connector.disconnect(disconnectFrom.getConnector, indexOut, id);
+                    }
+                } else {
+                    connector.disconnect(disconnectFrom, indexOut, id);
                 }
             }
-
-            if (idx >= 0) {
-                this._status.connection.splice(idx, 1);
-            }
         }
-
-        // PLEASE OVERRIDE ME LIKE THIS
-        // SubClass.prototype.connect = function(connectTo, bra, bra) {
-        //     AudioUnit.prototype.disconnect.apply(this, arguments);
-        // };
     };
 
     /**
-     * このオーディオユニットの入り口となる、connect/disconnectメソッドを持つオブジェクトを返します。<br/>
-     * AudioUnitクラス、SoundEnvironmentクラスなどのオブジェクトが使用する他、
-     * AudioUnitクラスを既存のWebAudioAPIで作られたチェーンに組み込む場合などに使用されます。<br/>
+     * このオーディオユニットの入り口となる、ノードを返します。<br/>
+     * snd.jsの内部で使用する他、AudioUnitクラスを既存のWebAudioAPIで作られたチェーンに組み込む場合などに使用されます。<br/>
      * このクラスを継承するクラスを作る場合、オーバーライドが必要です。
+     * @return {AudioNode} このオーディオユニットの入り口となるノード。入力を受け付けない場合はundefined。
      */
     snd.AudioUnit.prototype.getConnector = function() {
         // PLEASE OVERRIDE ME
     };
     
+    /**
+     * このオーディオユニットの出口となる、connect/disconnectメソッドを持つオブジェクトを返します。<br/>
+     * 主にsnd.jsの内部で使用するためのメソッドです。<br/>
+     * (AudioUnitを既存のWebAudioAPIで作られたチェーンに組み込む場合はconnectメソッドを使用してください)<br/>
+     * このクラスを継承するクラスを作る場合、オーバーライドが必要です。
+     * @return {AudioNode} このオーディオユニットの出口となるノード。出力を行わない場合はundefined。
+     */
+    snd.AudioUnit.prototype.getOutputConnector = function() {
+        // PLEASE OVERRIDE ME
+    };
+
     /**
      * このオーディオユニットのAudioParam
      * @returns {HashMap} このオーディオユニットのAudioParamをまとめたハッシュマップ(キー:パラメータ名, 値: AudioParam)
@@ -191,66 +230,95 @@
         // ret.foo = this.node1.gainParam;
         // ret.bar = this.node2.frequencyParam;
         // return ret;
-        
+
         return {};
     };
-    
+
     /**
      * 引数で渡されたAudioParamに接続されたGainノードを作り、返します。<br/>
      * 返されるGainノードには、渡されたAudioParamが持つ各メソッドを移譲したメソッドが定義されます。<br/>
      * AudioUnit内部のノードで再生成が必要となった際、外部からのAudioParamへの接続を維持するために使われます。<br/>
      * AudioUnitを継承するクラスで使用するメソッドなので、外部からは使用しないでください。
-     * @param {AudioParam} audioParam 
-     * @returns {Gain} 
+     * @param {AudioParam} audioParam
+     * @returns {Gain}
      */
-    snd.AudioUnit.prototype.createParamGain = function(audioParam) {
+    snd.AudioUnit.prototype.createParamGain = function() {
         var ret = snd.AUDIO_CONTEXT.createGain();
-        ret._audioParam = audioParam;
-        ret.connect(ret._audioParam);
-        
+        ret._audioParams = [];
+
         Object.defineProperties(ret, {
             value: {
                 set: function(val) {
-                    ret._audioParam.value = val;
+                    for (var i in this._audioParams) {
+                        this._audioParams[i].value = val;
+                    }
                 },
                 get: function() {
-                    return ret._audioParam.value;
+                    if (this._audioParams.length <= 0) {
+                        return undefined;
+                    }
+
+                    return this._audioParams[0].value;
                 }
             },
             defaultValue: {
                 get: function() {
-                    return ret._audioParam.defaultValue;
+                    if (this._audioParams.length <= 0) {
+                        return undefined;
+                    }
+
+                    return this._audioParams[0].defaultValue;
                 }
             }
         });
+
         ret.setValueAtTime = function(value, startTime) {
-            ret._audioParam.setValueAtTime(value, startTime);
+            for (var i in ret._audioParams) {
+                ret._audioParams[i].setValueAtTime(value, startTime);
+            }
         };
         ret.linearRampToValueAtTime = function(value, endTime) {
-            ret._audioParam.linearRampToValueAtTime(value, endTime);
+            for (var i in ret._audioParams) {
+                ret._audioParams[i].linearRampToValueAtTime(value, endTime);
+            }
         };
         ret.exponentialRampToValueAtTime = function(value, endTime) {
-            ret._audioParam.exponentialRampToValueAtTime(value, endTime);
+            for (var i in ret._audioParams) {
+                ret._audioParams[i].exponentialRampToValueAtTime(value, endTime);
+            }
         };
         ret.setTargetAtTime = function(target, startTime, timeConstant) {
-            ret._audioParam.setTargetAtTime(target, startTime, timeConstant);
+            for (var i in ret._audioParams) {
+                ret._audioParams[i].setTargetAtTime(target, startTime, timeConstant);
+            }
         };
         ret.setValueCurveAtTime  = function(values, startTime, duration) {
-            ret._audioParam.setValueCurveAtTime(values, startTime, duration);
+            for (var i in ret._audioParams) {
+                ret._audioParams[i].setValueCurveAtTime(values, startTime, duration);
+            }
         };
         ret.cancelScheduledValues = function(startTime) {
-            ret._audioParam.cancelScheduledValues(startTime);
+            for (var i in ret._audioParams) {
+                ret._audioParams[i].cancelScheduledValues(startTime);
+            }
         };
-        
-        ret.setAudioParam = function(audioParam) {
-            ret.disconnect(ret._audioParam);
-            ret._audioParam = audioParam;
-            ret.connect(ret._audioParam);
-        }
-        
+        ret.addAudioParam = function(audioParam) {
+            ret.connect(audioParam);
+
+            ret._audioParams.push(audioParam);
+        };
+        ret.removeAudioParam = function(audioParam) {
+            ret.disconnect(audioParam);
+
+            var i = ret._audioParams.indexOf(audioParam);
+            if (i >= 0) {
+                ret._audioParams.splice(i, 1);
+            }
+        };
+
         return ret;
     };
-    
+
     /**
      * JSON.stringifyで使用されるメソッドです。<br/>
      * このメソッドの戻り値がJSON.stringifyの出力に使用されます。
@@ -265,7 +333,7 @@
      * 接続先のリストは読み込みますが、このメソッドでは<strong>接続やイベントリスナの設定は行いません</strong>。<br/>
      * オーディオユニット同士のチェーンの再構築やイベントリスナの登録は別途で実装が必要です。<br/>
      * JSONの内容に不備があるなど、ロード中にエラーが発生した場合、snd.Exception 例外が throw されます。
-     * 
+     *
      * @param {String} json 読み込むJSON文字列
      * @throws {snd.Exception} データ読込みでエラーが発生した場合
      */
@@ -286,7 +354,7 @@
      * また、このメソッドはfromJSONメソッド内で呼び出されます。<br/>
      * このクラスを継承するクラスを作る場合、オーバーライドが必要です。(オーバーライドの際、apply必須)<br/>
      * オーバーライドする時は、toJSON メソッドで出力した内容を含むデータが渡される前提で作成し、不足などのエラーが発生した場合は snd.Exception クラスのオブジェクトを throw してください。
-     * 
+     *
      * @param {Object} data JSON文字列をパースした結果。
      * @throws {snd.AudioUnit.Exception} データロード中に不足データなどの例外が発生した場合
      */
@@ -304,7 +372,7 @@
         //     AudioUnit.prototype.loadData.apply(this, arguments);
         // };
     };
-    
+
     /**
      * paramに渡されたAudioParamに所定のパラメータ・メソッドを追加して返します。<br/>
      * AudioUnitを継承するクラス内で使用される前提のメソッドですので、通常は使用しないようにしてください。<br/>
@@ -314,7 +382,7 @@
      *  <li>setScheduledValues メソッド<br/>このAudioParamの時間変化を設定するメソッド。</li>
      * </ul>
      * @param {String} subID 何のAudioParamであるかを表すID
-     * @param {AudioParam} param パラメータ等を追加するAudioParam 
+     * @param {AudioParam} param パラメータ等を追加するAudioParam
      * @returns {AudioParam} 所定のパラメータ・メソッドを追加したparam
      */
     snd.AudioUnit.prototype.modAudioParam = function(subID, param) {
@@ -355,7 +423,7 @@
     /**
      * JSON.stringifyを使って出力した、AudioUnitオブジェクトのJSON文字列を読み込みます。
      * @param {String} json JSON文字列
-     * @returns {snd.AudioUnit|snd.AudioUnit} jsonの内容を読み込んだsnd.AudioUnitオブジェクト 
+     * @returns {snd.AudioUnit|snd.AudioUnit} jsonの内容を読み込んだsnd.AudioUnitオブジェクト
      */
     snd.AudioUnit.loadJSON = function(json) {
         var ret = new snd.AudioUnit("");
@@ -383,7 +451,6 @@
         this.channelCountMode = "max";
         this.channelInterpretation = "discrete";
     };
-    
+
     return snd;
 }));
-

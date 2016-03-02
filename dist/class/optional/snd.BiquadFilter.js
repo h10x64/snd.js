@@ -157,24 +157,6 @@
     };
     snd.BiquadFilter.prototype = Object.create(snd.AudioUnit.prototype);
     snd.BiquadFilter.prototype.constructor = snd.BiquadFilter;
-
-    snd.BiquadFilter.prototype.connect = function(connectTo, indexIn, indexOut, id) {
-        snd.AudioUnit.prototype.connect.apply(this, arguments);
-        if (connectTo.getConnector != null) {
-            this._output.connect(connectTo.getConnector(), indexIn, indexOut);
-        } else {
-            this._output.connect(connectTo, indexIn, indexOut);
-        }
-    };
-    
-    snd.BiquadFilter.prototype.disconnect = function(disconnectFrom, indexIn, id) {
-        snd.AudioUnit.prototype.disconnect.apply(this, arguments);
-        if (disconnectFrom.getConnector != null) {
-            this._output.disconnect(disconnectFrom.getConnector(), indexIn);
-        } else {
-            this._output.disconnect(disconnectFrom, indexIn);
-        }
-    };
     
     snd.BiquadFilter.prototype.createStatus = function() {
         return new snd.BiquadFilter.Status();
@@ -183,6 +165,10 @@
     snd.BiquadFilter.prototype.getConnector = function() {
         return this._connector;
     };
+    
+    snd.BiquadFilter.prototype.getOutputConnector = function() {
+        return this._output;
+    }
     
     snd.BiquadFilter.prototype.getParamDescription = function() {
         var ret = snd.AudioUnit.prototype.getParamDescription.apply(this, arguments);

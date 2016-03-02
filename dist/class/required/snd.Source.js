@@ -127,39 +127,11 @@
         return this._gain.gain.value;
     };
 
-    /**
-     * 詳細はAudioUnitクラスのconnectを参照してください。
-     * @param {AudioUnit} connectTo 接続先
-     */
-    snd.Source.prototype.connect = function(connectTo, indexIn, indexOut, id) {
-        snd.AudioUnit.prototype.connect.apply(this, arguments);
-
-        if (connectTo.isAudioUnit || connectTo.getConnector != null) {
-            this._gain.connect(connectTo.getConnector(), indexIn, indexOut);
-        } else {
-            if (!indexOut) {
-                this._gain.connect(connectTo, indexIn);
-            } else {
-                this._gain.connect(connectTo, indexIn, indexOut);
-            }
-        }
-    };
-
-    /**
-     * 詳細はAudioUnitクラスのdisconnectFromを参照してください。
-     * @param {AudioUnit} disconnectFrom 切断する接続先
-     */
-    snd.Source.prototype.disconnect = function(disconnectFrom, id) {
-        snd.AudioUnit.prototype.disconnect.apply(this, arguments);
-
-        if (disconnectFrom.isAudioUnit || disconnectFrom.getConnector != null) {
-            this._gain.disconnect(disconnectFrom.getConnector());
-        } else {
-            this._gain.disconnect(disconnectFrom);
-        }
-    };
-
     snd.Source.prototype.getConnector = function() {
+        return undefined;
+    };
+    
+    snd.Source.prototype.getOutputConnector = function(indexOut) {
         return this._gain;
     };
     
