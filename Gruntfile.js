@@ -61,10 +61,6 @@ module.exports = function(grunt) {
                         'src/COPYRIGHT',
                         'src/class/optional/snd.DynamicsCompressor.js'
                     ],
-                    'dist/class/optional/snd.Envelope.js': [
-                        'src/COPYRIGHT',
-                        'src/class/optional/snd.Envelope.js'
-                    ],
                     'dist/class/optional/snd.Gain.js': [
                         'src/COPYRIGHT',
                         'src/class/optional/snd.Gain.js'
@@ -104,6 +100,10 @@ module.exports = function(grunt) {
                     'dist/class/optional/TimeLine/snd.Envelope.js':[
                         'src/COPYRIGHT',
                         'src/class/optional/TimeLine/snd.Envelope.js'
+                    ],
+                    'dist/class/optional/TimeLine/snd.TimeValue.js':[
+                        'src/COPYRIGHT',
+                        'src/class/optional/TimeLine/snd.TimeValue.js'
                     ],
                     'dist/class/optional/snd.WaveShaper.js': [
                         'src/COPYRIGHT',
@@ -222,6 +222,106 @@ module.exports = function(grunt) {
                     // Peer
                     'dist/plugins/peer/snd.Peer.js': [
                         'src/plugins/peer/snd.Peer.js'
+                    ],
+
+                    /* TypeScript d.ts */
+                    // required
+                    'dist/misc/TypeScript/d.ts/snd.d.ts': [
+                        'src/misc/TypeScript/d.ts/snd.d.ts'
+                    ],
+                    'dist/misc/TypeScript/d.ts/snd.util.d.ts':[
+                        'src/misc/TypeScript/d.ts/snd.util.d.ts'
+                    ],
+                    'dist/misc/TypeScript/d.ts/snd.Exception.d.ts': [
+                        'src/misc/TypeScript/d.ts/snd.Exception.d.ts'
+                    ],
+                    'dist/misc/TypeScript/d.ts/snd.AudioDataManager.d.ts': [
+                        'src/misc/TypeScript/d.ts/snd.AudioDataManager.d.ts'
+                    ],
+                    'dist/misc/TypeScript/d.ts/snd.AudioMaster.d.ts': [
+                        'src/misc/TypeScript/d.ts/snd.AudioMaster.d.ts'
+                    ],
+                    'dist/misc/TypeScript/d.ts/snd.AudioUnit.d.ts': [
+                        'src/misc/TypeScript/d.ts/snd.AudioUnit.d.ts'
+                    ],
+                    'dist/misc/TypeScript/d.ts/snd.Source.d.ts': [
+                        'src/misc/TypeScript/d.ts/snd.Source.d.ts'
+                    ],
+                    // optional
+                    'dist/misc/TypeScript/d.ts/snd.Analyser.d.ts': [
+                        'src/misc/TypeScript/d.ts/snd.Analyser.d.ts'
+                    ],
+                    'dist/misc/TypeScript/d.ts/snd.BiquadFilter.d.ts': [
+                        'src/misc/TypeScript/d.ts/snd.BiquadFilter.d.ts'
+                    ],
+                    'dist/misc/TypeScript/d.ts/snd.BufferSource.d.ts': [
+                        'src/misc/TypeScript/d.ts/snd.BufferSource.d.ts'
+                    ],
+                    'dist/misc/TypeScript/d.ts/snd.Convolver.d.ts': [
+                        'src/misc/TypeScript/d.ts/snd.Convolver.d.ts'
+                    ],
+                    'dist/misc/TypeScript/d.ts/snd.Delay.d.ts': [
+                        'src/misc/TypeScript/d.ts/snd.Delay.d.ts'
+                    ],
+                    'dist/misc/TypeScript/d.ts/snd.DynamicsCompressor.d.ts': [
+                        'src/misc/TypeScript/d.ts/snd.DynamicsCompressor.d.ts'
+                    ],
+                    'dist/misc/TypeScript/d.ts/snd.Envelope.d.ts': [
+                        'src/misc/TypeScript/d.ts/snd.Envelope.d.ts'
+                    ],
+                    'dist/misc/TypeScript/d.ts/snd.Gain.d.ts': [
+                        'src/misc/TypeScript/d.ts/snd.Gain.d.ts'
+                    ],
+                    'dist/misc/TypeScript/d.ts/snd.MediaElementAudioSource.d.ts': [
+                        'src/misc/TypeScript/d.ts/snd.MediaElementAudioSource.d.ts'
+                    ],
+                    'dist/misc/TypeScript/d.ts/snd.MediaStreamAudioSource.d.ts': [
+                        'src/misc/TypeScript/d.ts/snd.MediaStreamAudioSource.d.ts'
+                    ],
+                    'dist/misc/TypeScript/d.ts/snd.MediaStreamAudioDestination.d.ts': [
+                        'src/misc/TypeScript/d.ts/snd.MediaStreamAudioDestination.d.ts'
+                    ],
+                    'dist/misc/TypeScript/d.ts/snd.OscillatorSource.d.ts': [
+                        'src/misc/TypeScript/d.ts/snd.OscillatorSource.d.ts'
+                    ],
+                    'dist/misc/TypeScript/d.ts/snd.ScriptProcessor.d.ts': [
+                        'src/misc/TypeScript/d.ts/snd.ScriptProcessor.d.ts'
+                    ],
+                    'dist/misc/TypeScript/d.ts/snd.Synth.d.ts': [
+                        'src/misc/TypeScript/d.ts/snd.Synth.d.ts'
+                    ],
+                    'dist/misc/TypeScript/d.ts/TimeLine/snd.TimeLine.d.ts':[
+                        'src/class/optional/TimeLine/snd.TimeLine.d.ts'
+                    ],
+                    'dist/misc/TypeScript/d.ts/TimeLine/snd.TimeLineEvent.d.ts':[
+                        'src/class/optional/TimeLine/snd.TimeLineEvent.d.ts'
+                    ],
+                    'dist/misc/TypeScript/d.ts/TimeLine/snd.Envelope.d.ts':[
+                        'src/class/optional/TimeLine/snd.Envelope.d.ts'
+                    ],
+                    'dist/misc/TypeScript/d.ts/TimeLine/snd.TimeValue.d.ts':[
+                        'src/class/optional/TimeLine/snd.TimeValue.d.ts'
+                    ],
+                    'dist/misc/TypeScript/d.ts/snd.WaveShaper.d.ts': [
+                        'src/misc/TypeScript/d.ts/snd.WaveShaper.d.ts'
+                    ],
+                    'dist/misc/TypeScript/d.ts/snd.Noise.d.ts': [
+                        'src/misc/TypeScript/d.ts/snd.Noise.d.ts'
+                    ],
+                    'dist/misc/TypeScript/d.ts/snd.VinylNoise.d.ts' : [
+                        'src/misc/TypeScript/d.ts/snd.VinylNoise.d.ts'
+                    ],
+                    'dist/misc/TypeScript/d.ts/MIDI/snd.MIDI.d.ts' : [
+                        'src/misc/TypeScript/d.ts/snd.MIDI.d.ts',
+                    ],
+                    'dist/misc/TypeScript/d.ts/MIDI/snd.MIDIIn.d.ts' : [
+                        'src/misc/TypeScript/d.ts/snd.MIDIIn.d.ts',
+                    ],
+                    'dist/misc/TypeScript/d.ts/MIDI/snd.MIDIOut.d.ts' : [
+                        'src/misc/TypeScript/d.ts/snd.MIDIOut.d.ts',
+                    ],
+                    'dist/misc/TypeScript/d.ts/MIDI/snd.MIDI.util.d.ts' : [
+                        'src/misc/TypeScript/d.ts/snd.MIDI.util.d.ts'
                     ]
                 }
             }
