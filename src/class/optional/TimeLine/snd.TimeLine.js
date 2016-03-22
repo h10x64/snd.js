@@ -1,7 +1,7 @@
 (function(root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD
-        define(['snd.TimeLineEvent'], factory);
+        define(['snd.TimeLineEvent', 'snd.Envelope'], factory);
     } else if (typeof exports === 'object') {
         // Node
     } else {
@@ -9,9 +9,9 @@
         root.snd = factory(root.snd);
     }
 }(this, function(snd) {
-    
+
     /**
-     * 
+     *
      * @class 1つのタイムラインを表すクラスです。<br/>
      */
     snd.TimeLine = function(id) {
@@ -19,18 +19,18 @@
         this._interval = 0.025;
         this._queueingLength = 4 * this._interval;
         this._startAt = 0;
-        
+
         this._startedTime = 0;
         this._elapsedTime = -1;
-        
+
         this._events = [];
         this._intervalID = null;
         this._timeoutID = null;
-        
+
         this._lastEventId = 0;
-        
+
         this._status = snd.status.READY;
-        
+
         Object.defineProperties(this, {
             id: {
                 get: function() {
@@ -51,22 +51,26 @@
                         console.log("TimeLine.startAt must greater than 0s.");
                         return;
                     }
-                    
+
                     this.setStartAt(val);
                 }
             },
             elapsedTime: {
                 get: function() {
-                    if (this._elapsedTime < 0) {
-                        return snd.CURRENT_TIME - this._startedTime;
+                    if (this.status != snd.status.STARTED) {
+                        return 0;
                     } else {
-                        return this._elapsedTime;
+                        return snd.CURRENT_TIME - this._startedTime;
                     }
                 }
             },
             now: {
                 get: function() {
-                    return this._startAt + this.elapsedTime;
+                    if (this.status != snd.status.STARTED) {
+                        return this._startAt;
+                    } else {
+                        return this._startAt + this.elapsedTime;
+                    }
                 }
             },
             interval: {
@@ -78,7 +82,7 @@
                         console.log("TimeLine.interval must greater than 0s.")
                         return;
                     }
-                    
+
                     this._interval = val;
                 }
             },
@@ -91,42 +95,63 @@
                         console.log("TimeLine.queueingLength must greater than 0s.")
                         return;
                     }
-                    
+
                     this._queueingLength = val;
                 }
             }
         });
     };
-    
+
     snd.TimeLine.prototype.push = function(timeLineEvent) {
-        this.addEvent(timeLineEvent);
-    };
-    
-    snd.TimeLine.prototype.addEvent = function(target, startTime, endTime) {
-        var st = (startTime) ? startTime : 0;
-        var et = (endTime) ? endTime : 1;
-        
-        var eventId = this.id + "." + this.getNewEventId();
-        
-        var event = new snd.TimeLineEvent(eventId, target, st, et);
-        
-        this._events.push(event);
+        var _this = this;
+
+        timeLineEvent.addStartTimeChangedEventListener(function(e,t){_this.onTimeLineEventStartTimeChanged(e,t);});
+
+        this._events.push(timeLineEvent);
+
         this._events.sort(snd.TimeLineEvent.compare);
+
+        this.onTimeLineEventAdded(timeLineEvent);
     };
-    
-    snd.TimeLine.prototype.removeEvent = function(time) {
-        var removeEvents = this.searchEvents(time);
-        
-        for (var i in removeEvents) {
-            var event = removeEvents[i];
-            
-            var idx = this._events.indexof(event);
-            if (idx >= 0) {
-                this._events.splice(idx, 1);
-            }
+
+    snd.TimeLine.prototype.onTimeLineEventAdded = function(evt) {
+    };
+
+    snd.TimeLine.prototype.size = function() {
+        return this._events.length;
+    };
+
+    snd.TimeLine.prototype.getEvent = function(i) {
+        if (i >= 0 && i < this._events.length) {
+            return this._events[i];
+        } else {
+            console.log("Index out of range. Return undefined. (timeline.size = " + this._events.length + ", i = " + i + ")");
+            return undefined;
         }
     };
-    
+
+    snd.TimeLine.prototype.removeEvent = function(timeLineEvent) {
+        var i = this._events.indexof(timeLineEvent);
+        this.remove(i);
+    };
+
+    snd.TimeLine.prototype.remove = function(i) {
+        if (i >= 0 && i < this._events.length) {
+            var _this = this;
+
+            var evt = this._events[i];
+
+            evt.removeStartTimeChangedEventListener(function(e,t){_this.onTimeLineEventStartTimeChanged(e,t);});
+
+            this._events.splice(i, 1);
+
+            this.onTimeLineEventRemoved(evt);
+        }
+    };
+
+    snd.TimeLine.prototype.onTimeLineEventRemoved = function(evt) {
+    };
+
     snd.TimeLine.prototype.start = function() {
         if (this.status == snd.status.STARTED) {
             console.log("TimeLine already started.");
@@ -140,21 +165,19 @@
             console.log("TimeLine.endTime must more than 0.0s");
             return;
         }
-        
+
         this._status = snd.status.STARTED;
-        
+
         this._startedTime = snd.CURRENT_TIME;
-        this._elapsedTime = -1;
-        
+
         this.startInterval();
-        
+
         this.onstarted(this._startedTime);
     };
-    
+
     snd.TimeLine.prototype.onstarted = function(startedTime) {
-        
     };
-    
+
     /**
      * このタイムラインを停止します。<br/>
      * このメソッドが呼び出されると、このタイムラインに追加済みのイベントの中から演奏途中のものを選んで、
@@ -168,31 +191,45 @@
      * </ul>
      * @returns {undefined}
      */
-    snd.TimeLine.prototype.stop = function() {
+    snd.TimeLine.prototype.stop = function(when) {
+        var now = this.now;
+
         window.clearInterval(this._intervalID);
-        
-        this._elapsedTime = snd.CURRENT_TIME - this._startedTime;
-        
-        var currentEvents = this.searchEvents(this.now);
+
+        var currentEvents = this.searchEvents(now);
         for (var i in currentEvents) {
-            currentEvents[i].stop(this.now);
+            currentEvents[i].stop(when);
         }
-        
+
         this.resetAllEvents();
-        
+
         this._status = snd.status.READY;
-        
+
         this.onstopped(this.now);
     };
-    
+
     snd.TimeLine.prototype.onstopped = function(now) {
-        
     };
-    
+
+    snd.TimeLine.prototype.setStartAt = function(t) {
+        if (this._currentEvents != null) {
+            this.stop();
+            this._currentEvents = null;
+        }
+
+        this._startAt = t;
+
+        this.onStartAtChanged(t);
+    };
+
+    snd.TimeLine.prototype.onStartAtChanged = function(t) {
+
+    };
+
     snd.TimeLine.prototype.tick = function(_this) {
         var now = _this.now;
         var events = _this.searchEventsBySpan(now, now + _this.queueingLength);
-        
+
         for (var i in events) {
             var event = events[i];
             if (event.status != snd.status.STARTED && event.status != snd.status.STOPPED) {
@@ -200,35 +237,21 @@
             }
         }
     };
-    
-    snd.TimeLine.prototype.getNewEventId = function() {
-        this._lastEventId++;
-        return this._lastEventId;
-    };
-    
+
     snd.TimeLine.prototype.startInterval = function() {
         var _this = this;
-        
+
         this.tick(_this);
-        
+
         this._intervalID = window.setInterval(_this.tick, Math.max(1, _this.interval * 1000), _this);
     };
-    
-    snd.TimeLine.prototype.setStartAt = function(t) {
-        if (this._currentEvents != null) {
-            this.stop();
-            this._currentEvents = null;
-        }
-        
-        this._startAt = t;
-    };
-    
+
     snd.TimeLine.prototype.resetAllEvents = function() {
         for (var i = 0; i < this._events.length; i++) {
             this._events[i].resetStatus();
         }
     };
-    
+
     /**
      * 指定された区間で再生が予定されているイベント全てを配列で返します。
      * @param {type} lt 検索開始時刻
@@ -237,11 +260,11 @@
      */
     snd.TimeLine.prototype.searchEventsBySpan = function(lt, rt) {
         var ret = [];
-        
+
         for (var i = 0; i < this._events.length; i++) {
             var st = this._events[i].startTime;
             var et = this._events[i].endTime;
-            
+
             if (((lt <= et && st <= rt) || (lt <= et && et <= rt))
                 || (st <= lt && lt <= et) || (st <= rt && rt <= et)){
                 ret.push(this._events[i]);
@@ -249,10 +272,10 @@
                 break;
             }
         }
-        
+
         return ret;
     };
-    
+
     /**
      * 指定された時刻で未終了のイベント全ての配列を返します。
      * @param {type} t タイムライン時刻
@@ -260,18 +283,22 @@
      */
     snd.TimeLine.prototype.searchEvents = function(t) {
         var ret = [];
-        
+
         for (var i = 0; i < this._events.length; i++) {
             var st = this._events[i].startTime;
             var et = this._events[i].endTime;
-            
+
             if (st <= t && t <= et) {
                 ret.push(this._events[i]);
             }
         }
-        
+
         return ret;
     };
-    
+
+    snd.TimeLine.prototype.onTimeLineEventStartTimeChanged = function(evt, t) {
+        this._events.sort(snd.TimeLineEvent.compare);
+    };
+
     return snd;
 }));
