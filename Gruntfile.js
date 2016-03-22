@@ -378,6 +378,7 @@ module.exports = function(grunt) {
                     'dist/min/class/optional/TimeLine/snd.TimeLine.js': ['dist/class/optional/TimeLine/snd.TimeLine.js'],
                     'dist/min/class/optional/TimeLine/snd.TimeLineEvent.js': ['dist/class/optional/TimeLine/snd.TimeLineEvent.js'],
                     'dist/min/class/optional/TimeLine/snd.Envelope.js': ['dist/class/optional/TimeLine/snd.Envelope.js'],
+                    'dist/min/class/optional/TimeLine/snd.TimeValue.js': ['dist/class/optional/TimeLine/snd.TimeValue.js'],
                     'dist/min/class/optional/snd.WaveShaper.js': ['dist/class/optional/snd.WaveShaper.js'],
                     'dist/min/class/optional/snd.Noise.js': ['dist/class/optional/snd.Noise.js'],
                     'dist/min/class/optional/snd.VinylNoise.js': ['dist/class/optional/snd.VinylNoise.js'],
