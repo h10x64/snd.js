@@ -24,12 +24,12 @@ var require = {
         'snd.Synth': '../../dist/class/optional/snd.Synth',
         'snd.TimeLine': '../../dist/class/optional/TimeLine/snd.TimeLine',
         'snd.TimeLineEvent': '../../dist/class/optional/TimeLine/snd.TimeLineEvent',
+        'snd.TimeValue': '../../dist/class/optional/TimeLine/snd.TimeValue',
         'snd.Envelope': '../../dist/class/optional/TimeLine/snd.Envelope',
         'snd.WaveShaper': '../../dist/class/optional/snd.WaveShaper',
         'snd.Noise': '../../dist/class/optional/snd.Noise',
         'snd.VinylNoise': '../../dist/class/optional/snd.VinylNoise',
         'snd.MIDI': '../../dist/class/optional/snd.MIDI',
-        'snd.MIDI.util': '../../dist/class/optional/snd.MIDI.util',
-        'Player': 'Player'
+        'snd.MIDI.util': '../../dist/class/optional/snd.MIDI.util'
     }
 };

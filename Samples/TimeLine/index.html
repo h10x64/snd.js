@@ -9,13 +9,13 @@
             window.onload = function() {
                 LOADED = true;
             };
-            
+
             onStartButtonClick = function() {
                 if (window.player) {
                     window.player.start();
                 }
             };
-            
+
             onStopButtonClick = function() {
                 if (window.player) {
                     window.player.stop();
@@ -25,15 +25,13 @@
     </head>
     <body style="height:100%;">
         <canvas id="player" width="680" height="30" style="background-color: #FFF; border:#000 1px solid;"></canvas><br/>
+        <canvas id="viewer" width="680" height="30" style="background-color: #FFF; border:#000 1px solid;"></canvas><br/>
         <button id="startButton" onclick="onStartButtonClick()">Start</button><button id="stopButton" onclick="onStopButtonClick()">Stop</button><br/>
-        タイムライン(snd.TimeLine)を使ってオシレータ音源(snd.OscillatorSource)とバッファ音源(snd.OscillatorSource)を交互に鳴らします。<br/>
-        Play snd.OscillatorSource and snd.BufferSource alternately with snd.TimeLine.<br/>
+        タイムライン(snd.TimeLine)を使って2つのオシレータ音源(snd.OscillatorSource)を交互に鳴らします。<br/>
+        Play two snd.OscillatorSources alternately with <b>snd.TimeLine</b>.<br/>
         <br/>
-        canvasタグをクリックするとスタート位置を変更することができます。<br/>
-        You can change start at time when click the "canvas" tag.<br/>
-        <br/>
-        !注意! サーバが必要です。（バッファ音源で再生するデータの取得にXMLHttpRequestを使用しています）<br/>
-        !NOTICE! Need some server. (This sample uses XMLHttpRequest to load sound data of the Buffered Source)
+        canvasタグをドラッグするとスタート位置を変更することができます。<br/>
+        You can change start at time when drag the "canvas" tag.<br/>
         <script src="./require.config.js"></script>
         <script src="../../lib/require.js" data-main="./TimeLineSample.js"></script>
    </body>
