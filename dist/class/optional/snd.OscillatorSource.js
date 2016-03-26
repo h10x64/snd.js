@@ -64,7 +64,7 @@
 
         this._periodicWave = null;
         this._sources = [];
-        
+
         this._frequencyGain = null;
         this._detuneGain = null;
 
@@ -134,8 +134,8 @@
                         for (var i in this._sources) {
                             this._sources[i].frequency.value = v;
                         }
-                        this._status.frequency = this._sources.frequency.value;
                     }
+                    this._status.frequency = val;
                 }
             },
             frequencyParam: {
@@ -156,10 +156,13 @@
                     }
                 },
                 set: function(val) {
-                    if (this._sources != null) {
-                        this._sources.detune.value = (val) ? parseFloat(val) : 0.0;
-                        this._status.detune = val;
+                    if (this._sources.length > 0) {
+                        var v = (val) ? parseFloat(val) : 0.0;
+                        for (var i in this._sources) {
+                            this._sources[i].detune.value = v;
+                        }
                     }
+                    this._status.detune = val;
                 }
             },
             detuneParam: {
@@ -233,18 +236,18 @@
 
     /**
      * 波形の再生をスタートします。
-     * 
+     *
      * @param {float} when 開始時刻 [秒]
      * @param {type} offset 使用しません
      * @param {type} duration 使用しません
      */
     snd.OscillatorSource.prototype.start = function(when, offset, duration) {
         var osc = this.addOscillator();
-        
+
         var w = (!when) ? 0 : when;
-        
+
         osc.start(w);
-        
+
         this._status.status = snd.status.STARTED;
         if (duration != null) {
             this.stop(when + duration);
@@ -254,7 +257,7 @@
     snd.OscillatorSource.prototype.stop = function(when) {
         if (this._status.status == snd.status.STARTED) {
             var w = (!when) ? 0 : when;
-            
+
             for (var i in this._sources) {
                 this._sources[i].stop(w);
             }
@@ -266,41 +269,41 @@
     snd.OscillatorSource.prototype.addOscillator = function() {
         var _this = this;
         var osc = snd.AUDIO_CONTEXT.createOscillator();
-        
+
         this.initializeOscillator(osc);
-        
+
         this._sources.push(osc)
-        
+
         var _i = _this._sources.length - 1;
         _this._sources[_i].onended = function() {
             _this._sources.splice(_i, 1);
             _this.fireOnEndedEvent(this);
         }
-        
+
         return osc;
     };
-    
+
     snd.OscillatorSource.prototype.removeOscillator = function(osc) {
         osc.disconnect(this._gain);
-        
+
         if (this._frequencyGain) {
             this._frequencyGain.removeAudioParam(osc.frequency);
         }
         if (this._detuneGain) {
             this._detuneGain.removeAudioParam(osc.detune);
         }
-        
+
         var i = this._sources.indexOf(osc);
         this._sources.splice(i, 1);
     };
-    
+
     snd.OscillatorSource.prototype.initializeOscillator = function(osc) {
         var _this = this;
 
         this.setWaveForm(osc);
         osc.detune.value = this._status.detune;
         osc.frequency.value = this._status.frequency;
-        
+
         // Setup param gains
         if (!this._frequencyGain) {
             this._frequencyGain = this.createParamGain();
@@ -314,7 +317,7 @@
         } else {
             this._detuneGain.addAudioParam(osc.detune);
         }
-        
+
         osc.connect(this._gain);
     };
 
@@ -333,7 +336,7 @@
             }
         }
     };
-    
+
     snd.OscillatorSource.prototype.onended = function(oscSource) {
     };
 
@@ -341,20 +344,20 @@
         if (typeof(this.onended) == "function") {
             this.onended(this);
         }
-        
+
         var listeners = this.listeners['onended'];
         for (var i = 0; i < listeners; i++) {
             if (typeof(listeners[i]) == "function") {
                 listeners[i](this);
             }
         }
-        
+
         this.removeOscillator(osc);
     };
-    
+
     snd.OscillatorSource.prototype.getParamDescription = function() {
         var ret = snd.Source.prototype.getParamDescription.apply(this, arguments);
-        
+
         ret.periodicWave = {
             type: snd.params.type.VALUE,
             default: undefined,
@@ -398,7 +401,7 @@
             max: ret.detune.max,
             min: ret.detune.min
         };
-        
+
         return ret;
     };
 
@@ -452,6 +455,6 @@
         this.frequency = snd.OscillatorSource.DEFAULT_FREQUENCY;
         this.detune = 0.0;
     };
-    
+
     return snd;
 }));

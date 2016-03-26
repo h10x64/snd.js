@@ -69,7 +69,7 @@
      *   MediaElement: {'MediaSourceID01': './hoge/fuga/bgm1.wav', 'MediaSourceID02': './hoge/fuga/bgm2.mp3'},<br/>
      *   AudioBuffer: {'BufferSourceID01': './hoge/fuga/sound1.wav', 'BufferSourceID02': './hoge/fuga/sound2.mp3'}<br/>
      * };
-     * 
+     *
      * @param {HashMap} dataSet 音源のIDとURLをまとめたデータセット
      * @param {boolean} connectToMaster snd.MASTERに接続するかどうか
      * @param {HTMLElement} element Audioタグを追加するDOMエレメント
@@ -132,7 +132,7 @@
     };
 
     /**
-     * 
+     *
      * @param {type} str
      * @returns {Boolean} strがsnd.AUDIO_DATA_MANAGERのキー値を表す文字列ならTrue, そうでなければFalse
      */
@@ -143,7 +143,7 @@
     /**
      * 与えられた文字列がsnd.AUDIO_DATA_MANAGERのキー値を表す文字列ならそのキー値を返します。(snd.AUDIO_DATA_MANAGER上にデータがあるかどうかは関係ありません。)<br/>
      * キー値を表す文字列でなければ、undefinedを返します。<br/>
-     * 
+     *
      * @param {String} str キー値を取得する文字列
      * @returns {String} キー値
      */
@@ -178,6 +178,77 @@
      */
     snd.util.noteToSec = function(tempo, noteValue) {
         return 60.0 / (tempo * noteValue / 4);
+    };
+
+    var SCRIPT_BASE = "var id = null; var ms = %MILLI_SECOND%;"
+    + "start = function() {"
+    + "  if (id == null) id = %SET_METHOD_NAME%(tick, ms);"
+    + "};"
+    + "stop = function() {"
+    + "  if (id != null) {"
+    + "    %CLEAR_METHOD_NAME%(id);"
+    + "    id = null;"
+    + "  }"
+    + "};"
+    + "setMs = function(val) {"
+    + "  if (val > 0) ms = val;"
+    + "};"
+    + "tick = function() {"
+    + "  postMessage('tick');"
+    + "  %AFTER_MESSAGE%"
+    + "};"
+    + "onmessage = function(e) {"
+    + "  if (e.data == 'start') {"
+    + "    start();"
+    + "  } else if (e.data == 'stop') {"
+    + "    stop();"
+    + "  } else {"
+    + "    if (e.data != null) setMs(parseInt(e.data));"
+    + "  }"
+    + "};";
+    var createTimerWorker = function(callback, ms, setMethodName, clearMethodName, afterMessage, params) {
+        var script = SCRIPT_BASE
+          .replace(/%MILLI_SECOND%/g, ms)
+          .replace(/%SET_METHOD_NAME%/g, setMethodName)
+          .replace(/%CLEAR_METHOD_NAME%/g, clearMethodName)
+          .replace(/%AFTER_MESSAGE%/g, afterMessage);
+        var blob = new Blob([script], {type:"text/javascript"});
+        var url = URL.createObjectURL(blob);
+
+        var ret = new Worker(url);
+
+        ret._blob = blob;
+        ret._url = url;
+        ret._callback = callback;
+        ret._params = params;
+        ret._ms = ms;
+        Object.defineProperties(ret, {
+          ms: {
+            get: function() {return this._ms},
+            set: function(val) {this._ms = val; postMessage(val);}
+          }
+        });
+        ret.start = function() {
+          this.postMessage('start');
+        };
+        ret.stop = function() {
+          this.postMessage('stop');
+        };
+        ret.onmessage = function(e) {
+          if (e.data == 'tick') {
+            this._callback.call(this, this._params);
+          }
+        };
+
+        return ret;
+    };
+
+    snd.util.createIntervalTimer = function(callback, ms, params) {
+        return createTimerWorker(callback, ms, "setInterval", "clearInterval", "", params);
+    };
+
+    snd.util.createTimeoutTimer = function(callback, ms, params) {
+        return createTimerWorker(callback, ms, "setInterval", "clearInterval", "stop();", params);
     };
 
     return snd;
