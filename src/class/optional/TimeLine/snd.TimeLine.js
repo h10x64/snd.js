@@ -1,7 +1,7 @@
 (function(root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD
-        define(['snd.TimeLineEvent', 'snd.Envelope'], factory);
+        define(['snd.util', 'snd.TimeLineEvent', 'snd.Envelope'], factory);
     } else if (typeof exports === 'object') {
         // Node
     } else {
@@ -16,7 +16,7 @@
      */
     snd.TimeLine = function(id) {
         this._id = id;
-        this._interval = 0.025;
+        this._interval = 0.25;
         this._queueingLength = 4 * this._interval;
         this._startAt = 0;
 
@@ -24,8 +24,7 @@
         this._elapsedTime = -1;
 
         this._events = [];
-        this._intervalID = null;
-        this._timeoutID = null;
+        this._intervalTimer = null;
 
         this._lastEventId = 0;
 
@@ -194,7 +193,7 @@
     snd.TimeLine.prototype.stop = function(when) {
         var now = this.now;
 
-        window.clearInterval(this._intervalID);
+        this._intervalTimer.stop();
 
         var currentEvents = this.searchEvents(now);
         for (var i in currentEvents) {
@@ -226,7 +225,14 @@
 
     };
 
-    snd.TimeLine.prototype.tick = function(_this) {
+    var LAST_TICK_TIME = null;
+    snd.TimeLine.prototype.tick = function(params) {
+        if (LAST_TICK_TIME != null && LAST_TICK_TIME >= snd.CURRENT_TIME) {
+          return;
+        }
+
+        var _this = params._this;
+
         var now = _this.now;
         var events = _this.searchEventsBySpan(now, now + _this.queueingLength);
 
@@ -236,14 +242,19 @@
                 event.start(now);
             }
         }
+
+        LAST_TICK_TIME = snd.CURRENT_TIME;
     };
 
     snd.TimeLine.prototype.startInterval = function() {
         var _this = this;
 
-        this.tick(_this);
+        if (!this._intervalTimer) {
+            this._intervalTimer = snd.util.createIntervalTimer(_this.tick, _this.interval * 1000, {_this:_this});
+        }
+        this.tick({_this:_this});
 
-        this._intervalID = window.setInterval(_this.tick, Math.max(1, _this.interval * 1000), _this);
+        this._intervalTimer.start();
     };
 
     snd.TimeLine.prototype.resetAllEvents = function() {
