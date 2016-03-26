@@ -184,20 +184,19 @@
             i = 0;
             left = {time: time, value: this._envelope[0].value};
         } else if (this._envelope[this._envelope.length - 1].time <= time) {
-            i = this._envelope.length;
-            left = this._envelope[i - 1];
+            i = this._envelope.length - 1;
+            left = this._envelope[i];
         } else {
             var l = null, r = null, nowTimeVal = null;
 
             for (i = 0; i < this._envelope.length; i++) {
                 if (this._envelope[i].time == time) {
                     nowTimeVal = this._envelope[i];
-                    i++;
                     break;
                 } else if (this._envelope[i].time > time) {
                     l = this._envelope[i - 1];
                     r = this._envelope[i];
-                    nowTimeVal = {time: time, value: r.value + (r.value - l.value) * (time - l.time) / (r.time - l.time)};
+                    nowTimeVal = {time: time, value: l.value + (r.value - l.value) * (time - l.time) / (r.time - l.time)};
                     break;
                 }
             }
