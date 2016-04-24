@@ -1,4 +1,5 @@
 require([
+    "assets",
     "snd.BufferSource",
     "snd.Analyser",
     "snd.BiquadFilter",
@@ -7,18 +8,19 @@ require([
     "snd.Delay",
     "snd.DynamicsCompressor",
     "snd.WaveShaper"
-], function(snd) {
-            MATCH_SOUND_FILE = "../sound/test.wav";
-            BGM_SOUND_FILE = "../sound/01 Liftoff (Get High).wav";
-            IR_CARPARK = "../sound/IR/carpark_balloon_ir_mono_16bit_44100.wav";
-            IR_MAES_HOWE = "../sound/IR/mh3_000_ortf_48k.wav";
-            IR_ST_PATRICKS_CHURCH_PATRINGTON = "../sound/IR/ortf_s1r1.wav";
-            IR_STAIRWAY_UNIVERSITY_YORK = "../sound/IR/stairwell_ortf.wav";
-            IR_INNOCENT_RAILWAY_TUNNEL = "../sound/IR/tunnel_entrance_f_1way_mono.wav";
+], function(assets, snd) {
+
+            MATCH_SOUND_FILE = assets["test"];
+            BGM_SOUND_FILE = assets["01_Liftoff_(Get_High)"];
+            IR_CARPARK = assets["IR/carpark_balloon_ir_mono_16bit_44100"];
+            IR_MAES_HOWE = assets["IR/mh3_000_ortf_48k"];
+            IR_ST_PATRICKS_CHURCH_PATRINGTON = assets["IR/ortf_s1r1"];
+            IR_STAIRWAY_UNIVERSITY_YORK = assets["IR/stairwell_ortf"];
+            IR_INNOCENT_RAILWAY_TUNNEL = assets["IR/tunnel_entrance_f_1way_mono"];
 
             // Analyserのcanvasで使う横方向の分割数
             AUDIO_LEVEL_METER_BAND_NUM = 100;
-            
+
             // 各エフェクタで使用する音源の設定
             SOUND_FILES = {
                 "analyserSound": MATCH_SOUND_FILE,
@@ -47,7 +49,7 @@ require([
             onLoad = function() {
                 // 見た目関係の設定
                 initHTML();
-                
+
                 // データマネージャにIR_FILESで指定されたファイルを追加
                 snd.AUDIO_DATA_MANAGER.addAll(IR_FILES);
                 // IRデータ読み込み終了時に呼び出されるコールバック関数
@@ -63,7 +65,7 @@ require([
                 // 読み込み開始
                 snd.AUDIO_DATA_MANAGER.load();
             };
-            
+
             /**
              * 画面周りの初期設定
              */
@@ -72,19 +74,19 @@ require([
                 // Analyserの画面更新を設定
                 setInterval(updateChart, 1000 / 15);
             };
-            
+
             /**
              * 音周りの初期設定
              */
             onAllDataLoaded = function(bufferSources) {
                 SOUNDS = bufferSources;
-                
+
                 // エフェクト・音源・マスターを接続する
                 createConnections(bufferSources);
                 // 画面で設定された値を取得し、各エフェクトに設定する
                 setEffectProperties();
             };
-            
+
             /**
              * 各エフェクタと音源とを接続し、snd.MASTERへ接続します。
              */
@@ -175,7 +177,7 @@ require([
                 EFFECTS['waveshaper'].gain = $('input[name=waveshaperGain]')[0].value;
                 EFFECTS['waveshaper'].oversample = $('select[name=waveshaperOversample]')[0].value;
             };
-            
+
             /**
              * 引数で指定された音源を再生/停止させます
              */
@@ -237,7 +239,7 @@ require([
                 }
                 return curve;
             };
-            
+
             if (LOADED) {
                 onLoad();
             } else {

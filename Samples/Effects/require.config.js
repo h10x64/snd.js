@@ -3,6 +3,7 @@
  */
 var require = {
     paths: {
+        'assets': '../assets/assets',
         'snd': '../../dist/class/snd',
         'snd.util': '../../dist/class/snd.util',
         'snd.AudioDataManager': '../../dist/class/required/snd.AudioDataManager',

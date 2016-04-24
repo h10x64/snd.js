@@ -1,0 +1,57 @@
+{
+    "output": "./out/assets.js",
+    "files": [
+        {
+            "path": "../../sound/test.wav",
+            "name": "test"
+        },
+        {
+            "path": "../../sound/01 Liftoff (Get High).wav",
+            "name": "01_Liftoff_(Get_High)"
+        },
+        {
+            "path": "../../sound/se_maoudamashii_onepoint26.mp3",
+            "name": "se_maoudamashii_onepoint26_mp3"
+        },
+        {
+            "path": "../../sound/se_maoudamashii_system23.mp3",
+            "name": "se_maoudamashii_system23_mp3"
+        },
+        {
+            "path": "../../sound/se_maoudamashii_system19.mp3",
+            "name": "se_maoudamashii_system19_mp3"
+        },
+        {
+            "path": "../../sound/se_maoudamashii_onepoint26.wav",
+            "name": "se_maoudamashii_onepoint26"
+        },
+        {
+            "path": "../../sound/se_maoudamashii_system23.wav",
+            "name": "se_maoudamashii_system23"
+        },
+        {
+            "path": "../../sound/se_maoudamashii_system19.wav",
+            "name": "se_maoudamashii_system19"
+        },
+        {
+            "path": "../../sound/IR/carpark_balloon_ir_mono_16bit_44100.wav",
+            "name": "IR/carpark_balloon_ir_mono_16bit_44100"
+        },
+        {
+            "path": "../../sound/IR/mh3_000_ortf_48k.wav",
+            "name": "IR/mh3_000_ortf_48k"
+        },
+        {
+            "path": "../../sound/IR/ortf_s1r1.wav",
+            "name": "IR/ortf_s1r1"
+        },
+        {
+            "path": "../../sound/IR/stairwell_ortf.wav",
+            "name": "IR/stairwell_ortf"
+        },
+        {
+            "path": "../../sound/IR/tunnel_entrance_f_1way_mono.wav",
+            "name": "IR/tunnel_entrance_f_1way_mono"
+        }
+    ]
+}

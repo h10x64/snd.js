@@ -1,6 +1,6 @@
-require(["snd.BufferSource", "snd.ScriptProcessor"], function(snd) {
+require(["assets", "snd.BufferSource", "snd.ScriptProcessor"], function(assets, snd) {
     _snd_ = snd;
-    
+
     /**
      * コードフェードイン時の音源オブジェクトのID
      * @type String
@@ -26,30 +26,50 @@ require(["snd.BufferSource", "snd.ScriptProcessor"], function(snd) {
      */
     BUTTON2_SOUND_ID = "ボタン2_音源";
 
+    /*
+     * // snd.BufferSourceでの音データのURLについて //
+     * snd.BufferSourceを読み込むと、snd.utilにcreateBufferSourcesメソッドが追加されます。
+     * このメソッドは、URLの種類を自動で判別し、データを動的に読み込みます。
+     *   "data:audio.*base64,"から始まる場合:
+     *     データURIスキームとして、そのデータを読み込みます。
+     *   "key:"から始まる場合:
+     *     snd.AudioDataManagerで読み込み済みのデータとして、snd.AudioDataManagerからそのキー値で取得できるデータを取得します。
+     *   その他の場合:
+     *     URLとして扱い、XMLHttpRequestを使ってそのURLを取得します。
+     *
+     * ここでは、assets.jsで読み込んだ、データURIスキームへ変換済みの音データ(assetsオブジェクト)を使用しています。
+     * assetsオブジェクトには、ファイル名をプロパティのキーとして、データURIスキーム文字列が格納されています。
+     * 例えば、 assets["se_maoudamashii_system19"] とすれば、 sound/se_maoudamashii_system19.wav を変換した文字列が取得される仕組みです。
+     * （mp3ファイルがあるものについては、サフィックス "_mp3" をつけて格納しています）
+     *
+     * 読み込みの流れはURLの種類によりませんので、混在させる事も可能です。
+     * たとえば、このサンプルの一部の音源をサーバーから取得するように変更したい場合、以下のURL定数をそのURLに入れ替えるだけで対応できます。
+     */
+
+    // ブラウザがmp3形式のファイルに対応している場合はmp3にする。
+    var suffix = "";
+    if (snd.DOES_MP3_SUPPORTED) {
+        suffix = "_mp3";
+    }
+
     /**
      * コードフェードイン時に出す音のデータのURLです。
      * @type String
      */
-    FADE_IN_SOUND_URL = "../sound/se_maoudamashii_system19.wav";
+    FADE_IN_SOUND_URL = assets["se_maoudamashii_system19" + suffix];
+    // FADE_IN_SOUND_URL = "../sound/se_maoudamashii_system19.wav";    // ←XHRを使う場合はこうする
 
     /**
      * コードフェードアウト時に出す音のデータのURLです。
      * @type String
      */
-    FADE_OUT_SOUND_URL = "../sound/se_maoudamashii_system23.wav";
+    FADE_OUT_SOUND_URL = assets["se_maoudamashii_system23" + suffix];
 
     /**
      * ボタンが押されたとき出す音のデータのURLです。
      * @type String
      */
-    BUTTON_SOUND_URL = "../sound/se_maoudamashii_onepoint26.wav";
-
-// ブラウザがmp3形式のファイルに対応している場合はmp3にする。
-    if (snd.DOES_MP3_SUPPORTED) {
-        FADE_IN_SOUND_URL = "../sound/se_maoudamashii_system19.mp3";
-        FADE_OUT_SOUND_URL = "../sound/se_maoudamashii_system23.mp3";
-        BUTTON_SOUND_URL = "../sound/se_maoudamashii_onepoint26.mp3";
-    }
+    BUTTON_SOUND_URL = assets["se_maoudamashii_onepoint26" + suffix];
 
     /**
      * 読込むデータをまとめた連想配列です。<br/>
@@ -104,7 +124,7 @@ require(["snd.BufferSource", "snd.ScriptProcessor"], function(snd) {
         buttonSound1.connect(snd.MASTER);
         buttonSound2.connect(snd.MASTER);
         fadeInSound.connect(snd.MASTER);
-        fadeOutSound.connect([snd.MASTER]); // 配列も可
+        fadeOutSound.connect([snd.MASTER]); // 接続は配列も可
 
         /* 再生メソッドの書き換え */
         // コードフェードイン時に呼び出されるfadeinメソッドを書き換える
@@ -134,9 +154,9 @@ require(["snd.BufferSource", "snd.ScriptProcessor"], function(snd) {
         // 最後にカーソルの形を元に戻します。おつかれさまでした。
         window.document.body.style.cursor = "default";
     };
-    
+
     window.snd = snd;
-    
+
     if (LOADED) {
         onLoad();
     } else {

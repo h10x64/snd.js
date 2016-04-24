@@ -1,4 +1,4 @@
-require(["snd.three", "snd.three.util", "snd.Listener", "snd.BufferSoundNode"], function(snd){
+require(["assets", "snd.three", "snd.three.util", "snd.Listener", "snd.BufferSoundNode"], function(assets, snd){
             // Set three.js measurement length to "cm"
             //  ex.) obj3D.setPosition(100, 0, 0) mean setPosition(100cm, 0cm, 0cm)
             snd.SOUND_ENVIRONMENT.setUnitPrefix(snd.SoundEnvironment.prefix.centi);
@@ -18,8 +18,8 @@ require(["snd.three", "snd.three.util", "snd.Listener", "snd.BufferSoundNode"], 
             var cameraPerspectiveHelper, cameraOrthoHelper;
 
             var SOUND_DATA = {
-                "match": "../../sound/test.wav",
-                "BGM": "../../sound/01 Liftoff (Get High).wav"
+                "match": assets["test"],
+                "BGM": assets["01_Liftoff_(Get_High)"]
             };
             var MATCH_SOUND_NODE = null;
             var BGM_SOUND_NODE = null;
@@ -49,23 +49,23 @@ require(["snd.three", "snd.three.util", "snd.Listener", "snd.BufferSoundNode"], 
 
                 // Initialize 3D objects
                 init();
-                
+
                 // Initialize Sound objects
                 initSound();
 
                 // Start animation
                 animate();
             });
-            
+
             function initSound() {
                 snd.three.attach(bgmSoundMesh, BGM_SOUND_NODE);
                 BGM_SOUND_NODE.setLoop(true);
                 BGM_SOUND_NODE.start();
-                
+
                 snd.three.attach(matchSoundMesh, MATCH_SOUND_NODE);
                 MATCH_SOUND_NODE.setLoop(true);
                 MATCH_SOUND_NODE.start();
-                
+
                 snd.three.addCamera(cameraPerspective);
                 snd.three.addCamera(cameraOrtho);
             };
@@ -75,7 +75,7 @@ require(["snd.three", "snd.three.util", "snd.Listener", "snd.BufferSoundNode"], 
                 document.body.appendChild(container);
 
                 initCamera();
-                
+
                 initGeometory();
 
                 renderer = new THREE.WebGLRenderer({antialias: true});
@@ -92,7 +92,7 @@ require(["snd.three", "snd.three.util", "snd.Listener", "snd.BufferSoundNode"], 
                 document.addEventListener('keydown', onKeyDown, false);
                 document.addEventListener('keyup', onKeyUp, false);
             }
-            
+
             function initCamera() {
                 scene = new THREE.Scene();
 
@@ -115,7 +115,7 @@ require(["snd.three", "snd.three.util", "snd.Listener", "snd.BufferSoundNode"], 
 
                 cameraOrthoHelper = new THREE.CameraHelper(cameraOrtho);
                 scene.add(cameraOrthoHelper);
-                
+
                 // Set activeCamera to the parspective camera. (that is rendered in the left side of the window)
                 activeCamera = cameraPerspective;
                 activeHelper = cameraPerspectiveHelper;
@@ -133,7 +133,7 @@ require(["snd.three", "snd.three.util", "snd.Listener", "snd.BufferSoundNode"], 
 
                 scene.add(cameraRig);
             }
-            
+
             function initGeometory() {
                 // Create Sound Object
                 matchSoundMesh = new THREE.Mesh(new THREE.SphereGeometry(5, 16, 8), new THREE.MeshBasicMaterial({color: 0xffffff, wireframe: true}));
@@ -158,7 +158,7 @@ require(["snd.three", "snd.three.util", "snd.Listener", "snd.BufferSoundNode"], 
 
                 var particles = new THREE.ParticleSystem(geometry, new THREE.ParticleSystemMaterial({color: 0x888888}));
                 scene.add(particles);
-                
+
                 //Create Base Grid
                 var gridGeometry = new THREE.Geometry();
                 var gridMaterial = new THREE.LineBasicMaterial({transparent: true, color: 0xFFFFFF, opacity:0.5});
@@ -169,12 +169,12 @@ require(["snd.three", "snd.three.util", "snd.Listener", "snd.BufferSoundNode"], 
                     gridGeometry.vertices.push(new THREE.Vector3(2000, -100, i));
                 }
                 var grid = new THREE.Line(gridGeometry, gridMaterial, THREE.LinePieces);
-                
+
                 scene.add(grid);
             }
 
             /** Events **/
-            
+
             function onKeyDown(event) {
                 switch (event.keyCode) {
                     case 79: /*O*/
@@ -265,7 +265,7 @@ require(["snd.three", "snd.three.util", "snd.Listener", "snd.BufferSoundNode"], 
                 cameraOrtho.updateProjectionMatrix();
 
             }
-            
+
             /** Animation & Render **/
 
             function animate() {
@@ -273,13 +273,13 @@ require(["snd.three", "snd.three.util", "snd.Listener", "snd.BufferSoundNode"], 
 
                 // Move Objects
                 moveObjects();
-                
+
                 // Render
                 render();
-                
+
                 // Update stats
                 stats.update();
-                
+
                 // Update snd.js
                 snd.three.update(activeCamera, clock.getElapsedTime());
             }
@@ -297,7 +297,7 @@ require(["snd.three", "snd.three.util", "snd.Listener", "snd.BufferSoundNode"], 
                 renderer.setViewport(0, 0, 2 * SCREEN_WIDTH / 3, SCREEN_HEIGHT);
                 renderer.render(scene, camera);
             }
-            
+
             function moveObjects() {
                 var r = Date.now() * 0.0005;
 
@@ -322,11 +322,11 @@ require(["snd.three", "snd.three.util", "snd.Listener", "snd.BufferSoundNode"], 
 
                     cameraPerspectiveHelper.visible = false;
                 }
-                
+
                 /* move camera position */
-                
+
                 // Rotate Parspective / Orthographic camera
-                
+
                 if (cameraMove.turnLeft) {
                     cameraEulerAngle.y += ROTATE_SPEED;
                 } else if(cameraMove.turnRight) {
@@ -338,9 +338,9 @@ require(["snd.three", "snd.three.util", "snd.Listener", "snd.BufferSoundNode"], 
                     cameraEulerAngle.x -= ROTATE_SPEED;
                 }
                 cameraRig.quaternion.setFromEuler(cameraEulerAngle);
-                
+
                 // Move Parspective / Orthographic camera
-                
+
                 if (cameraMove.forward) {
                     cameraRig.position.z += MOVE_SPEED;
                 } else if (cameraMove.backward) {
@@ -351,9 +351,9 @@ require(["snd.three", "snd.three.util", "snd.Listener", "snd.BufferSoundNode"], 
                 } else if (cameraMove.right) {
                     cameraRig.position.x -= MOVE_SPEED;
                 }
-                
+
                 // Move Overlook camera
-                
+
                 camera.position.x = cameraRig.position.x;
                 camera.position.z = cameraRig.position.z;
                 camera.up = new THREE.Vector3(0,0,1);
@@ -362,4 +362,3 @@ require(["snd.three", "snd.three.util", "snd.Listener", "snd.BufferSoundNode"], 
 
 
 });
-

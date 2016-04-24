@@ -10,6 +10,7 @@
  */
 var require = {
     paths: {
+        'assets': '../../assets/assets',
         /* snd */
         'snd': '../../../dist/class/snd',
         'snd.util': '../../../dist/class/snd.util',
@@ -49,4 +50,3 @@ var require = {
         'snd.MediaElementAudioNode': '../../../dist/plugins/three/snd.MediaElementAudioNode'
     }
 };
-
