@@ -190,7 +190,8 @@
 
     /**
      * keyがキー値となるAudioBufferを追加します。<br/>
-     * このメソッドはBase64形式のデータ文字列をAudioBufferにデコードして使用します。          * @param {String} key キー値
+     * このメソッドはBase64形式のデータ文字列をAudioBufferにデコードして使用します。
+     * @param {String} key キー値
      * @param {String} base64String Base64形式のデータ文字列
      **/
     snd.AudioDataManager.prototype.addBase64 = function(key, base64String) {
