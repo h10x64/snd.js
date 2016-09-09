@@ -52,6 +52,11 @@
         this._status.id = id;
 
         Object.defineProperties(this, {
+            className: {
+                get: function() {
+                    return this._status.className;
+                }
+            },
             isAudioUnit: {
                 get: function() {
                     return this._status.isAudioUnit;
@@ -64,16 +69,47 @@
             },
             connection: {
                 get: function() {
-                    var ret = Object.create(this._status.connection);
+                    var ret = [];
+                    for (var i in this._status.connection) {
+                        ret.push(this._status.connection[i]);
+                    }
                     return ret;
                 }
             },
-            audioParams: {
+            channelCount: {
                 get: function() {
-                    var ret = this.getParamDescription();
-                    return ret;
+                    return this._status.channelCount;
+                },
+                set: function(val) {
+                    this._output.channelCount = val;
+                    this._connector.channelCount = val;
+                    this._convolver.channelCount = val;
+                    this._status.channelCount = val;
                 }
-            }
+            },
+            channelCountMode: {
+                get: function() {
+                    return this._status.channelCountMode;
+
+                },
+                set: function(val) {
+                    this._output.channelCountMode = val;
+                    this._conector.channelCountMode = val;
+                    this._convolver.channelCountMode = val;
+                    this._status.channelCountMode = val;
+                }
+            },
+            channelInterpretation: {
+                get: function() {
+                    return this._status.channelInterpretation;
+                },
+                set: function(val) {
+                    this._output.channelInterpretation = val;
+                    this._connector.channelInterpretation = val;
+                    this._convolver.channelInterpretation = val;
+                    this._status.channelInterpretation = val;
+                }
+            },
         });
     };
 
@@ -84,8 +120,19 @@
      * @returns {snd.AudioUnit.Status} このクラスのデフォルト設定値
      */
     snd.AudioUnit.prototype.createStatus = function() {
-        // PLEASE OVERRIDE ME
-        return new snd.AudioUnit.Status();
+        var desc = this.getParamDescription();
+
+        var ret = {};
+        for (var key in desc) {
+          if (desc[key].default != null) {
+            ret[key] = desc[key].default;
+          }
+        }
+
+        ret.className = "snd.AudioUnit";
+        ret.connection = [];
+
+        return ret;
     };
 
     /**
@@ -119,7 +166,7 @@
         } else if (connectTo.id != null || id != null) {
             var str = null;
             var connector = this.getOutputConnector();
-            
+
             if (connector != null) {
                 if (connectTo.id != null) {
                     str = connectTo.id;
@@ -129,10 +176,10 @@
                 str += "[" + ((indexOut != null) ? indexOut : "0") + ":" + ((indexIn != null) ? indexIn : "0") + "]";
 
                 this._status.connection.push(str);
-                
+
                 if (typeof(connectTo.getConnector) == 'function') {
                     var conn = connectTo.getConnector();
-                    
+
                     if (conn == null) {
                         console.log(connectTo.id + " have not output node.");
                     } else {
@@ -164,7 +211,7 @@
             var idx = -1;
             var str = "";
             var connector = this.getOutputConnector();
-            
+
             if (connector != null) {
                 if (disconnectFrom.id != null) {
                     str = disconnectFrom.id;
@@ -186,7 +233,7 @@
 
                 if (typeof(disconnectFrom.getConnector) == 'function') {
                     var conn = disconnectFrom.getConnector();
-                    
+
                     if (conn == null) {
                         console.log(disconnectFrom.id + " have not input node.");
                     } else {
@@ -208,7 +255,7 @@
     snd.AudioUnit.prototype.getConnector = function() {
         // PLEASE OVERRIDE ME
     };
-    
+
     /**
      * このオーディオユニットの出口となる、connect/disconnectメソッドを持つオブジェクトを返します。<br/>
      * 主にsnd.jsの内部で使用するためのメソッドです。<br/>
@@ -222,16 +269,77 @@
 
     /**
      * このオーディオユニットのAudioParam
-     * @returns {HashMap} このオーディオユニットのAudioParamをまとめたハッシュマップ(キー:パラメータ名, 値: AudioParam)
+     * @returns {HashMap} このオーディオユニットのAudioParamをまとめたハッシュマップ(キー:パラメータ名, 値: 定義情報)
      */
     snd.AudioUnit.prototype.getParamDescription = function() {
-        // PLEASE OVERRIDE ME LIKE THIS
+        // PLEASE OVERRIDE ME LIKE
         // var ret = snd.AudioUnit.prototype.getParamDescription.apply(this, arguments);
-        // ret.foo = this.node1.gainParam;
-        // ret.bar = this.node2.frequencyParam;
+        // ret.theParameterYouAdded = {/* definition */};
         // return ret;
+        var ret = {};
 
-        return {};
+        /*
+         * type: snd.params.type.READ_ONLY(読込み専用), snd.params.type.AUDIO_PARAM(AudioParamオブジェクト), snd.params.type.VALUE(値), snd.params.type.ENUM(列挙), snd.params.type.FUNCTION(関数)
+         * default: デフォルト値
+         * value: (typeがsnd.params.type.ENUMの場合) 値の配列
+         * max: 最大値
+         * min: 最小値
+         * loader: データの読込みで使用される関数(function(obj, val){...}, obj:=値を設定する対象となるオブジェクト, val:=objに設定する値)
+         */
+
+        ret.className = {
+          type: snd.params.type.READ_ONLY,
+        };
+        ret.isAudioUnit = {
+          type: snd.params.type.READ_ONLY,
+          default: true
+        };
+        ret.id = {
+          type: snd.params.type.READ_ONLY,
+          loader: function(obj, val) {
+            obj._status.id = id;
+          }
+        };
+        ret.connection = {
+          type: snd.params.type.READ_ONLY,
+          loader: function(obj, val) {
+            obj._status.connection = val;
+          }
+        };
+        ret.channelCount = {
+          type: snd.params.type.VALUE,
+          default: 2,
+          max: snd.MAX_CHANNEL_COUNT,
+          min: 1,
+          loader: function(obj, val) {
+            obj.channelCount = val;
+          },
+        };
+        ret.channelCountMode = {
+          type: snd.params.type.ENUM,
+          value: [
+            "max",
+            "clamped-max",
+            "explicit"
+          ],
+          default: "explicit",
+          loader: function(obj, val) {
+            obj.channelCountMode = val;
+          },
+        };
+        ret.channelInterpretation = {
+          type: snd.params.type.ENUM,
+          value: [
+            "speakers",
+            "discrete"
+          ],
+          default: "speakers",
+          loader: function(obj, val) {
+            obj.channelCountMode = val;
+          }
+        };
+
+        return ret;
     };
 
     /**
@@ -325,7 +433,18 @@
      * @returns {snd.AudioUnit.Status}
      */
     snd.AudioUnit.prototype.toJSON = function() {
-        return this._status;
+        var status = {};
+        var desc = this.getParamDescription();
+
+        for (var key in desc) {
+          var val = this[key];
+          if (val == null && desc[key].default != null) {
+            val = desc[key].default;
+          }
+          status[key] = val;
+        }
+
+        return status;
     };
 
     /**
@@ -338,9 +457,8 @@
      * @throws {snd.Exception} データ読込みでエラーが発生した場合
      */
     snd.AudioUnit.prototype.fromJSON = function(json) {
-        var data = JSON.parse(json);
-
         try {
+            var data = JSON.parse(json);
             this.loadData(data);
             this._status = data;
         } catch (e) {
@@ -352,25 +470,22 @@
     /**
      * JSON文字列をパースしたデータオブジェクトを使って、このオブジェクトの各種設定値のロードを行います。<br/>
      * また、このメソッドはfromJSONメソッド内で呼び出されます。<br/>
-     * このクラスを継承するクラスを作る場合、オーバーライドが必要です。(オーバーライドの際、apply必須)<br/>
-     * オーバーライドする時は、toJSON メソッドで出力した内容を含むデータが渡される前提で作成し、不足などのエラーが発生した場合は snd.Exception クラスのオブジェクトを throw してください。
+     * <br/>
+     * このメソッドでは、getParamDescriptionメソッドで取得されるパラメータ定義情報を元にデータをロードしています。<br/>
+     * getParamDescriptionメソッドの戻り値で、loaderプロパティにfunctionが設定されている場合のみ、そのプロパティを持つ定義情報のキーと同じキーのデータ値をloaderを使用して設定します。<br/>
+     * 具体的な処理はソースを参照してください。<br/>
      *
      * @param {Object} data JSON文字列をパースした結果。
      * @throws {snd.AudioUnit.Exception} データロード中に不足データなどの例外が発生した場合
      */
     snd.AudioUnit.prototype.loadData = function(data) {
+      var desc = this.getparamDescription();
 
-        this._status.id = (data["id"] != null) ? data["id"] : "";
-        this._status.connection = (data["connection"] != null) ? data["connection"] : [];
-        this._status.channelCount = (data["channelCount"] != null) ? data["channelCount"] : 2;
-        this._status.channelCountMode = (data["channelCountMode"] != null) ? data["channelCountMode"] : "max";
-        this._status.channelInterpretation = (data["channelInterpretation"] != null) ? data["channelInterpretation"] : "discrete";
-
-
-        // PLEASE OVERRIDE ME LIKE THIS
-        // SubClass.prototype.connect = function(connectTo, bra, bra) {
-        //     AudioUnit.prototype.loadData.apply(this, arguments);
-        // };
+      for (var key in desc) {
+        if (data[key] != null && typeof(desc[key].loader) == "function") {
+          desc[key].loader(this, data[key]);
+        }
+      }
     };
 
     /**
@@ -432,24 +547,6 @@
         ret.loadData(data);
 
         return ret;
-    };
-
-    /**
-     * オーディオユニットの各種設定情報を保持するクラスです。
-     * @property {String} className このステータスを持つオブジェクトのクラス名
-     * @property {Boolean} isAudioUnit このステータスを持つオブジェクトがsnd.AudioUnitクラスのメソッドを実装していることを表すブール値
-     * @property {String} id このステータスを持つオブジェクトのID
-     * @property {Array} connection このステータスを持つオブジェクトが接続しているオブジェクトのIDを格納する配列
-     */
-    snd.AudioUnit.Status = function() {
-        this.className = "snd.AudioUnit";
-        this.isAudioUnit = true;
-        this.id = "";
-        this.connection = [];
-
-        this.channelCount = 2;
-        this.channelCountMode = "max";
-        this.channelInterpretation = "discrete";
     };
 
     return snd;

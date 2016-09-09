@@ -46,34 +46,6 @@
 
         /* DEFINE PROPERTIES */
         Object.defineProperties(this, {
-            channelCount: {
-                get: function() {
-                    return this._status.channelCount;
-                },
-                set: function(val) {
-                    this._gain.channelCount = val;
-                    this._status.channelCount = val;
-                }
-            },
-            channelCountMode: {
-                get: function() {
-                    return this._status.channelCountMode;
-
-                },
-                set: function(val) {
-                    this._gain.channelCountMode = val;
-                    this._status.channelCountMode = val;
-                }
-            },
-            channelInterpretation: {
-                get: function() {
-                    return this._status.channelInterpretation;
-                },
-                set: function(val) {
-                    this._gain.channelInterpretation = val;
-                    this._status.channelInterpretation = val;
-                }
-            },
             gain: {
                 get: function() {
                     return this._gain.gain.value;
@@ -95,7 +67,7 @@
     snd.Gain.prototype.constructor = snd.Gain;
     
     snd.Gain.prototype.getParamDescription = function() {
-        var ret = snd.AudioUnit.prototype.getAudioParams.apply(this, arguments);
+        var ret = snd.AudioUnit.prototype.getParamDescription.apply(this, arguments);
         
         ret.gain = {
             type: snd.params.type.AUDIO_PARAM,
@@ -109,7 +81,11 @@
     };
     
     snd.Gain.prototype.createStatus = function() {
-        return new snd.Gain.Status();
+        var ret = snd.AudioUnit.prototype.createStatus.call(this);
+        
+        ret.className = "snd.Gain";
+        
+        return ret;
     };
     
     snd.Gain.prototype.getConnector = function() {
@@ -125,13 +101,6 @@
 
         this.gain = data.gain;
     };
-
-    snd.Gain.Status = function() {
-        snd.AudioUnit.Status.apply(this, arguments);
-        this.gain = 1.0;
-    };
-    snd.Gain.Status.prototype = Object.create(snd.AudioUnit.Status.prototype);
-    snd.Gain.Status.prototype.constructor = snd.Gain.Status;
     
     return snd;
 }));

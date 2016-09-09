@@ -377,11 +377,11 @@
     };
 
     snd.OscillatorSource.prototype.createStatus = function() {
-        return new snd.OscillatorSource.Status();
-    };
-
-    snd.OscillatorSource.prototype.toJSON = function() {
-        return this._status;
+        var ret = snd.AudioUnit.prototype.createStatus.call(this);
+        
+        ret.className = "snd.OscillatorSource";
+        
+        return ret;
     };
 
     snd.OscillatorSource.prototype.loadData = function(data) {
@@ -410,21 +410,6 @@
         var ret = new snd.OscillatorSource("");
         ret.loadData(data);
         return ret;
-    };
-
-    snd.OscillatorSource.Status = function() {
-        snd.Source.Status.apply(this, arguments);
-
-        this.className = snd.OscillatorSource.CLASS_NAME;
-        this.type = snd.srctype.OSCILLATOR;
-        this.status = snd.status.NONE;
-
-        this.periodicWave = null;
-
-        this.oscillatorType = null;
-
-        this.frequency = snd.OscillatorSource.DEFAULT_FREQUENCY;
-        this.detune = 0.0;
     };
 
     return snd;

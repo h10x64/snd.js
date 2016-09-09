@@ -122,11 +122,27 @@
     snd.MediaStreamAudioSource.prototype.loadData = function() {
         snd.Source.prototype.loadData.apply(this, arguments);
     };
+    
+    snd.MediaStreamAudioSource.prototype.getParamDescription = function() {
+        var ret = snd.Source.prototype.getParamDescription.apply(this, arguments);
 
-    snd.MediaStreamAudioSource.Status = function() {
-        snd.Source.Status.apply(this, arguments);
+        ret.stream = {
+            type: snd.params.type.VALUE,
+            default: undefined,
+            max: undefined,
+            min: undefined
+        };
 
+        return ret;
     };
+    
+    snd.MediaStreamAudioSource.prototype.createStatus = function() {
+        var ret = snd.AudioUnit.prototype.createStatus.call(this);
+        
+        ret.className = "snd.MediaStreamAudioSource";
+        
+        return ret;
+    }
     
     return snd;
 }));

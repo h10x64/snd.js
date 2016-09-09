@@ -151,12 +151,12 @@
     };
 
     snd.ScriptProcessor.prototype.createStatus = function() {
-        return new snd.ScriptProcessor.Status();
+        var ret = snd.AudioUnit.prototype.createStatus.call(this);
+        
+        ret.className = "snd.ScriptProcessor";
+        
+        return ret;
     };
-
-    snd.ScriptProcessor.prototype.toJSON = function() {
-        return this._status;
-    }
 
     snd.ScriptProcessor.prototype.loadData = function(data) {
         snd.Source.prototype.loadData.apply(this, arguments);
@@ -180,20 +180,6 @@
 
         return ret;
     };
-
-    snd.ScriptProcessor.Status = function() {
-        snd.Source.Status.apply(this, arguments);
-
-        this.className = snd.ScriptProcessor.CLASS_NAME;
-        this.isSource = true;
-
-        this.inputChannels = 0;
-        this.outputChannels = 1;
-        this.bufferLength = 4096;
-        this.script = "";
-    };
-    snd.ScriptProcessor.Status.prototype = Object.create(snd.Source.prototype);
-    snd.ScriptProcessor.Status.prototype.constructor = snd.ScriptProcessor.Status;
     
     return snd;
 }));

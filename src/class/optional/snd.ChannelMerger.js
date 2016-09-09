@@ -13,14 +13,17 @@
         snd.AudioUnit.apply(this, arguments);
         
         Object.defineProperties(this, {
-            channelCount: {
+            numberOfInputs: {
                 get: function() {
-                    return this._status.channelCount;
+                    return this._status.numberOfInputs;
+                },
+                set: function(val) {
+                    this._setNumberOfInputs(val);
                 }
             }
         });
 
-        this.setChannelCount(channels);
+        this._setNumberOfInputs(channels);
     };
     snd.ChannelMerger.prototype = Object.create(snd.AudioUnit.prototype);
     snd.ChannelMerger.prototype.constructor = snd.ChannelMerger;
@@ -35,28 +38,42 @@
 
     snd.ChannelMerger.prototype.loadData = function(data) {
         snd.AudioUnit.prototype.loadData.apply(this, arguments);
-        this.setChannelCount(data.channelCount);
+        this.numberOfInputs = data.numberOfInputs;
+    };
+    
+    snd.ChannelMerger.prototype.getParamDescription = function() {
+        var ret = snd.Source.prototype.getParamDescription.apply(this, arguments);
+        
+        ret.numberOfInputs = {
+          type: snd.params.type.VALUE,
+          default: 6,
+          max: snd.MAX_CHANNEL_COUNT,
+          min: 1,
+          loader: function(obj, val) {
+            obj.numberOfInputs = val;
+          }
+        };
+        
+        return ret;
     };
 
     snd.ChannelMerger.prototype.createStatus = function() {
-        return new snd.ChannelMerger.Status();
+        var ret = snd.AudioUnit.prototype.createStatus.call(this);
+        
+        ret.className = "snd.ChannelMerger";
+        
+        return ret;
     };
 
     /**
      * @private
      */
-    snd.ChannelMerger.prototype.setChannelCount = function(channelCount) {
+    snd.ChannelMerger.prototype._setNumberOfInputs = function(channelCount) {
         this._status.channelCount = (channelCount == null) ? snd.MAX_CHANNEL_COUNT : channelCount;
         if (this._merger != null)
             delete this._merger;
         this._merger = snd.AUDIO_CONTEXT.createChannelMerger(this._status.channelCount);
     };
 
-    snd.ChannelMerger.Status = function() {
-        snd.AudioUnit.Status.apply(this, arguments);
-    };
-    snd.ChannelMerger.Status.prototype = Object.create(snd.AudioUnit.Status);
-    snd.ChannelMerger.Status.prototype.constructor = snd.ChannelMerger.Status;
-    
     return snd;
 }));

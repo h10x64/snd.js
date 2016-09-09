@@ -37,11 +37,6 @@
 
         /* DEFINE PROPERTIES */
         Object.defineProperties(this, {
-            channelCount: {
-                get: function() {
-                    return this._status.channelCount;
-                }
-            },
             volume: {
                 get: function() {
                     return this._gain.gain.value;
@@ -84,7 +79,11 @@
     };
     
     snd.Noise.prototype.createStatus = function() {
-        return new snd.Noise.Status();
+        var ret = snd.AudioUnit.prototype.createStatus.call(this);
+        
+        ret.className = "snd.Noise";
+        
+        return ret;
     };
     
     snd.Noise.prototype.getConnector = function() {
@@ -100,14 +99,6 @@
 
         this.gain = data.gain;
     };
-
-    snd.Noise.Status = function() {
-        snd.AudioUnit.Status.apply(this, arguments);
-        this.gain = 1.0;
-        this.channelCount = 1;
-    };
-    snd.Noise.Status.prototype = Object.create(snd.AudioUnit.Status.prototype);
-    snd.Noise.Status.prototype.constructor = snd.Noise.Status;
     
     return snd;
 }));

@@ -861,7 +861,11 @@
     };
 
     snd.MediaElementAudioSource.prototype.createStatus = function() {
-        return new snd.MediaElementAudioSource.Status();
+        var ret = snd.AudioUnit.prototype.createStatus.call(this);
+        
+        ret.className = "snd.MediaElementAudioSource";
+        
+        return ret;
     }
 
     snd.MediaElementAudioSource.prototype.toJSON = function() {
@@ -890,16 +894,6 @@
 
         return ret;
     };
-
-    snd.MediaElementAudioSource.Status = function() {
-        snd.Source.Status.apply(this, arguments);
-
-        this.className = snd.MediaElementAudioSource.CLASS_NAME;
-        this.status = snd.status.NONE;
-        this.element = "";
-    }
-    snd.MediaElementAudioSource.Status.prototype = Object.create(snd.Source.Status.prototype);
-    snd.MediaElementAudioSource.Status.prototype.constructor = snd.MediaElementAudioSource.Status;
 
     /* snd.util Methods */
 

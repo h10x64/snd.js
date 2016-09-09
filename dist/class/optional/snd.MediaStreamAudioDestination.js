@@ -80,6 +80,34 @@
     };
     
     snd.STREAM_MASTER = new snd.MediaStreamAudioDestination("STREAM_MASTER");
+    
+    snd.MediaStreamAudioDestination.prototype.getParamDescription = function() {
+        var ret = snd.Source.prototype.getParamDescription.apply(this, arguments);
+
+        ret.volume = {
+            type: snd.params.type.AUDIO_PARAM,
+            value: this.gainParam,
+            default: 1.0,
+            max: Infinity,
+            min: -Infinity
+        };
+        ret.stream = {
+            type: snd.params.type.VALUE,
+            default: undefined,
+            max: undefined,
+            min: undefined
+        };
+
+        return ret;
+    };
+    
+    snd.MediaStreamAudioDestination.prototype.createStatus = function() {
+        var ret = snd.AudioUnit.prototype.createStatus.call(this);
+        
+        ret.className = "snd.MediaStreamAudioDestination";
+        
+        return ret;
+    }
 
     return snd;
 }));

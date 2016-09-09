@@ -21,39 +21,6 @@
 
         /* DEFINE PROPERTIES */
         Object.defineProperties(this, {
-            channelCount: {
-                get: function() {
-                    return this._status.channelCount;
-                },
-                set: function(val) {
-                    this._output.channelCount = val;
-                    this._connector.channelCount = val;
-                    this._shaper.channelCount = val;
-                    this._status.channelCount = val;
-                }
-            },
-            channelCountMode: {
-                get: function() {
-                    return this._status.channelCountMode;
-                },
-                set: function(val) {
-                    this._output.channelCountMode = val;
-                    this._connector.channelCountMode = val;
-                    this._shaper.channelCountMode = val;
-                    this._status.channelCountMode = val;
-                }
-            },
-            channelInterpretation: {
-                get: function() {
-                    return this._status.channelInterpretation;
-                },
-                set: function(val) {
-                    this._output.channelInterpretation = val;
-                    this._connector.channelInterpretation = val;
-                    this._shaper.channelInterpretation = val;
-                    this._status.channelInterpretation = val;
-                }
-            },
             curve: {
                 get: function() {
                     return this._shaper.curve;
@@ -114,7 +81,7 @@
                 type: snd.params.type.VALUE,
                 default: 1.0,
                 max: Infinity,
-                min: -Inifinity
+                min: -Infinity
             };
             ret.gainParam = {
                 type: snd.params.type.AUDIO_PARAM,
@@ -128,7 +95,11 @@
     };
     
     snd.WaveShaper.prototype.createStatus = function() {
-        return new snd.WaveShaper.Status();
+        var ret = snd.AudioUnit.prototype.createStatus.call(this);
+        
+        ret.className = "snd.WaveShaper";
+        
+        return ret;
     };
     
     snd.WaveShaper.prototype.getConnector = function() {
@@ -145,16 +116,6 @@
         this.curve = data.curve;
         this.oversample = data.oversample;
     };
-
-    snd.WaveShaper.Status = function() {
-        snd.AudioUnit.Status.apply(this, arguments);
-
-        this.curve = null;
-        this.oversample = snd.WaveShaper.OVERSAMPLE_NONE;
-        this.gain = 1.0;
-    };
-    snd.WaveShaper.Status.prototype = Object.create(snd.AudioUnit.Status.prototype);
-    snd.WaveShaper.Status.prototype.constructor = snd.WaveShaper.Status;
     
     return snd;
 }));

@@ -50,40 +50,6 @@
 
         /* DEFINE PROPERTIES */
         Object.defineProperties(this, {
-            channelCount: {
-                get: function() {
-                    return this._status.channelCount;
-                },
-                set: function(val) {
-                    this._connector.channelCount = val;
-                    this._output.channelCount = val;
-                    this._compressor.channelCount = val;
-                    this._status.channelCount = val;
-                }
-            },
-            channelCountMode: {
-                get: function() {
-                    return this._status.channelCountMode;
-
-                },
-                set: function(val) {
-                    this._connector.channelCountMode = val;
-                    this._output.channelCountMode = val;
-                    this._compressor.channelCountMode = val;
-                    this._status.channelCountMode = val;
-                }
-            },
-            channelInterpretation: {
-                get: function() {
-                    return this._status.channelInterpretation;
-                },
-                set: function(val) {
-                    this._connector.channelInterpretation = val;
-                    this._output.channelInterpretation = val;
-                    this._compressor.channelInterpretation = val;
-                    this._status.channelInterpretation = val;
-                }
-            },
             attack: {
                 get: function() {
                     return this._compressor.attack.value;
@@ -246,7 +212,11 @@
     };
 
     snd.DynamicsCompressor.prototype.createStatus = function() {
-        return new snd.DynamicsCompressor.Status();
+        var ret = snd.AudioUnit.prototype.createStatus.call(this);
+        
+        ret.className = "snd.DynamicsCompressor";
+        
+        return ret;
     };
 
     snd.DynamicsCompressor.prototype.getConnector = function() {
@@ -266,18 +236,6 @@
         this.threshold = data.threshold;
         this.release = data.release;
     };
-
-    snd.DynamicsCompressor.Status = function() {
-        snd.AudioUnit.Status.apply(this, arguments);
-
-        this.attack = 0.003;
-        this.knee = 30;
-        this.ratio = 12;
-        this.threshold = -24;
-        this.release = 0.250;
-    };
-    snd.DynamicsCompressor.Status.prototype = Object.create(snd.AudioUnit.Status.prototype);
-    snd.DynamicsCompressor.Status.prototype.constructor = snd.DynamicsCompressor.Status;
 
     return snd;
 }));

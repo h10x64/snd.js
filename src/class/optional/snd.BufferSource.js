@@ -375,7 +375,11 @@
     };
 
     snd.BufferSource.prototype.createStatus = function() {
-        return new snd.BufferSource.Status();
+        var ret = snd.AudioUnit.prototype.createStatus.call(this);
+        
+        ret.className = "snd.BufferSource";
+        
+        return ret;
     };
 
     snd.BufferSource.prototype.toJSON = function() {
@@ -412,32 +416,6 @@
         ret.loadData(data);
 
         return ret;
-    };
-
-    /**
-     * @class BufferSourceの設定値を保持するクラスです。<br/>
-     * ループ関連の設定値や、音データのパスなどを保持します。
-     * @property {Boolean} loop ループするか否か
-     * @property {Float} loopStart ループ開始地点[秒]
-     * @property {Float} loopEnd ループ終了地点[秒]
-     * @property {String} src 音データのパス<br/>
-     * 下記の表に基づいて、「URL」,「DataURIScheme」,「snd.AUDIO_DATA_MANAGERのキー値」のいずれかが設定されます。<br/>
-     * <table>
-     * <tr><th>種類</th><th>判定</th><th>例</th></tr>
-     * <tr><td>DataURI</td><td>/^data:audio.*base64,.*$/</td><td>data:audio/mpeg:base64,…（BASE64文字列）…</td></tr>
-     * <tr><td>snd.AUDIO_DATA_MANAGERのキー値</td><td>/^key:.*$/</td><td>key:…（snd.AUDIO_DATA_MANAGERのキー値）…</td></tr>
-     * <tr><td>URL</td><td>上記に当てはまらない文字列</td><td>./sound/data.mp3</td></tr>
-     * </table>
-     */
-    snd.BufferSource.Status = function() {
-        snd.Source.Status.apply(this, arguments);
-
-        this.className = "snd.BufferSource";
-        this.type = snd.srctype.AUDIO_BUFFER;
-        this.loop = false;
-        this.loopStart = null;
-        this.loopEnd = null;
-        this.src = "";
     };
     
     /* snd.util Methods  */

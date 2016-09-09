@@ -50,40 +50,6 @@
 
         /* DEFINE PROPERTIES */
         Object.defineProperties(this, {
-            channelCount: {
-                get: function() {
-                    return this._status.channelCount;
-                },
-                set: function(val) {
-                    this._connector.channelCount = val;
-                    this._output.channelCount = val;
-                    this._filter.channelCount = val;
-                    this._status.channelCount = val;
-                }
-            },
-            channelCountMode: {
-                get: function() {
-                    return this._status.channelCountMode;
-
-                },
-                set: function(val) {
-                    this._connector.channelCountMode = val;
-                    this._output.channelCountMode = val;
-                    this._filter.channelCountMode = val;
-                    this._status.channelCountMode = val;
-                }
-            },
-            channelInterpretation: {
-                get: function() {
-                    return this._status.channelInterpretation;
-                },
-                set: function(val) {
-                    this._connector.channelInterpretation = val;
-                    this._output.channelInterpretation = val;
-                    this._filter.channelInterpretation = val;
-                    this._status.channelInterpretation = val;
-                }
-            },
             type: {
                 get: function() {
                     return this._filter.type;
@@ -157,22 +123,26 @@
     };
     snd.BiquadFilter.prototype = Object.create(snd.AudioUnit.prototype);
     snd.BiquadFilter.prototype.constructor = snd.BiquadFilter;
-    
+
     snd.BiquadFilter.prototype.createStatus = function() {
-        return new snd.BiquadFilter.Status();
+        var ret = snd.AudioUnit.prototype.createStatus.call(this);
+        
+        ret.className = "snd.BiquadFilter";
+        
+        return ret;
     };
-    
+
     snd.BiquadFilter.prototype.getConnector = function() {
         return this._connector;
     };
-    
+
     snd.BiquadFilter.prototype.getOutputConnector = function() {
         return this._output;
     }
-    
+
     snd.BiquadFilter.prototype.getParamDescription = function() {
         var ret = snd.AudioUnit.prototype.getParamDescription.apply(this, arguments);
-        
+
         ret.type = {
             type: snd.params.type.ENUM,
             value: [
@@ -239,28 +209,15 @@
             max: ret.gain.max,
             min: ret.gain.min
         };
-        
+
         return ret;
     };
-    
+
     snd.BiquadFilter.prototype.loadData = function(data) {
         snd.AudioUnit.prototype.loadData.apply(this, arguments);
 
         // PLEASE WRITE LOADING METHODS HERE
     };
 
-    snd.BiquadFilter.Status = function() {
-        snd.AudioUnit.Status.apply(this, arguments);
-
-        this.type = snd.LOWPASS;
-        this.frequency = 350;
-        this.detune = 0;
-        this.Q = 1.0;
-        this.gain = 0;
-    };
-    snd.BiquadFilter.Status.prototype = Object.create(snd.AudioUnit.Status.prototype);
-    snd.BiquadFilter.Status.prototype.constructor = snd.BiquadFilter.Status;
-    
     return snd;
 }));
-

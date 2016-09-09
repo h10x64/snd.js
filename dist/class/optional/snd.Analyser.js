@@ -38,7 +38,7 @@
         root.snd = factory(root.snd);
     }
 }(this, function(snd) {
-    
+
     snd.Analyser = function(id) {
         snd.AudioUnit.apply(this, arguments);
 
@@ -47,40 +47,6 @@
 
         /* DEFINE PROPERTIES */
         Object.defineProperties(this, {
-            channelCount: {
-                get: function() {
-                    return this._status.channelCount;
-                },
-                set: function(val) {
-                    this._output.channelCount = val;
-                    this._connector.channelCount = val;
-                    this._analyser.channelCount = val;
-                    this._status.channelCount = val;
-                }
-            },
-            channelCountMode: {
-                get: function() {
-                    return this._status.channelCountMode;
-
-                },
-                set: function(val) {
-                    this._output.channelCountMode = val;
-                    this._connector.channelCountMode = val;
-                    this._analyser.channelCountMode = val;
-                    this._status.channelCountMode = val;
-                }
-            },
-            channelInterpretation: {
-                get: function() {
-                    return this._status.channelInterpretation;
-                },
-                set: function(val) {
-                    this._output.channelInterpretation = val;
-                    this._connector.channelInterpretation = val;
-                    this._analyser.channelInterpretation = val;
-                    this._status.channelInterpretation = val;
-                }
-            },
             floatFrequencyData: {
                 get: function() {
                     this._analyser.getFloatFrequencyData(this._floatFrequencyDataBuffer);
@@ -156,10 +122,10 @@
     };
     snd.Analyser.prototype = Object.create(snd.AudioUnit.prototype);
     snd.Analyser.prototype.constructor = snd.Analyser;
-    
+
     snd.Analyser.prototype.getParamDescription = function() {
-        var ret = snd.AudioUnit.prototype.getParamDescription.apply(this, arguments);
-        
+        var ret = snd.AudioUnit.prototype.getParamDescription.call(this, arguments);
+
         ret.floatFrequencyData = {
             type: snd.params.type.READ_ONLY
         };
@@ -199,22 +165,26 @@
             max: Infinity,
             min: -Infinity
         };
+
+        return ret;
+    };
+
+    snd.Analyser.prototype.createStatus = function() {
+        var ret = snd.AudioUnit.prototype.createStatus.call(this);
+        
+        ret.className = "snd.Analyser";
         
         return ret;
     };
-    
-    snd.Analyser.prototype.createStatus = function() {
-        return new snd.Analyser.Status();
-    };
-    
+
     snd.Analyser.prototype.getConnector = function() {
         return this._analyser;
     };
-    
+
     snd.Analyser.prototype.getOutputConnector = function() {
         return this._analyser;
     };
-    
+
     snd.Analyser.prototype.loadData = function(data) {
         snd.AudioUnit.prototype.loadData.apply(this, arguments);
 
@@ -230,16 +200,5 @@
         this._floatTimeDomainDataBuffer = new Float32Array(this._analyser.fftSize);
     };
 
-    snd.Analyser.Status = function() {
-        snd.AudioUnit.Status.apply(this, arguments);
-
-        this.fftSize = 2048;
-        this.maxDecibels = -30;
-        this.minDecibels = -100;
-        this.smoothingTimeConstant = 0.1;
-    };
-    snd.Analyser.Status.prototype = Object.create(snd.AudioUnit.Status.prototype);
-    snd.Analyser.Status.prototype.constructor = snd.Analyser.Status;
-    
     return snd;
 }));

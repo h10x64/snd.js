@@ -101,14 +101,14 @@
     snd.Source.prototype.getConnector = function() {
         return undefined;
     };
-    
+
     snd.Source.prototype.getOutputConnector = function(indexOut) {
         return this._gain;
     };
-    
+
     snd.Source.prototype.getParamDescription = function() {
         var ret = snd.AudioUnit.prototype.getParamDescription.apply(this, arguments);
-        
+
         ret.volume = {
             type: snd.params.type.AUDIO_PARAM,
             value: this.volumeParam
@@ -119,7 +119,10 @@
         ret.status =  {
             type: snd.params.type.READ_ONLY
         };
-        
+        ret.isSource = {
+            type: snd.params.type.READ_ONLY
+        };
+
         return ret;
     };
 
@@ -128,7 +131,11 @@
      * @return {snd.AudioUnit.Status} このオブジェクトのデフォルト設定値
      */
     snd.Source.prototype.createStatus = function() {
-        return new snd.Source.Status();
+        var ret = snd.AudioUnit.prototype.createStatus.call(this);
+        
+        ret.className = "snd.Source";
+        
+        return ret;
     };
 
     snd.Source.prototype.toJSON = function() {
@@ -157,25 +164,5 @@
         return ret;
     };
 
-    /**
-     * @class snd.Sourceクラスの設定値を保持するステータスクラスです。<br/>
-     * 音源の種類、状態、ボリュームなどの情報を持ちます。
-     * @property {Boolean} isSource このオブジェクトが snd.Source を継承する音源であることを表す値
-     * @property {snd.srctype} type 音源の種類
-     * @property {snd.status} status 状態
-     * @property {Float} volume ボリューム
-     * @property {String} className この設定値を使用しているオブジェクトのクラス名
-     */
-    snd.Source.Status = function() {
-        snd.AudioUnit.Status.apply(this, arguments);
-
-        this.type = snd.srctype.NONE;
-        this.status = snd.status.NONE;
-        this.volume = 1;
-        this.isSource = true;
-
-        this.className = snd.Source.CLASS_NAME;
-    };
-    
     return snd;
 }));
